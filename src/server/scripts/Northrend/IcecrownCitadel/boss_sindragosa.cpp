@@ -406,7 +406,7 @@ class boss_sindragosa : public CreatureScript
                     float moveTime = me->GetExactDist(&SindragosaFlyInPos) / (me->GetSpeed(MOVE_RUN) * 0.001f);
                     me->m_Events.AddEvent(new FrostwyrmLandEvent(*me, SindragosaLandPos), me->m_Events.CalculateTime(uint64(moveTime) + 250));
                     me->GetMotionMaster()->MovePoint(POINT_FROSTWYRM_FLY_IN, SindragosaFlyInPos);
-                    me->CastSpell(me, SPELL_SINDRAGOSA_S_FURY, true);
+                    //me->CastSpell(me, SPELL_SINDRAGOSA_S_FURY, true);
                 }
             }
 
@@ -829,8 +829,19 @@ class spell_sindragosa_s_fury : public SpellScriptLoader
                 }
             }
 
-            void CountTargets(std::list<WorldObject*>& targets)
+            /*void CountTargets(std::list<WorldObject*>& targets)
             {
+                _targetCount = targets.size();
+            }*/
+
+            void FilterTargets(std::list<WorldObject*>& targets)
+            {
+                targets.remove_if([](WorldObject* obj) -> bool
+                {
+                    // SPELL_ATTR3_ONLY_TARGET_PLAYERS present on the spell, we can safely cast to Player
+                    return obj->ToPlayer()->IsGameMaster();
+                });
+
                 _targetCount = targets.size();
             }
 
@@ -846,7 +857,9 @@ class spell_sindragosa_s_fury : public SpellScriptLoader
                 if (ResistFactor > 0.9f)
                     ResistFactor = 0.9f;
 
-                uint32 damage = uint32( (GetEffectValue()/_targetCount) * (1.0f-ResistFactor) );
+                uint32 damage = 0;
+                if (_targetCount && _targetCount > 0)
+                    damage = uint32( (GetEffectValue()/_targetCount) * (1.0f-ResistFactor) );
 
                 SpellNonMeleeDamage damageInfo(GetCaster(), GetHitUnit(), GetSpellInfo()->Id, GetSpellInfo()->SchoolMask);
                 damageInfo.damage = damage;
@@ -857,7 +870,8 @@ class spell_sindragosa_s_fury : public SpellScriptLoader
             void Register()
             {
                 BeforeCast += SpellCastFn(spell_sindragosa_s_fury_SpellScript::SelectDest);
-                OnObjectAreaTargetSelect += SpellObjectAreaTargetSelectFn(spell_sindragosa_s_fury_SpellScript::CountTargets, EFFECT_1, TARGET_UNIT_DEST_AREA_ENTRY);
+                //OnObjectAreaTargetSelect += SpellObjectAreaTargetSelectFn(spell_sindragosa_s_fury_SpellScript::CountTargets, EFFECT_1, TARGET_UNIT_DEST_AREA_ENTRY);
+                OnObjectAreaTargetSelect += SpellObjectAreaTargetSelectFn(spell_sindragosa_s_fury_SpellScript::FilterTargets, EFFECT_1, TARGET_UNIT_DEST_AREA_ENTRY);
                 OnEffectHitTarget += SpellEffectFn(spell_sindragosa_s_fury_SpellScript::HandleDummy, EFFECT_1, SPELL_EFFECT_DUMMY);
             }
 
@@ -2072,7 +2086,7 @@ void AddSC_boss_sindragosa()
 {
     new boss_sindragosa();
     new npc_ice_tomb();
-    new spell_sindragosa_s_fury();
+    //new spell_sindragosa_s_fury();
     new spell_sindragosa_unchained_magic();
     new spell_sindragosa_permeating_chill();
     new spell_sindragosa_instability();

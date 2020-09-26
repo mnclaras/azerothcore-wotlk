@@ -1393,6 +1393,9 @@ class Player : public Unit, public GridObject<Player>
 
         bool AddItem(uint32 itemId, uint32 count);
 
+        void DeMorphIllusionShirt(uint8 slot, uint32 shirtEntry);
+        void MorphIllusionShirt(uint8 slot, uint32 shirtEntry);
+
         uint32 m_stableSlots;
 
         /*********************************************************/

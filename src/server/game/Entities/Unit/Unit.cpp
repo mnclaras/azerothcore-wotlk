@@ -52,6 +52,7 @@
 #include "ArenaSpectator.h"
 #include "DynamicVisibility.h"
 #include "AccountMgr.h"
+#include "../../../modules/mod-spell-regulator/src/SpellRegulator.h"
 
 #ifdef ELUNA
 #include "LuaEngine.h"
@@ -690,6 +691,9 @@ uint32 Unit::DealDamage(Unit* attacker, Unit* victim, uint32 damage, CleanDamage
 
     // Hook for OnDamage Event
     sScriptMgr->OnDamage(attacker, victim, damage);
+
+    if ((damagetype == SPELL_DIRECT_DAMAGE || damagetype == DOT) && spellProto)
+        sSpellRegulator->Regulate(damage, spellProto->Id);
 
     if (victim->GetTypeId() == TYPEID_PLAYER && attacker != victim)
     {
@@ -2142,6 +2146,9 @@ void Unit::AttackerStateUpdate (Unit* victim, WeaponAttackType attType, bool ext
         return;
 
     if (!victim->IsAlive())
+        return;
+
+    if ((attType == BASE_ATTACK || attType == OFF_ATTACK) && !IsWithinLOSInMap(victim))
         return;
 
     CombatStart(victim);
@@ -5581,6 +5588,7 @@ void Unit::SendSpellNonMeleeReflectLog(SpellNonMeleeDamage* log, Unit* attacker)
 
 void Unit::SendSpellNonMeleeDamageLog(SpellNonMeleeDamage* log)
 {
+    sSpellRegulator->Regulate(log->damage, log->SpellID);
     WorldPacket data(SMSG_SPELLNONMELEEDAMAGELOG, (16+4+4+4+1+4+4+1+1+4+4+1)); // we guess size
     data.append(log->target->GetPackGUID());
     data.append(log->attacker->GetPackGUID());
@@ -5627,6 +5635,8 @@ void Unit::ProcDamageAndSpell(Unit* victim, uint32 procAttacker, uint32 procVict
 void Unit::SendPeriodicAuraLog(SpellPeriodicAuraLogInfo* pInfo)
 {
     AuraEffect const* aura = pInfo->auraEff;
+
+    sSpellRegulator->Regulate(pInfo->damage, aura->GetId());
 
     WorldPacket data(SMSG_PERIODICAURALOG, 30);
     data.append(GetPackGUID());
@@ -13775,6 +13785,8 @@ void Unit::ModSpellCastTime(SpellInfo const* spellInfo, int32 & castTime, Spell*
             castTime = int32(float(castTime) * GetFloatValue(UNIT_MOD_CAST_SPEED));
         else if (spellInfo->SpellVisual[0] == 3881 && HasAura(67556)) // cooking with Chef Hat.
             castTime = 500;
+        if (spellInfo->Effects[0].Effect == SPELL_EFFECT_ENCHANT_ITEM || spellInfo->Effects[0].Effect == SPELL_EFFECT_APPLY_GLYPH || spellInfo->Effects[0].Effect == SPELL_EFFECT_ENCHANT_ITEM_PRISMATIC)
+            castTime = 1;
         break;
     case SPELL_DAMAGE_CLASS_MELEE:
         break; // no known cases

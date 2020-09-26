@@ -407,7 +407,7 @@ class Battleground
         bool HasFreeSlots() const;
         uint32 GetFreeSlotsForTeam(TeamId teamId) const;
         uint32 GetMaxFreeSlots() const;
- 
+
         typedef std::set<Player*> SpectatorList;
         typedef std::map<uint64, uint64> ToBeTeleportedMap;
         void AddSpectator(Player* p) { m_Spectators.insert(p); }
@@ -526,6 +526,9 @@ class Battleground
         void CheckArenaAfterTimerConditions();
         void CheckArenaWinConditions();
         virtual void UpdateArenaWorldState();
+
+        uint8 ClickFastStart(Player* player, GameObject* go);
+        void DespawnCrystals();
 
         // Triggers handle
         // must be implemented in BG subclass
@@ -685,6 +688,10 @@ class Battleground
         bool   m_PrematureCountDown;
         uint32 m_PrematureCountDownTimer;
         char const* m_Name;
+
+        // Arena ready check
+        std::set<uint64> m_playersWantsFastStart;
+        std::set<GameObject*> m_crystals;
 
         /* Pre- and post-update hooks */
 

@@ -1070,12 +1070,6 @@ void WorldSession::HandlePlayerLoginFromDB(LoginQueryHolder* holder)
         SendNotification(LANG_RESET_TALENTS);
     }
 
-    if (pCurrChar->HasAtLoginFlag(AT_LOGIN_FIRST)) {
-        pCurrChar->RemoveAtLoginFlag(AT_LOGIN_FIRST);
-
-        sScriptMgr->OnFirstLogin(pCurrChar);
-    }
-
     if (pCurrChar->HasAtLoginFlag(AT_LOGIN_CHECK_ACHIEVS))
     {
         pCurrChar->RemoveAtLoginFlag(AT_LOGIN_CHECK_ACHIEVS, true);
@@ -1201,7 +1195,23 @@ void WorldSession::HandlePlayerLoginFromDB(LoginQueryHolder* holder)
         }
     }
 
+    if (Item* item = pCurrChar->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_BODY))
+    {
+        //if (item->GetEntry() == 100019 || item->GetEntry() == 100022 || item->GetEntry() == 100030 || item->GetEntry() == 100033 || item->GetEntry() == 100038)
+        if (item->GetEntry() >= 100000 && item->GetEntry() <= 100100)
+        {
+            pCurrChar->MorphIllusionShirt(3, item->GetEntry());
+        }
+    }
+
     sScriptMgr->OnPlayerLogin(pCurrChar);
+
+    if (pCurrChar->HasAtLoginFlag(AT_LOGIN_FIRST))
+    {
+        pCurrChar->RemoveAtLoginFlag(AT_LOGIN_FIRST);
+        sScriptMgr->OnFirstLogin(pCurrChar);
+    }
+
     delete holder;
 }
 
@@ -2085,22 +2095,22 @@ void WorldSession::HandleCharFactionOrRaceChange(WorldPacket& recvData)
         }
 
         // is arena team captain
-        if (sArenaTeamMgr->GetArenaTeamByCaptain(guid))
-        {
-            WorldPacket data(SMSG_CHAR_FACTION_CHANGE, 1);
-            data << (uint8)CHAR_CREATE_CHARACTER_ARENA_LEADER;
-            SendPacket(&data);
-            return;
-        }
+        //if (sArenaTeamMgr->GetArenaTeamByCaptain(guid))
+        //{
+        //    WorldPacket data(SMSG_CHAR_FACTION_CHANGE, 1);
+        //    data << (uint8)CHAR_CREATE_CHARACTER_ARENA_LEADER;
+        //    SendPacket(&data);
+        //    return;
+        //}
 
         // check mailbox
-        if (playerData->mailCount)
-        {
-            WorldPacket data(SMSG_CHAR_FACTION_CHANGE, 1);
-            data << (uint8)CHAR_CREATE_CHARACTER_DELETE_MAIL;
-            SendPacket(&data);
-            return;
-        }
+        //if (playerData->mailCount)
+        //{
+        //    WorldPacket data(SMSG_CHAR_FACTION_CHANGE, 1);
+        //    data << (uint8)CHAR_CREATE_CHARACTER_DELETE_MAIL;
+        //    SendPacket(&data);
+        //    return;
+        //}
 
         // check auctions, current packet is processed single-threaded way, so not a problem
         bool has_auctions = false;
@@ -2156,7 +2166,7 @@ void WorldSession::HandleCharFactionOrRaceChange(WorldPacket& recvData)
     // xinef: check money
     bool valid = Player::TeamIdForRace(oldRace) == Player::TeamIdForRace(race);
     if ((level < 10 && money <= 0) || (level > 10 && level <= 30 && money <= 3000000 ) || (level > 30 && level <= 50 && money <= 10000000) ||
-        (level > 50 && level <= 70 && money <= 50000000) || (level > 70 && money <= 200000000))
+        (level > 50 && level <= 70 && money <= 50000000) || (level > 70 && money <= 2000000000))
         valid = true;
     if (!valid)
     {
@@ -2417,7 +2427,7 @@ void WorldSession::HandleCharFactionOrRaceChange(WorldPacket& recvData)
             }
 
             // Leave Arena Teams
-            Player::LeaveAllArenaTeams(guid);
+            //Player::LeaveAllArenaTeams(guid);
 
             // Reset homebind and position
             stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_PLAYER_HOMEBIND);
@@ -2428,21 +2438,35 @@ void WorldSession::HandleCharFactionOrRaceChange(WorldPacket& recvData)
             stmt->setUInt32(0, lowGuid);
             if (team == TEAM_ALLIANCE)
             {
-                stmt->setUInt16(1, 0);
-                stmt->setUInt16(2, 1519);
-                stmt->setFloat (3, -8867.68f);
-                stmt->setFloat (4, 673.373f);
-                stmt->setFloat (5, 97.9034f);
-                Player::SavePositionInDB(0, -8867.68f, 673.373f, 97.9034f, 0.0f, 1519, lowGuid);
+                //stmt->setUInt16(1, 0);
+                //stmt->setUInt16(2, 1519);
+                //stmt->setFloat (3, -8867.68f);
+                //stmt->setFloat (4, 673.373f);
+                //stmt->setFloat (5, 97.9034f);
+                //Player::SavePositionInDB(0, -8867.68f, 673.373f, 97.9034f, 0.0f, 1519, lowGuid);
+
+                stmt->setUInt16(1, 1);
+                stmt->setUInt16(2, 2317);
+                stmt->setFloat(3, -11823.9f);
+                stmt->setFloat(4, -4779.58f);
+                stmt->setFloat(5, 5.9206f);
+                Player::SavePositionInDB(1, -11823.9f, -4779.58f, 5.9206f, 1.1357f, 1519, lowGuid);
             }
             else
             {
+                //stmt->setUInt16(1, 1);
+                //stmt->setUInt16(2, 1637);
+                //stmt->setFloat (3, 1633.33f);
+                //stmt->setFloat (4, -4439.11f);
+                //stmt->setFloat (5, 15.7588f);
+                //Player::SavePositionInDB(1, 1633.33f, -4439.11f, 15.7588f, 0.0f, 1637, lowGuid);
+
                 stmt->setUInt16(1, 1);
-                stmt->setUInt16(2, 1637);
-                stmt->setFloat (3, 1633.33f);
-                stmt->setFloat (4, -4439.11f);
-                stmt->setFloat (5, 15.7588f);
-                Player::SavePositionInDB(1, 1633.33f, -4439.11f, 15.7588f, 0.0f, 1637, lowGuid);
+                stmt->setUInt16(2, 2317);
+                stmt->setFloat(3, -11823.9f);
+                stmt->setFloat(4, -4779.58f);
+                stmt->setFloat(5, 5.9206f);
+                Player::SavePositionInDB(1, -11823.9f, -4779.58f, 5.9206f, 1.1357f, 1519, lowGuid);
             }
             trans->Append(stmt);
 

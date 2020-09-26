@@ -1190,12 +1190,39 @@ void AddOutdoorPvPScripts()
 
 //~ **********************  Put your custom scripts below, like the commented examples, uncomment and edit *************************************
 
-
-//~ void AddSC_MySuperScript();
+void AddSC_custom_npc_global_trainer();
+void AddSC_custom_amnesia_coin_exchange();
+void AddSC_custom_npc_tools_reset_combat();
+void AddSC_custom_npc_tools_reset_instances();
+void AddSC_custom_npc_tools_reset_cds();
+void AddSC_custom_npc_teleporter();
+void AddSC_custom_item_teleporter();
+void AddSC_custom_vip_only_npc();
+void AddSC_custom_npc_lottery();
+void AddSC_arena_spectator_script();
+void AddSC_fast_arena_start();
+void AddSC_arenateamranks();
+void AddSC_vitality_pvp_island();
+void AddSC_ArenaAndBgRewards();
+void AddSC_zombie_event();
 
 void AddCustomScripts()
 {
 #ifdef SCRIPTS
-	//~ AddSC_MySuperScript();
+    AddSC_custom_npc_global_trainer();
+    AddSC_custom_amnesia_coin_exchange();
+    AddSC_custom_npc_tools_reset_combat();
+    AddSC_custom_npc_tools_reset_instances();
+    AddSC_custom_npc_tools_reset_cds();
+    AddSC_custom_npc_teleporter();
+	AddSC_custom_item_teleporter();
+    AddSC_custom_vip_only_npc();
+    AddSC_custom_npc_lottery();
+    AddSC_arena_spectator_script();
+    AddSC_fast_arena_start();
+    AddSC_arenateamranks();
+    AddSC_vitality_pvp_island();
+    AddSC_ArenaAndBgRewards();
+	AddSC_zombie_event();
 #endif
 }

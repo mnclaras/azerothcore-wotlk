@@ -3276,6 +3276,11 @@ void SpellMgr::LoadDbcDataCorrections()
 
         switch (spellInfo->Id)
         {
+            //Amnesia: Those spells cannot be resisted -> bosses resist this spells
+            case 47855: // Drenar alma
+            case 47610: // Descarga de pirofio
+                spellInfo->AttributesEx4 |= SPELL_ATTR4_IGNORE_RESISTANCES;
+                break;
             case 38776: // Evergrove Druid Transform Crow
                 spellInfo->DurationIndex = 4; // 120 seconds
                 break;

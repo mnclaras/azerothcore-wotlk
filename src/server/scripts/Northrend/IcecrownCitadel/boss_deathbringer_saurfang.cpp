@@ -316,6 +316,8 @@ class boss_deathbringer_saurfang : public CreatureScript
                 ScriptedAI::AttackStart(victim);
             }
 
+
+
             void MoveInLineOfSight(Unit* /*who*/) {}
 
             void JustReachedHome()
@@ -561,6 +563,8 @@ class npc_high_overlord_saurfang_icc : public CreatureScript
                             deathbringer->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                             deathbringer->SetWalk(false);
                             deathbringer->GetMotionMaster()->MovePoint(POINT_SAURFANG, deathbringerPos.GetPositionX(), deathbringerPos.GetPositionY(), deathbringerPos.GetPositionZ());
+
+                            RemoveBackPack();
                         }
                         break;
                     case ACTION_START_OUTRO:
@@ -694,6 +698,7 @@ class npc_high_overlord_saurfang_icc : public CreatureScript
                     case EVENT_INTRO_FINISH:
                         if (Creature* deathbringer = ObjectAccessor::GetCreature(*me, _instance->GetData64(DATA_DEATHBRINGER_SAURFANG)))
                         {
+                            RemoveBackPack();
                             deathbringer->AI()->DoAction(ACTION_INTRO_DONE);
                             deathbringer->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
                             if (Player* target = deathbringer->SelectNearestPlayer(100.0f))
@@ -725,6 +730,16 @@ class npc_high_overlord_saurfang_icc : public CreatureScript
                         Talk(SAY_OUTRO_HORDE_4);
                         break;*/
                 }
+            }
+
+            void RemoveBackPack()
+            {
+                // Destory Goblin Rocket Pack
+                Map::PlayerList const& PlayerList = me->GetMap()->GetPlayers();
+                if (!PlayerList.isEmpty())
+                    for (Map::PlayerList::const_iterator itr = PlayerList.begin(); itr != PlayerList.end(); ++itr)
+                        if (Player* pPlr = itr->GetSource())
+                            pPlr->DestroyItemCount(ITEM_GOBLIN_ROCKET_PACK, pPlr->GetItemCount(ITEM_GOBLIN_ROCKET_PACK), true);
             }
 
         private:
@@ -824,6 +839,8 @@ class npc_muradin_bronzebeard_icc : public CreatureScript
                             deathbringer->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NOT_SELECTABLE);
                             deathbringer->SetWalk(false);
                             deathbringer->GetMotionMaster()->MovePoint(POINT_SAURFANG, deathbringerPos.GetPositionX(), deathbringerPos.GetPositionY(), deathbringerPos.GetPositionZ());
+
+                            RemoveBackPack();
                         }
                         break;
                     case ACTION_START_OUTRO:
@@ -932,6 +949,7 @@ class npc_muradin_bronzebeard_icc : public CreatureScript
                     case EVENT_INTRO_FINISH:
                         if (Creature* deathbringer = ObjectAccessor::GetCreature(*me, _instance->GetData64(DATA_DEATHBRINGER_SAURFANG)))
                         {
+                            RemoveBackPack();
                             deathbringer->AI()->DoAction(ACTION_INTRO_DONE);
                             deathbringer->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC);
                             if (Player* target = deathbringer->SelectNearestPlayer(100.0f))
@@ -939,6 +957,16 @@ class npc_muradin_bronzebeard_icc : public CreatureScript
                         }
                         break;
                 }
+            }
+
+            void RemoveBackPack()
+            {
+                // Destory Goblin Rocket Pack
+                Map::PlayerList const& PlayerList = me->GetMap()->GetPlayers();
+                if (!PlayerList.isEmpty())
+                    for (Map::PlayerList::const_iterator itr = PlayerList.begin(); itr != PlayerList.end(); ++itr)
+                        if (Player* pPlr = itr->GetSource())
+                            pPlr->DestroyItemCount(ITEM_GOBLIN_ROCKET_PACK, pPlr->GetItemCount(ITEM_GOBLIN_ROCKET_PACK), true);
             }
 
         private:
