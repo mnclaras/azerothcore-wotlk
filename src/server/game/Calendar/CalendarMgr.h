@@ -110,9 +110,14 @@ enum CalendarError
     CALENDAR_ERROR_NO_MODERATOR                 = 40
 };
 
-#define CALENDAR_MAX_EVENTS         30
-#define CALENDAR_MAX_GUILD_EVENTS   100
-#define CALENDAR_MAX_INVITES        100
+enum CalendarLimits
+{
+    CALENDAR_MAX_EVENTS               = 30,
+    CALENDAR_MAX_GUILD_EVENTS         = 100,
+    CALENDAR_MAX_INVITES              = 100,
+    CALENDAR_CREATE_EVENT_COOLDOWN    = 5,
+    CALENDAR_OLD_EVENTS_DELETION_TIME = 1 * MONTH,
+};
 
 struct CalendarInvite
 {
@@ -129,7 +134,7 @@ struct CalendarInvite
             _text = calendarInvite.GetText();
         }
 
-        CalendarInvite() : _inviteId(1), _eventId(0), _invitee(0), _senderGUID(0), _statusTime(time(NULL)),
+        CalendarInvite() : _inviteId(1), _eventId(0), _invitee(0), _senderGUID(0), _statusTime(time(nullptr)),
             _status(CALENDAR_STATUS_INVITED), _rank(CALENDAR_RANK_PLAYER), _text("") { }
 
         CalendarInvite(uint64 inviteId, uint64 eventId, uint64 invitee, uint64 senderGUID, time_t statusTime,
@@ -235,6 +240,9 @@ struct CalendarEvent
         bool IsGuildEvent() const { return _flags & CALENDAR_FLAG_GUILD_EVENT; }
         bool IsGuildAnnouncement() const { return _flags & CALENDAR_FLAG_WITHOUT_INVITES; }
 
+        static bool IsGuildEvent(uint32 flags) { return (flags & CALENDAR_FLAG_GUILD_EVENT) != 0; }
+        static bool IsGuildAnnouncement(uint32 flags) { return (flags & CALENDAR_FLAG_WITHOUT_INVITES) != 0; }
+
         std::string BuildCalendarMailSubject(uint64 remover) const;
         std::string BuildCalendarMailBody() const;
 
@@ -273,9 +281,11 @@ class CalendarMgr
         
         void LoadFromDB();
 
-        CalendarEvent* GetEvent(uint64 eventId, CalendarEventStore::iterator* it = NULL);
+        CalendarEvent* GetEvent(uint64 eventId);
         CalendarEventStore const& GetEvents() const { return _events; }
+        CalendarEventStore GetEventsCreatedBy(uint64 guid, bool includeGuildEvents = false);
         CalendarEventStore GetPlayerEvents(uint64 guid);
+        CalendarEventStore GetGuildEvents(uint32 guildId);
 
         CalendarInvite* GetInvite(uint64 inviteId) const;
         CalendarEventInviteStore const& GetInvites() const { return _invites; }
@@ -287,10 +297,13 @@ class CalendarMgr
         void FreeInviteId(uint64 id);
         uint64 GetFreeInviteId();
 
+        void DeleteOldEvents();
+
         uint32 GetPlayerNumPending(uint64 guid);
 
         void AddEvent(CalendarEvent* calendarEvent, CalendarSendEventType sendType);
-        CalendarEventStore::iterator RemoveEvent(uint64 eventId, uint64 remover);
+        void RemoveEvent(uint64 eventId, uint64 remover);
+        void RemoveEvent(CalendarEvent* calendarEvent, uint64 remover);
         void UpdateEvent(CalendarEvent* calendarEvent);
 
         void AddInvite(CalendarEvent* calendarEvent, CalendarInvite* invite);
@@ -312,7 +325,7 @@ class CalendarMgr
         void SendCalendarEventRemovedAlert(CalendarEvent const& calendarEvent);
         void SendCalendarEventModeratorStatusAlert(CalendarEvent const& calendarEvent, CalendarInvite const& invite);
         void SendCalendarClearPendingAction(uint64 guid);
-        void SendCalendarCommandResult(uint64 guid, CalendarError err, char const* param = NULL);
+        void SendCalendarCommandResult(uint64 guid, CalendarError err, char const* param = nullptr);
 
         void SendPacketToAllEventRelatives(WorldPacket packet, CalendarEvent const& calendarEvent);
 };
