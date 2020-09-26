@@ -161,19 +161,19 @@ DB_MYSQL_EXEC="mysql"
 DB_MYSQL_DUMP_EXEC="mysqldump"
 
 
-DB_AUTH_CONF="MYSQL_USER='iO1nmxk9oPPlxk'; \
-                    MYSQL_PASS='jQx5nMkqEsd8l1bF'; \
-                    MYSQL_HOST='51.79.150.62';\
+DB_AUTH_CONF="MYSQL_USER='acore'; \
+                    MYSQL_PASS='acore'; \
+                    MYSQL_HOST='localhost';\
                     "
 
-DB_CHARACTERS_CONF="MYSQL_USER='iO1nmxk9oPPlxk'; \
-                    MYSQL_PASS='jQx5nMkqEsd8l1bF'; \
-                    MYSQL_HOST='51.79.150.62';\
+DB_CHARACTERS_CONF="MYSQL_USER='acore'; \
+                    MYSQL_PASS='acore'; \
+                    MYSQL_HOST='localhost';\
                     "
 
-DB_WORLD_CONF="MYSQL_USER='iO1nmxk9oPPlxk'; \
-                    MYSQL_PASS='jQx5nMkqEsd8l1bF'; \
-                    MYSQL_HOST='51.79.150.62';\
+DB_WORLD_CONF="MYSQL_USER='acore'; \
+                    MYSQL_PASS='acore'; \
+                    MYSQL_HOST='localhost';\
                     "
 
 DB_AUTH_NAME="acore_auth"
