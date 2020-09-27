@@ -2175,6 +2175,12 @@ class Unit : public WorldObject
         void setTransForm(uint32 spellid) { m_transform = spellid;}
         uint32 getTransForm() const { return m_transform;}
 
+        void SetOriginalDisplayId(uint32 modelId) { m_originalDisplayId = modelId; }
+        uint32 GetOriginalDisplayId() { return m_originalDisplayId; }
+
+        void SetOriginalNativeDisplayId(uint32 modelId) { m_originalNativeDisplayId = modelId; }
+        uint32 GetOriginalNativeDisplayId() { return m_originalNativeDisplayId; }
+
         // DynamicObject management
         void _RegisterDynObject(DynamicObject* dynObj);
         void _UnregisterDynObject(DynamicObject* dynObj);
@@ -2480,6 +2486,9 @@ class Unit : public WorldObject
         GameObjectList m_gameObj;
         uint32 m_transform;
 
+        uint32 m_originalDisplayId;
+        uint32 m_originalNativeDisplayId;
+
         Spell* m_currentSpells[CURRENT_MAX_SPELL];
 
         AuraMap m_ownedAuras;
@@ -2526,6 +2535,8 @@ class Unit : public WorldObject
         bool IsAlwaysVisibleFor(WorldObject const* seer) const override;
         bool IsAlwaysDetectableFor(WorldObject const* seer) const override;
         bool _instantCast;
+
+
 
     private:
         bool IsTriggeredAtSpellProcEvent(Unit* victim, Aura * aura, SpellInfo const* procSpell, uint32 procFlag, uint32 procExtra, WeaponAttackType attType, bool isVictim, bool active, SpellProcEventEntry const *& spellProcEvent, ProcEventInfo const& eventInfo);

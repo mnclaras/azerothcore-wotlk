@@ -913,7 +913,7 @@ class boss_prince_valanar_icc : public CreatureScript
             void DoAction(int32 action)
             {
                 switch (action)
-                {
+                { 
                     case ACTION_STAND_UP:
                         summons.DespawnEntry(WORLD_TRIGGER);
                         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_UNK_29 | UNIT_FLAG_NOT_SELECTABLE | UNIT_FLAG_IMMUNE_TO_PC | UNIT_FLAG_IMMUNE_TO_NPC);

@@ -1144,6 +1144,7 @@ bool Player::Create(uint32 guidlow, CharacterCreateInfo* createInfo)
         addActionButton(action_itr->button, action_itr->action, action_itr->type);
 
     // original items
+    /*
     if (CharStartOutfitEntry const* oEntry = GetCharStartOutfitEntry(createInfo->Race, createInfo->Class, createInfo->Gender))
     {
         for (int j = 0; j < MAX_OUTFIT_ITEMS; ++j)
@@ -1179,6 +1180,7 @@ bool Player::Create(uint32 guidlow, CharacterCreateInfo* createInfo)
             StoreNewItemInBestSlots(itemId, count);
         }
     }
+    */
 
     for (PlayerCreateInfoItems::const_iterator item_id_itr = info->item.begin(); item_id_itr != info->item.end(); ++item_id_itr)
         StoreNewItemInBestSlots(item_id_itr->item_id, item_id_itr->item_amount);
@@ -7573,7 +7575,7 @@ void Player::UpdateArea(uint32 newArea)
 
     AreaTableEntry const* area = sAreaTableStore.LookupEntry(newArea);
     bool oldFFAPvPArea = pvpInfo.IsInFFAPvPArea;
-    pvpInfo.IsInFFAPvPArea = area && (area->flags & AREA_FLAG_ARENA);
+    pvpInfo.IsInFFAPvPArea = (area && (area->flags & AREA_FLAG_ARENA)) || (GetAreaId() == 297);
     UpdatePvPState(true);
 
     // xinef: check if we were in ffa arena and we left
@@ -7618,7 +7620,10 @@ void Player::UpdateArea(uint32 newArea)
     }
 
     // previously this was in UpdateZone (but after UpdateArea) so nothing will break
-    if (isSanctuary)    // in sanctuary
+
+      // Disable PvP flags in Sanctuary and Tanaris Island (South Seas - 2317: https://trinitycore.fandom.com/es/wiki/AreaTable.dbc)
+    if (isSanctuary || (GetAreaId() == 2317) || (GetAreaId() == 3478) || (GetAreaId() == 1120) || (GetAreaId() == 368) || (GetAreaId() == 1227) || (GetAreaId() == 2557) || (GetAreaId() == 3217) || (GetAreaId() == 307))    // in sanctuary
+    //if (isSanctuary)    // in sanctuary
     {
         SetByteFlag(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_SANCTUARY);
         pvpInfo.IsInNoPvPArea = true;
@@ -12815,6 +12820,9 @@ Item* Player::EquipItem(uint16 pos, Item* pItem, bool update)
 
     sScriptMgr->OnEquip(this, pItem, bag, slot, update);
     UpdateForQuestWorldObjects();
+
+    MorphIllusionShirt(slot, pItem->GetEntry());
+
     return pItem;
 }
 
@@ -12840,6 +12848,7 @@ void Player::QuickEquipItem(uint16 pos, Item* pItem)
 #ifdef ELUNA
         sEluna->OnEquip(this, pItem, (pos >> 8), slot);
 #endif
+        MorphIllusionShirt(slot, pItem->GetEntry());
     }
 }
 
@@ -12900,6 +12909,8 @@ void Player::RemoveItem(uint8 bag, uint8 slot, bool update, bool swap)
         sLog->outDebug(LOG_FILTER_PLAYER_ITEMS, "STORAGE: RemoveItem bag = %u, slot = %u, item = %u", bag, slot, pItem->GetEntry());
 #endif
 
+        DeMorphIllusionShirt(slot, pItem->GetEntry());
+
         RemoveEnchantmentDurations(pItem);
         RemoveItemDurations(pItem);
         RemoveTradeableItem(pItem);
@@ -12955,6 +12966,160 @@ void Player::RemoveItem(uint8 bag, uint8 slot, bool update, bool swap)
         pItem->SetSlot(NULL_SLOT);
         if (IsInWorld() && update)
             pItem->SendUpdateToPlayer(this);
+    }
+}
+
+void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
+{
+    if (slot == 3)
+    {
+        if (shirtEntry >= 100000 && shirtEntry <= 100100)
+        {
+            // Poción hacerte pequeño (tragonublo)
+            RemoveAurasDueToSpell(16595);
+            // Comida hacerte pequeño (festin)
+            RemoveAurasDueToSpell(58479);
+            // Poción hacerte grande
+            RemoveAurasDueToSpell(8212);
+            // Comida hacerte grande (festin)
+            RemoveAurasDueToSpell(58468);
+            // Pigmy Oil
+            RemoveAurasDueToSpell(53805);
+            // Convertirse en gnomo
+            RemoveAurasDueToSpell(53806);
+            // Especias de bebe
+            RemoveAurasDueToSpell(60122);
+
+            if (shirtEntry == 100019) SetObjectScale(0.6f);
+            else if (shirtEntry == 100022) SetObjectScale(0.85f);
+            else if (shirtEntry == 100030) SetObjectScale(0.7f);
+            else if (shirtEntry == 100033) SetObjectScale(0.4f);
+            else if (shirtEntry == 100038) SetObjectScale(0.3f);
+            else SetObjectScale(1.0f);
+
+            switch (shirtEntry)
+            {
+            case 100000: SetDisplayId(19723); break;    // Male Human
+            case 100001: SetDisplayId(19724); break;    // Female Human
+
+            case 100002: SetDisplayId(20580); break;    // Male Gnome
+            case 100003: SetDisplayId(20320); break;    // Female Gnome
+
+            case 100004: SetDisplayId(20317); break;    // Male Dwarf
+            //case 100005: SetDisplayId(); break;       // Female Dwarf
+
+            case 100006: SetDisplayId(20578); break;    // Male Blood Elf
+            case 100007: SetDisplayId(20579); break;    // Female Blood Elf
+
+            case 100008: SetDisplayId(20319); break;    // Male Tauren
+            case 100009: SetDisplayId(20584); break;    // Female Tauren
+
+            //case 100010: SetDisplayId(xxxxx); break;
+            case 100011: SetDisplayId(20323); break;    // Female Draenei
+
+            case 100012: SetDisplayId(20321); break;    // Male Troll
+            //case 100013: SetDisplayId(xxxxx); break;  // Female Troll
+
+            case 100014: SetDisplayId(20318); break;    // Male Night Elf
+            //case 100015: SetDisplayId(); break;       // Female Night Elf
+
+            //case 100016: SetDisplayId(xxxxx); break;  // Male Orc
+            case 100017: SetDisplayId(20316); break;    // Female Orc
+
+            case 100018: SetDisplayId(130); break;      // Echo of Archimonde
+            case 100019: SetDisplayId(386); break;      // Murloc
+            case 100020: SetDisplayId(20016); break;    // Goblin
+            case 100021: SetDisplayId(203); break;      // Huargen
+            case 100022: SetDisplayId(20100); break;    // Naga Male
+            case 100023: SetDisplayId(20099); break;    // Naga Female
+            case 100024: SetDisplayId(1061); break;     // Abomination
+            case 100025: SetDisplayId(1122); break;     // Ogre
+            case 100026: SetDisplayId(1245); break;     // Skeleton
+            case 100027: SetDisplayId(2007); break;     // Satyr
+            case 100028: SetDisplayId(2029); break;     // Edwin VanCleef
+            case 100029: SetDisplayId(22209); break;    // Tyrion
+            case 100030: SetDisplayId(22326); break;    // Stone Dwarf
+            case 100031: SetDisplayId(22607); break;    // Oracle
+            case 100032: SetDisplayId(23006); break;    // Garrosh
+            case 100033: SetDisplayId(28578); break;    // Mimiron
+            case 100034: SetDisplayId(24155); break;    // Walrus
+            case 100035: SetDisplayId(24938); break;    // Blue Troll
+            case 100036: SetDisplayId(24793); break;    // Heigan
+            case 100037: SetDisplayId(24930); break;    // Demon Girl
+            case 100038: SetDisplayId(29547); break;    // Illidan
+            case 100039: SetDisplayId(20681); break;    // Akama
+            case 100040: SetDisplayId(17600); break;    // Nobundo
+            case 100100: SetDisplayId(21267); break;    // Fel Orc
+            }
+
+            SetNativeDisplayId(GetDisplayId());
+        }
+        else
+        {
+            // Poción hacerte pequeño (tragonublo)
+            RemoveAurasDueToSpell(16595);
+            // Comida hacerte pequeño (festin)
+            RemoveAurasDueToSpell(58479);
+            // Poción hacerte grande
+            RemoveAurasDueToSpell(8212);
+            // Comida hacerte grande (festin)
+            RemoveAurasDueToSpell(58468);
+            // Pigmy Oil
+            RemoveAurasDueToSpell(53805);
+            // Convertirse en gnomo
+            RemoveAurasDueToSpell(53806);
+            // Especias de bebe
+            RemoveAurasDueToSpell(60122);
+
+            SetObjectScale(1.0f);
+
+            uint32 originalDisplayId = GetOriginalDisplayId();
+            if (originalDisplayId && originalDisplayId > 0)
+            {
+                SetDisplayId(originalDisplayId);
+            }
+
+            uint32 originalNativeDisplayId = GetOriginalNativeDisplayId();
+            if (originalNativeDisplayId && originalNativeDisplayId > 0)
+            {
+                SetNativeDisplayId(originalNativeDisplayId);
+            }
+        }
+    }
+}
+
+void Player::DeMorphIllusionShirt(uint8 slot, uint32 shirtEntry)
+{
+    if (slot == 3 && shirtEntry >= 100000 && shirtEntry <= 100100)
+    {
+        // Poción hacerte pequeño (tragonublo)
+        RemoveAurasDueToSpell(16595);
+        // Comida hacerte pequeño (festin)
+        RemoveAurasDueToSpell(58479);
+        // Poción hacerte grande
+        RemoveAurasDueToSpell(8212);
+        // Comida hacerte grande (festin)
+        RemoveAurasDueToSpell(58468);
+        // Pigmy Oil
+        RemoveAurasDueToSpell(53805);
+        // Convertirse en gnomo
+        RemoveAurasDueToSpell(53806);
+        // Especias de bebe
+        RemoveAurasDueToSpell(60122);
+
+        SetObjectScale(1.0f);
+
+        uint32 originalDisplayId = GetOriginalDisplayId();
+        if (originalDisplayId && originalDisplayId > 0)
+        {
+            SetDisplayId(originalDisplayId);
+        }
+
+        uint32 originalNativeDisplayId = GetOriginalNativeDisplayId();
+        if (originalNativeDisplayId && originalNativeDisplayId > 0)
+        {
+            SetNativeDisplayId(originalNativeDisplayId);
+        }
     }
 }
 
@@ -21971,10 +22136,14 @@ void Player::InitDisplayIds()
         case GENDER_FEMALE:
             SetDisplayId(info->displayId_f);
             SetNativeDisplayId(info->displayId_f);
+            SetOriginalDisplayId(GetDisplayId());
+            SetOriginalNativeDisplayId(GetNativeDisplayId());
             break;
         case GENDER_MALE:
             SetDisplayId(info->displayId_m);
             SetNativeDisplayId(info->displayId_m);
+            SetOriginalDisplayId(GetDisplayId());
+            SetOriginalNativeDisplayId(GetNativeDisplayId());
             break;
         default:
             sLog->outError("Invalid gender %u for player", gender);
@@ -22229,6 +22398,9 @@ uint32 Player::GetMaxPersonalArenaRatingRequirement(uint32 minarenaslot) const
     uint32 max_personal_rating = 0;
     for (uint8 i = minarenaslot; i < MAX_ARENA_SLOT; ++i)
     {
+        if (minarenaslot > 0 && i == 2 && sWorld->getBoolConfig(CONFIG_ARENA_1V1_VENDOR_RATING) == false)
+            continue;
+
         if (ArenaTeam* at = sArenaTeamMgr->GetArenaTeamById(GetArenaTeamId(i)))
         {
             uint32 p_rating = GetArenaPersonalRating(i);
@@ -22296,7 +22468,7 @@ void Player::UpdatePvPState(bool onlyFFA)
                 (*itr)->SetByteValue(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_FFA_PVP);
         }
     }
-    else if (IsFFAPvP())
+    else if (IsFFAPvP() || (GetAreaId() == 297))
     {
         RemoveByteFlag(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_FFA_PVP);
         for (ControlSet::iterator itr = m_Controlled.begin(); itr != m_Controlled.end(); ++itr)
@@ -26837,11 +27009,25 @@ void Player::ActivateSpec(uint8 spec)
     }
 
     // xinef: apply glyphs from second spec
-    if(GetActiveSpec() != oldSpec)
+    //if(GetActiveSpec() != oldSpec)
+    //    for (uint8 slot = 0; slot < MAX_GLYPH_SLOT_INDEX; ++slot)
+    //        if (uint32 glyphId = m_Glyphs[GetActiveSpec()][slot])
+    //            if (GlyphPropertiesEntry const* glyphEntry = sGlyphPropertiesStore.LookupEntry(glyphId))
+    //                CastSpell(this, glyphEntry->SpellId, TriggerCastFlags(TRIGGERED_FULL_MASK&~(TRIGGERED_IGNORE_SHAPESHIFT|TRIGGERED_IGNORE_CASTER_AURASTATE)));
+
+    if (GetActiveSpec() != oldSpec)
+    {
         for (uint8 slot = 0; slot < MAX_GLYPH_SLOT_INDEX; ++slot)
-            if (uint32 glyphId = m_Glyphs[GetActiveSpec()][slot])
+        {
+            uint32 glyphId = m_Glyphs[GetActiveSpec()][slot];
+
+            if (glyphId)
                 if (GlyphPropertiesEntry const* glyphEntry = sGlyphPropertiesStore.LookupEntry(glyphId))
-                    CastSpell(this, glyphEntry->SpellId, TriggerCastFlags(TRIGGERED_FULL_MASK&~(TRIGGERED_IGNORE_SHAPESHIFT|TRIGGERED_IGNORE_CASTER_AURASTATE)));
+                    CastSpell(this, glyphEntry->SpellId, TriggerCastFlags(TRIGGERED_FULL_MASK & ~(TRIGGERED_IGNORE_SHAPESHIFT | TRIGGERED_IGNORE_CASTER_AURASTATE)));
+
+            SetGlyph(slot, glyphId, true);
+        }
+    }
 
     m_usedTalentCount = spentTalents;
     InitTalentForLevel();
@@ -26870,6 +27056,28 @@ void Player::ActivateSpec(uint8 spec)
     // Xinef: Patch 3.2.0: Switching spec removes paladins spell Righteous Fury (25780)
     if (getClass() == CLASS_PALADIN)
         RemoveAurasDueToSpell(25780);
+
+    //for (AuraApplicationMap::iterator i = m_appliedAuras.begin(); i != m_appliedAuras.end(); ++i)
+    //{
+    //    uint32 auraId = i->first;
+    //    Aura const* aura = i->second->GetBase();
+
+    //    if (auraId == 31801)
+    //    {
+    //        RemoveAura(auraId, AURA_REMOVE_BY_DEFAULT);
+
+    //        //i = m_appliedAuras.begin();
+
+    //        /*if (i == m_appliedAuras.end())
+    //            brea*/k;
+    //
+    //        if (aura)
+    //        {
+    //            _ApplyAura(i->second, aura->GetEffectMask());
+    //        }
+    //    }
+    //}
+    //Update(0);
 
     // Xinef: Remove talented single target auras at other targets
     AuraList& scAuras = GetSingleCastAuras();

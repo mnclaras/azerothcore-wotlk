@@ -1005,6 +1005,7 @@ class WorldSession
         Player* _player;
         WorldSocket* m_Socket;
         std::string m_Address;
+        uint64 m_CurrentVendor;
         // std::string m_LAddress;                             // Last Attempted Remote Adress - we can not set attempted ip for a non-existing session!
 
         AccountTypes _security;

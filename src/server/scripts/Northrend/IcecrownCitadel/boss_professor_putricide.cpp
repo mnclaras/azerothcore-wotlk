@@ -351,6 +351,8 @@ class boss_professor_putricide : public CreatureScript
                 switch (summon->GetEntry())
                 {
                     case NPC_GROWING_OOZE_PUDDLE:
+                        summon->CastSpell(summon, SPELL_GROW_STACKER, true);
+                        summon->CastSpell(summon, SPELL_SLIME_PUDDLE_AURA, true);
                         // blizzard casts this spell 7 times initially (confirmed in sniff)
                         for (uint8 i = 0; i < 7; ++i)
                             summon->CastSpell(summon, SPELL_GROW, true);
@@ -1550,7 +1552,7 @@ class spell_putricide_mutated_transformation : public SpellScriptLoader
 
                 summon->setPowerType(POWER_ENERGY);
                 summon->SetMaxPower(POWER_ENERGY, 100);
-                summon->SetPower(POWER_ENERGY, 0);
+                summon->SetPower(POWER_ENERGY, 10);
                 summon->SetStatFloatValue(UNIT_FIELD_POWER_REGEN_INTERRUPTED_FLAT_MODIFIER, 0);
                 summon->SetStatFloatValue(UNIT_FIELD_POWER_REGEN_FLAT_MODIFIER, 0);
             }
@@ -1649,14 +1651,14 @@ class spell_putricide_eat_ooze : public SpellScriptLoader
 
                 if (Aura* grow = target->GetAura(uint32(GetEffectValue())))
                 {
-                    if (grow->GetStackAmount() <= 4)
+                    if (grow->GetStackAmount() < 3)
                     {
                         target->RemoveAurasDueToSpell(SPELL_GROW_STACKER);
                         target->RemoveAura(grow);
                         target->DespawnOrUnsummon(1);
                     }
                     else
-                        grow->ModStackAmount(-4);
+                        grow->ModStackAmount(-3);
                 }
             }
 

@@ -504,6 +504,8 @@ inline void Battleground::_ProcessJoin(uint32 diff)
 
         StartingEventOpenDoors();
 
+        DespawnCrystals();
+
 #ifdef ELUNA
         sEluna->OnBGStart(this, GetBgTypeID(), GetInstanceID());
 #endif
@@ -1382,7 +1384,23 @@ void Battleground::ReadyMarkerClicked(Player* p)
         return;
     readyMarkerClickedSet.insert(p->GetGUIDLow());
     uint32 count = readyMarkerClickedSet.size();
-    uint32 req = GetArenaType()*2;
+
+    uint8 req = 0;
+
+    //uint32 req = GetArenaType()*2;
+    switch (GetArenaType())
+    {
+    case ARENA_TYPE_2v2:
+        req = 4;
+        break;
+    case ARENA_TYPE_3v3:
+        req = 6;
+        break;
+    case ARENA_TYPE_5v5:
+        req = 2;
+        break;
+    }
+
     p->GetSession()->SendNotification("You are marked as ready %u/%u", count, req);
     if (count == req)
     {
@@ -1991,4 +2009,59 @@ void Battleground::RewardXPAtKill(Player* killer, Player* victim)
 uint8 Battleground::GetUniqueBracketId() const
 {
     return GetMinLevel() / 10;
+}
+
+uint8 Battleground::ClickFastStart(Player* player, GameObject* go)
+{
+    if (!isArena())
+    {
+        player->GetSession()->SendAreaTriggerMessage("You can't do this while not in arena.");
+        return 0;
+    }
+
+    std::set<uint64>::iterator pIt = m_playersWantsFastStart.find(player->GetGUID());
+    if (pIt != m_playersWantsFastStart.end() || GetStartDelayTime() < BG_START_DELAY_15S)
+        return m_playersWantsFastStart.size();
+
+    m_playersWantsFastStart.insert(player->GetGUID());
+
+    std::set<GameObject*>::iterator goIt = m_crystals.find(go);
+    if (goIt == m_crystals.end())
+        m_crystals.insert(go);
+
+    uint8 playersNeeded = 0;
+
+    switch (GetArenaType())
+    {
+    case ARENA_TYPE_2v2:
+        playersNeeded = 4;
+        break;
+    case ARENA_TYPE_3v3:
+        playersNeeded = 6;
+        break;
+    case ARENA_TYPE_5v5:
+        playersNeeded = 2;
+        break;
+    }
+
+    if (m_playersWantsFastStart.size() == playersNeeded)
+    {
+        DespawnCrystals();
+        SetStartDelayTime(BG_START_DELAY_15S);
+    }
+
+    return m_playersWantsFastStart.size();
+}
+
+void Battleground::DespawnCrystals()
+{
+    if (m_crystals.empty())
+        return;
+
+    for (std::set<GameObject*>::iterator itr = m_crystals.begin(); itr != m_crystals.end(); ++itr)
+    {
+        GameObject* go = *itr;
+        go->Delete();
+        m_crystals.erase(itr);
+    }
 }

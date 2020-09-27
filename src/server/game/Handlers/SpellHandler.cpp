@@ -124,6 +124,12 @@ void WorldSession::HandleUseItemOpcode(WorldPacket& recvPacket)
         return;
     }
 
+    if (pItem->GetEntry() == 5634 && pUser->InBattleground() && !pUser->InArena())
+    {
+        pUser->SendEquipError(EQUIP_ERR_NOT_DURING_ARENA_MATCH, pItem, NULL);
+        return;
+    }
+
     if (pUser->IsInCombat())
     {
         for (int i = 0; i < MAX_ITEM_PROTO_SPELLS; ++i)

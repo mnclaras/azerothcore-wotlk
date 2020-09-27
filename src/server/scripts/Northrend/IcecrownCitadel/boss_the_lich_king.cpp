@@ -386,7 +386,6 @@ private:
 };
 
 
-
 struct NonTankLKTargetSelector : public acore::unary_function<Unit*, bool>
 {
 public:
@@ -833,7 +832,7 @@ class boss_the_lich_king : public CreatureScript
                             tirion->PlayDirectSound(17389);
                         }
                     }
-                    
+
                 }
                 else if (damage >= me->GetHealth())
                     damage = me->GetHealth()-1;
@@ -1087,17 +1086,17 @@ class boss_the_lich_king : public CreatureScript
                         {
                             uint32 evTime = events.GetNextEventTime(EVENT_SUMMON_VALKYR);
                             // if defile (cast time 2sec) is less than 3 before valkyr appears
-                            // we've to decide 
-                            if (evTime && (events.GetTimer() > evTime || evTime - events.GetTimer() < 5000)) 
+                            // we've to decide
+                            if (evTime && (events.GetTimer() > evTime || evTime - events.GetTimer() < 5000))
                             {
                                 // if valkyr is less than 1.5 secs after defile (cast time 2 sec) then we've a sync issue, so
                                 // we need to cancel it (break) and schedule a defile to be casted 5 or 4 seconds after valkyr
-                                if (events.GetTimer() > evTime || evTime - events.GetTimer() < 3500) 
+                                if (events.GetTimer() > evTime || evTime - events.GetTimer() < 3500)
                                 {
                                     uint32 t = events.GetTimer() > evTime ? 0 : evTime - events.GetTimer();
                                     events.ScheduleEvent(EVENT_DEFILE, t+(Is25ManRaid() ? 5000 : 4000), EVENT_GROUP_ABILITIES);
                                     break;
-                                } 
+                                }
 
                                 // if valkyr is coming between 1.5 and 3 seconds after defile then we've to
                                 // delay valkyr just a bit
@@ -1134,7 +1133,7 @@ class boss_the_lich_king : public CreatureScript
                             me->CastSpell((Unit*)NULL, SUMMON_VALKYR, false);
                             events.ScheduleEvent(EVENT_SUMMON_VALKYR, 45000, EVENT_GROUP_ABILITIES);
 
-                            // schedule a defile (or reschedule it) if next defile event 
+                            // schedule a defile (or reschedule it) if next defile event
                             // doesn't exist ( now > next defile ) or defile is coming too soon
                             uint32 minTime = (Is25ManRaid() ? 5000 : 4000);
                             if (uint32 evTime = events.GetNextEventTime(EVENT_DEFILE))
@@ -1493,7 +1492,7 @@ class npc_tirion_fordring_tft : public CreatureScript
                         {
                             theLichKing->GetMotionMaster()->MovePoint(0, CenterPosition);
                             uint32 travelTime = 1000*theLichKing->GetExactDist(&CenterPosition)/theLichKing->GetSpeed(MOVE_WALK) + 1000;
-                            
+
                             _events.ScheduleEvent(EVENT_OUTRO_LK_TALK_4, 1+travelTime);
                             _events.ScheduleEvent(EVENT_OUTRO_LK_RAISE_DEAD, 1000+travelTime);
                             _events.ScheduleEvent(EVENT_OUTRO_LK_TALK_5, 29000+travelTime);
@@ -1555,7 +1554,7 @@ class npc_tirion_fordring_tft : public CreatureScript
                             theLichKing->SetDisableGravity(true);
                             theLichKing->SetByteFlag(UNIT_FIELD_BYTES_1, 3, UNIT_BYTE1_FLAG_ALWAYS_STAND | UNIT_BYTE1_FLAG_HOVER);
                             theLichKing->GetMotionMaster()->MovePoint(0, OutroFlying);
-                            
+
                             _events.ScheduleEvent(EVENT_OUTRO_AFTER_SOUL_BARRAGE, 3000);
                         }
                         break;

@@ -517,6 +517,9 @@ class Battleground
         void CheckArenaWinConditions();
         virtual void UpdateArenaWorldState();
 
+        uint8 ClickFastStart(Player* player, GameObject* go);
+        void DespawnCrystals();
+
         // Triggers handle
         // must be implemented in BG subclass
         virtual void HandleAreaTrigger(Player* /*player*/, uint32 /*trigger*/) {}
@@ -675,6 +678,10 @@ class Battleground
         bool   m_PrematureCountDown;
         uint32 m_PrematureCountDownTimer;
         char const* m_Name;
+
+        // Arena ready check
+        std::set<uint64> m_playersWantsFastStart;
+        std::set<GameObject*> m_crystals;
 
         /* Pre- and post-update hooks */
 

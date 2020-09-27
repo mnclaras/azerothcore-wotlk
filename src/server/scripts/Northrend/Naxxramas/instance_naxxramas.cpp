@@ -77,7 +77,7 @@ public:
             _plagueEyePortalGUID = 0;
             _spiderEyePortalGUID = 0;
             _abomEyePortalGUID = 0;
-			
+
             // NPCs
             PatchwerkRoomTrash.clear();
             _patchwerkGUID = 0;
@@ -141,7 +141,7 @@ public:
         uint64 _plagueEyePortalGUID;
         uint64 _spiderEyePortalGUID;
         uint64 _abomEyePortalGUID;
-		
+
         // NPCs
         std::list<uint64> PatchwerkRoomTrash;
         uint64 _patchwerkGUID;
@@ -354,22 +354,22 @@ public:
                     if (GetBossState(BOSS_SAPPHIRON) == DONE)
                         pGo->SetGoState(GO_STATE_ACTIVE);
                     break;
-                case GO_DEATHKNIGHT_WING: 
+                case GO_DEATHKNIGHT_WING:
                     _loathebPortalGUID = pGo->GetGUID();
                     if (GetBossState(BOSS_LOATHEB) == DONE)
                         pGo->SetPhaseMask(1, true);
                     break;
-                case GO_THADDIUS_PORTAL: 
+                case GO_THADDIUS_PORTAL:
                     _thaddiusPortalGUID = pGo->GetGUID();
                     if (GetBossState(BOSS_THADDIUS) == DONE)
                         pGo->SetPhaseMask(1, true);
                     break;
-                case GO_MAEXXNA_PORTAL: 
+                case GO_MAEXXNA_PORTAL:
                     _maexxnaPortalGUID = pGo->GetGUID();
                     if (GetBossState(BOSS_MAEXXNA) == DONE)
                         pGo->SetPhaseMask(1, true);
                     break;
-                case GO_HORSEMAN_PORTAL: 
+                case GO_HORSEMAN_PORTAL:
                     _horsemanPortalGUID = pGo->GetGUID();
                     if (GetBossState(BOSS_HORSEMAN) == DONE)
                         pGo->SetPhaseMask(1, true);
@@ -588,11 +588,11 @@ public:
                 if (state == NOT_STARTED)
                     _horsemanTimer = 0;
             }
-            
-            
+
+
             if (!InstanceScript::SetBossState(bossId, state))
                 return false;
-            
+
             // Bosses data
             switch(bossId)
             {
@@ -629,7 +629,7 @@ public:
                 default:
                     break;
             }
-                    
+
             // Save instance and open gates
             if (state == DONE)
             {
@@ -719,7 +719,7 @@ public:
                         break;
                 }
             }
-                
+
             return true;
         }
 
@@ -879,7 +879,7 @@ public:
             else
                 OUT_LOAD_INST_DATA_FAIL;
         }
-            
+
     };
 };
 class boss_naxxramas_misc : public CreatureScript

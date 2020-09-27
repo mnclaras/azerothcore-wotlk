@@ -203,7 +203,27 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket & recvData)
         {
             // send in universal language in two side iteration allowed mode
             if (sWorld->getBoolConfig(CONFIG_ALLOW_TWO_SIDE_INTERACTION_CHAT))
+            {
                 lang = LANG_UNIVERSAL;
+
+                switch (type)
+                {
+                case CHAT_MSG_PARTY:
+                case CHAT_MSG_PARTY_LEADER:
+                case CHAT_MSG_RAID:
+                case CHAT_MSG_RAID_LEADER:
+                case CHAT_MSG_RAID_WARNING: 
+                    specialMessageLimit = 35;
+                    break;
+                case CHAT_MSG_GUILD:
+                case CHAT_MSG_OFFICER:
+                    specialMessageLimit = 35;
+                    break;
+                case CHAT_MSG_WHISPER:
+                    specialMessageLimit = 35;
+                    break;
+                }
+            }
             else
             {
                 switch (type)

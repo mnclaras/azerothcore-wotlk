@@ -581,7 +581,7 @@ class spell_dk_wandering_plague_aura : public SpellScriptLoader
             void HandleProc(AuraEffect const* aurEff, ProcEventInfo& eventInfo)
             {
                 PreventDefaultAction();
-                
+
                 eventInfo.GetActor()->AddSpellCooldown(SPELL_DK_WANDERING_PLAGUE_TRIGGER, 0, 1000);
                 eventInfo.GetActor()->CastCustomSpell(SPELL_DK_WANDERING_PLAGUE_TRIGGER, SPELLVALUE_BASE_POINT0, CalculatePct<int32, int32>(eventInfo.GetDamageInfo()->GetDamage(), aurEff->GetAmount()), eventInfo.GetActionTarget(), TRIGGERED_FULL_MASK);
             }
@@ -754,7 +754,7 @@ class spell_dk_dancing_rune_weapon : public SpellScriptLoader
                 // Death Coil exception, Check if spell is from spellbook
                 if (spellInfo->Id != SPELL_DK_DEATH_COIL_DAMAGE && !eventInfo.GetActor()->ToPlayer()->HasActiveSpell(spellInfo->Id))
                     return false;
-                
+
                 // Can't cast raise dead/ally, death grip, dark command, death pact, death and decay, anti-magic shell
                 if (spellInfo->SpellFamilyFlags.HasFlag(0x20A1220, 0x10000000, 0x0))
                     return false;
@@ -787,7 +787,7 @@ class spell_dk_dancing_rune_weapon : public SpellScriptLoader
                         dancingRuneWeapon = *itr;
                         break;
                     }
-                
+
                 if (!dancingRuneWeapon)
                     return;
 
@@ -982,7 +982,7 @@ class spell_dk_pet_scaling : public SpellScriptLoader
                 isPeriodic = true;
                 amplitude = 2*IN_MILLISECONDS;
             }
-            
+
             void HandlePeriodic(AuraEffect const* aurEff)
             {
                 PreventDefaultAction();
@@ -1459,6 +1459,7 @@ class spell_dk_death_coil : public SpellScriptLoader
                     {
                         if (AuraEffect const* auraEffect = caster->GetAuraEffect(SPELL_DK_ITEM_SIGIL_VENGEFUL_HEART, EFFECT_1))
                             damage += auraEffect->GetBaseAmount();
+                        damage = damage * 0.98;
                         caster->CastCustomSpell(target, SPELL_DK_DEATH_COIL_DAMAGE, &damage, nullptr, nullptr, true);
                     }
                 }
@@ -1610,7 +1611,7 @@ class spell_dk_death_grip : public SpellScriptLoader
                 Creature* targetCreature = GetHitCreature();
 
                 if (caster != target)
-                {                    
+                {
                     if (targetCreature && (targetCreature->isWorldBoss() || targetCreature->IsDungeonBoss()) && targetCreature->GetEntry() != EntryCheck(targetCreature->GetEntry()))
                     {
                         return;

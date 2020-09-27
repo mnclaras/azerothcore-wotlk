@@ -12,6 +12,8 @@
 #include "ScriptedCreature.h"
 #include "ruby_sanctum.h"
 #include "Player.h"
+#include "Group.h"
+#include "ObjectAccessor.h"
 
 
 enum Texts
@@ -322,6 +324,8 @@ class boss_halion : public CreatureScript
                         Unit::Kill(controller, controller);
             }
 
+            Position const* GetMeteorStrikePosition() const { return &_meteorStrikePos; }
+
             void DamageTaken(Unit* attacker, uint32& damage, DamageEffectType, SpellSchoolMask)
             {
                 if (events.GetNextEventTime(EVENT_CHECK_HEALTH) != 0)
@@ -381,8 +385,13 @@ class boss_halion : public CreatureScript
                         break;
                     case EVENT_METEOR_STRIKE:
                         _livingEmberCount = summons.GetEntryCount(NPC_LIVING_EMBER);
-                        me->CastCustomSpell(SPELL_METEOR_STRIKE_TARGETING, SPELLVALUE_MAX_TARGETS, 1, me, false);
-                        Talk(SAY_METEOR_STRIKE);
+                        if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 1, 100.0f, true, -SPELL_TWILIGHT_REALM))
+                        {
+                            //me->CastCustomSpell(SPELL_METEOR_STRIKE_TARGETING, SPELLVALUE_MAX_TARGETS, 1, target, false);
+                            _meteorStrikePos = target->GetPosition();
+                            me->CastSpell(_meteorStrikePos.GetPositionX(), _meteorStrikePos.GetPositionY(), _meteorStrikePos.GetPositionZ(), SPELL_METEOR_STRIKE, false, NULL, NULL, me->GetGUID());
+                            Talk(SAY_METEOR_STRIKE);
+                        }          
                         events.ScheduleEvent(EVENT_METEOR_STRIKE, 40000);
                         break;
                     case EVENT_FIERY_COMBUSTION:
@@ -408,6 +417,7 @@ class boss_halion : public CreatureScript
         private:
             EventMap _events2;
             uint32 _livingEmberCount;
+            Position _meteorStrikePos;
         };
 
         CreatureAI* GetAI(Creature* creature) const
@@ -872,7 +882,29 @@ class spell_halion_meteor_strike_spread : public SpellScriptLoader
                 if (!GetUnitOwner()->GetInstanceScript() || !GetUnitOwner()->GetInstanceScript()->IsEncounterInProgress())
                     return;
 
-                GetUnitOwner()->CastSpell(GetUnitOwner(), RAND(SPELL_SUMMON_METEOR_FLAME1, SPELL_SUMMON_METEOR_FLAME2, SPELL_SUMMON_METEOR_FLAME2, SPELL_SUMMON_METEOR_FLAME2, SPELL_SUMMON_METEOR_FLAME3), true);
+                //GetUnitOwner()->CastSpell(GetUnitOwner(), RAND(SPELL_SUMMON_METEOR_FLAME1, SPELL_SUMMON_METEOR_FLAME2, SPELL_SUMMON_METEOR_FLAME2, SPELL_SUMMON_METEOR_FLAME2, SPELL_SUMMON_METEOR_FLAME3), true);
+                GetUnitOwner()->CastSpell(GetUnitOwner(), RAND(
+                    SPELL_SUMMON_METEOR_FLAME1,
+                    SPELL_SUMMON_METEOR_FLAME1,
+                    SPELL_SUMMON_METEOR_FLAME1,
+                    SPELL_SUMMON_METEOR_FLAME2,
+                    SPELL_SUMMON_METEOR_FLAME2,
+                    SPELL_SUMMON_METEOR_FLAME2,
+                    SPELL_SUMMON_METEOR_FLAME2,
+                    SPELL_SUMMON_METEOR_FLAME2,
+                    SPELL_SUMMON_METEOR_FLAME2,
+                    SPELL_SUMMON_METEOR_FLAME2,
+                    SPELL_SUMMON_METEOR_FLAME2,
+                    SPELL_SUMMON_METEOR_FLAME2,
+                    SPELL_SUMMON_METEOR_FLAME2,
+                    SPELL_SUMMON_METEOR_FLAME2,
+                    SPELL_SUMMON_METEOR_FLAME2,
+                    SPELL_SUMMON_METEOR_FLAME2,
+                    SPELL_SUMMON_METEOR_FLAME2,
+                    SPELL_SUMMON_METEOR_FLAME3,
+                    SPELL_SUMMON_METEOR_FLAME3,
+                    SPELL_SUMMON_METEOR_FLAME3
+                ), true);
             }
 
             void Register()
