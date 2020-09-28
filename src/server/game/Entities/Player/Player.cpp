@@ -22350,9 +22350,9 @@ bool Player::BuyItemFromVendorSlot(uint64 vendorguid, uint32 vendorslot, uint32 
             || (item == 51424) || (item == 51418))
         {
             uint32 max_personal_rating_exclude_one_vs_one = 0;
-            for (uint8 i = iece->reqarenaslot; i < (MAX_ARENA_SLOT-1); ++i)
+            for (uint8 i = iece->reqarenaslot; i < MAX_ARENA_SLOT; ++i)
             {
-             
+                if (i == 2) continue;
                 if (ArenaTeam* at = sArenaTeamMgr->GetArenaTeamById(GetArenaTeamId(i)))
                 {
                     uint32 p_rating = GetArenaPersonalRating(i);
