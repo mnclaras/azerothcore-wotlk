@@ -22343,6 +22343,33 @@ bool Player::BuyItemFromVendorSlot(uint64 vendorguid, uint32 vendorslot, uint32 
             SendEquipError(EQUIP_ERR_CANT_EQUIP_RANK, NULL, nullptr);
             return false;
         }
+
+        // WoWAmnesia - Shoulders buyable in 2v2 - limit 1v1
+        if ((item == 51545) || (item == 51540) || (item == 51514) || (item == 51508) || (item == 51502) || (item == 51496) || (item == 51491) || (item == 51486)
+            || (item == 51479) || (item == 51473) || (item == 51467) || (item == 51462) || (item == 51438) || (item == 51430)
+            || (item == 51424) || (item == 51418))
+        {
+            uint32 max_personal_rating_exclude_one_vs_one = 0;
+            for (uint8 i = iece->reqarenaslot; i < (MAX_ARENA_SLOT-1); ++i)
+            {
+             
+                if (ArenaTeam* at = sArenaTeamMgr->GetArenaTeamById(GetArenaTeamId(i)))
+                {
+                    uint32 p_rating = GetArenaPersonalRating(i);
+                    uint32 t_rating = at->GetRating();
+                    p_rating = p_rating < t_rating ? p_rating : t_rating;
+                    if (max_personal_rating_exclude_one_vs_one < p_rating)
+                        max_personal_rating_exclude_one_vs_one = p_rating;
+                }
+            }
+
+            if (max_personal_rating_exclude_one_vs_one < iece->reqpersonalarenarating)
+            {
+                // probably not the proper equip err
+                SendEquipError(EQUIP_ERR_CANT_EQUIP_RANK, NULL, nullptr);
+                return false;
+            }
+        }
     }
 
     uint32 price = 0;
