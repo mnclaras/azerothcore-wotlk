@@ -884,9 +884,9 @@ class npc_crok_scourgebane : public CreatureScript
                     _wipeCheckTimer = 3000;
 
                     Player* player = nullptr;
-                    acore::AnyPlayerInObjectRangeCheck check(me, 140.0f);
+                    acore::AnyPlayerInObjectRangeCheck check(me, 240.0f);
                     acore::PlayerSearcher<acore::AnyPlayerInObjectRangeCheck> searcher(me, player, check);
-                    me->VisitNearbyWorldObject(140.0f, searcher);
+                    me->VisitNearbyWorldObject(240.0f, searcher);
                     // wipe
                     if (!player || me->GetExactDist(4357.0f, 2606.0f, 350.0f) > 125.0f)
                     {
