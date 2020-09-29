@@ -112,6 +112,7 @@ enum Spells
     SPELL_IMPALING_SPEAR            = 71443,
     SPELL_AETHER_SHIELD             = 71463,
     SPELL_HURL_SPEAR                = 71466,
+    SPELL_DIVINE_SURGE              = 71465,
 
     // Captain Arnath
     SPELL_DOMINATE_MIND             = 14515,
@@ -883,6 +884,7 @@ class npc_crok_scourgebane : public CreatureScript
                 {
                     _wipeCheckTimer = 3000;
 
+                    /** Original is 140 yards. Just for AmnesiaWoW */
                     Player* player = nullptr;
                     acore::AnyPlayerInObjectRangeCheck check(me, 240.0f);
                     acore::PlayerSearcher<acore::AnyPlayerInObjectRangeCheck> searcher(me, player, check);
@@ -1037,8 +1039,9 @@ class boss_sister_svalna : public CreatureScript
                 if (Creature* crok = ObjectAccessor::GetCreature(*me, instance->GetData64(DATA_CROK_SCOURGEBANE)))
                 {
                     crok->AI()->Talk(SAY_CROK_COMBAT_SVALNA);
-                    crok->AI()->AttackStart(me);
+                    crok->AI()->AttackStart(me);  
                 }
+                DoCastSelf(SPELL_DIVINE_SURGE, true);
                 events.ScheduleEvent(EVENT_SVALNA_COMBAT, 9000);
                 events.ScheduleEvent(EVENT_IMPALING_SPEAR, urand(15000, 20000));
             }
