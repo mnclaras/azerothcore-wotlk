@@ -3,6 +3,7 @@
 #include "ObjectMgr.h"
 #include "Group.h"
 
+
 enum ZOMBIE_DATA
 {
     NPC_START_GAME = 125,
@@ -488,7 +489,7 @@ public:
             else if (spawnTimer > 4.0) return 4;
             else if (spawnTimer > 2.5) return 5;
             else if (spawnTimer > 1.0) return 6;
-            else if (spawnTimer > 0.0) return 7;
+            else return 7;
         }
 
         bool resetZombieEvent()

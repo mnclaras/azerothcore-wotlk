@@ -866,7 +866,8 @@ class boss_the_lich_king : public CreatureScript
                         return;
                     case NPC_DEFILE:
                     case NPC_SHADOW_TRAP_TRIGGER:
-                        summon->m_positionZ = 840.86f;
+                        if (!summon->m_positionZ || summon->m_positionZ < 840.86f)
+                            summon->m_positionZ = 840.86f;
                         summon->UpdatePosition(summon->GetPositionX(), summon->GetPositionY(), summon->GetPositionZ(), summon->GetOrientation(), true);
                         summon->StopMovingOnCurrentPos();
                         break;
