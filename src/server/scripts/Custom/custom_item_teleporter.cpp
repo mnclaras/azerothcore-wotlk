@@ -995,7 +995,7 @@ public:
             break;
 
         case 205: // Rubi Sanctum
-            player->TeleportTo(571, 3604.82f, 191.464f, -113.6791f, 2.19912f);
+            player->TeleportTo(571, 3599.361572f, 199.044418f, -113.959305f, 5.329687f);
             CloseGossipMenuFor(player);
             break;
 
