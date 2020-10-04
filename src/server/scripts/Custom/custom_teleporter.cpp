@@ -990,6 +990,11 @@ public:
                 CloseGossipMenuFor(player);
                 break;
 
+            case 5001: // Shop Utgarde
+                player->TeleportTo(571, 1233.63f, -4979.2002f, 173.929001f, 5.25595f);
+                CloseGossipMenuFor(player);
+                break;
+
             case 0:
                 AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Shop Tanaris" : "Shop Tanaris", GOSSIP_SENDER_MAIN, 5000);
                 AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Shop Utgarde" : "Shop Utgarde", GOSSIP_SENDER_MAIN, 5001);
