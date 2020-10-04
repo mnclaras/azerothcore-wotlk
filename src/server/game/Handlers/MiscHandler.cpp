@@ -423,8 +423,8 @@ void WorldSession::HandleLogoutRequestOpcode(WorldPacket & /*recv_data*/)
 
     bool instantLogout = ((GetSecurity() >= 0 && uint32(GetSecurity()) >= sWorld->getIntConfig(CONFIG_INSTANT_LOGOUT))
         || (GetPlayer()->HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_RESTING) && !GetPlayer()->IsInCombat())) || GetPlayer()->IsInFlight()
-        // Shop Tanaris (2317) y Shop VIP (3478)
-        || (GetPlayer()->GetAreaId() == 2317) || (GetPlayer()->GetAreaId() == 3478);
+        // Shop Tanaris (2317) y Shop VIP (3478), Shop Utgarde Keep (3983)
+        || (GetPlayer()->GetAreaId() == 2317) || (GetPlayer()->GetAreaId() == 3478) || (GetPlayer()->GetAreaId() == 3983);
 
 
 

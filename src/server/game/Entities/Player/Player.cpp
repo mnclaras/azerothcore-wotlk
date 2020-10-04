@@ -7621,8 +7621,10 @@ void Player::UpdateArea(uint32 newArea)
 
     // previously this was in UpdateZone (but after UpdateArea) so nothing will break
 
-      // Disable PvP flags in Sanctuary and Tanaris Island (South Seas - 2317: https://trinitycore.fandom.com/es/wiki/AreaTable.dbc)
-    if (isSanctuary || (GetAreaId() == 2317) || (GetAreaId() == 3478) || (GetAreaId() == 1120) || (GetAreaId() == 368) || (GetAreaId() == 1227) || (GetAreaId() == 2557) || (GetAreaId() == 3217) || (GetAreaId() == 307))    // in sanctuary
+    // Disable PvP flags in Sanctuary and
+    // Tanaris Island (South Seas - 2317: https://trinitycore.fandom.com/es/wiki/AreaTable.dbc), Shop VIP (3478), Shop Utgarde Keep (3983)
+    if (isSanctuary || (GetAreaId() == 2317) || (GetAreaId() == 3478) || (GetAreaId() == 1120) || (GetAreaId() == 368) || (GetAreaId() == 1227)
+        || (GetAreaId() == 2557) || (GetAreaId() == 3217) || (GetAreaId() == 307) || GetAreaId() == 3983)    // in sanctuary
     //if (isSanctuary)    // in sanctuary
     {
         SetByteFlag(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_SANCTUARY);
