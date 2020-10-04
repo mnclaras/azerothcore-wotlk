@@ -34,7 +34,8 @@ public:
             return false;
         }
 
-        AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Shop" : "Shop", GOSSIP_SENDER_MAIN, 5000);
+        AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Shop Tanaris" : "Shop Tanaris", GOSSIP_SENDER_MAIN, 5000);
+        AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Shop Utgarde" : "Shop Utgarde", GOSSIP_SENDER_MAIN, 5001);
 
         QueryResult result = CharacterDatabase.PQuery("SELECT AccountId FROM premium WHERE active = 1 AND AccountId = %u", player->GetSession()->GetAccountId());
 
@@ -97,7 +98,8 @@ public:
             switch (action)
             {
             case 999:
-                AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Shop" : "Shop", GOSSIP_SENDER_MAIN, 5000);
+                AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Shop Tanaris" : "Shop Tanaris", GOSSIP_SENDER_MAIN, 5000);
+                AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Shop Utgarde" : "Shop Utgarde", GOSSIP_SENDER_MAIN, 5001);
 
                 result = CharacterDatabase.PQuery("SELECT AccountId FROM premium WHERE active = 1 AND AccountId = %u", player->GetSession()->GetAccountId());
                 if (result) {
@@ -347,6 +349,7 @@ public:
                 AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Ulduar" : "Ulduar", GOSSIP_SENDER_MAIN, 98);
                 AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "La Camara de Archavon" : "Vault of Archavon", GOSSIP_SENDER_MAIN, 99);
                 AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Ciudadela de la Corona de Hielo" : "Icecrown Citadel", GOSSIP_SENDER_MAIN, 201);
+                AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Sagrario Rubi" : "Rubi Sanctum", GOSSIP_SENDER_MAIN, 205);
                 AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Prueba del Cruzado" : "Trial of the Crusader", GOSSIP_SENDER_MAIN, 203);
                 AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Inicio" : "Home Page", GOSSIP_SENDER_MAIN, 999);
                 SendGossipMenuFor(player, DEFAULT_MESSAGE, creature->GetGUID());
@@ -759,7 +762,7 @@ public:
                 CloseGossipMenuFor(player);
                 break;
             case 97: // The Obsidian Sanctum
-                player->TeleportTo(571, 3547.39, 267.95, -115.96, 0);
+                player->TeleportTo(571, 3458.590576f, 262.752f, -114.4711f, 3.2161f);
                 CloseGossipMenuFor(player);
                 break;
             case 98: // Ulduar
@@ -977,13 +980,19 @@ public:
                 CloseGossipMenuFor(player);
                 break;
 
+            case 205: // Rubi Sanctum
+                player->TeleportTo(571, 3604.82f, 191.464f, -113.6791f, 2.19912f);
+                CloseGossipMenuFor(player);
+                break;
+
             case 5000: // Shop tanaris
                 player->TeleportTo(1, -11823.9, -4779.58, 5.9206, 1.1357);
                 CloseGossipMenuFor(player);
                 break;
 
             case 0:
-                AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Shop" : "Shop", GOSSIP_SENDER_MAIN, 5000);
+                AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Shop Tanaris" : "Shop Tanaris", GOSSIP_SENDER_MAIN, 5000);
+                AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Shop Utgarde" : "Shop Utgarde", GOSSIP_SENDER_MAIN, 5001);
 
                 result = CharacterDatabase.PQuery("SELECT AccountId FROM premium WHERE active = 1 AND AccountId = %u", player->GetSession()->GetAccountId());
                 if (result) {
