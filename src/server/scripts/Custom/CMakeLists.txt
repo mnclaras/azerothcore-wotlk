@@ -13,6 +13,7 @@
 set(scripts_STAT_SRCS
   ${scripts_STAT_SRCS}
   ${AC_SCRIPTS_DIR}/Custom/ArenaSpectator/arena_spectator.cpp
+  ${AC_SCRIPTS_DIR}/Custom/ArenaSpectator/custom_npc_leave_spectator.cpp
   ${AC_SCRIPTS_DIR}/Custom/PVP/arena_crystal.cpp
   ${AC_SCRIPTS_DIR}/Custom/PVP/arenaladder.cpp
   ${AC_SCRIPTS_DIR}/Custom/PVP/pvp_area.cpp

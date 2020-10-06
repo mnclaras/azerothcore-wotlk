@@ -1205,6 +1205,7 @@ void AddSC_arenateamranks();
 void AddSC_vitality_pvp_island();
 void AddSC_ArenaAndBgRewards();
 void AddSC_zombie_event();
+void AddSC_custom_npc_leave_spectator();
 
 void AddCustomScripts()
 {
@@ -1224,5 +1225,6 @@ void AddCustomScripts()
     AddSC_vitality_pvp_island();
     AddSC_ArenaAndBgRewards();
 	AddSC_zombie_event();
+	AddSC_custom_npc_leave_spectator();
 #endif
 }
