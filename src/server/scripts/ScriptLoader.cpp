@@ -1206,6 +1206,7 @@ void AddSC_vitality_pvp_island();
 void AddSC_ArenaAndBgRewards();
 void AddSC_zombie_event();
 void AddSC_custom_npc_leave_spectator();
+void AddSC_custom_npc_tier_nine();
 
 void AddCustomScripts()
 {
@@ -1226,5 +1227,6 @@ void AddCustomScripts()
     AddSC_ArenaAndBgRewards();
 	AddSC_zombie_event();
 	AddSC_custom_npc_leave_spectator();
+	AddSC_custom_npc_tier_nine();
 #endif
 }

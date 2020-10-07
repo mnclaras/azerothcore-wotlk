@@ -30,6 +30,7 @@ set(scripts_STAT_SRCS
   ${AC_SCRIPTS_DIR}/Custom/custom_item_teleporter.cpp
   ${AC_SCRIPTS_DIR}/Custom/custom_vip_only_npc.cpp
   ${AC_SCRIPTS_DIR}/Custom/zombie_event.cpp
+  ${AC_SCRIPTS_DIR}/Custom/custom_npc_tier_nine.cpp
 )
 
 AC_ADD_SCRIPT_LOADER("Custom" "ScriptLoader.h")
