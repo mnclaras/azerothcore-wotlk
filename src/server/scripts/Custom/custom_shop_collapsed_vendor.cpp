@@ -15,8 +15,6 @@
 #include "ScriptMgr.h"
 #include "ScriptedGossip.h"
 
-#define CREATURE_ENTRY_TRAINER_GLOBAL       101004
-
 #define CREATURE_VENDOR_GEMS_RED        601592          
 #define CREATURE_VENDOR_GEMS_YELLOW     601571          
 #define CREATURE_VENDOR_GEMS_PURPLE     601573          
@@ -43,7 +41,8 @@
 #define CREATURE_VENDOR_PVP_S8OFFPARTS      104000             
 #define CREATURE_VENDOR_PVP_3V3WEAPONS      104003          
 
-#define CREATURE_VENDOR_PVE_T9              100009          
+#define CREATURE_VENDOR_PVE_T9_HORDE        601632
+#define CREATURE_VENDOR_PVE_T9_ALLIANCE     601585
 #define CREATURE_VENDOR_PVE_OFFSET          100008          
 #define CREATURE_VENDOR_PVE_RINGS           601594          
 #define CREATURE_VENDOR_PVE_NECKS           601501          
@@ -114,13 +113,13 @@ public:
     {
         bool isSpanish = IsSpanishPlayer(player);
 
-        ShowOption(player, isSpanish ? "Gemas rojas." : "Red gems.", 1);
-        ShowOption(player, isSpanish ? "Gemas amarillas." : "Yellow gems.", 2);
-        ShowOption(player, isSpanish ? "Gemas azules." : "Blue gems.", 3);
-        ShowOption(player, isSpanish ? "Gemas naranjas." : "Orange gems.", 4);
-        ShowOption(player, isSpanish ? "Gemas verdes." : "Green gems.", 5);
-        ShowOption(player, isSpanish ? "Gemas moradas." : "Purple gems.", 6);
-        ShowOption(player, isSpanish ? "Gemas meta." : "Meta gems.", 7);
+        ShowOption(player, isSpanish ? "[Rojas]" : "[Red]", 1);
+        ShowOption(player, isSpanish ? "[Amarillas]" : "[Yellow]", 2);
+        ShowOption(player, isSpanish ? "[Azules]" : "[Blue]", 3);
+        ShowOption(player, isSpanish ? "[Naranjas]" : "[Orange]", 4);
+        ShowOption(player, isSpanish ? "[Verdes]" : "[Green]", 5);
+        ShowOption(player, isSpanish ? "[Moradas]" : "[Purple]", 6);
+        ShowOption(player, isSpanish ? "[Meta]" : "[Meta]", 7);
 
         SendGossipMenuFor(player, DEFAULT_MESSAGE, creature->GetGUID());
         return true;
@@ -149,10 +148,10 @@ public:
         custom_shop_collapsed_vendor_gemsAI(Creature* creature) : ScriptedAI(creature) { }
     };
 
-	CreatureAI* GetAI(Creature* creature) const override
-	{
-		return new custom_shop_collapsed_vendor_gemsAI(creature);
-	}
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new custom_shop_collapsed_vendor_gemsAI(creature);
+    }
 };
 
 class custom_shop_collapsed_vendor_professions : public CreatureScript
@@ -164,16 +163,16 @@ public:
     {
         bool isSpanish = IsSpanishPlayer(player);
 
-        ShowOption(player, isSpanish ? "Encantamiento." : "Enchanting.", 1);
-        ShowOption(player, isSpanish ? "Joyería." : "Jewelcrafting.", 2);
-        ShowOption(player, isSpanish ? "Peleteria." : "Leatherworking.", 3);
-        ShowOption(player, isSpanish ? "Inscripcion." : "Inscription.", 4);
-        ShowOption(player, isSpanish ? "Herboristeria." : "Herbalism.", 5);
-        ShowOption(player, isSpanish ? "Sastreria." : "Tailoring.", 6);
-        ShowOption(player, isSpanish ? "Herreria." : "Blacksmithing.", 7);
-        ShowOption(player, isSpanish ? "Ingenieria." : "Engineering.", 8);
-        ShowOption(player, isSpanish ? "Elementales." : "Elementals.", 9);
-        ShowOption(player, isSpanish ? "Alquimia." : "Alchemy.", 10);
+        ShowOption(player, isSpanish ? "[Encantamiento." : "[Enchanting]", 1);
+        ShowOption(player, isSpanish ? "[Joyeria]" : "[Jewelcrafting]", 2);
+        ShowOption(player, isSpanish ? "[Peleteria]" : "[Leatherworking]", 3);
+        ShowOption(player, isSpanish ? "[Inscripcion]" : "[Inscription]", 4);
+        ShowOption(player, isSpanish ? "[Herboristeria]" : "[Herbalism]", 5);
+        ShowOption(player, isSpanish ? "[Sastreria]" : "[Tailoring]", 6);
+        ShowOption(player, isSpanish ? "[Herreria]" : "[Blacksmithing]", 7);
+        ShowOption(player, isSpanish ? "[Ingenieria]" : "[Engineering]", 8);
+        ShowOption(player, isSpanish ? "[Elementales]" : "[Elementals]", 9);
+        ShowOption(player, isSpanish ? "[Alquimia]" : "[Alchemy]", 10);
 
         SendGossipMenuFor(player, DEFAULT_MESSAGE, creature->GetGUID());
         return true;
@@ -220,13 +219,13 @@ public:
     {
         bool isSpanish = IsSpanishPlayer(player);
 
-        ShowOption(player, isSpanish ? "S7." : "S7.", 1);
-        ShowOption(player, isSpanish ? "S7 Offset." : "S7 Offset.", 2);
-        ShowOption(player, isSpanish ? "S7 Armas." : "S7 Weapons.", 3);
-        ShowOption(player, isSpanish ? "S8." : "S8.", 4);
-        ShowOption(player, isSpanish ? "S8 Offset." : "S8 Offset.", 5);
-        ShowOption(player, isSpanish ? "Armas 3v3." : "3v3 Weapons.", 6);
-       
+        ShowOption(player, isSpanish ? "[S7]" : "[S7]", 1);
+        ShowOption(player, isSpanish ? "[S7 Offset]" : "[S7 Offset]", 2);
+        ShowOption(player, isSpanish ? "[S7 Armas]" : "[S7 Weapons]", 3);
+        ShowOption(player, isSpanish ? "[S8]" : "[S8]", 4);
+        ShowOption(player, isSpanish ? "[S8 Offset]" : "[S8 Offset]", 5);
+        ShowOption(player, isSpanish ? "[Armas 3v3]" : "[3v3 Weapons]", 6);
+
         SendGossipMenuFor(player, DEFAULT_MESSAGE, creature->GetGUID());
         return true;
     }
@@ -268,21 +267,21 @@ public:
     {
         bool isSpanish = IsSpanishPlayer(player);
 
-        ShowOption(player, isSpanish ? "T9." : "T9.", 1);
-        ShowOption(player, isSpanish ? "Offset." : "Offset.", 2);
-        ShowOption(player, isSpanish ? "Anillos." : "Rings.", 3);
-        ShowOption(player, isSpanish ? "Collares." : "Necks.", 4);
-        ShowOption(player, isSpanish ? "Capas." : "Cloaks.", 5);
-        ShowOption(player, isSpanish ? "Brazales." : "Bracers.", 6);
-        ShowOption(player, isSpanish ? "Cinturones." : "Belts.", 7);
-        ShowOption(player, isSpanish ? "Botas." : "Boots.", 8);
-        ShowOption(player, isSpanish ? "Armas 1 Mano." : "1 Hand Weapons.", 9);
-        ShowOption(player, isSpanish ? "Armas 2 Manos." : "2 Hand Weapons.", 10);
-        ShowOption(player, isSpanish ? "Armas a distancia." : "Ranged Weapons.", 11);
-        ShowOption(player, isSpanish ? "Mano izquierda." : "Offhands.", 12);
-        ShowOption(player, isSpanish ? "Escudos." : "Shields.", 13);
-        ShowOption(player, isSpanish ? "Reliquias." : "Relics.", 14);
-        ShowOption(player, isSpanish ? "Abalorios." : "Trinkets.", 15);
+        ShowOption(player, isSpanish ? "[T9]" : "[T9]", 1);
+        ShowOption(player, isSpanish ? "[Offset]" : "[Offset]", 2);
+        ShowOption(player, isSpanish ? "[Anillos]" : "[Rings]", 3);
+        ShowOption(player, isSpanish ? "[Collares]" : "[Necks]", 4);
+        ShowOption(player, isSpanish ? "[Capas]" : "[Cloaks]", 5);
+        ShowOption(player, isSpanish ? "[Brazales]" : "[Bracers]", 6);
+        ShowOption(player, isSpanish ? "[Cinturones]" : "[Belts]", 7);
+        ShowOption(player, isSpanish ? "[Botas]" : "[Boots]", 8);
+        ShowOption(player, isSpanish ? "[Armas 1 Mano]" : "[1 Hand Weapons]", 9);
+        ShowOption(player, isSpanish ? "[Armas 2 Manos]" : "[2 Hand Weapons]", 10);
+        ShowOption(player, isSpanish ? "[Armas a distancia]" : "[Ranged Weapons]", 11);
+        ShowOption(player, isSpanish ? "[Mano izquierda]" : "[Offhands]", 12);
+        ShowOption(player, isSpanish ? "[Escudos]" : "[Shields]", 13);
+        ShowOption(player, isSpanish ? "[Reliquias]" : "[Relics]", 14);
+        ShowOption(player, isSpanish ? "[Abalorios]" : "[Trinkets]", 15);
 
         SendGossipMenuFor(player, DEFAULT_MESSAGE, creature->GetGUID());
         return true;
@@ -293,7 +292,10 @@ public:
         ClearGossipMenuFor(player);
         switch (action)
         {
-        case GOSSIP_ACTION_INFO_DEF + 1: ShowVendor(player, creature, CREATURE_VENDOR_PVE_T9); break;
+        case GOSSIP_ACTION_INFO_DEF + 1:
+            if (player->GetTeamId() == TEAM_ALLIANCE) ShowVendor(player, creature, CREATURE_VENDOR_PVE_T9_ALLIANCE);
+            else if (player->GetTeamId() == TEAM_HORDE) ShowVendor(player, creature, CREATURE_VENDOR_PVE_T9_HORDE);
+            break;
         case GOSSIP_ACTION_INFO_DEF + 2: ShowVendor(player, creature, CREATURE_VENDOR_PVE_OFFSET); break;
         case GOSSIP_ACTION_INFO_DEF + 3: ShowVendor(player, creature, CREATURE_VENDOR_PVE_RINGS); break;
         case GOSSIP_ACTION_INFO_DEF + 4: ShowVendor(player, creature, CREATURE_VENDOR_PVE_NECKS); break;
@@ -448,7 +450,7 @@ public:
 
 void AddSC_custom_shop_collapsed_vendor()
 {
-	new custom_shop_collapsed_vendor_gems();            // npc_collapsed_vendor_gems
+    new custom_shop_collapsed_vendor_gems();            // npc_collapsed_vendor_gems
     new custom_shop_collapsed_vendor_professions();     // npc_collapsed_vendor_professions
     new custom_shop_collapsed_vendor_pvp();             // npc_collapsed_vendor_pvp
     new custom_shop_collapsed_vendor_pve();             // npc_collapsed_vendor_pve
