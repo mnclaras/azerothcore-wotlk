@@ -10,7 +10,7 @@ env/user/*
 # modules/*
 # !modules/*.md
 # !modules/*.sh
-modules/*/.git/
+modules/mod-1v1-arena/.git
 build*/
 var/*
 docker/build/cache
