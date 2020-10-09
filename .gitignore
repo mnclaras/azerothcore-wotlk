@@ -10,6 +10,7 @@ env/user/*
 # modules/*
 # !modules/*.md
 # !modules/*.sh
+modules/*/.git
 build*/
 var/*
 docker/build/cache
