@@ -81,7 +81,7 @@ public:
     // Restore phases
     void OnDuelEnd(Player* firstplayer, Player* secondplayer, DuelCompleteType /* type */) override // unusued param type
     {
-        if (sConfigMgr->GetBoolDefault("PhasedDueling.Enable", true))
+        if (sConfigMgr->GetBoolDefault("PhasedDuels.Enable", true))
         {
             // Phase players, dont update visibility yet
             firstplayer->SetPhaseMask(GetNormalPhase(firstplayer), false);
