@@ -163,7 +163,7 @@ public:
     {
         bool isSpanish = IsSpanishPlayer(player);
 
-        ShowOption(player, isSpanish ? "[Encantamiento." : "[Enchanting]", 1);
+        ShowOption(player, isSpanish ? "[Encantamiento]" : "[Enchanting]", 1);
         ShowOption(player, isSpanish ? "[Joyeria]" : "[Jewelcrafting]", 2);
         ShowOption(player, isSpanish ? "[Peleteria]" : "[Leatherworking]", 3);
         ShowOption(player, isSpanish ? "[Inscripcion]" : "[Inscription]", 4);
@@ -400,16 +400,16 @@ public:
     {
         bool isSpanish = IsSpanishPlayer(player);
 
-        ShowOption(player, isSpanish ? "T1." : "T1.", 1);
-        ShowOption(player, isSpanish ? "T2." : "T2.", 2);
-        ShowOption(player, isSpanish ? "T3." : "T3.", 3);
-        ShowOption(player, isSpanish ? "T4." : "T4.", 4);
-        ShowOption(player, isSpanish ? "T5." : "T5.", 5);
-        ShowOption(player, isSpanish ? "T6." : "T6.", 6);
-        ShowOption(player, isSpanish ? "T7." : "T7.", 7);
-        ShowOption(player, isSpanish ? "T7.5." : "T7.5.", 8);
-        ShowOption(player, isSpanish ? "T8." : "T8.", 9);
-        ShowOption(player, isSpanish ? "T8.5." : "T8.5.", 10);
+        ShowOption(player, isSpanish ? "[T1]" : "[T1]", 1);
+        ShowOption(player, isSpanish ? "[T2]" : "[T2]", 2);
+        ShowOption(player, isSpanish ? "[T3]" : "[T3]", 3);
+        ShowOption(player, isSpanish ? "[T4]" : "[T4]", 4);
+        ShowOption(player, isSpanish ? "[T5]" : "[T5]", 5);
+        ShowOption(player, isSpanish ? "[T6]" : "[T6]", 6);
+        ShowOption(player, isSpanish ? "[T7]" : "[T7]", 7);
+        ShowOption(player, isSpanish ? "[T7.5]" : "[T7.5]", 8);
+        ShowOption(player, isSpanish ? "[T8]" : "[T8]", 9);
+        ShowOption(player, isSpanish ? "[T8.5]" : "[T8.5]", 10);
 
         SendGossipMenuFor(player, DEFAULT_MESSAGE, creature->GetGUID());
         return true;
