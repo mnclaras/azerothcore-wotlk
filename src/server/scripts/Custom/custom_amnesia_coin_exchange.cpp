@@ -281,7 +281,6 @@ public:
                 SendMenu(player, creature);
                 break;
 
-
             case GOSSIP_ACTION_INFO_DEF + 8:
                 player->PlayerTalkClass->SendCloseGossip();
                 break;
