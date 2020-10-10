@@ -7,10 +7,10 @@ conf/*
 apps/drassil/*
 env/dist/*
 env/user/*
-# modules/*
-# !modules/*.md
-# !modules/*.sh
-modules/mod-1v1-arena/.git
+modules/*
+!modules/*.md
+!modules/*.sh
+#modules/mod-1v1-arena/.git
 build*/
 var/*
 docker/build/cache
