@@ -57,7 +57,7 @@ public:
         {
             ChatHandler(player->GetSession()).PSendSysMessage("Los links y la publicidad no son bienvenidos!");
             SendGMTexts(player, CheckMsg, FullMessage);
-            msg = "WoWAmnesia no permite que leas este mensaje!";
+            msg = "";
         }
     }
 
