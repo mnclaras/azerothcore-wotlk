@@ -1818,6 +1818,15 @@ void GameObject::Use(Unit* user)
 
             Player* player = user->ToPlayer();
 
+            // MorphIllusionShirt
+            if (player->GetOriginalDisplayId() != player->GetDisplayId())
+            {
+                LocaleConstant locale = player->GetSession()->GetSessionDbLocaleIndex();
+                bool isSpanish = locale == LOCALE_esES || locale == LOCALE_esMX;
+                player->GetSession()->SendNotification(isSpanish ? "No puedes cambiar tu aspecto con una camisa de ilusion equipada." : "You cannot change your appearance with an illusion shirt equipped.");
+                return;
+            }
+
             // fallback, will always work
             player->TeleportTo(GetMapId(), GetPositionX(), GetPositionY(), GetPositionZ(), GetOrientation(), TELE_TO_NOT_LEAVE_TRANSPORT | TELE_TO_NOT_LEAVE_COMBAT | TELE_TO_NOT_UNSUMMON_PET);
 
