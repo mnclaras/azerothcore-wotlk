@@ -53,11 +53,17 @@ public:
         std::string CheckMsg = msg;
         std::string FullMessage = msg;
 
-        if (IsBadMessage(CheckMsg))
+        try
         {
-            ChatHandler(player->GetSession()).PSendSysMessage("Los links y la publicidad no son bienvenidos!");
-            SendGMTexts(player, CheckMsg, FullMessage);
-            msg = "";
+            if (IsBadMessage(CheckMsg))
+            {
+                ChatHandler(player->GetSession()).PSendSysMessage("Los links y la publicidad no son bienvenidos!");
+                SendGMTexts(player, CheckMsg, FullMessage);
+                msg = "";
+            }
+        }
+        catch (std::exception& e)
+        {
         }
     }
 
