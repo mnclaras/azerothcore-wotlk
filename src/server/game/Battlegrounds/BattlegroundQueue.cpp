@@ -320,7 +320,9 @@ void BattlegroundQueue::RemovePlayer(uint64 guid, bool sentToBg, uint32 playerQu
                 case ARENA_TYPE_3v3: arenaType = 3; break;
                 case ARENA_TYPE_5v5: arenaType = 1; break;
             }
-            sWorld->SendWorldText(LANG_ARENA_QUEUE_ANNOUNCE_WORLD_EXIT, team->GetName().c_str(), arenaType, arenaType, groupInfo->ArenaTeamRating);
+            // Do not show message in 1v1
+            if (arenaType != 1)
+                sWorld->SendWorldText(LANG_ARENA_QUEUE_ANNOUNCE_WORLD_EXIT, team->GetName().c_str(), arenaType, arenaType, groupInfo->ArenaTeamRating);
         }
 
     // if player leaves queue and he is invited to a rated arena match, then count it as he lost
