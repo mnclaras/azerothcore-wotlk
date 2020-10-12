@@ -162,7 +162,9 @@ GroupQueueInfo* BattlegroundQueue::AddGroup(Player * leader, Group * grp, PvPDif
                 case ARENA_TYPE_3v3: arenaType = 3; break;
                 case ARENA_TYPE_5v5: arenaType = 1; break;
             }
-            sWorld->SendWorldText(LANG_ARENA_QUEUE_ANNOUNCE_WORLD_JOIN, team->GetName().c_str(), arenaType, arenaType, ginfo->ArenaTeamRating);
+            // Do not show message in 1v1
+            if (arenaType != 1)
+                sWorld->SendWorldText(LANG_ARENA_QUEUE_ANNOUNCE_WORLD_JOIN, team->GetName().c_str(), arenaType, arenaType, ginfo->ArenaTeamRating);
         }
             
 
