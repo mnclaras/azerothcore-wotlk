@@ -446,8 +446,8 @@ public:
 
                 case EVENT_SPELL_RADIANCE:
                     //me->CastSpell((Unit*)NULL, SPELL_RADIANCE, false);
-					DoCastAOE(SPELL_RADIANCE);
-					// me->CastSpell(me, SPELL_RADIANCE, true);
+					//DoCastAOE(SPELL_RADIANCE);
+					me->CastSpell(me, SPELL_RADIANCE, true);
                     me->MonsterTextEmote(TEXT_RADIATE, 0, true);
                     _events.ScheduleEvent(EVENT_SPELL_RADIANCE, 6000, PHASE_FOUR);
                     break;
