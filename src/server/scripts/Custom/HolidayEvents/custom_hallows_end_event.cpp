@@ -154,7 +154,7 @@ public:
 
         void JustSummoned(Creature* summon) override
         {
-            Summons.Summon(summon);          
+            Summons.Summon(summon);
         }
 
         void SummonedCreatureDies(Creature* summon, Unit*)
@@ -211,7 +211,7 @@ public:
                     me->MonsterYell("Se acabo!", LANG_UNIVERSAL, 0);
                     DoCast(me, SPELL_ENRAGE);
                     _events.ScheduleEvent(EVENT_ENRAGE, 180000);
-                    break;            
+                    break;
                 default:
                     break;
                 }
@@ -225,7 +225,7 @@ public:
             std::list<Creature*> unitList;
             me->GetCreaturesWithEntryInRange(unitList, 200.0f, creatureEntry);
             for (std::list<Creature*>::iterator itr = unitList.begin(); itr != unitList.end(); ++itr)
-                    (*itr)->ToCreature()->DespawnOrUnsummon(500);
+                (*itr)->ToCreature()->DespawnOrUnsummon(500);
         }
 
     private:
@@ -287,7 +287,7 @@ public:
             {
                 me->MonsterYell("FASE 2. Me estas enfadando!", LANG_UNIVERSAL, 0);
                 _events.SetPhase(PHASE_TWO);
-                _events.ScheduleEvent(EVENT_ICY_GRIP, 1000);
+                _events.ScheduleEvent(EVENT_ICY_GRIP, 2000);
                 _events.ScheduleEvent(EVENT_SUMMONS, 5000);
                 _events.ScheduleEvent(EVENT_SPELL_DOMINATE_MIND_25, 15000);
             }
@@ -296,7 +296,7 @@ public:
             {
                 me->MonsterYell("FASE 3. No voy a permitir que os salgais con la vuestra!", LANG_UNIVERSAL, 0);
                 _events.SetPhase(PHASE_THREE);
-                _events.ScheduleEvent(EVENT_ICY_GRIP, 1000);
+                _events.ScheduleEvent(EVENT_ICY_GRIP, 2000);
                 _events.ScheduleEvent(EVENT_SPELL_LEGION_FLAME, 5000);
                 _events.ScheduleEvent(EVENT_SPELL_INCINERATE_FLESH, 12000);
             }
@@ -305,7 +305,7 @@ public:
             {
                 me->MonsterYell("FASE 4. Vais a morir todos!", LANG_UNIVERSAL, 0);
                 _events.SetPhase(PHASE_FOUR);
-                _events.ScheduleEvent(EVENT_ICY_GRIP, 1000);
+                _events.ScheduleEvent(EVENT_ICY_GRIP, 2000);
                 _events.ScheduleEvent(EVENT_SPELL_RADIANCE, 5000);
                 _events.ScheduleEvent(EVENT_DECIMATE, 7000);
             }
@@ -455,8 +455,7 @@ public:
                     me->CastSpell(me, SPELL_BLISTERING_COLD, false);
                 case EVENT_ICY_GRIP:
                     me->CastSpell((Unit*)NULL, SPELL_ICY_GRIP, false);
-                    _events.DelayEventsToMax(1001, 0);
-                    _events.ScheduleEvent(EVENT_BLISTERING_COLD, 1000);
+                    _events.ScheduleEvent(EVENT_BLISTERING_COLD, 1500);
                     break;
                 default:
                     break;
@@ -470,7 +469,7 @@ public:
         {
             me->SetControlled(false, UNIT_STATE_ROOT);
             me->DisableRotate(false);
-            ScriptedAI::EnterEvadeMode(); 
+            ScriptedAI::EnterEvadeMode();
         }
 
         void SpellHitTarget(Unit* target, SpellInfo const* spell)
@@ -566,7 +565,7 @@ public:
                 case EVENT_BOMB_SUICIDE:
                     DoCastVictim(SPELL_BOMB_SUICIDE);
                     break;
-              
+
                 default:
                     break;
                 }
