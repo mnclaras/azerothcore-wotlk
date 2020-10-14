@@ -190,27 +190,27 @@ public:
                     break;
                 case EVENT_BEBENDE_ERDE:
                     DoCastVictim(SPELL_BEBENDE_ERDE);
-                    _events.RepeatEvent(8000);
+                    _events.ScheduleEvent(EVENT_BEBENDE_ERDE, 8000);
                     break;
                 case EVENT_BLADESTORM:
                     DoCastVictim(SPELL_BLADESTORM);
-                    _events.RepeatEvent(20000);
+                    _events.ScheduleEvent(EVENT_BLADESTORM, 20000);
                     break;
                 case EVENT_SUMMON_DRUDGE_GHOUL:
                     me->MonsterYell("Venid esbirros...", LANG_UNIVERSAL, 0);
                     if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 100.0f, true))
                         me->CastSpell(target, SPELL_SUMMON_DRUDGE_GHOULS, false);
-                    _events.RepeatEvent(25000);
+                    _events.ScheduleEvent(EVENT_SUMMON_DRUDGE_GHOUL, 25000);
                     break;
                 case EVENT_BERSERK:
                     me->MonsterYell("Me has puesto furioso!", LANG_UNIVERSAL, 0);
                     DoCast(me, SPELL_BERSERK);
-                    _events.RepeatEvent(150000);
+                    _events.ScheduleEvent(EVENT_BERSERK, 150000);
                     break;
                 case EVENT_ENRAGE:
                     me->MonsterYell("Se acabo!", LANG_UNIVERSAL, 0);
                     DoCast(me, SPELL_ENRAGE);
-                    _events.RepeatEvent(180000);
+                    _events.ScheduleEvent(EVENT_ENRAGE, 180000);
                     break;
                 default:
                     break;
@@ -357,9 +357,7 @@ public:
                 case EVENT_SUMMONS:
                     me->MonsterYell("Venid esbirros...", LANG_UNIVERSAL, 0);
                     me->SummonCreature(NPC_BOSS_TWO_ADD, me->GetPositionX() + 5, me->GetPositionY(), me->GetPositionZ(), 0, TEMPSUMMON_CORPSE_DESPAWN, 600000);
-                    me->SummonCreature(NPC_BOSS_TWO_ADD, me->GetPositionX() + 5, me->GetPositionY(), me->GetPositionZ(), 0, TEMPSUMMON_CORPSE_DESPAWN, 600000);
-                    me->SummonCreature(NPC_BOSS_TWO_ADD, me->GetPositionX() + 5, me->GetPositionY(), me->GetPositionZ(), 0, TEMPSUMMON_CORPSE_DESPAWN, 600000);
-                    _events.RepeatEvent(30000);
+                    _events.ScheduleEvent(EVENT_SUMMONS, 30000);
                     break;
                 case EVENT_UNROOT:
                     me->SetControlled(false, UNIT_STATE_ROOT);
@@ -380,18 +378,18 @@ public:
                         }
                     }
                     _events.DelayEvents(1);
-                    _events.RepeatEvent(25000);
+                    _events.ScheduleEvent(EVENT_SLIME_SPRAY, 25000);
                     _events.ScheduleEvent(EVENT_UNROOT, 0);
                 }
                 break;
                 case EVENT_SPELL_SLIME_POOL:
                     if (Creature* c = me->SummonCreature(NPC_SLIME_POOL, *me, TEMPSUMMON_TIMED_DESPAWN, 30000))
                         c->CastSpell(c, SPELL_SLIME_POOL_EFFECT, true);
-                    _events.RepeatEvent(10000);
+                    _events.ScheduleEvent(EVENT_SPELL_SLIME_POOL, 10000);
                     break;
                 case EVENT_MORTAL_WOUND:
                     me->CastSpell(me->GetVictim(), SPELL_MORTAL_WOUND, false);
-                    _events.RepeatEvent(urand(4500, 7000));
+                    _events.ScheduleEvent(EVENT_MORTAL_WOUND, urand(4500, 7000));
                     break;
                 case EVENT_SPELL_DOMINATE_MIND_25:
                 {
@@ -418,7 +416,7 @@ public:
                         me->CastSpell(target, SPELL_DOMINATE_MIND_25, true);
                     }
 
-                    _events.RepeatEvent(35000);
+                    _events.ScheduleEvent(EVENT_SPELL_DOMINATE_MIND_25, 35000);
                 }
                 break;
                 case EVENT_SPELL_LEGION_FLAME:
@@ -427,28 +425,28 @@ public:
                         me->MonsterYell("Corre insentato!", LANG_UNIVERSAL, 0);
                         me->CastSpell(target, SPELL_LEGION_FLAME, false);
                     }
-                    _events.RepeatEvent(15000);
+                    _events.ScheduleEvent(EVENT_SPELL_LEGION_FLAME, 15000);
                     break;
                 case EVENT_SPELL_INCINERATE_FLESH:
                     if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 0.0f, true))
                     {
                         me->CastSpell(target, SPELL_INCINERATE_FLESH, false);
                     }
-                    _events.RepeatEvent(urand(10000, 13000));
+                    _events.ScheduleEvent(EVENT_SPELL_LEGION_FLAME, urand(10000, 13000));
                     break;
                 case EVENT_SPELL_RADIANCE:
                     me->CastSpell((Unit*)NULL, SPELL_RADIANCE, false);
                     me->MonsterTextEmote(TEXT_RADIATE, 0, true);
-                    _events.RepeatEvent(6000);
+                    _events.ScheduleEvent(EVENT_SPELL_RADIANCE, 6000);
                     break;
                 case EVENT_DECIMATE:
                     me->CastSpell(me->GetVictim(), SPELL_DECIMATE, false);
-                    _events.RepeatEvent(10000);
+                    _events.ScheduleEvent(EVENT_DECIMATE, 10000);
                     break;
                 case EVENT_BLISTERING_COLD:
                     me->MonsterYell("Huid de mi...", LANG_UNIVERSAL, 0);
                     me->CastSpell(me, SPELL_BLISTERING_COLD, false);
-                    break;
+					break;
                 case EVENT_ICY_GRIP:
                     me->CastSpell((Unit*)NULL, SPELL_ICY_GRIP, false);
                     _events.ScheduleEvent(EVENT_BLISTERING_COLD, 1500);
@@ -556,10 +554,10 @@ public:
                 {
                 case EVENT_BONE_SLICE:
                     DoCastVictim(SPELL_BONE_SLICE);
-                    _events.RepeatEvent(10000);
+                    _events.ScheduleEvent(EVENT_BEBENDE_ERDE, 10000);
                     break;
                 case EVENT_BOMB_SUICIDE:
-                    DoCastSelf(SPELL_BOMB_SUICIDE, true);
+                    DoCastSelf(SPELL_BOMB_SUICIDE, false);
                     break;
 
                 default:
