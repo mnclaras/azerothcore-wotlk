@@ -310,7 +310,7 @@ public:
                 _events.SetPhase(PHASE_FOUR);
                 _events.ScheduleEvent(EVENT_ICY_GRIP, 2000, PHASE_FOUR);
                 _events.ScheduleEvent(EVENT_SPELL_RADIANCE, 5000, PHASE_FOUR);
-                _events.ScheduleEvent(EVENT_DECIMATE, 7000, PHASE_FOUR);
+                //_events.ScheduleEvent(EVENT_DECIMATE, 7000, PHASE_FOUR);
             }
         }
 
@@ -443,7 +443,8 @@ public:
 
                 case EVENT_SPELL_RADIANCE:
                     //me->CastSpell((Unit*)NULL, SPELL_RADIANCE, false);
-					me->CastSpell(me, SPELL_RADIANCE, true);
+					
+					me->CastSpell(me, SPELL_RADIANCE, false);
                     me->MonsterTextEmote(TEXT_RADIATE, 0, true);
                     _events.ScheduleEvent(EVENT_SPELL_RADIANCE, 6000, PHASE_FOUR);
                     break;
