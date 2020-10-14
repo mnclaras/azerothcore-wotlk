@@ -135,7 +135,7 @@ public:
             _events.ScheduleEvent(EVENT_BEBENDE_ERDE, 12000);
         }
 
-        void DamageTaken(Unit*, uint32& damage, DamageEffectType, SpellSchoolMask)
+        void DamageTaken(Unit*, uint32& damage, DamageEffectType, SpellSchoolMask) override
         {
             if (me->HealthBelowPctDamaged(75, damage) && _events.IsInPhase(PHASE_ONE))
             {
@@ -592,4 +592,5 @@ void AddSC_custom_hallows_end_event()
 {
     new custom_hallows_end_event_boss_one();
     new custom_hallows_end_event_boss_two();
+	new custom_hallows_end_event_boss_two_add();
 }
