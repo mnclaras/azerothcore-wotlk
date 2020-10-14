@@ -318,7 +318,7 @@ public:
             switch (summon->GetEntry())
             {
             case NPC_BOSS_TWO_ADD:
-                if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, NonTankTargetSelector(me)))
+                if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 1, 100.0f, true))
                     summon->AI()->AttackStart(target);
                 break;
             default:
@@ -326,7 +326,7 @@ public:
             }
         }
 
-        void SummonedCreatureDies(Creature* summon, Unit*)
+        void SummonedCreatureDies(Creature* summon, Unit*) override
         {
             switch (summon->GetEntry())
             {
@@ -357,7 +357,9 @@ public:
                 case EVENT_SUMMONS:
                     me->MonsterYell("Venid esbirros...", LANG_UNIVERSAL, 0);
                     me->SummonCreature(NPC_BOSS_TWO_ADD, me->GetPositionX() + 5, me->GetPositionY(), me->GetPositionZ(), 0, TEMPSUMMON_CORPSE_DESPAWN, 600000);
-                    _events.ScheduleEvent(EVENT_SUMMONS, 30000);
+                    me->SummonCreature(NPC_BOSS_TWO_ADD, me->GetPositionX() + 5, me->GetPositionY(), me->GetPositionZ(), 0, TEMPSUMMON_CORPSE_DESPAWN, 600000);
+                    me->SummonCreature(NPC_BOSS_TWO_ADD, me->GetPositionX() + 5, me->GetPositionY(), me->GetPositionZ(), 0, TEMPSUMMON_CORPSE_DESPAWN, 600000);
+                    _events.ScheduleEvent(EVENT_SUMMONS, 30000, PHASE_TWO);
                     break;
                 case EVENT_UNROOT:
                     me->SetControlled(false, UNIT_STATE_ROOT);
@@ -378,14 +380,14 @@ public:
                         }
                     }
                     _events.DelayEvents(1);
-                    _events.ScheduleEvent(EVENT_SLIME_SPRAY, 25000);
+                    _events.ScheduleEvent(EVENT_SLIME_SPRAY, 25000, PHASE_ONE);
                     _events.ScheduleEvent(EVENT_UNROOT, 0);
                 }
                 break;
                 case EVENT_SPELL_SLIME_POOL:
                     if (Creature* c = me->SummonCreature(NPC_SLIME_POOL, *me, TEMPSUMMON_TIMED_DESPAWN, 30000))
                         c->CastSpell(c, SPELL_SLIME_POOL_EFFECT, true);
-                    _events.ScheduleEvent(EVENT_SPELL_SLIME_POOL, 10000);
+                    _events.ScheduleEvent(EVENT_SPELL_SLIME_POOL, 10000, PHASE_ONE);
                     break;
                 case EVENT_MORTAL_WOUND:
                     me->CastSpell(me->GetVictim(), SPELL_MORTAL_WOUND, false);
@@ -416,37 +418,40 @@ public:
                         me->CastSpell(target, SPELL_DOMINATE_MIND_25, true);
                     }
 
-                    _events.ScheduleEvent(EVENT_SPELL_DOMINATE_MIND_25, 35000);
+                    _events.ScheduleEvent(EVENT_SPELL_DOMINATE_MIND_25, 35000, PHASE_TWO);
                 }
                 break;
+
                 case EVENT_SPELL_LEGION_FLAME:
                     if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 0.0f, true))
                     {
                         me->MonsterYell("Corre insentato!", LANG_UNIVERSAL, 0);
                         me->CastSpell(target, SPELL_LEGION_FLAME, false);
                     }
-                    _events.ScheduleEvent(EVENT_SPELL_LEGION_FLAME, 15000);
+                    _events.ScheduleEvent(EVENT_SPELL_LEGION_FLAME, 15000, PHASE_THREE);
                     break;
                 case EVENT_SPELL_INCINERATE_FLESH:
                     if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, 0.0f, true))
                     {
                         me->CastSpell(target, SPELL_INCINERATE_FLESH, false);
                     }
-                    _events.ScheduleEvent(EVENT_SPELL_LEGION_FLAME, urand(10000, 13000));
+                    _events.ScheduleEvent(EVENT_SPELL_INCINERATE_FLESH, urand(10000, 13000), PHASE_THREE);
                     break;
+
                 case EVENT_SPELL_RADIANCE:
                     me->CastSpell((Unit*)NULL, SPELL_RADIANCE, false);
                     me->MonsterTextEmote(TEXT_RADIATE, 0, true);
-                    _events.ScheduleEvent(EVENT_SPELL_RADIANCE, 6000);
+                    _events.ScheduleEvent(EVENT_SPELL_RADIANCE, 6000, PHASE_FOUR);
                     break;
                 case EVENT_DECIMATE:
                     me->CastSpell(me->GetVictim(), SPELL_DECIMATE, false);
-                    _events.ScheduleEvent(EVENT_DECIMATE, 10000);
+                    _events.ScheduleEvent(EVENT_DECIMATE, 10000, PHASE_FOUR);
                     break;
+
                 case EVENT_BLISTERING_COLD:
                     me->MonsterYell("Huid de mi...", LANG_UNIVERSAL, 0);
                     me->CastSpell(me, SPELL_BLISTERING_COLD, false);
-					break;
+                    break;
                 case EVENT_ICY_GRIP:
                     me->CastSpell((Unit*)NULL, SPELL_ICY_GRIP, false);
                     _events.ScheduleEvent(EVENT_BLISTERING_COLD, 1500);
@@ -525,7 +530,7 @@ public:
         void EnterCombat(Unit* /*who*/) override
         {
             _events.SetPhase(PHASE_ONE);
-            _events.ScheduleEvent(EVENT_BONE_SLICE, 7000);
+            //_events.ScheduleEvent(EVENT_BONE_SLICE, 7000);
         }
 
         void DamageTaken(Unit*, uint32& damage, DamageEffectType, SpellSchoolMask)
@@ -557,7 +562,7 @@ public:
                     _events.ScheduleEvent(EVENT_BEBENDE_ERDE, 10000);
                     break;
                 case EVENT_BOMB_SUICIDE:
-                    DoCastSelf(SPELL_BOMB_SUICIDE, false);
+                    DoCast(me, SPELL_BOMB_SUICIDE);
                     break;
 
                 default:
