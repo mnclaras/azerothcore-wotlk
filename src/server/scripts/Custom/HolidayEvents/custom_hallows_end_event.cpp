@@ -73,6 +73,10 @@ enum Events
     EVENT_BOMB_SUICIDE,
     EVENT_SPELL_LEGION_FLAME,
     EVENT_SPELL_INCINERATE_FLESH,
+    EVENT_SPELL_RADIANCE_LEFT6,
+    EVENT_SPELL_RADIANCE_LEFT3,
+    EVENT_SPELL_RADIANCE_LEFT2,
+    EVENT_SPELL_RADIANCE_LEFT1,
     EVENT_SPELL_RADIANCE,
     EVENT_DECIMATE,
     EVENT_BLISTERING_COLD,
@@ -95,7 +99,6 @@ enum Summons
     NPC_BOSS_TWO_ADD = 2100002 // Calabacino Explosivo
 };
 
-#define TEXT_RADIATE "Se esta empezando a radiar luz. Tapate los ojos!"
 
 class custom_hallows_end_event_boss_one : public CreatureScript
 {
@@ -139,14 +142,14 @@ public:
         {
             if (me->HealthBelowPctDamaged(75, damage) && _events.IsInPhase(PHASE_ONE))
             {
-				me->MonsterYell("FASE 2. Me has enfadado!", LANG_UNIVERSAL, 0);
+                me->MonsterYell("FASE 2. Me has enfadado!", LANG_UNIVERSAL, 0);
                 _events.SetPhase(PHASE_TWO);
                 _events.ScheduleEvent(EVENT_BLADESTORM, 10000);
             }
 
             if (me->HealthBelowPctDamaged(45, damage) && _events.IsInPhase(PHASE_TWO))
             {
-				me->MonsterYell("FASE 3. No voy a tener piedad...", LANG_UNIVERSAL, 0);
+                me->MonsterYell("FASE 3. No voy a tener piedad...", LANG_UNIVERSAL, 0);
                 _events.SetPhase(PHASE_THREE);
                 //_events.ScheduleEvent(EVENT_SUMMON_DRUDGE_GHOUL, 10000);
                 _events.ScheduleEvent(EVENT_BERSERK, 150000, PHASE_THREE);   // Berserk starts 2.5 minutes after phase 3 begins. 
@@ -196,7 +199,7 @@ public:
                     break;
                 case EVENT_BLADESTORM:
                     //DoCastVictim(SPELL_BLADESTORM);
-					me->CastSpell(me, SPELL_BLADESTORM, false);
+                    me->CastSpell(me, SPELL_BLADESTORM, false);
                     _events.ScheduleEvent(EVENT_BLADESTORM, 22000);
                     break;
                 case EVENT_SUMMON_DRUDGE_GHOUL:
@@ -312,7 +315,7 @@ public:
                 _events.CancelEventGroup(PHASE_THREE);
                 _events.SetPhase(PHASE_FOUR);
                 _events.ScheduleEvent(EVENT_ICY_GRIP, 2000, PHASE_FOUR);
-                _events.ScheduleEvent(EVENT_SPELL_RADIANCE, 5000, PHASE_FOUR);
+                _events.ScheduleEvent(EVENT_SPELL_RADIANCE_LEFT6, 1000, PHASE_FOUR);
                 //_events.ScheduleEvent(EVENT_DECIMATE, 7000, PHASE_FOUR);
             }
         }
@@ -444,12 +447,27 @@ public:
                     _events.ScheduleEvent(EVENT_SPELL_INCINERATE_FLESH, urand(10000, 13000), PHASE_THREE);
                     break;
 
+                case EVENT_SPELL_RADIANCE_LEFT6:
+                    me->MonsterTextEmote("Se esta empezando a radiar luz!", 0, true);
+                    _events.ScheduleEvent(EVENT_SPELL_RADIANCE_LEFT2, 3000, PHASE_FOUR);
+                    break;
+                case EVENT_SPELL_RADIANCE_LEFT3:
+                    me->MonsterTextEmote("Date la vuelta en 3..", 0, true);
+                    _events.ScheduleEvent(EVENT_SPELL_RADIANCE_LEFT2, 1000, PHASE_FOUR);
+                    break;
+                case EVENT_SPELL_RADIANCE_LEFT2:
+                    me->MonsterTextEmote("2...", 0, true);
+                    _events.ScheduleEvent(EVENT_SPELL_RADIANCE_LEFT1, 1000, PHASE_FOUR);
+                    break;
+                case EVENT_SPELL_RADIANCE_LEFT1:
+                    me->MonsterTextEmote("1...", 0, true);
+                    _events.ScheduleEvent(EVENT_SPELL_RADIANCE, 1000, PHASE_FOUR);
+                    break;
                 case EVENT_SPELL_RADIANCE:
                     //me->CastSpell((Unit*)NULL, SPELL_RADIANCE, false);
-					//DoCastAOE(SPELL_RADIANCE);
-					me->CastSpell(me, SPELL_RADIANCE, true);
-                    me->MonsterTextEmote(TEXT_RADIATE, 0, true);
-                    _events.ScheduleEvent(EVENT_SPELL_RADIANCE, 6000, PHASE_FOUR);
+                    //DoCastAOE(SPELL_RADIANCE);
+                    me->CastSpell(me, SPELL_RADIANCE, true);
+                    _events.ScheduleEvent(EVENT_SPELL_RADIANCE_LEFT6, 100, PHASE_FOUR);
                     break;
                 case EVENT_DECIMATE:
                     me->CastSpell(me->GetVictim(), SPELL_DECIMATE, false);
