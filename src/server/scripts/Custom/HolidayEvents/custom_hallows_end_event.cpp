@@ -157,7 +157,7 @@ public:
             Summons.Summon(summon);
         }
 
-        void SummonedCreatureDies(Creature* summon, Unit*)
+        void SummonedCreatureDies(Creature* summon, Unit*) override
         {
             switch (summon->GetEntry())
             {
@@ -281,11 +281,12 @@ public:
             DoCastSelf(SPELL_DIVINE_SURGE, true);
         }
 
-        void DamageTaken(Unit*, uint32& damage, DamageEffectType, SpellSchoolMask)
+        void DamageTaken(Unit*, uint32& damage, DamageEffectType, SpellSchoolMask) override
         {
             if (me->HealthBelowPctDamaged(70, damage) && _events.IsInPhase(PHASE_ONE))
             {
                 me->MonsterYell("FASE 2. Me estas enfadando!", LANG_UNIVERSAL, 0);
+                _events.CancelEventGroup(PHASE_ONE);
                 _events.SetPhase(PHASE_TWO);
                 _events.ScheduleEvent(EVENT_ICY_GRIP, 2000, PHASE_TWO);
                 _events.ScheduleEvent(EVENT_SUMMONS, 5000, PHASE_TWO);
@@ -295,6 +296,7 @@ public:
             if (me->HealthBelowPctDamaged(35, damage) && _events.IsInPhase(PHASE_TWO))
             {
                 me->MonsterYell("FASE 3. No voy a permitir que os salgais con la vuestra!", LANG_UNIVERSAL, 0);
+                _events.CancelEventGroup(PHASE_TWO);
                 _events.SetPhase(PHASE_THREE);
                 _events.ScheduleEvent(EVENT_ICY_GRIP, 2000, PHASE_THREE);
                 _events.ScheduleEvent(EVENT_SPELL_LEGION_FLAME, 5000, PHASE_THREE);
@@ -304,6 +306,7 @@ public:
             if (me->HealthBelowPctDamaged(10, damage) && _events.IsInPhase(PHASE_THREE))
             {
                 me->MonsterYell("FASE 4. Vais a morir todos!", LANG_UNIVERSAL, 0);
+                _events.CancelEventGroup(PHASE_THREE);
                 _events.SetPhase(PHASE_FOUR);
                 _events.ScheduleEvent(EVENT_ICY_GRIP, 2000, PHASE_FOUR);
                 _events.ScheduleEvent(EVENT_SPELL_RADIANCE, 5000, PHASE_FOUR);
@@ -439,7 +442,8 @@ public:
                     break;
 
                 case EVENT_SPELL_RADIANCE:
-                    me->CastSpell((Unit*)NULL, SPELL_RADIANCE, false);
+                    //me->CastSpell((Unit*)NULL, SPELL_RADIANCE, false);
+                    me->CastSpell(me, SPELL_RADIANCE, false);
                     me->MonsterTextEmote(TEXT_RADIATE, 0, true);
                     _events.ScheduleEvent(EVENT_SPELL_RADIANCE, 6000, PHASE_FOUR);
                     break;
@@ -464,14 +468,14 @@ public:
             DoMeleeAttackIfReady();
         }
 
-        void EnterEvadeMode()
+        void EnterEvadeMode() override
         {
             me->SetControlled(false, UNIT_STATE_ROOT);
             me->DisableRotate(false);
             ScriptedAI::EnterEvadeMode();
         }
 
-        void SpellHitTarget(Unit* target, SpellInfo const* spell)
+        void SpellHitTarget(Unit* target, SpellInfo const* spell) override
         {
             switch (spell->Id)
             {
@@ -533,7 +537,7 @@ public:
             //_events.ScheduleEvent(EVENT_BONE_SLICE, 7000);
         }
 
-        void DamageTaken(Unit*, uint32& damage, DamageEffectType, SpellSchoolMask)
+        void DamageTaken(Unit*, uint32& damage, DamageEffectType, SpellSchoolMask) override
         {
             if (me->HealthBelowPctDamaged(20, damage) && _events.IsInPhase(PHASE_ONE))
             {
