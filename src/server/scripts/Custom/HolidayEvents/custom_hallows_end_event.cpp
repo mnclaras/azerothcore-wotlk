@@ -30,7 +30,7 @@
 enum Spells
 {
     SPELL_BEBENDE_ERDE = 6524,
-    SPELL_BLADESTORM = 9632,
+    SPELL_BLADESTORM = 50228, //9632,
     SPELL_BERSERK = 26662,
     SPELL_ENRAGE = 64487,
     SPELL_SLIME_SPRAY = 69508,
@@ -139,12 +139,14 @@ public:
         {
             if (me->HealthBelowPctDamaged(75, damage) && _events.IsInPhase(PHASE_ONE))
             {
+				me->MonsterYell("FASE 2. Me has enfadado!", LANG_UNIVERSAL, 0);
                 _events.SetPhase(PHASE_TWO);
                 _events.ScheduleEvent(EVENT_BLADESTORM, 10000);
             }
 
             if (me->HealthBelowPctDamaged(45, damage) && _events.IsInPhase(PHASE_TWO))
             {
+				me->MonsterYell("FASE 3. No voy a tener piedad...", LANG_UNIVERSAL, 0);
                 _events.SetPhase(PHASE_THREE);
                 //_events.ScheduleEvent(EVENT_SUMMON_DRUDGE_GHOUL, 10000);
                 _events.ScheduleEvent(EVENT_BERSERK, 150000, PHASE_THREE);   // Berserk starts 2.5 minutes after phase 3 begins. 
@@ -193,8 +195,9 @@ public:
                     _events.ScheduleEvent(EVENT_BEBENDE_ERDE, 8000);
                     break;
                 case EVENT_BLADESTORM:
-                    DoCastVictim(SPELL_BLADESTORM);
-                    _events.ScheduleEvent(EVENT_BLADESTORM, 20000);
+                    //DoCastVictim(SPELL_BLADESTORM);
+					me->CastSpell(me, SPELL_BLADESTORM, false);
+                    _events.ScheduleEvent(EVENT_BLADESTORM, 22000);
                     break;
                 case EVENT_SUMMON_DRUDGE_GHOUL:
                     me->MonsterYell("Venid esbirros...", LANG_UNIVERSAL, 0);
