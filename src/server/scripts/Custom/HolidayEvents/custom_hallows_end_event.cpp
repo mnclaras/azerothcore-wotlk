@@ -443,7 +443,7 @@ public:
 
                 case EVENT_SPELL_RADIANCE:
                     //me->CastSpell((Unit*)NULL, SPELL_RADIANCE, false);
-                    me->CastSpell(me, SPELL_RADIANCE, false);
+					me->CastSpell(me, SPELL_RADIANCE, true);
                     me->MonsterTextEmote(TEXT_RADIATE, 0, true);
                     _events.ScheduleEvent(EVENT_SPELL_RADIANCE, 6000, PHASE_FOUR);
                     break;
@@ -563,7 +563,7 @@ public:
                 {
                 case EVENT_BONE_SLICE:
                     DoCastVictim(SPELL_BONE_SLICE);
-                    _events.ScheduleEvent(EVENT_BEBENDE_ERDE, 10000);
+                    _events.ScheduleEvent(EVENT_BONE_SLICE, 10000);
                     break;
                 case EVENT_BOMB_SUICIDE:
                     DoCast(me, SPELL_BOMB_SUICIDE);
@@ -592,5 +592,5 @@ void AddSC_custom_hallows_end_event()
 {
     new custom_hallows_end_event_boss_one();
     new custom_hallows_end_event_boss_two();
-	new custom_hallows_end_event_boss_two_add();
+    new custom_hallows_end_event_boss_two_add();
 }
