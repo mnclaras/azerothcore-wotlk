@@ -315,7 +315,6 @@ public:
                 _events.CancelEventGroup(PHASE_THREE);
                 _events.SetPhase(PHASE_FOUR);
                 _events.ScheduleEvent(EVENT_ICY_GRIP, 2000, PHASE_FOUR);
-                me->MonsterTextEmote("Se esta empezando a radiar luz!", 0, true);
                 _events.ScheduleEvent(EVENT_SPELL_RADIANCE_LEFT6, 1000, PHASE_FOUR);
                 //_events.ScheduleEvent(EVENT_DECIMATE, 7000, PHASE_FOUR);
             }
@@ -452,7 +451,7 @@ public:
                     _events.ScheduleEvent(EVENT_SPELL_RADIANCE_LEFT3, 3000, PHASE_FOUR);
                     break;
                 case EVENT_SPELL_RADIANCE_LEFT3:
-                    me->MonsterTextEmote("Date la vuelta en 3..", 0, true);
+                    me->MonsterTextEmote("Date la vuelta en 3...", 0, true);
                     _events.ScheduleEvent(EVENT_SPELL_RADIANCE_LEFT2, 1000, PHASE_FOUR);
                     break;
                 case EVENT_SPELL_RADIANCE_LEFT2:
@@ -477,10 +476,11 @@ public:
                 case EVENT_BLISTERING_COLD:
                     me->MonsterYell("Huid de mi...", LANG_UNIVERSAL, 0);
                     me->CastSpell(me, SPELL_BLISTERING_COLD, false);
+					me->MonsterTextEmote("Se esta empezando a radiar luz!", 0, true);
                     break;
                 case EVENT_ICY_GRIP:
                     me->CastSpell((Unit*)NULL, SPELL_ICY_GRIP, false);
-                    _events.ScheduleEvent(EVENT_BLISTERING_COLD, 1500);
+                    _events.ScheduleEvent(EVENT_BLISTERING_COLD, 1000);
                     break;
                 default:
                     break;
