@@ -8,7 +8,8 @@ enum Quests
     QUEST_WIN_50_ARENA = 80001,
     QUEST_WIN_5_BG = 80002,
     QUEST_WIN_50_BG = 80003,
-    QUEST_KILL_100_PLAYERS = 80004
+    QUEST_KILL_100_PLAYERS = 80004,
+    QUEST_HALLOWEEN_WIN_5_2V2 = 100005
 };
 
 class ArenaAndBgRewards : public BGScript
@@ -25,6 +26,12 @@ public:
         {
             if (player->GetQuestStatus(QUEST_WIN_10_ARENA) == QUEST_STATUS_INCOMPLETE)
                 player->KilledMonsterCredit(QUEST_WIN_10_ARENA, 0);
+
+            if (bg->GetArenaType() == ARENA_TYPE_2v2 && player->GetQuestStatus(QUEST_HALLOWEEN_WIN_5_2V2) == QUEST_STATUS_INCOMPLETE)
+            {
+                player->KilledMonsterCredit(QUEST_HALLOWEEN_WIN_5_2V2, 0);
+            }
+            
 
             if (player->GetQuestStatus(QUEST_WIN_50_ARENA) == QUEST_STATUS_INCOMPLETE)
                 player->KilledMonsterCredit(QUEST_WIN_50_ARENA, 0);

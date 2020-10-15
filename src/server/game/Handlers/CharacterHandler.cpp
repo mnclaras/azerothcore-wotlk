@@ -1197,7 +1197,6 @@ void WorldSession::HandlePlayerLoginFromDB(LoginQueryHolder* holder)
 
     if (Item* item = pCurrChar->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_BODY))
     {
-        //if (item->GetEntry() == 100019 || item->GetEntry() == 100022 || item->GetEntry() == 100030 || item->GetEntry() == 100033 || item->GetEntry() == 100038)
         if (item->GetEntry() >= 100000 && item->GetEntry() <= 100100)
         {
             pCurrChar->MorphIllusionShirt(3, item->GetEntry());

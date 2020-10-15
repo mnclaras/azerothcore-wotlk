@@ -12997,6 +12997,9 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
             else if (shirtEntry == 100030) SetObjectScale(0.7f);
             else if (shirtEntry == 100033) SetObjectScale(0.4f);
             else if (shirtEntry == 100038) SetObjectScale(0.3f);
+            else if (shirtEntry == 100041) SetObjectScale(0.2f);
+            else if (shirtEntry == 100042) SetObjectScale(2.0f);
+
             else SetObjectScale(1.0f);
 
             switch (shirtEntry)
@@ -13051,6 +13054,8 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
             case 100038: SetDisplayId(29547); break;    // Illidan
             case 100039: SetDisplayId(20681); break;    // Akama
             case 100040: SetDisplayId(17600); break;    // Nobundo
+            case 100041: SetDisplayId(28641); break;    // Algalon
+            case 100042: SetDisplayId(21900); break;    // Calabaza Evento Halloween - Calabacino
             case 100100: SetDisplayId(21267); break;    // Fel Orc
             }
 
