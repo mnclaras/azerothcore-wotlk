@@ -51,6 +51,8 @@ enum Spells
     SPELL_BLISTERING_COLD = 70123,
     SPELL_ICY_GRIP = 70117,
     SPELL_ICY_GRIP_JUMP = 70122,
+    SPELL_FROST_AURA_25 = 55799,
+    SPELL_GROUND_TREMOR_FREYA_25 = 62859,
 };
 
 enum Events
@@ -80,7 +82,8 @@ enum Events
     EVENT_SPELL_RADIANCE,
     EVENT_DECIMATE,
     EVENT_BLISTERING_COLD,
-    EVENT_ICY_GRIP
+    EVENT_ICY_GRIP,
+    EVENT_FREYA_GROUND_TREMOR
 };
 
 enum Phases
@@ -99,6 +102,7 @@ enum Summons
     NPC_BOSS_TWO_ADD = 2100002 // Calabacino Explosivo
 };
 
+#define DEFAULT_MESSAGE 907
 
 class custom_hallows_end_event_boss_one : public CreatureScript
 {
@@ -299,7 +303,7 @@ public:
                 _events.ScheduleEvent(EVENT_SPELL_DOMINATE_MIND_25, 15000, PHASE_TWO);
             }
 
-            if (me->HealthBelowPctDamaged(35, damage) && _events.IsInPhase(PHASE_TWO))
+            if (me->HealthBelowPctDamaged(40, damage) && _events.IsInPhase(PHASE_TWO))
             {
                 me->MonsterYell("FASE 3. No voy a permitir que os salgais con la vuestra!", LANG_UNIVERSAL, 0);
                 _events.CancelEventGroup(PHASE_TWO);
@@ -309,13 +313,16 @@ public:
                 _events.ScheduleEvent(EVENT_SPELL_INCINERATE_FLESH, 12000, PHASE_THREE);
             }
 
-            if (me->HealthBelowPctDamaged(10, damage) && _events.IsInPhase(PHASE_THREE))
+            if (me->HealthBelowPctDamaged(20, damage) && _events.IsInPhase(PHASE_THREE))
             {
                 me->MonsterYell("FASE 4. Vais a morir todos!", LANG_UNIVERSAL, 0);
                 _events.CancelEventGroup(PHASE_THREE);
                 _events.SetPhase(PHASE_FOUR);
                 _events.ScheduleEvent(EVENT_ICY_GRIP, 2000, PHASE_FOUR);
                 _events.ScheduleEvent(EVENT_SPELL_RADIANCE_LEFT6, 1000, PHASE_FOUR);
+                _events.ScheduleEvent(EVENT_FREYA_GROUND_TREMOR, 13000, PHASE_FOUR);
+
+                me->CastSpell(me, SPELL_FROST_AURA_25, true);
                 //_events.ScheduleEvent(EVENT_DECIMATE, 7000, PHASE_FOUR);
             }
         }
@@ -476,11 +483,15 @@ public:
                 case EVENT_BLISTERING_COLD:
                     me->MonsterYell("Huid de mi...", LANG_UNIVERSAL, 0);
                     me->CastSpell(me, SPELL_BLISTERING_COLD, false);
-					me->MonsterTextEmote("Se esta empezando a radiar luz!", 0, true);
+                    me->MonsterTextEmote("Se esta empezando a radiar luz!", 0, true);
                     break;
                 case EVENT_ICY_GRIP:
                     me->CastSpell((Unit*)NULL, SPELL_ICY_GRIP, false);
                     _events.ScheduleEvent(EVENT_BLISTERING_COLD, 1000);
+                    break;
+                case EVENT_FREYA_GROUND_TREMOR:
+                    me->CastSpell(me, SPELL_GROUND_TREMOR_FREYA_25, false);
+                    _events.ScheduleEvent(EVENT_DECIMATE, 12000, PHASE_FOUR);
                     break;
                 default:
                     break;
@@ -609,10 +620,74 @@ public:
     }
 };
 
+class custom_hallows_end_event_teleporter : public CreatureScript
+{
+public:
+    custom_hallows_end_event_teleporter() : CreatureScript("custom_hallows_end_event_teleporter") { }
+
+    bool OnGossipHello(Player* player, Creature* creature) override
+    {
+        AddGossipItemFor(player, GOSSIP_ICON_TRAINER, "Quiero combatir a Calabacino Malvado.", GOSSIP_SENDER_MAIN, 2, "Seguro?", 0, false);
+        SendGossipMenuFor(player, DEFAULT_MESSAGE, creature->GetGUID());
+        return true;
+    }
+
+    bool OnGossipSelect(Player* player, Creature* creature, uint32 sender, uint32 action) override
+    {
+        player->PlayerTalkClass->ClearMenus();
+
+        if (sender == GOSSIP_SENDER_MAIN)
+        {
+            switch (action)
+            {
+            case 2: 
+                player->TeleportTo(469, -7729.168457f, -1673.251953f, 131.131653f, 1.537820f);
+
+                Group* grp = player->GetGroup();
+                if (grp && grp != NULL && grp->GetLeaderGUID() == player->GetGUID())
+                {
+                    GroupReference* grpRef = grp->GetFirstMember();
+                    if (grp->GetLeaderGUID() == player->GetGUID())
+                        GroupReference grpRef = player->GetGroupRef();
+
+                    for (grpRef; grpRef != NULL; grpRef = grpRef->next())
+                    {
+                        Player* groupMember = grpRef->GetSource();
+                        ChatHandler(player->GetSession()).PSendSysMessage("Enviando solicitud de summon a...");
+                        if (!groupMember)
+                            continue;
+                        if (groupMember->GetGUID() == player->GetGUID())
+                            break;
+                        player->SetSelection(groupMember->GetGUID());
+                        player->CastSpell(groupMember, 7720, true);
+                        ChatHandler(player->GetSession()).PSendSysMessage("%s", groupMember->GetName().c_str());
+                    }
+                }
+
+                CloseGossipMenuFor(player);
+                break;
+            }
+        }
+
+        return true;
+    }
+
+    struct custom_hallows_end_event_teleporterAI : public ScriptedAI
+    {
+        custom_hallows_end_event_teleporterAI(Creature* creature) : ScriptedAI(creature) { }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new custom_hallows_end_event_teleporterAI(creature);
+    }
+};
+
 
 void AddSC_custom_hallows_end_event()
 {
     new custom_hallows_end_event_boss_one();
     new custom_hallows_end_event_boss_two();
     new custom_hallows_end_event_boss_two_add();
+    new custom_hallows_end_event_teleporter();
 }
