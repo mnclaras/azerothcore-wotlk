@@ -699,14 +699,11 @@ public:
     void OnBattlegroundEndReward(Battleground* bg, Player* player, TeamId winnerTeamId) override
     {
         TeamId bgTeamId = player->GetBgTeamId();
-        uint32 RewardCount = 0;
 
-        if (bg->isArena() && bg->isRated() && bgTeamId == winnerTeamId)
+        if (bgTeamId && bg->isArena() && bg->isRated() && bgTeamId == winnerTeamId && bg->GetArenaType() == ARENA_TYPE_2v2 
+			&& player->GetQuestStatus(QUEST_HALLOWEEN_WIN_5_2V2) == QUEST_STATUS_INCOMPLETE)
         {
-            if (bg->GetArenaType() == ARENA_TYPE_2v2 && player->GetQuestStatus(QUEST_HALLOWEEN_WIN_5_2V2) == QUEST_STATUS_INCOMPLETE)
-            {
-                player->KilledMonsterCredit(QUEST_HALLOWEEN_WIN_5_2V2_MONSTERCREDIT, 0);
-            }
+			player->KilledMonsterCredit(QUEST_HALLOWEEN_WIN_5_2V2_MONSTERCREDIT, 0);
         }
     }
 };
