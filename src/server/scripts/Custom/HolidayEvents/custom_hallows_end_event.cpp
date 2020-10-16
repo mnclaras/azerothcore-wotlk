@@ -25,6 +25,7 @@
 #include "Creature.h"
 #include "Group.h"
 #include "GroupMgr.h"
+#include "Battleground.h"
 #include <random>
 
 enum Spells
@@ -101,6 +102,13 @@ enum Summons
     NPC_SLIME_POOL = 35176,
     NPC_BOSS_TWO_ADD = 2100002 // Calabacino Explosivo
 };
+
+enum Quests
+{
+    QUEST_HALLOWEEN_WIN_5_2V2 = 100005,
+    QUEST_HALLOWEEN_WIN_5_2V2_MONSTERCREDIT = 80005
+};
+
 
 #define DEFAULT_MESSAGE 907
 
@@ -683,6 +691,25 @@ public:
     }
 };
 
+class custom_hallows_end_event_quests : public BGScript
+{
+public:
+    custom_hallows_end_event_quests() : BGScript("custom_hallows_end_event_quests") {}
+
+    void OnBattlegroundEndReward(Battleground* bg, Player* player, TeamId winnerTeamId) override
+    {
+        TeamId bgTeamId = player->GetBgTeamId();
+        uint32 RewardCount = 0;
+
+        if (bg->isArena() && bg->isRated() && bgTeamId == winnerTeamId)
+        {
+            if (bg->GetArenaType() == ARENA_TYPE_2v2 && player->GetQuestStatus(QUEST_HALLOWEEN_WIN_5_2V2) == QUEST_STATUS_INCOMPLETE)
+            {
+                player->KilledMonsterCredit(QUEST_HALLOWEEN_WIN_5_2V2_MONSTERCREDIT, 0);
+            }
+        }
+    }
+};
 
 void AddSC_custom_hallows_end_event()
 {
@@ -690,4 +717,5 @@ void AddSC_custom_hallows_end_event()
     new custom_hallows_end_event_boss_two();
     new custom_hallows_end_event_boss_two_add();
     new custom_hallows_end_event_teleporter();
+	new custom_hallows_end_event_quests();
 }
