@@ -635,7 +635,7 @@ public:
 
     bool OnGossipHello(Player* player, Creature* creature) override
     {
-        AddGossipItemFor(player, GOSSIP_ICON_TRAINER, "Quiero combatir a Calabacino Malvado.", GOSSIP_SENDER_MAIN, 2, "Seguro?", 0, false);
+        AddGossipItemFor(player, GOSSIP_ICON_TRAINER, "Quiero combatir a Calabacino Malvado.", GOSSIP_SENDER_MAIN, 2, "Deseas ir a combatir a Calabacino Malvado?", 0, false);
         SendGossipMenuFor(player, DEFAULT_MESSAGE, creature->GetGUID());
         return true;
     }
