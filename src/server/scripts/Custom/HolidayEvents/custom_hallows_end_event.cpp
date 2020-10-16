@@ -649,28 +649,6 @@ public:
             {
             case 2: 
                 player->TeleportTo(469, -7729.168457f, -1673.251953f, 131.131653f, 1.537820f);
-
-                Group* grp = player->GetGroup();
-                if (grp && grp != NULL && grp->GetLeaderGUID() == player->GetGUID())
-                {
-                    GroupReference* grpRef = grp->GetFirstMember();
-                    if (grp->GetLeaderGUID() == player->GetGUID())
-                        GroupReference grpRef = player->GetGroupRef();
-
-                    for (grpRef; grpRef != NULL; grpRef = grpRef->next())
-                    {
-                        Player* groupMember = grpRef->GetSource();
-                        ChatHandler(player->GetSession()).PSendSysMessage("Enviando solicitud de summon a...");
-                        if (!groupMember)
-                            continue;
-                        if (groupMember->GetGUID() == player->GetGUID())
-                            break;
-                        player->SetSelection(groupMember->GetGUID());
-                        player->CastSpell(groupMember, 7720, true);
-                        ChatHandler(player->GetSession()).PSendSysMessage("%s", groupMember->GetName().c_str());
-                    }
-                }
-
                 CloseGossipMenuFor(player);
                 break;
             }
