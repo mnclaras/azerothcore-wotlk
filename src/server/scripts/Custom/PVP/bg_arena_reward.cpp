@@ -7,7 +7,8 @@ enum Quests
     QUEST_WIN_10_ARENA = 80000,
     QUEST_WIN_50_ARENA = 80001,
     QUEST_WIN_5_BG = 80002,
-    QUEST_WIN_50_BG = 80003
+    QUEST_WIN_50_BG = 80003,
+    QUEST_KILL_100_PLAYERS = 80004,
 };
 
 class ArenaAndBgRewards : public BGScript
