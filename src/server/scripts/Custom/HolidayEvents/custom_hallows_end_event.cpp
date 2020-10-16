@@ -328,7 +328,6 @@ public:
                 _events.SetPhase(PHASE_FOUR);
                 _events.ScheduleEvent(EVENT_ICY_GRIP, 2000, PHASE_FOUR);
                 _events.ScheduleEvent(EVENT_SPELL_RADIANCE_LEFT6, 1000, PHASE_FOUR);
-                _events.ScheduleEvent(EVENT_FREYA_GROUND_TREMOR, 13000, PHASE_FOUR);
 
                 me->CastSpell(me, SPELL_FROST_AURA_25, true);
                 //_events.ScheduleEvent(EVENT_DECIMATE, 7000, PHASE_FOUR);
@@ -481,6 +480,7 @@ public:
                     //me->CastSpell((Unit*)NULL, SPELL_RADIANCE, false);
                     //DoCastAOE(SPELL_RADIANCE);
                     me->CastSpell(me, SPELL_RADIANCE, true);
+					_events.ScheduleEvent(EVENT_FREYA_GROUND_TREMOR, 100, PHASE_FOUR);
                     _events.ScheduleEvent(EVENT_SPELL_RADIANCE_LEFT6, 100, PHASE_FOUR);
                     break;
                 case EVENT_DECIMATE:
@@ -499,7 +499,6 @@ public:
                     break;
                 case EVENT_FREYA_GROUND_TREMOR:
                     me->CastSpell(me, SPELL_GROUND_TREMOR_FREYA_25, false);
-                    _events.ScheduleEvent(EVENT_DECIMATE, 12000, PHASE_FOUR);
                     break;
                 default:
                     break;
