@@ -93,3 +93,5 @@ local.properties
 #  !modules/yourmodule
 #
 # ==================
+CMakeSettings.json
+.vs
