@@ -671,7 +671,7 @@ class boss_the_lich_king : public CreatureScript
                             //lets get the info we want
                             Map* map = p->GetMap();
                             std::string g_name = "< Sin Hermandad >";
-                            std::string boss_name = "Gunship Battle";
+                            std::string boss_name = "The Lich King";
                             std::string IsHeroicMode;
                             std::string IsNormal;
                             std::string tag_colour = "7bbef7";
