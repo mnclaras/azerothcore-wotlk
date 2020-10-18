@@ -658,6 +658,50 @@ class boss_the_lich_king : public CreatureScript
                 _JustDied();
                 DoAction(ACTION_RESTORE_LIGHT);
                 me->PlayDirectSound(17374);
+
+                Map::PlayerList const& pl = me->GetMap()->GetPlayers();
+                bool event_broadcasted = false;
+                for (Map::PlayerList::const_iterator itr = pl.begin(); itr != pl.end(); ++itr)
+                    if (Player* p = itr->GetSource())
+                    {
+                        // 2 Extra frost to alliance
+                        if (p->GetTeamId() == TEAM_ALLIANCE) p->AddItem(49426, 2);
+                        if (!event_broadcasted)
+                        {
+                            //lets get the info we want
+                            Map* map = p->GetMap();
+                            std::string g_name = "< Sin Hermandad >";
+                            std::string boss_name = "Gunship Battle";
+                            std::string IsHeroicMode;
+                            std::string IsNormal;
+                            std::string tag_colour = "7bbef7";
+                            std::string plr_colour = "7bbef7";
+                            std::string guild_colour = "00ff00";
+                            std::string boss_colour = "ff0000";
+                            std::string alive_text = "00ff00";
+
+                            IsNormal = (p->GetMap()->Is25ManRaid()) ? "25" : "10";
+                            IsHeroicMode = (p->GetMap()->IsHeroic()) ? "|cffff0000Heroico|r" : "|cff00ff00Normal|r";
+
+                            std::ostringstream stream;
+
+                            Player* leader = p;
+                            uint64 leaderGuid = p->GetGroup() ? p->GetGroup()->GetLeaderGUID() : p->GetGUID();
+                            if (leaderGuid != p->GetGUID())
+                                leader = ObjectAccessor::FindPlayerInOrOutOfWorld(p->GetGroup()->GetLeaderGUID());
+
+                            if (!leader) leader = p;
+                            if (leader && leader->GetGuild()) g_name = leader->GetGuildName();
+
+                            stream << "La hermandad |cff" << guild_colour << "" << g_name <<
+                                "|r ha derrotado a |CFF" << boss_colour << "[" << boss_name <<
+                                "]|r en modo |cff" << alive_text << IsNormal << "|r " << IsHeroicMode;
+                            sWorld->SendServerMessage(SERVER_MSG_STRING, stream.str().c_str());
+
+                            event_broadcasted = true;
+                        }
+                    }
+
             }
 
             void EnterCombat(Unit* target)
