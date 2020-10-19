@@ -3426,6 +3426,15 @@ void SpellMgr::LoadDbcDataCorrections()
         case 37408: // Oscillation Field
             spellInfo->AttributesEx3 |= SPELL_ATTR3_STACK_FOR_DIFF_CASTERS;
             break;
+        //case 41406: // Positive Dementia
+        //case 41409: // Negative Dementia (UNUSED)
+        case 36814:
+            spellInfo->DurationIndex = 21; // Infinite
+            //spellInfo->ProcCharges = 5; // Stack up to 5 times
+            //spellInfo->StackAmount = 5; // Stack up to 5 times
+            spellInfo->procCharges = 8;// 10; // Stack up to 10 times
+            spellInfo->StackAmount = 8;// 10; // Stack up to 10 times
+            break;
         case 28200: // Ascendance (Talisman of Ascendance trinket)
             spellInfo->procCharges = 6;
             break;

@@ -1210,6 +1210,7 @@ void AddSC_custom_npc_tier_nine();
 void AddSC_custom_shop_collapsed_vendor();
 void AddSC_custom_hallows_end_event();
 void AddSC_custom_double_emblems_alliance();
+void AddSC_Arena_AntiDraw();
 
 void AddCustomScripts()
 {
@@ -1234,5 +1235,6 @@ void AddCustomScripts()
 	AddSC_custom_shop_collapsed_vendor();
 	AddSC_custom_hallows_end_event();
     AddSC_custom_double_emblems_alliance();
+	AddSC_Arena_AntiDraw();
 #endif
 }
