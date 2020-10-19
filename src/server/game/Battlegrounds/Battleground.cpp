@@ -304,128 +304,125 @@ void Battleground::Update(uint32 diff)
                 Aura* demAura = player->GetAura(36814);
                 float startTimer = 10 * MINUTE * IN_MILLISECONDS;
 
-                Pet* pet = ObjectAccessor::FindPet(itr->first);
-                if (!pet) pet = player->GetPet();
-
                 if (!player->IsSpectator())
                 {
-                    if ((GetStartTime() >= 10 * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= 10.1 * MINUTE * IN_MILLISECONDS))
+                    if ((GetStartTime() >= 2 * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= 2.1 * MINUTE * IN_MILLISECONDS))
                     {
                         if (!player->HasAura(36814))
                         {
                             player->AddAura(36814, player);
-                            player->GetSession()->SendAreaTriggerMessage("El DPS y la sanacion se van a aumentar progresivamente cada minuto desde ahora!");
+                            player->GetSession()->SendAreaTriggerMessage("La sanacion se van a reducir progresivamente cada minuto desde ahora!");
                         }
-                        if (pet)
+                        if (Pet* pet = ObjectAccessor::FindPet(itr->first))
                         {
                             Aura* pemAura = pet->GetAura(36814);
                             if (!pet->HasAura(36814)) pet->AddAura(36814, pet);
-                            else if (!pet->HasAura(36814)) pet->AddAura(36814, pet);
+                            else if (pet->IsSummon()) pet->AddAura(36814, pet);
                         }
                     }
 
-                    if ((GetStartTime() >= 11 * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= 11.1 * MINUTE * IN_MILLISECONDS))
+                    if ((GetStartTime() >= 3 * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= 3.1 * MINUTE * IN_MILLISECONDS))
                     {
                         if (demAura->GetStackAmount() == 1)
                         {
                             player->AddAura(36814, player);
-                            player->GetSession()->SendAreaTriggerMessage("El DPS y la sanacion han sido aumentados!");
+                            player->GetSession()->SendAreaTriggerMessage("Sanacion disminuida!");
                         }
-                        if (pet)
+                        if (Pet* pet = ObjectAccessor::FindPet(itr->first))
                         {
                             Aura* pemAura = pet->GetAura(36814);
                             if (pet && pemAura->GetStackAmount() == 1) pet->AddAura(36814, pet);
-                            else if (!pet->HasAura(36814)) pet->AddAura(36814, pet);
+                            else if (pet->IsSummon()) pet->AddAura(36814, pet);
                         }
                     }
 
-                    if ((GetStartTime() >= 12 * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= 12.1 * MINUTE * IN_MILLISECONDS))
+                    if ((GetStartTime() >= 4 * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= 4.1 * MINUTE * IN_MILLISECONDS))
                     {
                         if (demAura->GetStackAmount() == 2)
                         {
                             player->AddAura(36814, player);
-                            player->GetSession()->SendAreaTriggerMessage("El DPS y la sanacion han sido aumentados!");
+                            player->GetSession()->SendAreaTriggerMessage("Sanacion disminuida!");
                         }
-                        if (pet)
+                        if (Pet* pet = ObjectAccessor::FindPet(itr->first))
                         {
                             Aura* pemAura = pet->GetAura(36814);
                             if (pet && pemAura->GetStackAmount() == 2) pet->AddAura(36814, pet);
-                            else if (!pet->HasAura(36814)) pet->AddAura(36814, pet);
+                            else if (pet->IsSummon()) pet->AddAura(36814, pet);
                         }
                     }
 
-                    if ((GetStartTime() >= 13 * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= 13.1 * MINUTE * IN_MILLISECONDS))
+                    if ((GetStartTime() >= 5 * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= 5.1 * MINUTE * IN_MILLISECONDS))
                     {
                         if (demAura->GetStackAmount() == 3)
                         {
                             player->AddAura(36814, player);
-                            player->GetSession()->SendAreaTriggerMessage("El DPS y la sanacion han sido aumentados!");
+                            player->GetSession()->SendAreaTriggerMessage("Sanacion disminuida!");
                         }
-                        if (pet)
+                        if (Pet* pet = ObjectAccessor::FindPet(itr->first))
                         {
                             Aura* pemAura = pet->GetAura(36814);
                             if (pet && pemAura->GetStackAmount() == 3) pet->AddAura(36814, pet);
-                            else if (!pet->HasAura(36814)) pet->AddAura(36814, pet);
+                            else if (pet->IsSummon()) pet->AddAura(36814, pet);
                         }
                     }
 
-                    if ((GetStartTime() >= 14 * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= 14.1 * MINUTE * IN_MILLISECONDS))
+                    if ((GetStartTime() >= 6 * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= 6.1 * MINUTE * IN_MILLISECONDS))
                     {
                         if (demAura->GetStackAmount() == 4)
                         {
                             player->AddAura(36814, player);
-                            player->GetSession()->SendAreaTriggerMessage("El DPS y la sanacion han sido aumentados!");
+                            player->GetSession()->SendAreaTriggerMessage("Sanacion disminuida!");
                         }
-                        if (pet)
+                        if (Pet* pet = ObjectAccessor::FindPet(itr->first))
                         {
                             Aura* pemAura = pet->GetAura(36814);
                             if (pet && pemAura->GetStackAmount() == 4) pet->AddAura(36814, pet);
-                            else if (!pet->HasAura(36814)) pet->AddAura(36814, pet);
+                            else if (pet->IsSummon()) pet->AddAura(36814, pet);
                         }
                     }
 
-                    if ((GetStartTime() >= 15 * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= 15.1 * MINUTE * IN_MILLISECONDS))
+                    if ((GetStartTime() >= 7 * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= 7.1 * MINUTE * IN_MILLISECONDS))
                     {
                         if (demAura->GetStackAmount() == 5)
                         {
                             player->AddAura(36814, player);
-                            player->GetSession()->SendAreaTriggerMessage("El DPS y la sanacion han sido aumentados!");
+                            player->GetSession()->SendAreaTriggerMessage("Sanacion disminuida!");
                         }
-                        if (pet)
+                        if (Pet* pet = ObjectAccessor::FindPet(itr->first))
                         {
                             Aura* pemAura = pet->GetAura(36814);
                             if (pet && pemAura->GetStackAmount() == 5) pet->AddAura(36814, pet);
-                            else if (!pet->HasAura(36814)) pet->AddAura(36814, pet);
+                            else if (pet->IsSummon()) pet->AddAura(36814, pet);
                         }
                     }
 
-                    if ((GetStartTime() >= 16 * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= 16.1 * MINUTE * IN_MILLISECONDS))
+                    if ((GetStartTime() >= 8 * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= 8.1 * MINUTE * IN_MILLISECONDS))
                     {
                         if (demAura->GetStackAmount() == 6)
                         {
                             player->AddAura(36814, player);
-                            player->GetSession()->SendAreaTriggerMessage("El DPS y la sanacion han sido aumentados!");
+                            player->GetSession()->SendAreaTriggerMessage("Sanacion disminuida!");
                         }
-                        if (pet)
+                        if (Pet* pet = ObjectAccessor::FindPet(itr->first))
                         {
                             Aura* pemAura = pet->GetAura(36814);
                             if (pet && pemAura->GetStackAmount() == 6) pet->AddAura(36814, pet);
-                            else if (!pet->HasAura(36814)) pet->AddAura(36814, pet);
+                            else if (pet->IsSummon()) pet->AddAura(36814, pet);
                         }
                     }
 
-                    if ((GetStartTime() >= 17 * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= 17.1 * MINUTE * IN_MILLISECONDS))
+                    if ((GetStartTime() >= 9 * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= 9.1 * MINUTE * IN_MILLISECONDS))
                     {
                         if (demAura->GetStackAmount() == 7)
                         {
                             player->AddAura(36814, player);
-                            player->GetSession()->SendAreaTriggerMessage("El DPS y la sanacion han sido aumentados! Ya no se van a aumentar mas veces.");
+                            player->GetSession()->SendAreaTriggerMessage("Sanacion disminuida! Ya no se van a disminuir mas veces.");
                         }
-                        if (pet)
+                        if (Pet* pet = ObjectAccessor::FindPet(itr->first))
                         {
                             Aura* pemAura = pet->GetAura(36814);
                             if (pet && pemAura->GetStackAmount() == 7) pet->AddAura(36814, pet);
-                            else if (!pet->HasAura(36814)) pet->AddAura(36814, pet);
+                            else if (pet->IsSummon()) pet->AddAura(36814, pet);
                         }
                     }
                 }
