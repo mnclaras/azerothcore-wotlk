@@ -175,6 +175,13 @@ public:
                         isSpanish ? "|TInterface\\icons\\inv_misc_frostemblem_01:20|t [Emblema de escarcha] x 1." : "|TInterface\\icons\\inv_misc_frostemblem_01:20|t [Emblem of Frost] x 1.",
                         GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 7, confirmText, 0, false);
                 }
+                else
+                {
+                    AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Usar 15 Emblemas de Triunfo para comprar:" : "Use 15 Emblem of Triumph to buy:", GOSSIP_SENDER_MAIN, -1);
+                    AddGossipItemFor(player, GOSSIP_ICON_VENDOR,
+                        isSpanish ? "|TInterface\\icons\\inv_misc_frostemblem_01:20|t [Emblema de escarcha] x 1." : "|TInterface\\icons\\inv_misc_frostemblem_01:20|t [Emblem of Frost] x 1.",
+                        GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 9, confirmText, 0, false);
+                }
 
                 AddGossipItemFor(player, GOSSIP_ICON_TALK,
                     isSpanish ? "|TInterface/ICONS/Thrown_1H_Harpoon_D_01Blue:20|t Hasta Luego!" : "|TInterface/ICONS/Thrown_1H_Harpoon_D_01Blue:20|t Nevermind!",
@@ -284,6 +291,14 @@ public:
             case GOSSIP_ACTION_INFO_DEF + 8:
                 player->PlayerTalkClass->SendCloseGossip();
                 break;
+
+            case GOSSIP_ACTION_INFO_DEF + 9:
+                // Buy 1 Emblem of Frost with 15 Emblem of Triumph
+                DoExchange(player, EMBLEM_OF_TRIUMPH_ENTRY, 15, EMBLEM_OF_FROST_ENTRY, 1);
+                //player->PlayerTalkClass->SendCloseGossip();
+                SendMenu(player, creature);
+                break;
+
             }
 
         }
