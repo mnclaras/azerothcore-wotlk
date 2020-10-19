@@ -73,7 +73,6 @@
 #define CREATURE_VENDOR_TRANSMOG_PVP_WEAP_S5    601620          
 #define CREATURE_VENDOR_TRANSMOG_PVP_WEAP_S6    601621
 
-
 #define CREATURE_VENDOR_TRANSMOG_PVE_T1     601575          
 #define CREATURE_VENDOR_TRANSMOG_PVE_T2     601576          
 #define CREATURE_VENDOR_TRANSMOG_PVE_T3     601577          
@@ -85,7 +84,20 @@
 #define CREATURE_VENDOR_TRANSMOG_PVE_T8     601583          
 #define CREATURE_VENDOR_TRANSMOG_PVE_T85    601584          
 
-#define CREATURE_VENDOR_               
+#define CREATURE_VENDOR_ICC_T10_251         601588
+#define CREATURE_VENDOR_ICC_T10_264         601589      
+#define CREATURE_VENDOR_ICC_T10_277         601590
+
+#define CREATURE_VENDOR_MOUNTS_PVE          101000
+#define CREATURE_VENDOR_MOUNTS_PVP          101001
+#define CREATURE_VENDOR_MOUNTS_EPIC         601533
+
+#define CREATURE_VENDOR_PETS_PVE            601000
+#define CREATURE_VENDOR_PETS_PVP            601001
+
+//#define CREATURE_VENDOR_               
+//#define CREATURE_VENDOR_               
+//#define CREATURE_VENDOR_               
 
 #define DEFAULT_MESSAGE 907
 
@@ -447,6 +459,129 @@ public:
     }
 };
 
+class custom_shop_collapsed_vendor_tier10 : public CreatureScript
+{
+public:
+    custom_shop_collapsed_vendor_tier10() : CreatureScript("npc_collapsed_vendor_tier10") { }
+
+    bool OnGossipHello(Player* player, Creature* creature) override
+    {
+        bool isSpanish = IsSpanishPlayer(player);
+
+        ShowOption(player, isSpanish ? "[T10 251]" : "[T10 251]", 1);
+        ShowOption(player, isSpanish ? "[T10.5 264]" : "[T10.5 264]", 2);
+        ShowOption(player, isSpanish ? "[T10.5H 277]" : "[T10.5H 277]", 3);
+      
+        SendGossipMenuFor(player, DEFAULT_MESSAGE, creature->GetGUID());
+        return true;
+    }
+
+    bool OnGossipSelect(Player* player, Creature* creature, uint32 sender, uint32 action) override
+    {
+        ClearGossipMenuFor(player);
+        switch (action)
+        {
+        case GOSSIP_ACTION_INFO_DEF + 1: ShowVendor(player, creature, CREATURE_VENDOR_ICC_T10_251); break;
+        case GOSSIP_ACTION_INFO_DEF + 2: ShowVendor(player, creature, CREATURE_VENDOR_ICC_T10_264); break;
+        case GOSSIP_ACTION_INFO_DEF + 3: ShowVendor(player, creature, CREATURE_VENDOR_ICC_T10_277); break;
+        default: OnGossipHello(player, creature); break;
+        }
+
+        return true;
+    };
+
+    struct custom_shop_collapsed_vendor_tier10AI : public ScriptedAI
+    {
+        custom_shop_collapsed_vendor_tier10AI(Creature* creature) : ScriptedAI(creature) { }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new custom_shop_collapsed_vendor_tier10AI(creature);
+    }
+};
+
+class custom_shop_collapsed_vendor_mounts : public CreatureScript
+{
+public:
+    custom_shop_collapsed_vendor_mounts() : CreatureScript("npc_collapsed_vendor_mounts") { }
+
+    bool OnGossipHello(Player* player, Creature* creature) override
+    {
+        bool isSpanish = IsSpanishPlayer(player);
+
+        ShowOption(player, isSpanish ? "[Monturas PVE]" : "[PVE Mounts]", 1);
+        ShowOption(player, isSpanish ? "[Monturas PVP]" : "[PVP Mounts]", 2);
+        ShowOption(player, isSpanish ? "[Monturas Epicas]" : "[Epic Mounts]", 3);
+
+        SendGossipMenuFor(player, DEFAULT_MESSAGE, creature->GetGUID());
+        return true;
+    }
+
+    bool OnGossipSelect(Player* player, Creature* creature, uint32 sender, uint32 action) override
+    {
+        ClearGossipMenuFor(player);
+        switch (action)
+        {
+        case GOSSIP_ACTION_INFO_DEF + 1: ShowVendor(player, creature, CREATURE_VENDOR_MOUNTS_PVE); break;
+        case GOSSIP_ACTION_INFO_DEF + 2: ShowVendor(player, creature, CREATURE_VENDOR_MOUNTS_PVP); break;
+        case GOSSIP_ACTION_INFO_DEF + 3: ShowVendor(player, creature, CREATURE_VENDOR_MOUNTS_EPIC); break;
+        default: OnGossipHello(player, creature); break;
+        }
+
+        return true;
+    };
+
+    struct custom_shop_collapsed_vendor_mountsAI : public ScriptedAI
+    {
+        custom_shop_collapsed_vendor_mountsAI(Creature* creature) : ScriptedAI(creature) { }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new custom_shop_collapsed_vendor_mountsAI(creature);
+    }
+};
+
+class custom_shop_collapsed_vendor_pets : public CreatureScript
+{
+public:
+    custom_shop_collapsed_vendor_pets() : CreatureScript("npc_collapsed_vendor_pets") { }
+
+    bool OnGossipHello(Player* player, Creature* creature) override
+    {
+        bool isSpanish = IsSpanishPlayer(player);
+
+        ShowOption(player, isSpanish ? "[Mascotas PVE]" : "[PVE Pets]", 1);
+        ShowOption(player, isSpanish ? "[Mascotas PVP]" : "[PVP Pets]", 2);
+
+        SendGossipMenuFor(player, DEFAULT_MESSAGE, creature->GetGUID());
+        return true;
+    }
+
+    bool OnGossipSelect(Player* player, Creature* creature, uint32 sender, uint32 action) override
+    {
+        ClearGossipMenuFor(player);
+        switch (action)
+        {
+        case GOSSIP_ACTION_INFO_DEF + 1: ShowVendor(player, creature, CREATURE_VENDOR_PETS_PVE); break;
+        case GOSSIP_ACTION_INFO_DEF + 2: ShowVendor(player, creature, CREATURE_VENDOR_PETS_PVP); break;
+        default: OnGossipHello(player, creature); break;
+        }
+
+        return true;
+    };
+
+    struct custom_shop_collapsed_vendor_petsAI : public ScriptedAI
+    {
+        custom_shop_collapsed_vendor_petsAI(Creature* creature) : ScriptedAI(creature) { }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new custom_shop_collapsed_vendor_petsAI(creature);
+    }
+};
 
 void AddSC_custom_shop_collapsed_vendor()
 {
@@ -456,4 +591,7 @@ void AddSC_custom_shop_collapsed_vendor()
     new custom_shop_collapsed_vendor_pve();             // npc_collapsed_vendor_pve
     new custom_shop_collapsed_vendor_transmog_pvp();    // npc_collapsed_vendor_transmog_pvp
     new custom_shop_collapsed_vendor_transmog_pve();    // npc_collapsed_vendor_transmog_pve
+    new custom_shop_collapsed_vendor_tier10();          // npc_collapsed_vendor_tier10
+    new custom_shop_collapsed_vendor_mounts();          // npc_collapsed_vendor_mounts
+    new custom_shop_collapsed_vendor_pets();            // npc_collapsed_vendor_pets
 }
