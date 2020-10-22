@@ -12973,6 +12973,7 @@ void Player::RemoveItem(uint8 bag, uint8 slot, bool update, bool swap)
 
 void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
 {
+    /*
     if (slot == 3)
     {
         if (shirtEntry >= 100000 && shirtEntry <= 100100)
@@ -13103,10 +13104,12 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
             }
         }
     }
+    */
 }
 
 void Player::DeMorphIllusionShirt(uint8 slot, uint32 shirtEntry)
 {
+    /*
     if (slot == 3 && shirtEntry >= 100000 && shirtEntry <= 100100)
     {
         // Poción hacerte pequeño (tragonublo)
@@ -13138,6 +13141,7 @@ void Player::DeMorphIllusionShirt(uint8 slot, uint32 shirtEntry)
             SetNativeDisplayId(originalNativeDisplayId);
         }
     }
+    */
 }
 
 // Common operation need to remove item from inventory without delete in trade, auction, guild bank, mail....
