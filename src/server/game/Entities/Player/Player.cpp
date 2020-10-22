@@ -12997,13 +12997,12 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
             RemoveAurasDueToSpell(36901);
             RemoveAurasDueToSpell(36895);
 
-            if (shirtEntry == 100019) SetObjectScale(0.6f);
-            else if (shirtEntry == 100022) SetObjectScale(0.85f);
+            if (shirtEntry == 100022) SetObjectScale(0.75f);
             else if (shirtEntry == 100023) SetObjectScale(0.85f);
             else if (shirtEntry == 100024) SetObjectScale(0.85f);
-            else if (shirtEntry == 100030) SetObjectScale(0.7f);
-            else if (shirtEntry == 100033) SetObjectScale(0.4f);
-            else if (shirtEntry == 100038) SetObjectScale(0.3f);
+            else if (shirtEntry == 100030) SetObjectScale(0.9f);
+            else if (shirtEntry == 100033) SetObjectScale(0.8f);
+            else if (shirtEntry == 100038) SetObjectScale(0.25f);
             else if (shirtEntry == 100041) SetObjectScale(0.2f);
             else if (shirtEntry == 100042) SetObjectScale(2.0f);
 
