@@ -12972,8 +12972,7 @@ void Player::RemoveItem(uint8 bag, uint8 slot, bool update, bool swap)
 }
 
 void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
-{
-    /*
+{   
     if (slot == 3)
     {
         if (shirtEntry >= 100000 && shirtEntry <= 100100)
@@ -13000,6 +12999,8 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
 
             if (shirtEntry == 100019) SetObjectScale(0.6f);
             else if (shirtEntry == 100022) SetObjectScale(0.85f);
+            else if (shirtEntry == 100023) SetObjectScale(0.85f);
+            else if (shirtEntry == 100024) SetObjectScale(0.85f);
             else if (shirtEntry == 100030) SetObjectScale(0.7f);
             else if (shirtEntry == 100033) SetObjectScale(0.4f);
             else if (shirtEntry == 100038) SetObjectScale(0.3f);
@@ -13008,6 +13009,7 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
 
             else SetObjectScale(1.0f);
 
+            /*
             switch (shirtEntry)
             {
             case 100000: SetDisplayId(19723); break;    // Male Human
@@ -13066,6 +13068,7 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
             }
 
             SetNativeDisplayId(GetDisplayId());
+            */
         }
         else
         {
@@ -13091,6 +13094,7 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
 
             SetObjectScale(1.0f);
 
+            /*
             uint32 originalDisplayId = GetOriginalDisplayId();
             if (originalDisplayId && originalDisplayId > 0)
             {
@@ -13102,14 +13106,13 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
             {
                 SetNativeDisplayId(originalNativeDisplayId);
             }
+            */
         }
     }
-    */
 }
 
 void Player::DeMorphIllusionShirt(uint8 slot, uint32 shirtEntry)
 {
-    /*
     if (slot == 3 && shirtEntry >= 100000 && shirtEntry <= 100100)
     {
         // Poción hacerte pequeño (tragonublo)
@@ -13129,6 +13132,7 @@ void Player::DeMorphIllusionShirt(uint8 slot, uint32 shirtEntry)
 
         SetObjectScale(1.0f);
 
+        /*
         uint32 originalDisplayId = GetOriginalDisplayId();
         if (originalDisplayId && originalDisplayId > 0)
         {
@@ -13140,8 +13144,8 @@ void Player::DeMorphIllusionShirt(uint8 slot, uint32 shirtEntry)
         {
             SetNativeDisplayId(originalNativeDisplayId);
         }
+        */
     }
-    */
 }
 
 // Common operation need to remove item from inventory without delete in trade, auction, guild bank, mail....
