@@ -648,7 +648,7 @@ public:
             switch (action)
             {
             case 2: 
-                player->TeleportTo(469, -7729.168457f, -1673.251953f, 131.131653f, 1.537820f);
+                player->TeleportTo(568, 1001.268799f, 1968.256226f, 0.000122f, 3.437670f);
                 CloseGossipMenuFor(player);
                 break;
             }
@@ -676,8 +676,8 @@ public:
     void OnBattlegroundEndReward(Battleground* bg, Player* player, TeamId winnerTeamId) override
     {
         TeamId bgTeamId = player->GetBgTeamId();
-
-        if (bgTeamId && bg->isArena() && bg->isRated() && bgTeamId == winnerTeamId && bg->GetArenaType() == ARENA_TYPE_2v2 
+		// For the moment, all arena modes && bg->GetArenaType() == ARENA_TYPE_2v2
+        if (bg->isArena() && bg->isRated() && bgTeamId == winnerTeamId 
 			&& player->GetQuestStatus(QUEST_HALLOWEEN_WIN_5_2V2) == QUEST_STATUS_INCOMPLETE)
         {
 			player->KilledMonsterCredit(QUEST_HALLOWEEN_WIN_5_2V2_MONSTERCREDIT, 0);
