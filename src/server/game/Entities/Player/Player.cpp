@@ -12991,6 +12991,11 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
             RemoveAurasDueToSpell(53806);
             // Especias de bebe
             RemoveAurasDueToSpell(60122);
+            // More debuffs to delete
+            RemoveAurasDueToSpell(36899);
+            RemoveAurasDueToSpell(36900);
+            RemoveAurasDueToSpell(36901);
+            RemoveAurasDueToSpell(36895);
 
             if (shirtEntry == 100019) SetObjectScale(0.6f);
             else if (shirtEntry == 100022) SetObjectScale(0.85f);
@@ -13077,6 +13082,11 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
             RemoveAurasDueToSpell(53806);
             // Especias de bebe
             RemoveAurasDueToSpell(60122);
+            // More debuffs to delete
+            RemoveAurasDueToSpell(36899);
+            RemoveAurasDueToSpell(36900);
+            RemoveAurasDueToSpell(36901);
+            RemoveAurasDueToSpell(36895);
 
             SetObjectScale(1.0f);
 
