@@ -13008,7 +13008,7 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
 
             else SetObjectScale(1.0f);
 
-            /*
+            
             switch (shirtEntry)
             {
             case 100000: SetDisplayId(19723); break;    // Male Human
@@ -13067,7 +13067,7 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
             }
 
             SetNativeDisplayId(GetDisplayId());
-            */
+            
         }
         else
         {
@@ -13093,7 +13093,7 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
 
             SetObjectScale(1.0f);
 
-            /*
+            
             uint32 originalDisplayId = GetOriginalDisplayId();
             if (originalDisplayId && originalDisplayId > 0)
             {
@@ -13105,7 +13105,7 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
             {
                 SetNativeDisplayId(originalNativeDisplayId);
             }
-            */
+            
         }
     }
 }
@@ -13131,7 +13131,7 @@ void Player::DeMorphIllusionShirt(uint8 slot, uint32 shirtEntry)
 
         SetObjectScale(1.0f);
 
-        /*
+        
         uint32 originalDisplayId = GetOriginalDisplayId();
         if (originalDisplayId && originalDisplayId > 0)
         {
@@ -13143,7 +13143,7 @@ void Player::DeMorphIllusionShirt(uint8 slot, uint32 shirtEntry)
         {
             SetNativeDisplayId(originalNativeDisplayId);
         }
-        */
+        
     }
 }
 
