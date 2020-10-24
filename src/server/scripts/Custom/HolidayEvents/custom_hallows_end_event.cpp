@@ -435,7 +435,7 @@ public:
                     std::random_device rd;
                     std::shuffle(begin, end, std::default_random_engine{ rd() });
 
-                    for (uint8 i = 0; i < 3 && i < validPlayers.size(); i++)
+                    for (uint8 i = 0; i < 1 && i < validPlayers.size(); i++)
                     {
                         Unit* target = validPlayers[i];
                         me->CastSpell(target, SPELL_DOMINATE_MIND_25, true);
