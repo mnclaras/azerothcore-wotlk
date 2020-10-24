@@ -41,10 +41,12 @@ class npc_pet_dk_ebon_gargoyle : public CreatureScript
                 _despawnTimer = 36000; // 30 secs + 4 fly out + 2 initial attack timer
                 _despawning = false;
                 _initialSelection = true;
+                _initialImmune = true;
+                _initialNotImmune = true;
                 _targetGUID = 0;
             }
 
-            void MovementInform(uint32 type, uint32 point)
+            void MovementInformMovementInform(uint32 type, uint32 point)
             {
                 if (type == POINT_MOTION_TYPE && point == 1)
                 {
@@ -166,9 +168,23 @@ class npc_pet_dk_ebon_gargoyle : public CreatureScript
                             break;
                         }
                 }
+
+                if (_initialImmune)
+                {
+                    _initialImmune = false;
+                    me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE);
+                }
+
                 if (_despawnTimer > 4000)
                 {
                     _despawnTimer -= diff;
+
+                    if (_initialCastTimer >= 2000 && _initialNotImmune)
+                    {
+                        _initialNotImmune = false;
+                        me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE);
+                    }
+
                     if (!UpdateVictimWithGaze())
                     {
                         MySelectNextTarget();
@@ -204,6 +220,9 @@ class npc_pet_dk_ebon_gargoyle : public CreatureScript
             uint32 _initialCastTimer;
             bool _despawning;
             bool _initialSelection;
+            bool _initialImmune;
+            bool _initialNotImmune;
+
         };
 
         CreatureAI* GetAI(Creature* creature) const
