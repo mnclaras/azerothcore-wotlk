@@ -115,6 +115,7 @@ enum Enchants
     ENCHANT_HEAD_FLEEING_SHADOW = 3814,
     ENCHANT_HEAD_FROSTY_SOUL = 3812,
     ENCHANT_HEAD_TOXIC_WARDING = 3813,
+    ENCHANT_HEAD_MIND_AMPLIFICATION_DASH = 3878,
 
     ENCHANT_SHOULDER_MASTERS_AXE = 3835,
     ENCHANT_SHOULDER_MASTERS_CRAG = 3836,
@@ -422,6 +423,10 @@ public:
         }
         case 4: // Enchant Head
         {
+            if (player->HasSkill(SKILL_ENGINEERING) && player->GetSkillValue(SKILL_ENGINEERING) == 450)
+            {
+                player->ADD_GOSSIP_ITEM(1, isSpanish ? "Disco de amplificación mental (+45 Aguante + control mental enemigos)" : "Mind Amplification Dash (+45p Stamina + enemy mind control)", GOSSIP_SENDER_MAIN, 235);
+            }
             player->ADD_GOSSIP_ITEM(1, isSpanish ? "50 Poder de Ataque + 20 Critico" : "50 Attack Power + 20 Crit", GOSSIP_SENDER_MAIN, 129);
             player->ADD_GOSSIP_ITEM(1, isSpanish ? "50 Poder de Ataque + 20 Temple" : "50 Attack Power + 20 Resilience", GOSSIP_SENDER_MAIN, 130);
             player->ADD_GOSSIP_ITEM(1, isSpanish ? "30 Poder con Hechizos + 20 Critico" : "30 Spell Power + 20 Crit", GOSSIP_SENDER_MAIN, 125);
@@ -1412,6 +1417,12 @@ public:
                 return false;
             }
             Enchant(player, creature, player->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_OFFHAND), ENCHANT_WEP_ICY_WEAPON);
+            break;
+        case 235:
+            if (player->HasSkill(SKILL_ENGINEERING) && player->GetSkillValue(SKILL_ENGINEERING) == 450)
+            {
+                Enchant(player, creature, player->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_HEAD), ENCHANT_HEAD_MIND_AMPLIFICATION_DASH);
+            }
             break;
         case 300:
         {
