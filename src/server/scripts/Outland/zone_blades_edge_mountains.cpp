@@ -1038,7 +1038,7 @@ class go_apexis_relic : public GameObjectScript
             bool large = (go->GetEntry() == GO_APEXIS_MONUMENT);
             //if (player->HasItemCount(ITEM_APEXIS_SHARD, large ? 35 : 1))
             //{
-                player->CastSpell(player, large ? SPELL_TAKE_REAGENTS_GROUP : SPELL_TAKE_REAGENTS_SOLO, false);
+                //player->CastSpell(player, large ? SPELL_TAKE_REAGENTS_GROUP : SPELL_TAKE_REAGENTS_SOLO, false);
 
                 if (Creature* bunny = player->SummonCreature(NPC_SIMON_BUNNY, go->GetPositionX(), go->GetPositionY(), go->GetPositionZ()))
                     bunny->AI()->SetGUID(player->GetGUID(), large);
