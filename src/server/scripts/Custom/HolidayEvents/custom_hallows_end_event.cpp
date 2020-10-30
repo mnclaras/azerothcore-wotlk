@@ -480,7 +480,7 @@ public:
                     //me->CastSpell((Unit*)NULL, SPELL_RADIANCE, false);
                     //DoCastAOE(SPELL_RADIANCE);
                     me->CastSpell(me, SPELL_RADIANCE, true);
-					_events.ScheduleEvent(EVENT_FREYA_GROUND_TREMOR, 100, PHASE_FOUR);
+					//_events.ScheduleEvent(EVENT_FREYA_GROUND_TREMOR, 100, PHASE_FOUR); // Disallow because community wants
                     _events.ScheduleEvent(EVENT_SPELL_RADIANCE_LEFT6, 100, PHASE_FOUR);
                     break;
                 case EVENT_DECIMATE:
