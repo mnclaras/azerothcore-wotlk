@@ -23,7 +23,7 @@ public:
         // Icecrown Citadel & Rubi Sanctum
         if (boss->GetMap()->IsRaid() && boss->getLevel() > 80 && boss->IsDungeonBoss() && player->GetTeamId() == TEAM_ALLIANCE && (player->GetMapId() == 631 || player->GetMapId() == 724))
         {
-            player->AddItem(EMBLEM_OF_FROST_ENTRY, 2);
+            player->AddItem(EMBLEM_OF_FROST_ENTRY, 4);
 
             Group* grp = player->GetGroup();
             if (grp)
@@ -32,7 +32,7 @@ public:
                     if (Player* member = itr->GetSource())
                         if (member->IsInMap(player) && player->GetGUID() != member->GetGUID())
                         {
-                            member->AddItem(EMBLEM_OF_FROST_ENTRY, 2);
+                            member->AddItem(EMBLEM_OF_FROST_ENTRY, 4);
                         }
             }
         }
