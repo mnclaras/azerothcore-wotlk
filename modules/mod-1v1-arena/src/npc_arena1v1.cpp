@@ -165,12 +165,24 @@ public:
             if (at)
             {
                 std::stringstream s;
-                s << "Rating: " << at->GetStats().Rating;
-                s << "\nRank: " << at->GetStats().Rank;
-                s << "\nSeason Games: " << at->GetStats().SeasonGames;
-                s << "\nSeason Wins: " << at->GetStats().SeasonWins;
-                s << "\nWeek Games: " << at->GetStats().WeekGames;
-                s << "\nWeek Wins: " << at->GetStats().WeekWins;
+                if (isSpanish)
+                {
+                    s << "Rating: " << at->GetStats().Rating;
+                    s << "\nRank: " << at->GetStats().Rank;
+                    s << "\Juegos Temporada: " << at->GetStats().SeasonGames;
+                    s << "\nGanadas en Temporada: " << at->GetStats().SeasonWins;
+                    s << "\nJuegos Semanales: " << at->GetStats().WeekGames;
+                    s << "\nGanadas semanales: " << at->GetStats().WeekWins;
+                }
+                else
+                {
+                    s << "Rating: " << at->GetStats().Rating;
+                    s << "\nRank: " << at->GetStats().Rank;
+                    s << "\nSeason Games: " << at->GetStats().SeasonGames;
+                    s << "\nSeason Wins: " << at->GetStats().SeasonWins;
+                    s << "\nWeek Games: " << at->GetStats().WeekGames;
+                    s << "\nWeek Wins: " << at->GetStats().WeekWins;
+                }         
 
                 ChatHandler(player->GetSession()).PSendSysMessage(SERVER_MSG_STRING, s.str().c_str());
             }
@@ -337,6 +349,9 @@ private:
         if (sConfigMgr->GetBoolDefault("Arena1v1BlockForbiddenTalents", true) == false)
             return true;
 
+        typedef std::map<uint32, uint32> TalentTabCount;
+        TalentTabCount talentTabs;
+
         uint32 count = 0;
 		uint32 countShokadin = 0;
         for (uint32 talentId = 0; talentId < sTalentStore.GetNumRows(); ++talentId)
@@ -353,6 +368,11 @@ private:
 
                 if (player->HasTalent(talentInfo->RankID[rank], player->GetActiveSpec()))
                 {
+                    if (talentTabs[talentInfo->TalentTab])
+                        talentTabs[talentInfo->TalentTab] += rank + 1;
+                    else
+                        talentTabs[talentInfo->TalentTab] = rank + 1;
+
                     for (int8 i = 0; FORBIDDEN_TALENTS_IN_1V1_ARENA_AUX[i] != 0; i++)
 					{
                         if (FORBIDDEN_TALENTS_IN_1V1_ARENA_AUX[i] == talentInfo->TalentTab)
@@ -371,6 +391,24 @@ private:
             return false;
         }
 
+        // Check if at least one talent tab has 50 talent points
+        bool atLeast50TalentsInOneSpec = false;
+        for (TalentTabCount::const_iterator talentTab = talentTabs.begin(); talentTab != talentTabs.end(); ++talentTab)
+        {           
+            if (talentTab->second >= 50)
+            {
+                atLeast50TalentsInOneSpec = true;
+            }
+        }
+
+        if (!atLeast50TalentsInOneSpec)
+        {
+            bool isSpanish = IsSpanishPlayer(player);
+            ChatHandler(player->GetSession()).SendSysMessage(isSpanish ? "No puedes anotar arena sin tener al menos 50 puntos de talento en la rama principal."
+                : "You can not join because you have not at least 50 talent points in your main branch.");
+            return false;
+        }
+        
         return true;
     }
 
