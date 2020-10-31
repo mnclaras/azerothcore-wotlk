@@ -292,7 +292,10 @@ void Battleground::Update(uint32 diff)
     {
         if (Player* player = ObjectAccessor::FindPlayer(itr->first))
         {
-            //&& GetArenaType() == ARENA_TYPE_2v2
+            float minuteStartTimer = 15;
+            if (GetArenaType() == ARENA_TYPE_5v5)
+                minuteStartTimer = 10;
+
             if (player->InArena())
             {
                 //if (sWorld->getBoolConfig(CONFIG_DEMENTIA_ENABLE) == 0)
@@ -302,11 +305,10 @@ void Battleground::Update(uint32 diff)
 
                 // 41406
                 Aura* demAura = player->GetAura(36814);
-                float startTimer = 10 * MINUTE * IN_MILLISECONDS;
 
                 if (!player->IsSpectator())
                 {
-                    if ((GetStartTime() >= 15 * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= 15.1 * MINUTE * IN_MILLISECONDS))
+                    if ((GetStartTime() >= (minuteStartTimer + 0.0f) * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= (minuteStartTimer + 0.1f) * MINUTE * IN_MILLISECONDS))
                     {
                         if (!player->HasAura(36814))
                         {
@@ -321,7 +323,7 @@ void Battleground::Update(uint32 diff)
                         //}
                     }
 
-                    if ((GetStartTime() >= 16 * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= 16.1 * MINUTE * IN_MILLISECONDS))
+                    if ((GetStartTime() >= (minuteStartTimer + 1.0f) * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= (minuteStartTimer + 1.1f) * MINUTE * IN_MILLISECONDS))
                     {
                         if (demAura && demAura->GetStackAmount() == 1)
                         {
@@ -340,7 +342,7 @@ void Battleground::Update(uint32 diff)
                         //}
                     }
 
-                    if ((GetStartTime() >= 17 * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= 17.1 * MINUTE * IN_MILLISECONDS))
+                    if ((GetStartTime() >= (minuteStartTimer + 2.0f) * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= (minuteStartTimer + 2.1f) * MINUTE * IN_MILLISECONDS))
                     {
                         if (demAura && demAura->GetStackAmount() == 2)
                         {
@@ -359,7 +361,7 @@ void Battleground::Update(uint32 diff)
                         //}
                     }
 
-                    if ((GetStartTime() >= 18 * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= 18.1 * MINUTE * IN_MILLISECONDS))
+                    if ((GetStartTime() >= (minuteStartTimer + 3.0f) * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= (minuteStartTimer + 3.1f) * MINUTE * IN_MILLISECONDS))
                     {
                         if (demAura && demAura->GetStackAmount() == 3)
                         {
@@ -378,7 +380,7 @@ void Battleground::Update(uint32 diff)
                         //}
                     }
 
-                    if ((GetStartTime() >= 19 * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= 19.1 * MINUTE * IN_MILLISECONDS))
+                    if ((GetStartTime() >= (minuteStartTimer + 4.0f) * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= (minuteStartTimer + 4.1f) * MINUTE * IN_MILLISECONDS))
                     {
                         if (demAura && demAura->GetStackAmount() == 4)
                         {
@@ -397,7 +399,7 @@ void Battleground::Update(uint32 diff)
                         //}
                     }
 
-                    if ((GetStartTime() >= 20 * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= 20.1 * MINUTE * IN_MILLISECONDS))
+                    if ((GetStartTime() >= (minuteStartTimer + 5.0f) * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= (minuteStartTimer + 5.1f) * MINUTE * IN_MILLISECONDS))
                     {
                         if (demAura && demAura->GetStackAmount() == 5)
                         {
@@ -416,7 +418,7 @@ void Battleground::Update(uint32 diff)
                         //}
                     }
 
-                    if ((GetStartTime() >= 21 * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= 21.1 * MINUTE * IN_MILLISECONDS))
+                    if ((GetStartTime() >= (minuteStartTimer + 6.0f) * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= (minuteStartTimer + 6.1f) * MINUTE * IN_MILLISECONDS))
                     {
                         if (demAura && demAura->GetStackAmount() == 6)
                         {
@@ -435,7 +437,7 @@ void Battleground::Update(uint32 diff)
                         //}
                     }
 
-                    if ((GetStartTime() >= 22 * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= 22.1 * MINUTE * IN_MILLISECONDS))
+                    if ((GetStartTime() >= (minuteStartTimer + 7.0f) * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= (minuteStartTimer + 7.1f) * MINUTE * IN_MILLISECONDS))
                     {
                         if (demAura && demAura->GetStackAmount() == 7)
                         {
