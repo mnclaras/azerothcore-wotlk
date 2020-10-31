@@ -93,14 +93,8 @@ void WorldSession::HandleMessagechatOpcode(WorldPacket & recvData)
         case CHAT_MSG_DND:
             if (sender->IsSpectator())
             {
-                std::string msg;
-                recvData >> msg;
-
-                if (msg != ".spect" && msg != ".spect reset" && msg != ".spect spectate" && msg != ".spect watch" && msg != ".spect leave")
-                {
-                    recvData.rfinish();
-                    return;
-                }
+                recvData.rfinish();
+                return;
             }
     }
 
