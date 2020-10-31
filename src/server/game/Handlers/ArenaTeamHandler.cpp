@@ -148,7 +148,7 @@ void WorldSession::HandleArenaTeamInviteOpcode(WorldPacket & recvData)
         maxPlayers = arenaTeam->GetType() * 2;
         break;
     case ARENA_TYPE_5v5:
-        maxPlayers = 2;
+        maxPlayers = 1;
         break;
     }
 
