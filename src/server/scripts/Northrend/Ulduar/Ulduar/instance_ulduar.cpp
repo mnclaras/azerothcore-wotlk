@@ -520,7 +520,7 @@ public:
                     gameObject->EnableCollision(false);
                     break;
                 case GO_MIMIRON_TRAM:
-                    if (GetData(TYPE_MIMIRON) == DONE)
+                    //if (GetData(TYPE_MIMIRON) == DONE)
                         m_mimironTramUsed = true;
                     m_mimironTramGUID = gameObject->GetGUID();
                     break;
@@ -609,7 +609,8 @@ public:
                         if (GameObject* go = instance->GetGameObject(m_keepersgateGUID))
                             go->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_LOCKED);
                     }
-                    if (type == TYPE_MIMIRON && data == IN_PROGRESS) // after reaching him without tram and starting the fight
+                    //if (type == TYPE_MIMIRON && data == IN_PROGRESS) // after reaching him without tram and starting the fight
+                    if (type == TYPE_MIMIRON) // after reaching him without tram and starting the fight
                         m_mimironTramUsed = true;
                     break;
 
