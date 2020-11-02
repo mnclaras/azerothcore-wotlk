@@ -26977,8 +26977,13 @@ void Player::ActivateSpec(uint8 spec)
     if (spec > GetSpecsCount())
         return;
 
-    if (InBattleground() || InArena() || InBattlegroundQueue())
+    if (InBattlegroundQueueForBattlegroundQueueType(BATTLEGROUND_QUEUE_5v5))
+    {
+        LocaleConstant locale = GetSession()->GetSessionDbLocaleIndex();
+        bool isSpanish = (locale == LOCALE_esES || locale == LOCALE_esMX);
+        ChatHandler(GetSession()).PSendSysMessage(isSpanish ? "No puedes cambiar de talentos mientras estás anotado en 1v1" : "Cannot change spec while in 1v1.");
         return;
+    }
 
     // xinef: interrupt currently casted spell just in case
     if (IsNonMeleeSpellCast(false))
