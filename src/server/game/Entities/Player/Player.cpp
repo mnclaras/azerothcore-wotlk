@@ -26977,6 +26977,9 @@ void Player::ActivateSpec(uint8 spec)
     if (spec > GetSpecsCount())
         return;
 
+    if (InBattleground() || InArena() || InBattlegroundQueue())
+        return;
+
     // xinef: interrupt currently casted spell just in case
     if (IsNonMeleeSpellCast(false))
         InterruptNonMeleeSpells(false);
