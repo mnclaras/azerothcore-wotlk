@@ -391,7 +391,7 @@ bool Transmogrification::CanTransmogrifyItemWithItem(Player* player, ItemTemplat
     if (source->DisplayInfoID == target->DisplayInfoID)
         return false;
 
-    if (source->Class != target->Class)
+    if (source->Class != target->Class && !AllowMixedArmorTypes)
         return false;
 
     if (source->InventoryType == INVTYPE_BAG ||
