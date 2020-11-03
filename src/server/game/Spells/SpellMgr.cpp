@@ -3964,7 +3964,12 @@ void SpellMgr::LoadDbcDataCorrections()
         case 70650:
             spellInfo->EffectApplyAuraName[0] = SPELL_AURA_ADD_PCT_MODIFIER;
             break;
-
+        // Gnaw
+        case 47481:
+            spellInfo->Category = 88;
+            spellInfo->RecoveryTime = 0;
+            spellInfo->CategoryRecoveryTime = 60000;
+            break;
 
 
         /////////////////////////////////
@@ -4430,6 +4435,7 @@ void SpellMgr::LoadDbcDataCorrections()
             break;
         // DEATH KNIGHT SCARLET FIRE ARROW
         case 53348:
+        // BALISTA
         // BALISTA
         case 53117:
             spellInfo->RecoveryTime = 5000;
