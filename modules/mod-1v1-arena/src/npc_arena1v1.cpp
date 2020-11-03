@@ -401,7 +401,7 @@ private:
             }
         }
 
-        if (!atLeast50TalentsInOneSpec)
+        if (!atLeast50TalentsInOneSpec && player->getClass() != CLASS_ROGUE)
         {
             bool isSpanish = IsSpanishPlayer(player);
             ChatHandler(player->GetSession()).SendSysMessage(isSpanish ? "No puedes anotar arena sin tener al menos 50 puntos de talento en la rama principal."
