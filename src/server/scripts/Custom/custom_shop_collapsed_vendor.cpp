@@ -39,7 +39,11 @@
 #define CREATURE_VENDOR_PVP_S7WEAPONS       601512          
 #define CREATURE_VENDOR_PVP_S8              104002          
 #define CREATURE_VENDOR_PVP_S8OFFPARTS      104000             
-#define CREATURE_VENDOR_PVP_3V3WEAPONS      104003          
+#define CREATURE_VENDOR_PVP_3V3WEAPONS      104003
+
+#define CREATURE_VENDOR_PVP_PVEGEARBYARENA_OFFSET      604000
+#define CREATURE_VENDOR_PVP_PVEGEARBYARENA_WEAPONS     604001
+#define CREATURE_VENDOR_PVP_PVEGEARBYARENA_TRINKETS    604002          
 
 #define CREATURE_VENDOR_PVE_T9_HORDE        601632
 #define CREATURE_VENDOR_PVE_T9_ALLIANCE     601585
@@ -237,6 +241,10 @@ public:
         ShowOption(player, isSpanish ? "[S8]" : "[S8]", 4);
         ShowOption(player, isSpanish ? "[S8 Offset]" : "[S8 Offset]", 5);
         ShowOption(player, isSpanish ? "[Armas 3v3]" : "[3v3 Weapons]", 6);
+        ShowOption(player, isSpanish ? "---- Equipo PVE por Rating de Arenas ----" : "---- PVE Gear by Arena Rating ----", 100);
+        ShowOption(player, isSpanish ? "[1850 - Offset]" : "[1850 - Offset]", 7);
+        ShowOption(player, isSpanish ? "[1950 - Armas]" : "[1950 - Weapons]", 8);
+        ShowOption(player, isSpanish ? "[2050 - Abalorios]" : "[2050 - Trinkets]", 9);
 
         SendGossipMenuFor(player, DEFAULT_MESSAGE, creature->GetGUID());
         return true;
@@ -253,6 +261,9 @@ public:
         case GOSSIP_ACTION_INFO_DEF + 4: ShowVendor(player, creature, CREATURE_VENDOR_PVP_S8); break;
         case GOSSIP_ACTION_INFO_DEF + 5: ShowVendor(player, creature, CREATURE_VENDOR_PVP_S8OFFPARTS); break;
         case GOSSIP_ACTION_INFO_DEF + 6: ShowVendor(player, creature, CREATURE_VENDOR_PVP_3V3WEAPONS); break;
+        case GOSSIP_ACTION_INFO_DEF + 7: ShowVendor(player, creature, CREATURE_VENDOR_PVP_PVEGEARBYARENA_OFFSET); break;
+        case GOSSIP_ACTION_INFO_DEF + 8: ShowVendor(player, creature, CREATURE_VENDOR_PVP_PVEGEARBYARENA_WEAPONS); break;
+        case GOSSIP_ACTION_INFO_DEF + 9: ShowVendor(player, creature, CREATURE_VENDOR_PVP_PVEGEARBYARENA_TRINKETS); break;
         default: OnGossipHello(player, creature); break;
         }
 
