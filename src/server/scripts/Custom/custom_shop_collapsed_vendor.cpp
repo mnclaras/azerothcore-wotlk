@@ -253,8 +253,8 @@ public:
         ShowOption(player, isSpanish ? "[1850: Anillos - Collares]" : "[1850: Rings - Necks]", 8);
         ShowOption(player, isSpanish ? "[1850: Capas]" : "[1850: Cloaks]", 9);
         ShowOption(player, isSpanish ? "[1850: Off-Tier]" : "[1850: Off-Tier]", 10);
-        ShowOption(player, isSpanish ? "[1950: Armas]" : "[1950 - Weapons]", 11);
-        ShowOption(player, isSpanish ? "[2050: Abalorios]" : "[2050 - Trinkets]", 12);
+        ShowOption(player, isSpanish ? "[1950: Armas]" : "[1950: Weapons]", 11);
+        ShowOption(player, isSpanish ? "[2050: Abalorios]" : "[2050: Trinkets]", 12);
 
         SendGossipMenuFor(player, DEFAULT_MESSAGE, creature->GetGUID());
         return true;
