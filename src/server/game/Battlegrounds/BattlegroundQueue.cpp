@@ -815,7 +815,8 @@ void BattlegroundQueue::BattlegroundQueueUpdate(BattlegroundBracketId bracket_id
 
         const uint32 currMSTime = World::GetGameTimeMS();
         const uint32 discardTime = sBattlegroundMgr->GetRatingDiscardTimer();
-        const uint32 maxDefaultRatingDifference = (MaxPlayersPerTeam > 2 ? 300 : 200);
+        const uint32 maxDefaultRatingDifference = sBattlegroundMgr->GetMaxRatingDifference();
+        //const uint32 maxDefaultRatingDifference = (MaxPlayersPerTeam > 2 ? 300 : 200);
         const uint32 maxCountedMMR = 2500;
 
         // we need to find 2 teams which will play next game

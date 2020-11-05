@@ -843,6 +843,13 @@ uint32 BattlegroundMgr::GetRatingDiscardTimer() const
     return sWorld->getIntConfig(CONFIG_ARENA_RATING_DISCARD_TIMER);
 }
 
+uint32 BattlegroundMgr::GetMaxRatingDifference() const
+{
+    return sWorld->getIntConfig(CONFIG_ARENA_MAX_RATING_DIFFERENCE);
+}
+
+
+
 uint32 BattlegroundMgr::GetPrematureFinishTime() const
 {
     return sWorld->getIntConfig(CONFIG_BATTLEGROUND_PREMATURE_FINISH_TIMER);
