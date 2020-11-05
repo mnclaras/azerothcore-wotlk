@@ -15,89 +15,96 @@
 #include "ScriptMgr.h"
 #include "ScriptedGossip.h"
 
-#define CREATURE_VENDOR_GEMS_RED        601592          
-#define CREATURE_VENDOR_GEMS_YELLOW     601571          
-#define CREATURE_VENDOR_GEMS_PURPLE     601573          
-#define CREATURE_VENDOR_GEMS_ORANGE     601567          
-#define CREATURE_VENDOR_GEMS_META       601559          
-#define CREATURE_VENDOR_GEMS_GREEN      601541          
-#define CREATURE_VENDOR_GEMS_BLUE       601514
+enum Spells
+{
 
-#define CREATURE_VENDOR_PROFESSION_ENCHANTING       601531          
-#define CREATURE_VENDOR_PROFESSION_JEWELCRAFTING    601540          
-#define CREATURE_VENDOR_PROFESSION_LEATHERWORKING   601554          
-#define CREATURE_VENDOR_PROFESSION_INSCRIPTION      601548          
-#define CREATURE_VENDOR_PROFESSION_HERBALISM        601543          
-#define CREATURE_VENDOR_PROFESSION_TAILORING        601518  
-#define CREATURE_VENDOR_PROFESSION_BLACKSMITHING    601560       
-#define CREATURE_VENDOR_PROFESSION_ENGINEERING      601522    
-#define CREATURE_VENDOR_PROFESSION_ELEMENTALS       601552   
-#define CREATURE_VENDOR_PROFESSION_ALCHEMY          601561
-
-#define CREATURE_VENDOR_PVP_S7              601511        
-#define CREATURE_VENDOR_PVP_S7OFFPARTS      601615  
-#define CREATURE_VENDOR_PVP_S7WEAPONS       601512          
-#define CREATURE_VENDOR_PVP_S8              104002          
-#define CREATURE_VENDOR_PVP_S8OFFPARTS      104000             
-#define CREATURE_VENDOR_PVP_3V3WEAPONS      104003
-
-#define CREATURE_VENDOR_PVP_PVEGEARBYARENA_OFFSET      604000
-#define CREATURE_VENDOR_PVP_PVEGEARBYARENA_WEAPONS     604001
-#define CREATURE_VENDOR_PVP_PVEGEARBYARENA_TRINKETS    604002          
-
-#define CREATURE_VENDOR_PVE_T9_HORDE        601632
-#define CREATURE_VENDOR_PVE_T9_ALLIANCE     601585
-#define CREATURE_VENDOR_PVE_OFFSET          100008          
-#define CREATURE_VENDOR_PVE_RINGS           601594          
-#define CREATURE_VENDOR_PVE_NECKS           601501          
-#define CREATURE_VENDOR_PVE_CLOAKS          601517          
-#define CREATURE_VENDOR_PVE_BRACERS         601644          
-#define CREATURE_VENDOR_PVE_BELTS           601642          
-#define CREATURE_VENDOR_PVE_BOOTS           601640          
-#define CREATURE_VENDOR_PVE_1HWEAPONS       601566          
-#define CREATURE_VENDOR_PVE_2HWEAPONS       601608          
-#define CREATURE_VENDOR_PVE_RANGEDWEAPONS   601542         
-#define CREATURE_VENDOR_PVE_OFFHANDS        601563          
-#define CREATURE_VENDOR_PVE_SHIELDS         601598          
-#define CREATURE_VENDOR_PVE_RELICS          601593          
-#define CREATURE_VENDOR_PVE_TRINKETS        601605
-
-#define CREATURE_VENDOR_TRANSMOG_PVP_S1     601502          
-#define CREATURE_VENDOR_TRANSMOG_PVP_S2     601503     
-#define CREATURE_VENDOR_TRANSMOG_PVP_S3     601504     
-#define CREATURE_VENDOR_TRANSMOG_PVP_S4     601505          
-#define CREATURE_VENDOR_TRANSMOG_PVP_S5     601506          
-#define CREATURE_VENDOR_TRANSMOG_PVP_S52    601507      
-#define CREATURE_VENDOR_TRANSMOG_PVP_S53    601508      
-#define CREATURE_VENDOR_TRANSMOG_PVP_S6     601509
-#define CREATURE_VENDOR_TRANSMOG_PVP_WEAP_S1    601616         
-#define CREATURE_VENDOR_TRANSMOG_PVP_WEAP_S2    601617         
-#define CREATURE_VENDOR_TRANSMOG_PVP_WEAP_S3    601618          
-#define CREATURE_VENDOR_TRANSMOG_PVP_WEAP_S4    601619          
-#define CREATURE_VENDOR_TRANSMOG_PVP_WEAP_S5    601620          
-#define CREATURE_VENDOR_TRANSMOG_PVP_WEAP_S6    601621
-
-#define CREATURE_VENDOR_TRANSMOG_PVE_T1     601575          
-#define CREATURE_VENDOR_TRANSMOG_PVE_T2     601576          
-#define CREATURE_VENDOR_TRANSMOG_PVE_T3     601577          
-#define CREATURE_VENDOR_TRANSMOG_PVE_T4     601578          
-#define CREATURE_VENDOR_TRANSMOG_PVE_T5     601579          
-#define CREATURE_VENDOR_TRANSMOG_PVE_T6     601580          
-#define CREATURE_VENDOR_TRANSMOG_PVE_T7     601581          
-#define CREATURE_VENDOR_TRANSMOG_PVE_T75    601582          
-#define CREATURE_VENDOR_TRANSMOG_PVE_T8     601583          
-#define CREATURE_VENDOR_TRANSMOG_PVE_T85    601584          
-
-#define CREATURE_VENDOR_ICC_T10_251         601588
-#define CREATURE_VENDOR_ICC_T10_264         601589      
-#define CREATURE_VENDOR_ICC_T10_277         601590
-
-#define CREATURE_VENDOR_MOUNTS_PVE          101000
-#define CREATURE_VENDOR_MOUNTS_PVP          101001
-#define CREATURE_VENDOR_MOUNTS_EPIC         601533
-
-#define CREATURE_VENDOR_PETS_PVE            601000
-#define CREATURE_VENDOR_PETS_PVP            601001
+    CREATURE_VENDOR_GEMS_RED        = 601592,          
+    CREATURE_VENDOR_GEMS_YELLOW     = 601571,          
+    CREATURE_VENDOR_GEMS_PURPLE     = 601573,          
+    CREATURE_VENDOR_GEMS_ORANGE     = 601567,          
+    CREATURE_VENDOR_GEMS_META       = 601559,          
+    CREATURE_VENDOR_GEMS_GREEN      = 601541,          
+    CREATURE_VENDOR_GEMS_BLUE       = 601514,
+    
+    CREATURE_VENDOR_PROFESSION_ENCHANTING       = 601531,          
+    CREATURE_VENDOR_PROFESSION_JEWELCRAFTING    = 601540,          
+    CREATURE_VENDOR_PROFESSION_LEATHERWORKING   = 601554,          
+    CREATURE_VENDOR_PROFESSION_INSCRIPTION      = 601548,          
+    CREATURE_VENDOR_PROFESSION_HERBALISM        = 601543,          
+    CREATURE_VENDOR_PROFESSION_TAILORING        = 601518,  
+    CREATURE_VENDOR_PROFESSION_BLACKSMITHING    = 601560,       
+    CREATURE_VENDOR_PROFESSION_ENGINEERING      = 601522,    
+    CREATURE_VENDOR_PROFESSION_ELEMENTALS       = 601552,   
+    CREATURE_VENDOR_PROFESSION_ALCHEMY          = 601561,
+    
+    CREATURE_VENDOR_PVP_S7              = 601511,        
+    CREATURE_VENDOR_PVP_S7OFFPARTS      = 601615,  
+    CREATURE_VENDOR_PVP_S7WEAPONS       = 601512,          
+    CREATURE_VENDOR_PVP_S8              = 104002,          
+    CREATURE_VENDOR_PVP_S8OFFPARTS      = 104000,             
+    CREATURE_VENDOR_PVP_3V3WEAPONS      = 104003,
+    
+    CREATURE_VENDOR_PVP_PVEGEARBYARENA_WEAPONS                      = 604000,
+    CREATURE_VENDOR_PVP_PVEGEARBYARENA_TRINKETS                     = 604001,
+    CREATURE_VENDOR_PVP_PVEGEARBYARENA_OFFSET_BELTS_BOOTS_BRACERS   = 604002,
+    CREATURE_VENDOR_PVP_PVEGEARBYARENA_OFFSET_RINGS_NECKS           = 604003,
+    CREATURE_VENDOR_PVP_PVEGEARBYARENA_OFFSET_CLOAKS                = 604004,
+    CREATURE_VENDOR_PVP_PVEGEARBYARENA_OFFTIER                      = 604005,
+      
+    CREATURE_VENDOR_PVE_T9_HORDE        = 601632,
+    CREATURE_VENDOR_PVE_T9_ALLIANCE     = 601585,
+    CREATURE_VENDOR_PVE_OFFSET          = 100008,          
+    CREATURE_VENDOR_PVE_RINGS           = 601594,          
+    CREATURE_VENDOR_PVE_NECKS           = 601501,          
+    CREATURE_VENDOR_PVE_CLOAKS          = 601517,          
+    CREATURE_VENDOR_PVE_BRACERS         = 601644,          
+    CREATURE_VENDOR_PVE_BELTS           = 601642,          
+    CREATURE_VENDOR_PVE_BOOTS           = 601640,          
+    CREATURE_VENDOR_PVE_1HWEAPONS       = 601566,          
+    CREATURE_VENDOR_PVE_2HWEAPONS       = 601608,          
+    CREATURE_VENDOR_PVE_RANGEDWEAPONS   = 601542,         
+    CREATURE_VENDOR_PVE_OFFHANDS        = 601563,          
+    CREATURE_VENDOR_PVE_SHIELDS         = 601598,          
+    CREATURE_VENDOR_PVE_RELICS          = 601593,          
+    CREATURE_VENDOR_PVE_TRINKETS        = 601605,
+    
+    CREATURE_VENDOR_TRANSMOG_PVP_S1     = 601502,          
+    CREATURE_VENDOR_TRANSMOG_PVP_S2     = 601503,     
+    CREATURE_VENDOR_TRANSMOG_PVP_S3     = 601504,     
+    CREATURE_VENDOR_TRANSMOG_PVP_S4     = 601505,          
+    CREATURE_VENDOR_TRANSMOG_PVP_S5     = 601506,          
+    CREATURE_VENDOR_TRANSMOG_PVP_S52    = 601507,      
+    CREATURE_VENDOR_TRANSMOG_PVP_S53    = 601508,      
+    CREATURE_VENDOR_TRANSMOG_PVP_S6     = 601509,
+    CREATURE_VENDOR_TRANSMOG_PVP_WEAP_S1    = 601616,         
+    CREATURE_VENDOR_TRANSMOG_PVP_WEAP_S2    = 601617,         
+    CREATURE_VENDOR_TRANSMOG_PVP_WEAP_S3    = 601618,          
+    CREATURE_VENDOR_TRANSMOG_PVP_WEAP_S4    = 601619,          
+    CREATURE_VENDOR_TRANSMOG_PVP_WEAP_S5    = 601620,          
+    CREATURE_VENDOR_TRANSMOG_PVP_WEAP_S6    = 601621,
+    
+    CREATURE_VENDOR_TRANSMOG_PVE_T1     = 601575,          
+    CREATURE_VENDOR_TRANSMOG_PVE_T2     = 601576,          
+    CREATURE_VENDOR_TRANSMOG_PVE_T3     = 601577,          
+    CREATURE_VENDOR_TRANSMOG_PVE_T4     = 601578,          
+    CREATURE_VENDOR_TRANSMOG_PVE_T5     = 601579,          
+    CREATURE_VENDOR_TRANSMOG_PVE_T6     = 601580,          
+    CREATURE_VENDOR_TRANSMOG_PVE_T7     = 601581,          
+    CREATURE_VENDOR_TRANSMOG_PVE_T75    = 601582,          
+    CREATURE_VENDOR_TRANSMOG_PVE_T8     = 601583,          
+    CREATURE_VENDOR_TRANSMOG_PVE_T85    = 601584,          
+    
+    CREATURE_VENDOR_ICC_T10_251         = 601588,
+    CREATURE_VENDOR_ICC_T10_264         = 601589,      
+    CREATURE_VENDOR_ICC_T10_277         = 601590,
+    
+    CREATURE_VENDOR_MOUNTS_PVE          = 101000,
+    CREATURE_VENDOR_MOUNTS_PVP          = 101001,
+    CREATURE_VENDOR_MOUNTS_EPIC         = 601533,
+    
+    CREATURE_VENDOR_PETS_PVE            = 601000,
+    CREATURE_VENDOR_PETS_PVP            = 601001
+};
 
 //#define CREATURE_VENDOR_               
 //#define CREATURE_VENDOR_               
@@ -242,9 +249,12 @@ public:
         ShowOption(player, isSpanish ? "[S8 Offset]" : "[S8 Offset]", 5);
         ShowOption(player, isSpanish ? "[Armas 3v3]" : "[3v3 Weapons]", 6);
         ShowOption(player, isSpanish ? "---- Equipo PVE por Rating de Arenas ----" : "---- PVE Gear by Arena Rating ----", 100);
-        ShowOption(player, isSpanish ? "[1850 - Offset]" : "[1850 - Offset]", 7);
-        ShowOption(player, isSpanish ? "[1950 - Armas]" : "[1950 - Weapons]", 8);
-        ShowOption(player, isSpanish ? "[2050 - Abalorios]" : "[2050 - Trinkets]", 9);
+        ShowOption(player, isSpanish ? "[1850: Cinturones - Botas - Brazales]" : "[1850: Belts - Boots - Bracers]", 7);
+        ShowOption(player, isSpanish ? "[1850: Anillos - Collares]" : "[1850: Rings - Necks]", 8);
+        ShowOption(player, isSpanish ? "[1850: Capas]" : "[1850: Cloaks]", 9);
+        ShowOption(player, isSpanish ? "[1850: Off-Tier]" : "[1850: Off-Tier]", 10);
+        ShowOption(player, isSpanish ? "[1950: Armas]" : "[1950 - Weapons]", 11);
+        ShowOption(player, isSpanish ? "[2050: Abalorios]" : "[2050 - Trinkets]", 12);
 
         SendGossipMenuFor(player, DEFAULT_MESSAGE, creature->GetGUID());
         return true;
@@ -261,9 +271,12 @@ public:
         case GOSSIP_ACTION_INFO_DEF + 4: ShowVendor(player, creature, CREATURE_VENDOR_PVP_S8); break;
         case GOSSIP_ACTION_INFO_DEF + 5: ShowVendor(player, creature, CREATURE_VENDOR_PVP_S8OFFPARTS); break;
         case GOSSIP_ACTION_INFO_DEF + 6: ShowVendor(player, creature, CREATURE_VENDOR_PVP_3V3WEAPONS); break;
-        case GOSSIP_ACTION_INFO_DEF + 7: ShowVendor(player, creature, CREATURE_VENDOR_PVP_PVEGEARBYARENA_OFFSET); break;
-        case GOSSIP_ACTION_INFO_DEF + 8: ShowVendor(player, creature, CREATURE_VENDOR_PVP_PVEGEARBYARENA_WEAPONS); break;
-        case GOSSIP_ACTION_INFO_DEF + 9: ShowVendor(player, creature, CREATURE_VENDOR_PVP_PVEGEARBYARENA_TRINKETS); break;
+        case GOSSIP_ACTION_INFO_DEF + 7: ShowVendor(player, creature, CREATURE_VENDOR_PVP_PVEGEARBYARENA_OFFSET_BELTS_BOOTS_BRACERS); break;
+        case GOSSIP_ACTION_INFO_DEF + 8: ShowVendor(player, creature, CREATURE_VENDOR_PVP_PVEGEARBYARENA_OFFSET_RINGS_NECKS); break;
+        case GOSSIP_ACTION_INFO_DEF + 9: ShowVendor(player, creature, CREATURE_VENDOR_PVP_PVEGEARBYARENA_OFFSET_CLOAKS); break;
+        case GOSSIP_ACTION_INFO_DEF + 10: ShowVendor(player, creature, CREATURE_VENDOR_PVP_PVEGEARBYARENA_OFFTIER); break;
+        case GOSSIP_ACTION_INFO_DEF + 11: ShowVendor(player, creature, CREATURE_VENDOR_PVP_PVEGEARBYARENA_WEAPONS); break;
+        case GOSSIP_ACTION_INFO_DEF + 12: ShowVendor(player, creature, CREATURE_VENDOR_PVP_PVEGEARBYARENA_TRINKETS); break;
         default: OnGossipHello(player, creature); break;
         }
 
@@ -291,7 +304,7 @@ public:
         bool isSpanish = IsSpanishPlayer(player);
 
         ShowOption(player, isSpanish ? "[T9]" : "[T9]", 1);
-        ShowOption(player, isSpanish ? "[Offset]" : "[Offset]", 2);
+        ShowOption(player, isSpanish ? "[Off-Tier]" : "[Off-Tier]", 2);
         ShowOption(player, isSpanish ? "[Anillos]" : "[Rings]", 3);
         ShowOption(player, isSpanish ? "[Collares]" : "[Necks]", 4);
         ShowOption(player, isSpanish ? "[Capas]" : "[Cloaks]", 5);
