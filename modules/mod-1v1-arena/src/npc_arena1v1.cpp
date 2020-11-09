@@ -391,17 +391,17 @@ private:
             return false;
         }
 
-        // Check if at least one talent tab has 50 talent points
+        // Check if at least one talent tab has 51 talent points
         bool atLeast50TalentsInOneSpec = false;
         for (TalentTabCount::const_iterator talentTab = talentTabs.begin(); talentTab != talentTabs.end(); ++talentTab)
         {           
-            if (talentTab->second >= 50)
+            if (talentTab->second >= 51)
             {
                 atLeast50TalentsInOneSpec = true;
             }
         }
 
-        if (!atLeast50TalentsInOneSpec && player->getClass() != CLASS_ROGUE)
+        if (!atLeast50TalentsInOneSpec && (player->getClass() == CLASS_PALADIN || player->getClass() == CLASS_DEATH_KNIGHT))
         {
             bool isSpanish = IsSpanishPlayer(player);
             ChatHandler(player->GetSession()).SendSysMessage(isSpanish ? "No puedes anotar arena sin tener al menos 50 puntos de talento en la rama principal."
