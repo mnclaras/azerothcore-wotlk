@@ -102,21 +102,25 @@ class npc_pet_dk_ebon_gargoyle : public CreatureScript
             void MySelectNextTarget()
             {
                 Unit* owner = me->GetOwner();
-                // && (!me->GetVictim() || me->GetVictim()->IsImmunedToSpell(sSpellMgr->GetSpellInfo(51963)) || !me->IsValidAttackTarget(me->GetVictim()) || !owner->CanSeeOrDetect(me->GetVictim()))
-                if (owner && owner->GetTypeId() == TYPEID_PLAYER)
+                // 
+                if (owner && owner->GetTypeId() == TYPEID_PLAYER
+                    && (!me->GetVictim() || me->GetVictim()->IsImmunedToSpell(sSpellMgr->GetSpellInfo(51963)) || !me->IsValidAttackTarget(me->GetVictim()) || !owner->CanSeeOrDetect(me->GetVictim())))
                 {
                     Unit* ghoulTarget = ObjectAccessor::GetUnit(*me, GetGhoulTargetGUID());
                     Unit* selection = owner->ToPlayer()->GetSelectedUnit();
-                    if (ghoulTarget && ghoulTarget != me->GetVictim() && me->IsValidAttackTarget(ghoulTarget))
+                    if (ghoulTarget && me->IsValidAttackTarget(ghoulTarget))
+                    {
+                        if (ghoulTarget != me->GetVictim())
+                        {
+                            me->GetMotionMaster()->Clear(false);
+                            SetGazeOn(ghoulTarget);
+                        }
+                    }                    
+                    else if (selection && selection != me->GetVictim() && me->IsValidAttackTarget(selection)) 
                     {
                         me->GetMotionMaster()->Clear(false);
-                        SetGazeOn(ghoulTarget);
-                    }                    
-                    //else if (selection && selection != me->GetVictim() && me->IsValidAttackTarget(selection)) 
-                    //{
-                    //    me->GetMotionMaster()->Clear(false);
-                    //    SetGazeOn(selection);
-                    //}                 
+                        SetGazeOn(selection);
+                    }                 
                     else if (!me->GetVictim() || !owner->CanSeeOrDetect(me->GetVictim()))
                     {
                         me->CombatStop(true);
@@ -133,7 +137,6 @@ class npc_pet_dk_ebon_gargoyle : public CreatureScript
                 _targetGUID = who->GetGUID();
                 me->AddAura(SPELL_DK_SUMMON_GARGOYLE_1, who);
                 ScriptedAI::AttackStart(who);
-                me->SetReactState(REACT_PASSIVE);
             }
 
             void RemoveTargetAura()
