@@ -110,11 +110,13 @@ class npc_pet_dk_ebon_gargoyle : public CreatureScript
                     if (ghoulTarget && ghoulTarget != me->GetVictim() && me->IsValidAttackTarget(ghoulTarget))
                     {
                         me->GetMotionMaster()->Clear(false);
+                        AttackStart(ghoulTarget);
                         SetGazeOn(ghoulTarget);
                     }                    
                     else if (selection && selection != me->GetVictim() && me->IsValidAttackTarget(selection)) 
                     {
                         me->GetMotionMaster()->Clear(false);
+                        AttackStart(ghoulTarget);
                         SetGazeOn(selection);
                     }                 
                     else if (!me->GetVictim() || !owner->CanSeeOrDetect(me->GetVictim()))
@@ -133,6 +135,7 @@ class npc_pet_dk_ebon_gargoyle : public CreatureScript
                 _targetGUID = who->GetGUID();
                 me->AddAura(SPELL_DK_SUMMON_GARGOYLE_1, who);
                 ScriptedAI::AttackStart(who);
+                me->SetReactState(REACT_PASSIVE);
             }
 
             void RemoveTargetAura()
