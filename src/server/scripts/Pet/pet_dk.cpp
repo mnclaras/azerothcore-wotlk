@@ -112,11 +112,11 @@ class npc_pet_dk_ebon_gargoyle : public CreatureScript
                         me->GetMotionMaster()->Clear(false);
                         SetGazeOn(ghoulTarget);
                     }                    
-                    else if (selection && selection != me->GetVictim() && me->IsValidAttackTarget(selection)) 
-                    {
-                        me->GetMotionMaster()->Clear(false);
-                        SetGazeOn(selection);
-                    }                 
+                    //else if (selection && selection != me->GetVictim() && me->IsValidAttackTarget(selection)) 
+                    //{
+                    //    me->GetMotionMaster()->Clear(false);
+                    //    SetGazeOn(selection);
+                    //}                 
                     else if (!me->GetVictim() || !owner->CanSeeOrDetect(me->GetVictim()))
                     {
                         me->CombatStop(true);
