@@ -110,14 +110,12 @@ class npc_pet_dk_ebon_gargoyle : public CreatureScript
                     if (ghoulTarget && ghoulTarget != me->GetVictim() && me->IsValidAttackTarget(ghoulTarget))
                     {
                         me->GetMotionMaster()->Clear(false);
-                        AttackStart(ghoulTarget);
-                        //SetGazeOn(ghoulTarget);
+                        SetGazeOn(ghoulTarget);
                     }                    
                     else if (selection && selection != me->GetVictim() && me->IsValidAttackTarget(selection)) 
                     {
                         me->GetMotionMaster()->Clear(false);
-                        AttackStart(ghoulTarget);
-                        //SetGazeOn(selection);
+                        SetGazeOn(selection);
                     }                 
                     else if (!me->GetVictim() || !owner->CanSeeOrDetect(me->GetVictim()))
                     {
@@ -193,9 +191,8 @@ class npc_pet_dk_ebon_gargoyle : public CreatureScript
                         if ((*iter)->GetAura(SPELL_DK_SUMMON_GARGOYLE_1, me->GetOwnerGUID()))
                         {
                             (*iter)->RemoveAura(SPELL_DK_SUMMON_GARGOYLE_1, me->GetOwnerGUID());
-                            //SetGazeOn(*iter);
-                            AttackStart((*iter));
-                            //_targetGUID = (*iter)->GetGUID();
+                            SetGazeOn(*iter);
+                            _targetGUID = (*iter)->GetGUID();
                             break;
                         }
                 }
@@ -216,11 +213,11 @@ class npc_pet_dk_ebon_gargoyle : public CreatureScript
                         me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE);
                     }
 
-                    //if (!UpdateVictimWithGaze())
-                    //{
-                    //    MySelectNextTarget();
-                    //    return;
-                    //}
+                    if (!UpdateVictimWithGaze())
+                    {
+                        MySelectNextTarget();
+                        return;
+                    }
 
                     _initialCastTimer += diff;
                     _selectionTimer += diff;
