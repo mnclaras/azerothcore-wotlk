@@ -78,18 +78,44 @@ class npc_pet_dk_ebon_gargoyle : public CreatureScript
                 _initialCastTimer = 0;
             }
 
+            uint64 GetGhoulTargetGUID()
+            {
+                uint64 ghoulTargetGUID = 0;
+
+                std::list<Unit*> targets;
+                acore::AnyFriendlyUnitInObjectRangeCheck ghoul_check(me, me, 50);
+                acore::UnitListSearcher<acore::AnyFriendlyUnitInObjectRangeCheck> searcher(me, targets, ghoul_check);
+                me->VisitNearbyObject(50, searcher);
+                for (std::list<Unit*>::const_iterator iter = targets.begin(); iter != targets.end(); ++iter)
+                {
+                    if ((*iter)->GetEntry() == 26125) // ghoul entry
+                        if ((*iter)->GetOwnerGUID() == me->GetOwnerGUID()) // same owner
+                        {
+                            ghoulTargetGUID = (*iter)->GetTarget();
+                            break;
+                        }
+                }
+
+                return ghoulTargetGUID;
+            }
+
             void MySelectNextTarget()
             {
                 Unit* owner = me->GetOwner();
                 if (owner && owner->GetTypeId() == TYPEID_PLAYER && (!me->GetVictim() || me->GetVictim()->IsImmunedToSpell(sSpellMgr->GetSpellInfo(51963)) || !me->IsValidAttackTarget(me->GetVictim()) || !owner->CanSeeOrDetect(me->GetVictim())))
                 {
+                    Unit* ghoulTarget = ObjectAccessor::GetUnit(*me, GetGhoulTargetGUID());
                     Unit* selection = owner->ToPlayer()->GetSelectedUnit();
-                    if (selection && selection != me->GetVictim() && me->IsValidAttackTarget(selection)) 
+                    if (ghoulTarget && ghoulTarget != me->GetVictim() && me->IsValidAttackTarget(ghoulTarget))
+                    {
+                        me->GetMotionMaster()->Clear(false);
+                        SetGazeOn(ghoulTarget);
+                    }                    
+                    else if (selection && selection != me->GetVictim() && me->IsValidAttackTarget(selection)) 
                     {
                         me->GetMotionMaster()->Clear(false);
                         SetGazeOn(selection);
-                    }
-                    
+                    }                 
                     else if (!me->GetVictim() || !owner->CanSeeOrDetect(me->GetVictim()))
                     {
                         me->CombatStop(true);
