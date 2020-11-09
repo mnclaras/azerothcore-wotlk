@@ -103,8 +103,7 @@ class npc_pet_dk_ebon_gargoyle : public CreatureScript
             {
                 Unit* owner = me->GetOwner();
                 // 
-                if (owner && owner->GetTypeId() == TYPEID_PLAYER
-                    && (!me->GetVictim() || me->GetVictim()->IsImmunedToSpell(sSpellMgr->GetSpellInfo(51963)) || !me->IsValidAttackTarget(me->GetVictim()) || !owner->CanSeeOrDetect(me->GetVictim())))
+                if (owner && owner->GetTypeId() == TYPEID_PLAYER)
                 {
                     Unit* ghoulTarget = ObjectAccessor::GetUnit(*me, GetGhoulTargetGUID());
                     Unit* selection = owner->ToPlayer()->GetSelectedUnit();
@@ -116,7 +115,8 @@ class npc_pet_dk_ebon_gargoyle : public CreatureScript
                             SetGazeOn(ghoulTarget);
                         }
                     }                    
-                    else if (selection && selection != me->GetVictim() && me->IsValidAttackTarget(selection)) 
+                    else if (selection && selection != me->GetVictim() && me->IsValidAttackTarget(selection)
+                        && (!me->GetVictim() || me->GetVictim()->IsImmunedToSpell(sSpellMgr->GetSpellInfo(51963)) || !me->IsValidAttackTarget(me->GetVictim()) || !owner->CanSeeOrDetect(me->GetVictim())))
                     {
                         me->GetMotionMaster()->Clear(false);
                         SetGazeOn(selection);
