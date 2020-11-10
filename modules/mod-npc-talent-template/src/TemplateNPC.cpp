@@ -91,7 +91,7 @@ void sTemplateNPC::Copy(Player* target, Player* src)
         for (uint8 rank = 0; rank < MAX_TALENT_RANK; ++rank)
             if (talentInfo->RankID[rank] && itr->first == talentInfo->RankID[rank])
             {
-                currentTalentRank = rank + 1;
+                currentTalentRank = rank;
                 break;
             }
 

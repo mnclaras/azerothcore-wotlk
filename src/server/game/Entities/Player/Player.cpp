@@ -25910,7 +25910,7 @@ void Player::LearnTalent(uint32 talentId, uint32 talentRank, bool skipDependsOn)
     }
 
     // xinef: we do not have enough talent points to add talent of this tier
-    if (spentPoints < (talentInfo->Row * MAX_TALENT_RANK))
+    if (spentPoints < (talentInfo->Row * MAX_TALENT_RANK) && !skipDependsOn)
         return;
 
     // xinef: hacking attempt, tries to learn unknown rank
