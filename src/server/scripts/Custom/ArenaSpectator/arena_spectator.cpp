@@ -86,6 +86,7 @@ public:
         handler->PSendSysMessage("Command has subcommands:");
         handler->PSendSysMessage("   spectate");
         handler->PSendSysMessage("   leave");
+        
         return true;
     }
 
@@ -110,7 +111,8 @@ public:
         Player* player = handler->GetSession()->GetPlayer();
         if (!player->IsSpectator() || !player->FindMap() || !player->FindMap()->IsBattleArena())
         {
-            handler->SendSysMessage("You are not a spectator.");
+            bool isSpanish = IsSpanishPlayer(player);
+            handler->SendSysMessage(isSpanish ? "No eres un espectador." : "You are not a spectator.");
             return true;
         }
 
@@ -122,10 +124,11 @@ public:
     static bool HandleSpectatorSpectateCommand(ChatHandler* handler, char const* args)
     {
         Player* player = handler->GetSession()->GetPlayer();
+        bool isSpanish = IsSpanishPlayer(player);
         std::list<std::string> errors;
         if (!*args)
         {
-            handler->SendSysMessage("Missing player name.");
+            handler->SendSysMessage(isSpanish ? "Nombre de jugador no encontrado." : "Missing player name.");
             return true;
         }
         if (player->IsSpectator())
@@ -135,12 +138,12 @@ public:
                 HandleSpectatorWatchCommand(handler, args);
                 return true;
             }
-            handler->PSendSysMessage("You are already spectacting arena.");
+            handler->PSendSysMessage(isSpanish ? "Ya estas espectando una arena." : "You are already spectacting arena.");
             return true;
         }
         if (player->getClass() == CLASS_DEATH_KNIGHT && player->GetMapId() == 609)
         {
-            handler->PSendSysMessage("Death Knights can't spectate before finishing questline.");
+            handler->PSendSysMessage(isSpanish ? "Los DK no pueden espectar antes de acabar la cadena de misiones." : "Death Knights can't spectate before finishing questline.");
             return true;
         }
 
@@ -148,52 +151,52 @@ public:
         Player* spectate = ObjectAccessor::FindPlayerByName(name);
         if (!spectate)
         {
-            handler->SendSysMessage("Requested player not found.");
+            handler->SendSysMessage(isSpanish ? "El jugador no ha sido encontrado." : "Requested player not found.");
             return true;
         }
         if (spectate->IsSpectator())
         {
-            handler->SendSysMessage("Requested player is a spectator.");
+            handler->SendSysMessage(isSpanish ? "El jugador es un espectador." : "Requested player is a spectator.");
             return true;
         }
         if (!spectate->FindMap() || !spectate->FindMap()->IsBattleArena())
         {
-            handler->SendSysMessage("Requested player is not in arena.");
+            handler->SendSysMessage(isSpanish ? "El jugador no esta en una arena." : "Requested player is not in arena.");
             return true;
         }
         BattlegroundMap* bgmap = ((BattlegroundMap*)spectate->FindMap());
         if (!bgmap->GetBG() || bgmap->GetBG()->GetStatus() == STATUS_WAIT_LEAVE)
         {
-            handler->SendSysMessage("This arena battle has finished.");
+            handler->SendSysMessage(isSpanish ? "La arena ha finalizado." : "This arena battle has finished.");
             return true;
         }
 
         if (player->IsBeingTeleported() || !player->IsInWorld())
-            errors.push_back("Can't use while being teleported.");
+            errors.push_back(isSpanish ? "No puedes espectar mientras estas siendo teletransportado." : "Can't use while being teleported.");
         if (!player->FindMap() || player->FindMap()->Instanceable())
-            errors.push_back("Can't use while in instance, bg or arena.");
+            errors.push_back(isSpanish ? "No puedes espectar mientras estas en una instancia, BG o arena." : "Can't use while in instance, bg or arena.");
         if (player->GetVehicle())
-            errors.push_back("Can't be on a vehicle.");
+            errors.push_back(isSpanish ? "No puedes estar en un vehiculo o montura." : "Can't be on a vehicle.");
         if (player->IsInCombat())
-            errors.push_back("Can't be in combat.");
+            errors.push_back(isSpanish ? "No puedes estar en combate." : "Can't be in combat.");
         if (player->isUsingLfg())
-            errors.push_back("Can't spectate while using LFG system.");
+            errors.push_back(isSpanish ? "No puedes espectar mientras estas coleado en el sistema LFG." : "Can't spectate while using LFG system.");
         if (player->InBattlegroundQueue())
-            errors.push_back("Can't be queued for arena or bg.");
+            errors.push_back(isSpanish ? "No puedes estar anotando en arena o BG." : "Can't be queued for arena or bg.");
         if (player->GetGroup())
-            errors.push_back("Can't be in a group.");
+            errors.push_back(isSpanish ? "No puedes estar en un grupo." : "Can't be in a group.");
         if (player->HasUnitState(UNIT_STATE_ISOLATED))
-            errors.push_back("Can't be isolated.");
+            errors.push_back(isSpanish ? "No puedes estar aislado." : "Can't be isolated.");
         if (player->m_mover != player)
-            errors.push_back("You must control yourself.");
+            errors.push_back(isSpanish ? "Debes tener el control de ti mismo." : "You must control yourself.");
         if (player->IsInFlight())
-            errors.push_back("Can't be in flight.");
+            errors.push_back(isSpanish ? "No puedes estar volando." : "Can't be in flight.");
         if (player->IsMounted())
-            errors.push_back("Dismount before spectating.");
+            errors.push_back(isSpanish ? "Debes desmontarte antes de espectar." : "Dismount before spectating.");
         if (!player->IsAlive())
-            errors.push_back("Must be alive.");
+            errors.push_back(isSpanish ? "Debes estar vivo." : "Must be alive.");
         if (!player->m_Controlled.empty())
-            errors.push_back("Can't be controlling creatures.");
+            errors.push_back(isSpanish ? "No puedes estar controlando criaturas." : "Can't be controlling creatures.");
 
         const Unit::VisibleAuraMap* va = player->GetVisibleAuras();
         for (Unit::VisibleAuraMap::const_iterator itr = va->begin(); itr != va->end(); ++itr)
@@ -213,7 +216,7 @@ public:
                         continue;
                     }
 
-                    errors.push_back("Can't have negative auras.");
+                    errors.push_back(isSpanish ? "No puedes tener auras negativas." : "Can't have negative auras.");
                     break;
                 }
 
@@ -229,14 +232,14 @@ public:
             (handler->GetSession()->GetSecurity() && bgmap->GetBG()->GetStatus() != STATUS_WAIT_JOIN && bgmap->GetBG()->GetStatus() != STATUS_IN_PROGRESS))
         {
             bgPreparation = true;
-            handler->SendSysMessage("Arena is not in progress yet. You will be invited as soon as it starts.");
+            handler->SendSysMessage(isSpanish ? "La arena todavia no ha comenzado. Seras invitado tan pronto como empiece." : "Arena is not in progress yet. You will be invited as soon as it starts.");
             bgmap->GetBG()->AddToBeTeleported(player->GetGUID(), spectate->GetGUID());
             player->SetPendingSpectatorInviteInstanceId(spectate->GetBattlegroundId());
         }
 
         if (!errors.empty())
         {
-            handler->PSendSysMessage("To spectate, please fix the following:");
+            handler->PSendSysMessage(isSpanish ? "Para espectar, por favor arregla lo siguiente:" : "To spectate, please fix the following:");
             for (std::list<std::string>::const_iterator itr = errors.begin(); itr != errors.end(); ++itr)
                 handler->PSendSysMessage("- %s", (*itr).c_str());
 
@@ -278,12 +281,24 @@ public:
                 ArenaTeam* secondTeam = sArenaTeamMgr->GetArenaTeamById(secondTeamID);
                 if (firstTeam && secondTeam)
                 {
-                    handler->PSendSysMessage("You entered a Rated Arena.");
-                    handler->PSendSysMessage("Teams:");
-                    handler->PSendSysMessage("|cFFffffff%s|r vs |cFFffffff%s|r", firstTeam->GetName().c_str(), secondTeam->GetName().c_str());
-                    handler->PSendSysMessage("|cFFffffff%u(%u)|r -- |cFFffffff%u(%u)|r", firstTeam->GetRating(), firstTeam->GetAverageMMR(firstTeamMember->GetGroup()),
-                        secondTeam->GetRating(), secondTeam->GetAverageMMR(secondTeamMember->GetGroup()));
-                    handler->PSendSysMessage("To exit spectate, type .spect leave. You can also do player POV typing .spect watch PlayerName, and .spect watch PlayerName another time to cancel POV.");
+                    if (isSpanish)
+                    {
+                        handler->PSendSysMessage("Has entrado en una arena puntuada.");
+                        handler->PSendSysMessage("Equipos:");
+                        handler->PSendSysMessage("|cFFffffff%s|r vs |cFFffffff%s|r", firstTeam->GetName().c_str(), secondTeam->GetName().c_str());
+                        handler->PSendSysMessage("|cFFffffff%u(%u)|r -- |cFFffffff%u(%u)|r", firstTeam->GetRating(), firstTeam->GetAverageMMR(firstTeamMember->GetGroup()),
+                            secondTeam->GetRating(), secondTeam->GetAverageMMR(secondTeamMember->GetGroup()));
+                        handler->PSendSysMessage("Para salir del espectador, escribe .spect leave. Tambien puedes hacer 1a persona escribiendo .spect watch NombreJugador, y .spect watch NombreJugador otra vez para cancelarlo.");
+                    }
+                    else
+                    {
+                        handler->PSendSysMessage("You entered a Rated Arena.");
+                        handler->PSendSysMessage("Teams:");
+                        handler->PSendSysMessage("|cFFffffff%s|r vs |cFFffffff%s|r", firstTeam->GetName().c_str(), secondTeam->GetName().c_str());
+                        handler->PSendSysMessage("|cFFffffff%u(%u)|r -- |cFFffffff%u(%u)|r", firstTeam->GetRating(), firstTeam->GetAverageMMR(firstTeamMember->GetGroup()),
+                            secondTeam->GetRating(), secondTeam->GetAverageMMR(secondTeamMember->GetGroup()));
+                        handler->PSendSysMessage("To exit spectate, type .spect leave. You can also do player POV typing .spect watch PlayerName, and .spect watch PlayerName another time to cancel POV.");
+                    }
                 }
             }
         }
@@ -336,6 +351,11 @@ public:
         return true;
     }
 
+    static bool IsSpanishPlayer(Player* player)
+    {
+        LocaleConstant locale = player->GetSession()->GetSessionDbLocaleIndex();
+        return (locale == LOCALE_esES || locale == LOCALE_esMX);
+    }
 
     std::vector<ChatCommand> GetCommands() const override
     {
@@ -521,13 +541,24 @@ public:
         /*arenasQueueTotal[2] = GetSpecificArenasCount(ARENA_TYPE_3v3_SOLO, arenasQueuePlaying[2]);*/
         arenasQueueTotal[2] = GetSpecificArenasCount(ARENA_TYPE_5v5, arenasQueuePlaying[2]);
 
+        bool isSpanish = IsSpanishPlayer(player);
+
         std::stringstream Gossip2s;
         std::stringstream Gossip3s;
         std::stringstream Gossip3ss;
 
-        Gossip2s << "|TInterface\\icons\\Achievement_Arena_2v2_7:35:35:-30:0|tGames: 2v2 (Playing: " << arenasQueueTotal[0] << ")"/* << arenasQueuePlaying[0] << ")"*/;
-        Gossip3s << "|TInterface\\icons\\Achievement_Arena_3v3_7:35:35:-30:0|tGames: 3v3 (Playing: " << arenasQueueTotal[1] << ")"/* << arenasQueuePlaying[1] << ")"*/;
-        Gossip3ss << "|TInterface\\icons\\Achievement_Arena_5v5_7:35:35:-30:0|tGames: 1v1 (Playing: " << arenasQueueTotal[2] << ")"/* << arenasQueuePlaying[2] << ")"*/;
+        if (isSpanish)
+        {
+            Gossip2s << "|TInterface\\icons\\Achievement_Arena_2v2_7:35:35:-30:0|tJuegos: 2v2 (Jugando: " << arenasQueueTotal[0] << ")"/* << arenasQueuePlaying[0] << ")"*/;
+            Gossip3s << "|TInterface\\icons\\Achievement_Arena_3v3_7:35:35:-30:0|tJuegos: 3v3 (Jugando: " << arenasQueueTotal[1] << ")"/* << arenasQueuePlaying[1] << ")"*/;
+            Gossip3ss << "|TInterface\\icons\\Achievement_Arena_5v5_7:35:35:-30:0|tJuegos: 1v1 (Jugando: " << arenasQueueTotal[2] << ")"/* << arenasQueuePlaying[2] << ")"*/;
+        }
+        else
+        {
+            Gossip2s << "|TInterface\\icons\\Achievement_Arena_2v2_7:35:35:-30:0|tGames: 2v2 (Playing: " << arenasQueueTotal[0] << ")"/* << arenasQueuePlaying[0] << ")"*/;
+            Gossip3s << "|TInterface\\icons\\Achievement_Arena_3v3_7:35:35:-30:0|tGames: 3v3 (Playing: " << arenasQueueTotal[1] << ")"/* << arenasQueuePlaying[1] << ")"*/;
+            Gossip3ss << "|TInterface\\icons\\Achievement_Arena_5v5_7:35:35:-30:0|tGames: 1v1 (Playing: " << arenasQueueTotal[2] << ")"/* << arenasQueuePlaying[2] << ")"*/;
+        }
         /* Cuando haya soloq */
         //Gossip3ss << "|TInterface\\icons\\Achievement_Arena_5v5_7:35:35:-30:0|tGames: 3v3 SoloQueue (Playing: " << arenasQueueTotal[2] << ")"/* << arenasQueuePlaying[2] << ")"*/;
         
@@ -535,7 +566,9 @@ public:
         AddGossipItemFor(player, GOSSIP_ICON_CHAT, Gossip3ss.str(), GOSSIP_SENDER_MAIN, NPC_SPECTATOR_ACTION_3V3S_GAMES);
         AddGossipItemFor(player, GOSSIP_ICON_CHAT, Gossip2s.str(), GOSSIP_SENDER_MAIN, NPC_SPECTATOR_ACTION_2V2_GAMES);
         AddGossipItemFor(player, GOSSIP_ICON_CHAT, Gossip3s.str(), GOSSIP_SENDER_MAIN, NPC_SPECTATOR_ACTION_3V3_GAMES);
-        AddGossipItemFor(player, GOSSIP_ICON_CHAT, "|TInterface\\icons\\Spell_Holy_DevineAegis:35:35:-30:0|tSpectate Specific Player.", GOSSIP_SENDER_MAIN, NPC_SPECTATOR_ACTION_SPECIFIC, "", 0, true);
+        AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "|TInterface\\icons\\Spell_Holy_DevineAegis:35:35:-30:0|tEspectar jugador especifico."
+                                                               : "|TInterface\\icons\\Spell_Holy_DevineAegis:35:35:-30:0|tSpectate Specific Player.",
+            GOSSIP_SENDER_MAIN, NPC_SPECTATOR_ACTION_SPECIFIC, "", 0, true);
 
         SendGossipMenuFor(player, DEFAULT_GOSSIP_MESSAGE, creature->GetGUID());
         return true;
@@ -545,6 +578,8 @@ public:
     {
         player->PlayerTalkClass->ClearMenus();
 
+        bool isSpanish = IsSpanishPlayer(player);
+
         if (action == NPC_SPECTATOR_ACTION_MAIN_MENU)
         {
             OnGossipHello(player, creature);
@@ -553,7 +588,7 @@ public:
 
         if (action >= NPC_SPECTATOR_ACTION_2V2_GAMES && action < NPC_SPECTATOR_ACTION_3V3_GAMES)
         {
-            AddGossipItemFor(player, GOSSIP_ICON_DOT, "Refresh", GOSSIP_SENDER_MAIN, NPC_SPECTATOR_ACTION_2V2_GAMES);
+            AddGossipItemFor(player, GOSSIP_ICON_DOT, isSpanish ? "Refrescar" : "Refresh", GOSSIP_SENDER_MAIN, NPC_SPECTATOR_ACTION_2V2_GAMES);
             bool haveMatches = ShowPage(player, action - NPC_SPECTATOR_ACTION_2V2_GAMES, ARENA_TYPE_2v2, NPC_SPECTATOR_ACTION_2V2_GAMES);
             if (haveMatches)
                 SendGossipMenuFor(player, DEFAULT_GOSSIP_MESSAGE, creature->GetGUID());
@@ -562,7 +597,7 @@ public:
         }
         else if (action >= NPC_SPECTATOR_ACTION_3V3_GAMES && action < NPC_SPECTATOR_ACTION_3V3S_GAMES)
         {
-            AddGossipItemFor(player, GOSSIP_ICON_DOT, "Refresh", GOSSIP_SENDER_MAIN, NPC_SPECTATOR_ACTION_3V3_GAMES);
+            AddGossipItemFor(player, GOSSIP_ICON_DOT, isSpanish ? "Refrescar" : "Refresh", GOSSIP_SENDER_MAIN, NPC_SPECTATOR_ACTION_3V3_GAMES);
             bool haveMatches = ShowPage(player, action - NPC_SPECTATOR_ACTION_3V3_GAMES, ARENA_TYPE_3v3, NPC_SPECTATOR_ACTION_3V3_GAMES);
             if (haveMatches)
                 SendGossipMenuFor(player, DEFAULT_GOSSIP_MESSAGE, creature->GetGUID());
@@ -571,7 +606,7 @@ public:
         }
         else if (action >= NPC_SPECTATOR_ACTION_3V3S_GAMES && action < NPC_SPECTATOR_ACTION_SELECTED_PLAYER)
         {
-            AddGossipItemFor(player, GOSSIP_ICON_DOT, "Refresh", GOSSIP_SENDER_MAIN, NPC_SPECTATOR_ACTION_3V3S_GAMES);
+            AddGossipItemFor(player, GOSSIP_ICON_DOT, isSpanish ? "Refrescar" : "Refresh", GOSSIP_SENDER_MAIN, NPC_SPECTATOR_ACTION_3V3S_GAMES);
             bool haveMatches = ShowPage(player, action - NPC_SPECTATOR_ACTION_3V3S_GAMES, ARENA_TYPE_5v5, NPC_SPECTATOR_ACTION_3V3S_GAMES);
             if (haveMatches)
                 SendGossipMenuFor(player, DEFAULT_GOSSIP_MESSAGE, creature->GetGUID());
@@ -624,7 +659,8 @@ public:
                     char const* pTarget = target->GetName().c_str();
                     arena_spectator_commands::HandleSpectatorSpectateCommand(&handler, pTarget);
                 }
-                ChatHandler(player->GetSession()).PSendSysMessage("Player is not online or does not exist.");
+                bool isSpanish = IsSpanishPlayer(player);
+                ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "El jugador no esta online o no existe." : "Player is not online or does not exist.");
                 return true;
             }
         }
@@ -656,9 +692,9 @@ public:
             break;
         case CLASS_HUNTER:
             if (player->HasTalent(SPELL_HUNTER_BEAST_MASTERY, player->GetActiveSpec()))
-                sClass = "B";
+                sClass = "BM";
             else if (player->HasTalent(SPELL_HUNTER_MARKSMANSHIP, player->GetActiveSpec()))
-                sClass = "M";
+                sClass = "MM";
             else if (player->HasTalent(SPELL_HUNTER_SURVIVAL, player->GetActiveSpec()))
                 sClass = "S";
             sClass += "Hunter ";
@@ -924,28 +960,29 @@ public:
             }
         }
 
+        bool isSpanish = IsSpanishPlayer(player);
         if (page > 0)
         {
             if (type == NPC_SPECTATOR_ACTION_2V2_GAMES)
-                AddGossipItemFor(player, GOSSIP_ICON_DOT, "Previous..", GOSSIP_SENDER_MAIN, NPC_SPECTATOR_ACTION_2V2_GAMES + page - 1);
+                AddGossipItemFor(player, GOSSIP_ICON_DOT, isSpanish ? "Previo.." : "Previous..", GOSSIP_SENDER_MAIN, NPC_SPECTATOR_ACTION_2V2_GAMES + page - 1);
             else if (type == NPC_SPECTATOR_ACTION_3V3_GAMES)
-                AddGossipItemFor(player, GOSSIP_ICON_DOT, "Previous..", GOSSIP_SENDER_MAIN, NPC_SPECTATOR_ACTION_3V3_GAMES + page - 1);
+                AddGossipItemFor(player, GOSSIP_ICON_DOT, isSpanish ? "Previo.." : "Previous..", GOSSIP_SENDER_MAIN, NPC_SPECTATOR_ACTION_3V3_GAMES + page - 1);
             else if (type == NPC_SPECTATOR_ACTION_3V3S_GAMES)
-                AddGossipItemFor(player, GOSSIP_ICON_DOT, "Previous..", GOSSIP_SENDER_MAIN, NPC_SPECTATOR_ACTION_3V3S_GAMES + page - 1);
+                AddGossipItemFor(player, GOSSIP_ICON_DOT, isSpanish ? "Previo.." : "Previous..", GOSSIP_SENDER_MAIN, NPC_SPECTATOR_ACTION_3V3S_GAMES + page - 1);
             else if (type == NPC_SPECTATOR_ACTION_SPECIFIC)
-                AddGossipItemFor(player, GOSSIP_ICON_DOT, "Previous..", GOSSIP_SENDER_MAIN, NPC_SPECTATOR_ACTION_SPECIFIC + page - 1);
+                AddGossipItemFor(player, GOSSIP_ICON_DOT, isSpanish ? "Previo.." : "Previous..", GOSSIP_SENDER_MAIN, NPC_SPECTATOR_ACTION_SPECIFIC + page - 1);
         }
 
         if (haveNextPage)
         {
             if (type == NPC_SPECTATOR_ACTION_2V2_GAMES)
-                AddGossipItemFor(player, GOSSIP_ICON_DOT, "Next..", GOSSIP_SENDER_MAIN, NPC_SPECTATOR_ACTION_2V2_GAMES + page + 1);
+                AddGossipItemFor(player, GOSSIP_ICON_DOT, isSpanish ? "Siguiente.." : "Next..", GOSSIP_SENDER_MAIN, NPC_SPECTATOR_ACTION_2V2_GAMES + page + 1);
             else if (type == NPC_SPECTATOR_ACTION_3V3_GAMES)
-                AddGossipItemFor(player, GOSSIP_ICON_DOT, "Next..", GOSSIP_SENDER_MAIN, NPC_SPECTATOR_ACTION_3V3_GAMES + page + 1);
+                AddGossipItemFor(player, GOSSIP_ICON_DOT, isSpanish ? "Siguiente.." : "Next..", GOSSIP_SENDER_MAIN, NPC_SPECTATOR_ACTION_3V3_GAMES + page + 1);
             else if (type == NPC_SPECTATOR_ACTION_3V3S_GAMES)
-                AddGossipItemFor(player, GOSSIP_ICON_DOT, "Next..", GOSSIP_SENDER_MAIN, NPC_SPECTATOR_ACTION_3V3S_GAMES + page + 1);
+                AddGossipItemFor(player, GOSSIP_ICON_DOT, isSpanish ? "Siguiente.." : "Next..", GOSSIP_SENDER_MAIN, NPC_SPECTATOR_ACTION_3V3S_GAMES + page + 1);
             else if (type == NPC_SPECTATOR_ACTION_SPECIFIC)
-                AddGossipItemFor(player, GOSSIP_ICON_DOT, "Next..", GOSSIP_SENDER_MAIN, NPC_SPECTATOR_ACTION_SPECIFIC + page + 1);
+                AddGossipItemFor(player, GOSSIP_ICON_DOT, isSpanish ? "Siguiente.." : "Next..", GOSSIP_SENDER_MAIN, NPC_SPECTATOR_ACTION_SPECIFIC + page + 1);
         }
 
         if (page == 0 && TypeOne == 0 && TypeTwo == 0 && TypeThree == 0 && TypePlayer == 0)
@@ -953,6 +990,12 @@ public:
             return false;
         }
         return true;
+    }
+
+    static bool IsSpanishPlayer(Player* player)
+    {
+        LocaleConstant locale = player->GetSession()->GetSessionDbLocaleIndex();
+        return (locale == LOCALE_esES || locale == LOCALE_esMX);
     }
 
     struct MyAI : public ScriptedAI
