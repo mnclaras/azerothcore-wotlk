@@ -75,12 +75,32 @@ void sTemplateNPC::Copy(Player* target, Player* src)
     target->resetTalents(true);
 
     // copy talents
-    for (const auto& [talentId, _] : src->GetTalentMap())
+    const PlayerTalentMap& talentMap = src->GetTalentMap();
+    for (PlayerTalentMap::const_iterator itr = talentMap.begin(); itr != talentMap.end(); ++itr)
     {
-        target->learnSpell(talentId);
-        target->addTalent(talentId, src->GetActiveSpecMask(), true);
-        target->SetFreeTalentPoints(0);
+        SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(itr->first);
+        if (!spellInfo || !SpellMgr::IsSpellValid(spellInfo)) continue;
+
+        TalentEntry const* talentInfo = sTalentStore.LookupEntry(itr->second->talentID);
+        if (!talentInfo) continue;
+
+        TalentTabEntry const* talentTabInfo = sTalentTabStore.LookupEntry(talentInfo->TalentTab);
+        if (!talentTabInfo) continue;
+
+        uint8 currentTalentRank = 0;
+        for (uint8 rank = 0; rank < MAX_TALENT_RANK; ++rank)
+            if (talentInfo->RankID[rank] && itr->first == talentInfo->RankID[rank])
+            {
+                currentTalentRank = rank + 1;
+                break;
+            }
+
+        if (currentTalentRank == MAX_TALENT_RANK) continue;
+
+        target->LearnTalent(talentInfo->TalentID, currentTalentRank);
     }
+    target->SetFreeTalentPoints(0);
+	target->SendTalentsInfoData(false);
 
     RemoveAllGlyphs(target);
 
@@ -115,8 +135,30 @@ void sTemplateNPC::LearnTemplateTalents(Player* player, std::string sTalentsSpec
     {
         if ((*itr)->playerClass == GetClassString(player).c_str() && (*itr)->playerSpec == sTalentsSpec)
         {
-            player->learnSpell((*itr)->talentId);
-            player->addTalent((*itr)->talentId, player->GetActiveSpecMask(), 0);
+            uint32 spellId = (*itr)->talentId;
+            SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(spellId);
+            if (!spellInfo || !SpellMgr::IsSpellValid(spellInfo)) continue;
+
+            for (uint32 talentId = 0; talentId < sTalentStore.GetNumRows(); ++talentId)
+            {
+                TalentEntry const* talentInfo = sTalentStore.LookupEntry(talentId);
+                if (!talentInfo) continue;
+
+                // find talent rank
+                int8 talentRank = -1;
+                for (int8 rank = MAX_TALENT_RANK - 1; rank >= 0; --rank)
+                {
+                    if (talentInfo->RankID[rank] && talentInfo->RankID[rank] == spellId)
+                    {
+                        talentRank = rank;
+                        break;
+                    }
+                }
+                // talent not found
+                if (talentRank < 0 || talentRank == MAX_TALENT_RANK) continue;
+
+                player->LearnTalent(talentInfo->TalentID, talentRank);
+            }
         }
     }
 
