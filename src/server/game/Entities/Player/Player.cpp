@@ -25832,7 +25832,7 @@ void Player::CompletedAchievement(AchievementEntry const* entry)
     m_achievementMgr->CompletedAchievement(entry);
 }
 
-void Player::LearnTalent(uint32 talentId, uint32 talentRank)
+void Player::LearnTalent(uint32 talentId, uint32 talentRank, bool skipDependsOn)
 {
     uint32 CurTalentPoints = GetFreeTalentPoints();
 
@@ -25876,7 +25876,7 @@ void Player::LearnTalent(uint32 talentId, uint32 talentRank)
         return;
 
     // xinef: check if talent deponds on another talent
-    if (talentInfo->DependsOn > 0)
+    if (talentInfo->DependsOn > 0 && !skipDependsOn)
         if (TalentEntry const* depTalentInfo = sTalentStore.LookupEntry(talentInfo->DependsOn))
         {
             bool hasEnoughRank = false;
