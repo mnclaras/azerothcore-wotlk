@@ -929,6 +929,8 @@ public:
             if (!player || !creature)
                 return false;
 
+            bool isSpanish = IsSpanishPlayer(player);
+
             switch (uiAction)
             {
             case 0: // Use Discipline Priest Spec
@@ -1053,7 +1055,6 @@ public:
 
             case 30:
                 sTemplateNpcMgr->RemoveAllGlyphs(player);
-                bool isSpanish = IsSpanishPlayer(player);
                 player->GetSession()->SendAreaTriggerMessage(isSpanish ? "Tus glifos han sido eliminados." : "Your glyphs have been removed.");
                 break;
 
@@ -1065,13 +1066,11 @@ public:
             // on relog.
             if (player->resetTalents(true))
             {
-                bool isSpanish = IsSpanishPlayer(player);
                 player->SendTalentsInfoData(false);
                 player->GetSession()->SendAreaTriggerMessage(isSpanish ? "Tus talentos han sido reiniciados" : "Your talents have been reset.");
             }
             else
             {
-                bool isSpanish = IsSpanishPlayer(player);
                 player->GetSession()->SendAreaTriggerMessage(isSpanish ? "Tus talentos no pudieron ser reiniciados. Prueba a relogear." : "Your talent's couldn't be reset. Try to re-log.");
             }
                 break;
@@ -1096,7 +1095,6 @@ public:
                         }
                     }
                 }
-                bool isSpanish = IsSpanishPlayer(player);
                 player->GetSession()->SendAreaTriggerMessage(isSpanish ? "Tu equipamiento ha sido destruido." : "Your equipped gear has been destroyed.");
                 break;
 
@@ -1486,7 +1484,6 @@ public:
                 break;
 
             default: // Just in case
-                bool isSpanish = IsSpanishPlayer(player);
                 player->GetSession()->SendAreaTriggerMessage(isSpanish ? "Algo fue mal. Por favor, contacta con un administrador." : "Something went wrong in the code. Please contact the administrator.");
                 break;
             }
