@@ -3966,13 +3966,9 @@ void SpellMgr::LoadDbcDataCorrections()
         case 70650:
             spellInfo->EffectApplyAuraName[0] = SPELL_AURA_ADD_PCT_MODIFIER;
         // Corpse explosion
-        case 49158:
-        case 51325:
-        case 51326:
-        case 51327:
-        case 51328:
-            spellInfo->EffectRadiusIndex[0] = EFFECT_RADIUS_10_YARDS;   // 10yd
-
+        case 47496:
+            spellInfo->EffectRadiusIndex[2] = EFFECT_RADIUS_10_YARDS;   // 10yd
+            break;
 
         /////////////////////////////////
         ///// SHAMAN
