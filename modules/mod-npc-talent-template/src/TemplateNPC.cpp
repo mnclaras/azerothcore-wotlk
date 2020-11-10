@@ -97,7 +97,7 @@ void sTemplateNPC::Copy(Player* target, Player* src)
 
         if (currentTalentRank == MAX_TALENT_RANK) continue;
 
-        target->LearnTalent(talentInfo->TalentID, currentTalentRank);
+        target->LearnTalent(talentInfo->TalentID, currentTalentRank, true);
     }
     target->SetFreeTalentPoints(0);
 	target->SendTalentsInfoData(false);
@@ -157,7 +157,7 @@ void sTemplateNPC::LearnTemplateTalents(Player* player, std::string sTalentsSpec
                 // talent not found
                 if (talentRank < 0 || talentRank == MAX_TALENT_RANK) continue;
 
-                player->LearnTalent(talentInfo->TalentID, talentRank);
+                player->LearnTalent(talentInfo->TalentID, talentRank, true);
             }
         }
     }
