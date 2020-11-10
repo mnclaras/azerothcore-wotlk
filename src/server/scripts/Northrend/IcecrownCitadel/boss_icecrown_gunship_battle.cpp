@@ -652,7 +652,7 @@ class npc_gunship : public CreatureScript
                         if (Player* p = itr->GetSource())
                         {
                             // 2 Extra frost to alliance
-                            if (p->GetTeamId() == TEAM_ALLIANCE) p->AddItem(49426, 2);
+                            if (p->GetTeamId() == TEAM_ALLIANCE) p->AddItem(49426, 4);
                             if (!event_broadcasted)
                             {
                                 //lets get the info we want
