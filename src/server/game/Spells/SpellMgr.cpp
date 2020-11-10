@@ -3968,6 +3968,8 @@ void SpellMgr::LoadDbcDataCorrections()
             break;
         // Corpse explosion
         case 47496:
+            spellInfo->EffectRadiusIndex[0] = EFFECT_RADIUS_10_YARDS;   // 10yd
+            spellInfo->EffectRadiusIndex[1] = EFFECT_RADIUS_10_YARDS;   // 10yd
             spellInfo->EffectRadiusIndex[2] = EFFECT_RADIUS_10_YARDS;   // 10yd
             break;
 
