@@ -404,8 +404,8 @@ private:
         if (!atLeast50TalentsInOneSpec && (player->getClass() == CLASS_PALADIN || player->getClass() == CLASS_DEATH_KNIGHT))
         {
             bool isSpanish = IsSpanishPlayer(player);
-            ChatHandler(player->GetSession()).SendSysMessage(isSpanish ? "No puedes anotar arena sin tener al menos 50 puntos de talento en la rama principal."
-                : "You can not join because you have not at least 50 talent points in your main branch.");
+            ChatHandler(player->GetSession()).SendSysMessage(isSpanish ? "No puedes anotar arena sin tener al menos 51 puntos de talento en la rama principal."
+                : "You can not join because you have not at least 51 talent points in your main branch.");
             return false;
         }
         
