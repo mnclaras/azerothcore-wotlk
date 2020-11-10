@@ -3965,10 +3965,14 @@ void SpellMgr::LoadDbcDataCorrections()
         // Death Knight T10 Tank 2p Bonus
         case 70650:
             spellInfo->EffectApplyAuraName[0] = SPELL_AURA_ADD_PCT_MODIFIER;
+            break;
         // Corpse explosion
         case 47496:
             spellInfo->EffectRadiusIndex[2] = EFFECT_RADIUS_10_YARDS;   // 10yd
             break;
+
+
+
 
         /////////////////////////////////
         ///// SHAMAN
