@@ -118,15 +118,23 @@ private:
         return buf.str();
     }
 
+    static bool IsSpanishPlayer(Player* player)
+    {
+        LocaleConstant locale = player->GetSession()->GetSessionDbLocaleIndex();
+        return (locale == LOCALE_esES || locale == LOCALE_esMX);
+    }
+
 public:
 
     ArenaTeamRanks() : CreatureScript("ArenaTeamRanks") { }
 
     bool OnGossipHello(Player* player, Creature* creature)  override
     {
-        AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, "|TInterface\\icons\\Achievement_Arena_5v5_7:35:35:-30:0|tTop teams in 1v1", GOSSIP_SENDER_MAIN, ARENA_5V5_LADDER);
-        AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, "|TInterface\\icons\\Achievement_Arena_2v2_7:35:35:-30:0|tTop teams in 2v2", GOSSIP_SENDER_MAIN, ARENA_2V2_LADDER);
-        AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, "|TInterface\\icons\\Achievement_Arena_3v3_7:35:35:-30:0|tTop teams in 3v3", GOSSIP_SENDER_MAIN, ARENA_3V3_LADDER);
+        bool isSpanish = IsSpanishPlayer(player);
+
+        AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, isSpanish ? "|TInterface\\icons\\Achievement_Arena_5v5_7:35:35:-30:0|tTOP 1v1" : "|TInterface\\icons\\Achievement_Arena_5v5_7:35:35:-30:0|tTOP 1v1", GOSSIP_SENDER_MAIN, ARENA_5V5_LADDER);
+        AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, isSpanish ? "|TInterface\\icons\\Achievement_Arena_2v2_7:35:35:-30:0|tTOP 2v2" : "|TInterface\\icons\\Achievement_Arena_2v2_7:35:35:-30:0|tTOP 2v2", GOSSIP_SENDER_MAIN, ARENA_2V2_LADDER);
+        AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, isSpanish ? "|TInterface\\icons\\Achievement_Arena_3v3_7:35:35:-30:0|tTOP 3v3" : "|TInterface\\icons\\Achievement_Arena_3v3_7:35:35:-30:0|tTOP 3v3", GOSSIP_SENDER_MAIN, ARENA_3V3_LADDER);
         /* Cuando haya soloq */
         /*AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, "|TInterface\\icons\\Achievement_Arena_5v5_7:35:35:-30:0|tTop teams in 3vs3 SoloQueue", GOSSIP_SENDER_MAIN, ARENA_3v3SOLO_LADDER);*/
 
@@ -138,7 +146,7 @@ public:
     bool OnGossipSelect(Player* player, Creature* creature, uint32 sender, uint32 action) override
     {
         player->PlayerTalkClass->ClearMenus();
-
+        bool isSpanish = IsSpanishPlayer(player);
         switch (action) {
         case 0:
             // Here should the magic happend
@@ -160,7 +168,7 @@ public:
             );
 
             if (!result) {
-                AddGossipItemFor(player, GOSSIP_ICON_CHAT, "Goodbye", GOSSIP_SENDER_MAIN, ARENA_GOODBYE);
+                AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Adios" : "Goodbye", GOSSIP_SENDER_MAIN, ARENA_GOODBYE);
                 SendGossipMenuFor(player, ARENA_GOSSIP_NOTEAMS, creature->GetGUID());
             }
             else {
@@ -203,7 +211,7 @@ public:
 
                 // no team found
                 if (!result) {
-                    player->GetSession()->SendNotification("Arena team not found...");
+                    player->GetSession()->SendNotification(isSpanish ? "Equipo de arenas no encontrado..." : "Arena team not found...");
                     player->PlayerTalkClass->SendCloseGossip();
                     return true;
                 }
@@ -227,17 +235,34 @@ public:
                 std::string weekWinPercentage = getWinPercent(weekWins, weekLosses);
 
                 std::stringstream buf;
-                buf << "Team Name: " << name;
-                AddGossipItemFor(player, GOSSIP_ICON_BATTLE, buf.str(), GOSSIP_SENDER_MAIN, parentOption);
-                buf.str("");
-                buf << "Rating: " << rating << " (rank " << rank << ", bracket " << type << "v" << type << ")";
-                AddGossipItemFor(player, GOSSIP_ICON_DOT, buf.str(), GOSSIP_SENDER_MAIN, parentOption);
-                buf.str("");
-                buf << "Total Week: " << weekWins << "-" << weekLosses << " (" << weekWinPercentage << " win), " << (weekWins + weekLosses) << " played";
-                AddGossipItemFor(player, GOSSIP_ICON_DOT, buf.str(), GOSSIP_SENDER_MAIN, parentOption);
-                buf.str("");
-                buf << "Total Season: " << seasonWins << "-" << seasonLosses << " (" << seasonWinPercentage << " win), " << (seasonWins + seasonLosses) << " played";
-                AddGossipItemFor(player, GOSSIP_ICON_DOT, buf.str(), GOSSIP_SENDER_MAIN, parentOption);
+                if (isSpanish)
+                {
+                    buf << "Nombre Equipo: " << name;
+                    AddGossipItemFor(player, GOSSIP_ICON_BATTLE, buf.str(), GOSSIP_SENDER_MAIN, parentOption);
+                    buf.str("");
+                    buf << "Rating: " << rating << " (Rango " << rank << ", Grupo " << type << "v" << type << ")";
+                    AddGossipItemFor(player, GOSSIP_ICON_DOT, buf.str(), GOSSIP_SENDER_MAIN, parentOption);
+                    buf.str("");
+                    buf << "Total Semana: " << weekWins << "-" << weekLosses << " (" << weekWinPercentage << " ganadas), " << (weekWins + weekLosses) << " jugadas";
+                    AddGossipItemFor(player, GOSSIP_ICON_DOT, buf.str(), GOSSIP_SENDER_MAIN, parentOption);
+                    buf.str("");
+                    buf << "Total Season: " << seasonWins << "-" << seasonLosses << " (" << seasonWinPercentage << " ganadas), " << (seasonWins + seasonLosses) << " jugadas";
+                    AddGossipItemFor(player, GOSSIP_ICON_DOT, buf.str(), GOSSIP_SENDER_MAIN, parentOption);
+                }
+                else
+                {
+                    buf << "Team Name: " << name;
+                    AddGossipItemFor(player, GOSSIP_ICON_BATTLE, buf.str(), GOSSIP_SENDER_MAIN, parentOption);
+                    buf.str("");
+                    buf << "Rating: " << rating << " (Rank " << rank << ", Bracket " << type << "v" << type << ")";
+                    AddGossipItemFor(player, GOSSIP_ICON_DOT, buf.str(), GOSSIP_SENDER_MAIN, parentOption);
+                    buf.str("");
+                    buf << "Total Week: " << weekWins << "-" << weekLosses << " (" << weekWinPercentage << " win), " << (weekWins + weekLosses) << " played";
+                    AddGossipItemFor(player, GOSSIP_ICON_DOT, buf.str(), GOSSIP_SENDER_MAIN, parentOption);
+                    buf.str("");
+                    buf << "Total Season: " << seasonWins << "-" << seasonLosses << " (" << seasonWinPercentage << " win), " << (seasonWins + seasonLosses) << " played";
+                    AddGossipItemFor(player, GOSSIP_ICON_DOT, buf.str(), GOSSIP_SENDER_MAIN, parentOption);
+                }
 
                 QueryResult members = CharacterDatabase.PQuery(
                     "SELECT "
@@ -253,8 +278,7 @@ public:
                     teamId, captainGuid);
 
                 if (!members) {
-                    AddGossipItemFor(player, GOSSIP_ICON_CHAT, "No team members found...?", GOSSIP_SENDER_MAIN, parentOption);
-
+                    AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "No se han encontrado miembros...?" : "No team members found...?", GOSSIP_SENDER_MAIN, parentOption);
                 }
                 else {
                     uint32 memberPos = 1;
@@ -263,7 +287,15 @@ public:
                     std::string name, race, Class;
 
                     buf.str("");
-                    buf << memberCount << " team " << ((memberCount == 1) ? "member" : " members") << " found:";
+                    if (isSpanish)
+                    {
+                        buf << memberCount << ((memberCount == 1) ? " miembro encontrado:" : " miembros encontrados:");
+                    }
+                    else
+                    {
+                        buf << memberCount << " team " << ((memberCount == 1) ? "member" : " members") << " found:";
+                    }
+
                     AddGossipItemFor(player, GOSSIP_ICON_CHAT, buf.str(), GOSSIP_SENDER_MAIN, parentOption);
 
                     do {
@@ -285,27 +317,57 @@ public:
                         // TODO: add output
                         buf.str(""); // clear it
                         buf << memberPos << ". ";
-                        if (guid == captainGuid)
-                            buf << "Team Captain ";
-                        buf << name << ", ";
 
-                        AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, buf.str(), GOSSIP_SENDER_MAIN, parentOption);
-                        buf.str("");
-                        buf << "Level " << level << " " << race << " " << Class << ", " << personalRating << " personal rating.";
-                        AddGossipItemFor(player, GOSSIP_ICON_DOT, buf.str(), GOSSIP_SENDER_MAIN, parentOption);
-                        buf.str("");
-                        buf << "Week: " << weekWins << "-" << weekLosses << " (" << weekWinPercentage << " win), " << (weekWins + weekLosses) << " played";
-                        AddGossipItemFor(player, GOSSIP_ICON_DOT, buf.str(), GOSSIP_SENDER_MAIN, parentOption);
-                        buf.str("");
-                        buf << "Season: " << seasonWins << "-" << seasonLosses << " (" << seasonWinPercentage << " win), " << (seasonWins + seasonLosses) << " played";
-                        AddGossipItemFor(player, GOSSIP_ICON_DOT, buf.str(), GOSSIP_SENDER_MAIN, parentOption);
-                        memberPos++;
+                        if (isSpanish)
+                        {
+                            if (guid == captainGuid)
+                                buf << "Capitan ";
+                            buf << name << ". ";
+
+                            AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, buf.str(), GOSSIP_SENDER_MAIN, parentOption);
+                            buf.str("");
+                            buf << race << " " << Class << ", " << personalRating << " rating personal.";
+                            AddGossipItemFor(player, GOSSIP_ICON_DOT, buf.str(), GOSSIP_SENDER_MAIN, parentOption);
+                            buf.str("");
+                            buf << "Semana: " << weekWins << "-" << weekLosses << " (" << weekWinPercentage << " ganadas), " << (weekWins + weekLosses) << " jugadas.";
+                            AddGossipItemFor(player, GOSSIP_ICON_DOT, buf.str(), GOSSIP_SENDER_MAIN, parentOption);
+                            buf.str("");
+                            buf << "Season: " << seasonWins << "-" << seasonLosses << " (" << seasonWinPercentage << " ganadas), " << (seasonWins + seasonLosses) << " jugadas.";
+                            AddGossipItemFor(player, GOSSIP_ICON_DOT, buf.str(), GOSSIP_SENDER_MAIN, parentOption);
+                            memberPos++;
+                        }
+                        else
+                        {
+                            if (guid == captainGuid)
+                                buf << "Team Captain ";
+                            buf << name << ". ";
+
+                            AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, buf.str(), GOSSIP_SENDER_MAIN, parentOption);
+                            buf.str("");
+                            buf << race << " " << Class << ", " << personalRating << " personal rating.";
+                            AddGossipItemFor(player, GOSSIP_ICON_DOT, buf.str(), GOSSIP_SENDER_MAIN, parentOption);
+                            buf.str("");
+                            buf << "Week: " << weekWins << "-" << weekLosses << " (" << weekWinPercentage << " win), " << (weekWins + weekLosses) << " played.";
+                            AddGossipItemFor(player, GOSSIP_ICON_DOT, buf.str(), GOSSIP_SENDER_MAIN, parentOption);
+                            buf.str("");
+                            buf << "Season: " << seasonWins << "-" << seasonLosses << " (" << seasonWinPercentage << " win), " << (seasonWins + seasonLosses) << " played.";
+                            AddGossipItemFor(player, GOSSIP_ICON_DOT, buf.str(), GOSSIP_SENDER_MAIN, parentOption);
+                            memberPos++;
+                        }
                     } while (members->NextRow());
-
                 }
 
                 buf.str("");
-                buf << "Return to " << type << "v" << type << " rankings!";
+
+                if (isSpanish)
+                {
+                    buf << "Volver a rankings " << type << "v" << type << "!";
+                }
+                else
+                {
+                    buf << "Return to " << type << "v" << type << " rankings!";
+                }
+
                 AddGossipItemFor(player, GOSSIP_ICON_CHAT, buf.str(), GOSSIP_SENDER_MAIN, parentOption);
                 SendGossipMenuFor(player, ARENA_GOSSIP_TEAM_LOOKUP, creature->GetGUID());
             }
