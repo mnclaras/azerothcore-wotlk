@@ -169,7 +169,7 @@ public:
                 {
                     s << "Rating: " << at->GetStats().Rating;
                     s << "\nRank: " << at->GetStats().Rank;
-                    s << "\Juegos Temporada: " << at->GetStats().SeasonGames;
+                    s << "\nJuegos Temporada: " << at->GetStats().SeasonGames;
                     s << "\nGanadas en Temporada: " << at->GetStats().SeasonWins;
                     s << "\nJuegos Semanales: " << at->GetStats().WeekGames;
                     s << "\nGanadas semanales: " << at->GetStats().WeekWins;
