@@ -353,7 +353,6 @@ private:
         TalentTabCount talentTabs;
 
         uint32 count = 0;
-		uint32 countShokadin = 0;
         for (uint32 talentId = 0; talentId < sTalentStore.GetNumRows(); ++talentId)
         {
             TalentEntry const* talentInfo = sTalentStore.LookupEntry(talentId);
@@ -377,14 +376,12 @@ private:
 					{
                         if (FORBIDDEN_TALENTS_IN_1V1_ARENA_AUX[i] == talentInfo->TalentTab)
                             count += rank + 1;
-						if (talentInfo->TalentTab == 382)
-							countShokadin += rank + 1;
 					}
                 }
             }
         }
 
-        if (count >= 36 || countShokadin >= 31)
+        if (count >= 36)
         {
             bool isSpanish = IsSpanishPlayer(player);
             ChatHandler(player->GetSession()).SendSysMessage(isSpanish ? "No puedes anotar arena porque tienes demasiados puntos de talentos en una rama prohibida. (Heal)" : "You can not join because you have too many talent points in a forbidden tree. (Heal)");
