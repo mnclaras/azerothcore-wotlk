@@ -23609,7 +23609,7 @@ void Player::ApplyEquipCooldown(Item* pItem)
             continue;
 
         // xinef: apply hidden cooldown for procs
-        if (spellData.SpellTrigger == ITEM_SPELLTRIGGER_ON_EQUIP)
+        if (spellData.SpellTrigger == ITEM_SPELLTRIGGER_ON_EQUIP && spellData.SpellId != 71903)
         {
             // xinef: uint32(-1) special marker for proc cooldowns
             AddSpellCooldown(spellData.SpellId, uint32(-1), 30*IN_MILLISECONDS);
