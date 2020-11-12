@@ -13005,9 +13005,12 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
             else if (shirtEntry == 100038) SetObjectScale(0.25f);
             else if (shirtEntry == 100041) SetObjectScale(0.2f);
             else if (shirtEntry == 100042) SetObjectScale(2.0f);
+            else if (shirtEntry == 100049) SetObjectScale(0.6f);
+            else if (shirtEntry == 100050) SetObjectScale(0.15f);
+            else if (shirtEntry == 100051) SetObjectScale(0.2f);
+            else if (shirtEntry == 100052) SetObjectScale(0.15f);
 
             else SetObjectScale(1.0f);
-
             
             switch (shirtEntry)
             {
@@ -13063,6 +13066,19 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
             case 100040: SetDisplayId(17600); break;    // Nobundo
             case 100041: SetDisplayId(28641); break;    // Algalon
             case 100042: SetDisplayId(21900); break;    // Calabaza Evento Halloween - Calabacino
+            case 100043: SetDisplayId(30790); break;    // Deathbringer Saurfang
+            // Legendarias
+            case 100044: SetDisplayId(21666); break;    // Elfo Guitarrista
+            case 100045: SetDisplayId(21659); break;    // No Muerto Guitarrista
+            case 100046: SetDisplayId(21662); break;    // Troll Guitarrista
+            case 100047: SetDisplayId(21661); break;    // Tauren Batería
+            case 100048: SetDisplayId(21665); break;    // Orco Cantante
+            case 100049: SetDisplayId(16590); break;    // Noth
+            case 100050: SetDisplayId(16137); break;    // Thaddius
+            case 100051: SetDisplayId(29615); break;    // Jaraxxus
+            case 100052: SetDisplayId(15945); break;    // Kel'Thuzad
+
+
             case 100100: SetDisplayId(21267); break;    // Fel Orc
             }
 
