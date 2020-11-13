@@ -75,63 +75,50 @@ public:
 
             if (player->GetMap()->Is25ManRaid() && player->GetTeamId() == TEAM_ALLIANCE)
             {
-                FindAndGiveEtherealCredits(player, player->GetMapId(), boss->GetEntry());
+                FindAndGiveEtherealCredits(player, player->GetMapId(), boss->GetEntry(), boss->GetMap()->IsHeroic());
             }
         }
     }
 
-    void FindAndGiveEtherealCredits(Player* player, uint32 mapId, uint32 bossEntry)
+    void FindAndGiveEtherealCredits(Player* player, uint32 mapId, uint32 bossEntry, bool isHeroic)
     {
         if (mapId == MAP_ICC)
         {
-            if (bossEntry == 38431 || bossEntry == 38586 || bossEntry == 38265 || bossEntry == 38267 || bossEntry == 39166)
+            if (bossEntry == 36678 || bossEntry == 36853 || bossEntry == 36597)
             {
-                //{ 38431, 5 },    // PP 25NM
-                //{ 38586, 5 },    // PP 25HC
-                //{ 38265, 5 },    // Sindra 25NM
-                //{ 38267, 5 },    // Sindra 25HC
-                //{ 39166, 5 },    // LK 25NM
+                //{ 36678, 5 },    // PP
+                //{ 36853, 5 },    // Sindra
+                //{ 36597, 5 },    // LK
                 GiveEmblemsToAllGroup(player, ETHEREAL_CREDIT_ENTRY, 5);
-            }
-            else if (bossEntry == 39168)
-            {
-                //{ 39168, 15 },   // LK 25HC
-                GiveEmblemsToAllGroup(player, ETHEREAL_CREDIT_ENTRY, 15);
             }
         }
         else if (mapId == MAP_RS)
         {
-            if (bossEntry == 39864)
+            if (bossEntry == 39863 || bossEntry == 40142)
             {
-                //{ 39864, 10 },   // Halion 25NM
-                GiveEmblemsToAllGroup(player, ETHEREAL_CREDIT_ENTRY, 10);
-            }
-            else if (bossEntry == 39945)
-            {
-                //{ 39945, 15 },   // Halion 25HC
-                GiveEmblemsToAllGroup(player, ETHEREAL_CREDIT_ENTRY, 15);
-            }
+                //{ 39863, 10 },   // Halion
+                GiveEmblemsToAllGroup(player, ETHEREAL_CREDIT_ENTRY, isHeroic ? 15 : 10);
+            }       
         }
         else if (mapId == MAP_ULDUAR)
         {
-            if (bossEntry == 33885 || bossEntry == 34175)
+            if (bossEntry == 33293 || bossEntry == 33515)
             {
-                //{ 33885, 5 },    // Desarmador XA - 002 25
-                //{ 34175, 5 },    // Auriaya 25
+                //{ 33293, 5 },    // Desarmador XA - 002
+                //{ 33515, 5 },    // Auriaya 25
                 GiveEmblemsToAllGroup(player, ETHEREAL_CREDIT_ENTRY, 5);
             }
-            else if (bossEntry == 33955)
+            else if (bossEntry == 33288)
             {
-                //{ 33955, 15 },   // Yogg-Saron 25
+                //{ 33288, 15 },   // Yogg-Saron
                 GiveEmblemsToAllGroup(player, ETHEREAL_CREDIT_ENTRY, 15);
             }
         }
         else if (mapId == MAP_TOC)
         {
-            if (bossEntry == 34566 || bossEntry == 35616)
+            if (bossEntry == 34564)
             {
-                //{ 34566, 15 },    // Anub'arak 25NM
-                //{ 35616, 15 },    // Anub'arak 25HC
+                //{ 34564, 15 },    // Anub'arak
                 GiveEmblemsToAllGroup(player, ETHEREAL_CREDIT_ENTRY, 15);
             }
         }
