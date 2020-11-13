@@ -665,7 +665,16 @@ class boss_the_lich_king : public CreatureScript
                     if (Player* p = itr->GetSource())
                     {
                         // 2 Extra frost to alliance
-                        if (p->GetTeamId() == TEAM_ALLIANCE) p->AddItem(49426, 4);
+                        if (p->GetTeamId() == TEAM_ALLIANCE) {
+                            p->AddItem(49426, 4);
+
+                            // Ethereal credit
+                            if (Is25ManRaid())
+                            {
+                                p->AddItem(38186, IsHeroic() ? 15 : 10);
+                            }
+                        }
+
                         if (!event_broadcasted)
                         {
                             //lets get the info we want
