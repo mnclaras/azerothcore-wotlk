@@ -11,6 +11,12 @@ enum Quests
     QUEST_KILL_100_PLAYERS = 80004,
 };
 
+enum EmblemEntries
+{
+    EMBLEM_OF_FROST_ENTRY = 49426,
+    ETHEREAL_CREDIT_ENTRY = 38186
+};
+
 class ArenaAndBgRewards : public BGScript
 {
 public:
@@ -37,6 +43,12 @@ public:
 
             if (player->GetQuestStatus(QUEST_WIN_50_BG) == QUEST_STATUS_INCOMPLETE)
                 player->KilledMonsterCredit(QUEST_WIN_50_BG, 0);
+
+            // First RDF Win of the day
+            if (!player->GetRandomWinner())
+            {
+                player->AddItem(ETHEREAL_CREDIT_ENTRY, 5);
+            }
         }
         
 

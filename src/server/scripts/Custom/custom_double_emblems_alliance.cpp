@@ -37,7 +37,7 @@ BossEntriesEtherealCredit boss_list_ethereal_credit = {
         { 38586, 5 },    // PP 25HC
         { 38265, 5 },    // Sindra 25NM
         { 38267, 5 },    // Sindra 25HC
-        { 39166, 10 },   // LK 25NM
+        { 39166, 5 },    // LK 25NM
         { 39168, 15 },   // LK 25HC
     } },
     {MAP_RS, {
@@ -47,7 +47,7 @@ BossEntriesEtherealCredit boss_list_ethereal_credit = {
     {MAP_ULDUAR, {
         { 33885, 5 },    // Desarmador XA - 002 25
         { 34175, 5 },    // Auriaya 25
-        { 33955, 10 },   // Yogg-Saron 25
+        { 33955, 15 },   // Yogg-Saron 25
     } },
     {MAP_TOC, {
         { 34566, 15 },    // Anub'arak 25NM
@@ -80,22 +80,6 @@ public:
         }
     }
 
-    void GiveEmblemsToAllGroup(Player* player, uint32 emblemEntry, uint32 quantity)
-    {
-        player->AddItem(emblemEntry, quantity);
-
-        Group* grp = player->GetGroup();
-        if (grp)
-        {
-            for (GroupReference* itr = grp->GetFirstMember(); itr != nullptr; itr = itr->next())
-                if (Player* member = itr->GetSource())
-                    if (member->IsInMap(player) && player->GetGUID() != member->GetGUID())
-                    {
-                        member->AddItem(emblemEntry, quantity);
-                    }
-        }
-    }
-
     void FindAndGiveEtherealCredits(Player* player, uint32 bossEntry)
     {
         auto zone_bosses = boss_list_ethereal_credit.find(player->GetMapId());
@@ -114,6 +98,24 @@ public:
             }
         }
     }
+
+    void GiveEmblemsToAllGroup(Player* player, uint32 emblemEntry, uint32 quantity)
+    {
+        player->AddItem(emblemEntry, quantity);
+
+        Group* grp = player->GetGroup();
+        if (grp)
+        {
+            for (GroupReference* itr = grp->GetFirstMember(); itr != nullptr; itr = itr->next())
+                if (Player* member = itr->GetSource())
+                    if (member->IsInMap(player) && player->GetGUID() != member->GetGUID())
+                    {
+                        member->AddItem(emblemEntry, quantity);
+                    }
+        }
+    }
+
+   
 
 };
 
