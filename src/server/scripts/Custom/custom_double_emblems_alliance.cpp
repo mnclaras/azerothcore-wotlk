@@ -68,35 +68,89 @@ public:
         // Icecrown Citadel & Rubi Sanctum
         if (boss->GetMap()->IsRaid() && boss->getLevel() > 80 && boss->IsDungeonBoss())
         {
-            if (player->GetTeamId() == TEAM_ALLIANCE && (player->GetMapId() == 631 || player->GetMapId() == 724))
+            if (player->GetTeamId() == TEAM_ALLIANCE && (player->GetMapId() == MAP_ICC || player->GetMapId() == MAP_RS))
             {
                 GiveEmblemsToAllGroup(player, EMBLEM_OF_FROST_ENTRY, 4);
             }
 
             if (player->GetMap()->Is25ManRaid() && player->GetTeamId() == TEAM_ALLIANCE)
             {
-                FindAndGiveEtherealCredits(player, boss->GetEntry());
+                FindAndGiveEtherealCredits(player, player->GetMapId(), boss->GetEntry());
             }
         }
     }
 
-    void FindAndGiveEtherealCredits(Player* player, uint32 bossEntry)
+    void FindAndGiveEtherealCredits(Player* player, uint32 mapId, uint32 bossEntry)
     {
-        auto zone_bosses = boss_list_ethereal_credit.find(player->GetMapId());
-        if (zone_bosses != boss_list_ethereal_credit.end())
+        if (mapId == MAP_ICC)
         {
-            std::vector<BossReward> bosses = zone_bosses->second;
-            if (bosses.empty()) return;
-
-            for (auto const& bossInfo : bosses)
+            if (bossEntry == 38431 || bossEntry == 38586 || bossEntry == 38265 || bossEntry == 38267 || bossEntry == 39166)
             {
-                if (bossInfo.entry == bossEntry)
-                {
-                    GiveEmblemsToAllGroup(player, ETHEREAL_CREDIT_ENTRY, bossInfo.recompence);
-                    break;
-                }
+                //{ 38431, 5 },    // PP 25NM
+                //{ 38586, 5 },    // PP 25HC
+                //{ 38265, 5 },    // Sindra 25NM
+                //{ 38267, 5 },    // Sindra 25HC
+                //{ 39166, 5 },    // LK 25NM
+                GiveEmblemsToAllGroup(player, ETHEREAL_CREDIT_ENTRY, 5);
+            }
+            else if (bossEntry == 39168)
+            {
+                //{ 39168, 15 },   // LK 25HC
+                GiveEmblemsToAllGroup(player, ETHEREAL_CREDIT_ENTRY, 15);
             }
         }
+        else if (mapId == MAP_RS)
+        {
+            if (bossEntry == 39864)
+            {
+                //{ 39864, 10 },   // Halion 25NM
+                GiveEmblemsToAllGroup(player, ETHEREAL_CREDIT_ENTRY, 10);
+            }
+            else if (bossEntry == 39945)
+            {
+                //{ 39945, 15 },   // Halion 25HC
+                GiveEmblemsToAllGroup(player, ETHEREAL_CREDIT_ENTRY, 15);
+            }
+        }
+        else if (mapId == MAP_ULDUAR)
+        {
+            if (bossEntry == 33885 || bossEntry == 34175)
+            {
+                //{ 33885, 5 },    // Desarmador XA - 002 25
+                //{ 34175, 5 },    // Auriaya 25
+                GiveEmblemsToAllGroup(player, ETHEREAL_CREDIT_ENTRY, 5);
+            }
+            else if (bossEntry == 33955)
+            {
+                //{ 33955, 15 },   // Yogg-Saron 25
+                GiveEmblemsToAllGroup(player, ETHEREAL_CREDIT_ENTRY, 15);
+            }
+        }
+        else if (mapId == MAP_TOC)
+        {
+            if (bossEntry == 34566 || bossEntry == 35616)
+            {
+                //{ 34566, 15 },    // Anub'arak 25NM
+                //{ 35616, 15 },    // Anub'arak 25HC
+                GiveEmblemsToAllGroup(player, ETHEREAL_CREDIT_ENTRY, 15);
+            }
+        }
+
+        //auto zone_bosses = boss_list_ethereal_credit.find(player->GetMapId());
+        //if (zone_bosses != boss_list_ethereal_credit.end())
+        //{
+        //    std::vector<BossReward> bosses = zone_bosses->second;
+        //    if (bosses.empty()) return;
+
+        //    for (auto const& bossInfo : bosses)
+        //    {
+        //        if (bossInfo.entry == bossEntry)
+        //        {
+        //            GiveEmblemsToAllGroup(player, ETHEREAL_CREDIT_ENTRY, bossInfo.recompence);
+        //            break;
+        //        }
+        //    }
+        //}
     }
 
     void GiveEmblemsToAllGroup(Player* player, uint32 emblemEntry, uint32 quantity)
