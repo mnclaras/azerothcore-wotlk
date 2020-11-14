@@ -358,11 +358,16 @@ void AnticheatMgr::BuildReport(Player* player, uint8 reportType)
     if (m_Players[key].GetTotalReports() > (uint32)sConfigMgr->GetIntDefault("Anticheat.ReportsForIngameWarnings", 70))
     {
         // display warning at the center of the screen, hacky way?
-        std::string str = "";
-        str = "|cFFFFFC00[Playername:|cFF00FFFF[|cFF60FF00" + std::string(player->GetName().c_str()) + "|cFF00FFFF] Possible cheater! Banned for 1 day.";
-        WorldPacket data(SMSG_NOTIFICATION, (str.size() + 1));
-        data << str;
-        sWorld->SendGlobalGMMessage(&data);
+
+        if (player && player->GetSession()
+            && AccountMgr::IsPlayerAccount(player->GetSession()->GetSecurity()))
+        {
+            std::string str = "";
+            str = "|cFFFFFC00[Playername:|cFF00FFFF[|cFF60FF00" + std::string(player->GetName().c_str()) + "|cFF00FFFF] Possible cheater! Banned for 1 day.";
+            WorldPacket data(SMSG_NOTIFICATION, (str.size() + 1));
+            data << str;
+            sWorld->SendGlobalGMMessage(&data);
+        }
 
         std::stringstream duration;
         duration << 86400 << "s";
