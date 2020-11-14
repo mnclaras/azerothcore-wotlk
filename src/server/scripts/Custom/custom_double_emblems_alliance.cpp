@@ -84,11 +84,10 @@ public:
     {
         if (mapId == MAP_ICC)
         {
-            if (bossEntry == 36678 || bossEntry == 36853 || bossEntry == 36597)
+            if (bossEntry == 36678 || bossEntry == 36853)
             {
                 //{ 36678, 5 },    // PP
                 //{ 36853, 5 },    // Sindra
-                //{ 36597, 5 },    // LK
                 GiveEmblemsToAllGroup(player, ETHEREAL_CREDIT_ENTRY, 5);
             }
         }

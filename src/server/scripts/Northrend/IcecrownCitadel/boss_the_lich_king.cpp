@@ -671,7 +671,7 @@ class boss_the_lich_king : public CreatureScript
                             // Ethereal credit
                             if (Is25ManRaid())
                             {
-                                p->AddItem(38186, IsHeroic() ? 15 : 10);
+                                p->AddItem(38186, 5);
                             }
                         }
 
