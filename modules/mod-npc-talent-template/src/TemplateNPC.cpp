@@ -21,6 +21,7 @@ static const std::unordered_set<std::string> knownSpecs = {
     "Elemental",  "Enhancement", "Restoration", "Ballance",   "Feral",       "Marksmanship", "Beastmastery", "Survival", "Assassination", "Combat", "Subtlety",   "Blood",      "Unholy",
 	"DisciplinePVE", "HolyPVE",        "ShadowPVE",      "ProtectionPVE", "RetributionPVE", "FuryPVE",         "ArmsPVE",         "ArcanePVE",   "FirePVE",          "FrostPVE",  "AfflictionPVE", "DemonologyPVE", "DestructionPVE",
     "ElementalPVE",  "EnhancementPVE", "RestorationPVE", "BallancePVE",   "FeralPVE",       "MarksmanshipPVE", "BeastmasteryPVE", "SurvivalPVE", "AssassinationPVE", "CombatPVE", "SubtletyPVE",   "BloodPVE",      "UnholyPVE",
+    "FeralTankPVE",
 };
 
 void sTemplateNPC::ApplyBonus(Player* player, Item* item, EnchantmentSlot slot, uint32 bonusEntry)
@@ -682,6 +683,7 @@ public:
         std::string shaman_Restoration = isSpanish ? "Restauracion" : "Restoration";
         std::string druid_Balance = isSpanish ? "Equilibrio" : "Balance";
         std::string druid_Feral = isSpanish ? "Feral" : "Feral";
+        std::string druid_FeralTank = isSpanish ? "Tanque" : "Tank";
         std::string druid_Restoration = isSpanish ? "Restauracion" : "Restoration";
         std::string hunter_Marksmanship = isSpanish ? "Punteria" : "Marksmanship";
         std::string hunter_Beastmastery = isSpanish ? "Bestias" : "Beastmastery";
@@ -802,6 +804,7 @@ public:
 			AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, isSpanish ? "---- PVE EQUIPO Y TALENTOS ----" : "---- PVE GEAR AND TALENTS ----", GOSSIP_SENDER_MAIN, 5000);
 			AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, "|cff00ff00|TInterface\\icons\\spell_nature_starfall:20|t|r " + druid_Balance, GOSSIP_SENDER_MAIN, 218);
             AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, "|cff00ff00|TInterface\\icons\\ability_racial_bearform:20|t|r " + druid_Feral, GOSSIP_SENDER_MAIN, 219);
+            AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, "|cff00ff00|TInterface\\icons\\ability_racial_bearform:20|t|r " + druid_FeralTank, GOSSIP_SENDER_MAIN, 330);
             AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, "|cff00ff00|TInterface\\icons\\spell_nature_healingtouch:20|t|r " + druid_Restoration, GOSSIP_SENDER_MAIN, 220);
 			//AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, isSpanish ? "---- PVE SOLO TALENTOS ----" : "---- PVE ONLY TALENTS ----", GOSSIP_SENDER_MAIN, 5000);
 			//AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, "|cff00ff00|TInterface\\icons\\spell_nature_starfall:20|t|r " + isSpanish ? "Equilibrio" : "Balance", GOSSIP_SENDER_MAIN, 318);
@@ -1506,6 +1509,11 @@ public:
 
             case 329:
                 LearnOnlyTalentsAndGlyphs(player, "UnholyPVE");
+                break;
+
+                // Feral Tank
+            case 330:
+                LearnOnlyTalentsAndGlyphs(player, "FeralTankPVE");
                 break;
 
             case 5000:
