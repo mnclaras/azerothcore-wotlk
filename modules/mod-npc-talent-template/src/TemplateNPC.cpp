@@ -804,7 +804,7 @@ public:
 			AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, isSpanish ? "---- PVE EQUIPO Y TALENTOS ----" : "---- PVE GEAR AND TALENTS ----", GOSSIP_SENDER_MAIN, 5000);
 			AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, "|cff00ff00|TInterface\\icons\\spell_nature_starfall:20|t|r " + druid_Balance, GOSSIP_SENDER_MAIN, 218);
             AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, "|cff00ff00|TInterface\\icons\\ability_racial_bearform:20|t|r " + druid_Feral, GOSSIP_SENDER_MAIN, 219);
-            AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, "|cff00ff00|TInterface\\icons\\ability_racial_bearform:20|t|r " + druid_FeralTank, GOSSIP_SENDER_MAIN, 330);
+            AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, "|cff00ff00|TInterface\\icons\\ability_racial_bearform:20|t|r " + druid_FeralTank, GOSSIP_SENDER_MAIN, 230);
             AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, "|cff00ff00|TInterface\\icons\\spell_nature_healingtouch:20|t|r " + druid_Restoration, GOSSIP_SENDER_MAIN, 220);
 			//AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, isSpanish ? "---- PVE SOLO TALENTOS ----" : "---- PVE ONLY TALENTS ----", GOSSIP_SENDER_MAIN, 5000);
 			//AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, "|cff00ff00|TInterface\\icons\\spell_nature_starfall:20|t|r " + isSpanish ? "Equilibrio" : "Balance", GOSSIP_SENDER_MAIN, 318);
@@ -1380,7 +1380,10 @@ public:
             case 229: // Use Unholy DK Spec
                 EquipFullTemplateGear(player, "UnholyPVE");
                 break;
-
+			
+			case 230: // Use Feral Tank PVE
+                EquipFullTemplateGear(player, "FeralTankPVE");
+                break;
 			                //Priest
             case 300:
                 LearnOnlyTalentsAndGlyphs(player, "DisciplinePVE");
@@ -1516,6 +1519,7 @@ public:
                 LearnOnlyTalentsAndGlyphs(player, "FeralTankPVE");
                 break;
 
+				
             case 5000:
                 // return to OnGossipHello menu, otherwise it will freeze every menu
                 OnGossipHello(player, creature);
