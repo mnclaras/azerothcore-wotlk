@@ -138,13 +138,13 @@ uint32 CFBG::getMorphFromRace(uint8 race, uint8 gender) {
     if (gender == GENDER_MALE) {
         switch (race) {
             case RACE_ORC:
-                return FAKE_M_FEL_ORC;
+                return FAKE_F_ORC;  // Dont want to use rare morphs FAKE_M_FEL_ORC;
             case RACE_DWARF:
                 return FAKE_M_DWARF;
             case RACE_NIGHTELF:
                 return FAKE_M_NIGHT_ELF;
             case RACE_DRAENEI:
-                return FAKE_M_BROKEN_DRAENEI;
+                return FAKE_F_DRAENEI; // Dont want to use rare morphs FAKE_M_BROKEN_DRAENEI;
             case RACE_TROLL:
                 return FAKE_M_TROLL;
             case RACE_HUMAN:
@@ -329,6 +329,9 @@ void CFBG::randomRaceMorph(uint8* race, uint32* morph, TeamId team, uint8 _class
             switch (_class) {
                 case CLASS_DRUID:
                     // FEMALE NIGHT ELF is missing
+					// Set as MALE NIGHT ELF
+					*race = RACE_NIGHTELF;
+                    *morph = FAKE_M_NIGHT_ELF;
                     break;
                 case CLASS_SHAMAN:
                 case CLASS_HUNTER:
