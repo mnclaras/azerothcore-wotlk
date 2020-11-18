@@ -4065,7 +4065,7 @@ void Player::learnSpell(uint32 spellId)
     // Xinef: don't allow to learn active spell once more
     if (HasActiveSpell(spellId))
     {
-        sLog->outError("Player (%u) tries to learn already active spell: %u", GetGUIDLow(), spellId);
+        //sLog->outError("Player (%u) tries to learn already active spell: %u", GetGUIDLow(), spellId);
         return;
     }
 
