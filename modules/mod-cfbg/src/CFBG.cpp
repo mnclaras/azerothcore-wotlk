@@ -290,7 +290,7 @@ void CFBG::randomRaceMorph(uint8* race, uint32* morph, TeamId team, uint8 _class
                     break;
                 case CLASS_SHAMAN:
                     *race = RACE_DRAENEI;
-                    *morph = FAKE_M_BROKEN_DRAENEI;
+                    *morph = FAKE_F_DRAENEI; // Dont want to use rare morphs FAKE_M_BROKEN_DRAENEI;
                     break;
                 case CLASS_WARRIOR:
                 case CLASS_DEATH_KNIGHT:
