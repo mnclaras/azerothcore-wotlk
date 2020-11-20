@@ -44,12 +44,19 @@ enum Spells
     CREATURE_VENDOR_PVP_S8OFFPARTS      = 104000,             
     CREATURE_VENDOR_PVP_3V3WEAPONS      = 104003,
     
-    CREATURE_VENDOR_PVP_PVEGEARBYARENA_WEAPONS                      = 604000,
-    CREATURE_VENDOR_PVP_PVEGEARBYARENA_TRINKETS                     = 604001,
-    CREATURE_VENDOR_PVP_PVEGEARBYARENA_OFFSET_BELTS_BOOTS_BRACERS   = 604002,
-    CREATURE_VENDOR_PVP_PVEGEARBYARENA_OFFSET_RINGS_NECKS           = 604003,
-    CREATURE_VENDOR_PVP_PVEGEARBYARENA_OFFSET_CLOAKS                = 604004,
-    CREATURE_VENDOR_PVP_PVEGEARBYARENA_OFFTIER                      = 604005,
+    CREATURE_VENDOR_PVP_PVEGEARBYARENA_264_WEAPONS                          = 604000,
+    CREATURE_VENDOR_PVP_PVEGEARBYARENA_264_TRINKETS                         = 604001,
+    CREATURE_VENDOR_PVP_PVEGEARBYARENA_264_OFFSET_BELTS_BOOTS_BRACERS       = 604002,
+    CREATURE_VENDOR_PVP_PVEGEARBYARENA_264_OFFSET_RINGS_NECKS               = 604003,
+    CREATURE_VENDOR_PVP_PVEGEARBYARENA_264_OFFSET_CLOAKS                    = 604004,
+    CREATURE_VENDOR_PVP_PVEGEARBYARENA_264_OFFTIER                          = 604005,
+
+    CREATURE_VENDOR_PVP_PVEGEARBYARENA_271_277_WEAPONS                      = 604006,
+    CREATURE_VENDOR_PVP_PVEGEARBYARENA_271_277_TRINKETS                     = 604007,
+    CREATURE_VENDOR_PVP_PVEGEARBYARENA_271_277_OFFSET_BELTS_BOOTS_BRACERS   = 604008,
+    CREATURE_VENDOR_PVP_PVEGEARBYARENA_271_277_OFFSET_RINGS_NECKS           = 604009,
+    CREATURE_VENDOR_PVP_PVEGEARBYARENA_271_277_OFFSET_CLOAKS                = 604010,
+    CREATURE_VENDOR_PVP_PVEGEARBYARENA_271_277_OFFTIER                      = 604011,
       
     CREATURE_VENDOR_PVE_T9_HORDE        = 601632,
     CREATURE_VENDOR_PVE_T9_ALLIANCE     = 601585,
@@ -248,13 +255,20 @@ public:
         ShowOption(player, isSpanish ? "[S8]" : "[S8]", 4);
         ShowOption(player, isSpanish ? "[S8 Offset]" : "[S8 Offset]", 5);
         ShowOption(player, isSpanish ? "[Armas 3v3]" : "[3v3 Weapons]", 6);
-        ShowOption(player, isSpanish ? "---- Equipo PVE por Rating de Arenas ----" : "---- PVE Gear by Arena Rating ----", 100);
-        ShowOption(player, isSpanish ? "[1850: Cinturones - Botas - Brazales]" : "[1850: Belts - Boots - Bracers]", 7);
-        ShowOption(player, isSpanish ? "[1850: Anillos - Collares]" : "[1850: Rings - Necks]", 8);
-        ShowOption(player, isSpanish ? "[1850: Capas]" : "[1850: Cloaks]", 9);
-        ShowOption(player, isSpanish ? "[1850: Off-Tier]" : "[1850: Off-Tier]", 10);
-        ShowOption(player, isSpanish ? "[1950: Armas]" : "[1950: Weapons]", 11);
-        ShowOption(player, isSpanish ? "[2050: Abalorios]" : "[2050: Trinkets]", 12);
+        ShowOption(player, isSpanish ? "-- (264) Equipo PVE Rating de Arenas --"            : "-- (264) Equipo PVE Gear Arena Rating --", 100);
+        ShowOption(player, isSpanish ? "[1650: (264) Cinturones - Botas - Brazales]"        : "[1650: (264) Belts - Boots - Bracers]", 7);
+        ShowOption(player, isSpanish ? "[1650: (264) Anillos - Collares]"                   : "[1650: (264) Rings - Necks]", 8);
+        ShowOption(player, isSpanish ? "[1650: (264) Capas]"                                : "[1650: (264) Cloaks]", 9);
+        ShowOption(player, isSpanish ? "[1650: (264) Off-Tier]"                             : "[1650: (264) Off-Tier]", 10);
+        ShowOption(player, isSpanish ? "[1750: (264) Armas]"                                : "[1750: (264) Weapons]", 11);
+        ShowOption(player, isSpanish ? "[1850: (264) Abalorios]"                            : "[1850: (264) Trinkets]", 12);
+        ShowOption(player, isSpanish ? "-- (271/277) Equipo PVE Rating de Arenas --"        : "-- (271/277) Equipo PVE Gear Arena Rating --", 100);
+        ShowOption(player, isSpanish ? "[2050: (271/277) Cinturones - Botas - Brazales]"    : "[2050: (271/277) Belts - Boots - Bracers]", 13);
+        ShowOption(player, isSpanish ? "[2050: (271/277) Anillos - Collares]"               : "[2050: (271/277) Rings - Necks]", 14);
+        ShowOption(player, isSpanish ? "[2050: (271/277) Capas]"                            : "[2050: (271/277) Cloaks]", 15);
+        ShowOption(player, isSpanish ? "[2050: (271/277) Off-Tier]"                         : "[2050: (271/277) Off-Tier]", 16);
+        ShowOption(player, isSpanish ? "[2200: (271/277) Armas]"                            : "[2200: (271/277) Weapons]", 17);
+        ShowOption(player, isSpanish ? "[2350: (271/277) Abalorios]"                        : "[2350: (271/277) Trinkets]", 18);
 
         SendGossipMenuFor(player, DEFAULT_MESSAGE, creature->GetGUID());
         return true;
@@ -271,12 +285,20 @@ public:
         case GOSSIP_ACTION_INFO_DEF + 4: ShowVendor(player, creature, CREATURE_VENDOR_PVP_S8); break;
         case GOSSIP_ACTION_INFO_DEF + 5: ShowVendor(player, creature, CREATURE_VENDOR_PVP_S8OFFPARTS); break;
         case GOSSIP_ACTION_INFO_DEF + 6: ShowVendor(player, creature, CREATURE_VENDOR_PVP_3V3WEAPONS); break;
-        case GOSSIP_ACTION_INFO_DEF + 7: ShowVendor(player, creature, CREATURE_VENDOR_PVP_PVEGEARBYARENA_OFFSET_BELTS_BOOTS_BRACERS); break;
-        case GOSSIP_ACTION_INFO_DEF + 8: ShowVendor(player, creature, CREATURE_VENDOR_PVP_PVEGEARBYARENA_OFFSET_RINGS_NECKS); break;
-        case GOSSIP_ACTION_INFO_DEF + 9: ShowVendor(player, creature, CREATURE_VENDOR_PVP_PVEGEARBYARENA_OFFSET_CLOAKS); break;
-        case GOSSIP_ACTION_INFO_DEF + 10: ShowVendor(player, creature, CREATURE_VENDOR_PVP_PVEGEARBYARENA_OFFTIER); break;
-        case GOSSIP_ACTION_INFO_DEF + 11: ShowVendor(player, creature, CREATURE_VENDOR_PVP_PVEGEARBYARENA_WEAPONS); break;
-        case GOSSIP_ACTION_INFO_DEF + 12: ShowVendor(player, creature, CREATURE_VENDOR_PVP_PVEGEARBYARENA_TRINKETS); break;
+
+        case GOSSIP_ACTION_INFO_DEF + 7: ShowVendor(player, creature, CREATURE_VENDOR_PVP_PVEGEARBYARENA_264_OFFSET_BELTS_BOOTS_BRACERS); break;
+        case GOSSIP_ACTION_INFO_DEF + 8: ShowVendor(player, creature, CREATURE_VENDOR_PVP_PVEGEARBYARENA_264_OFFSET_RINGS_NECKS); break;
+        case GOSSIP_ACTION_INFO_DEF + 9: ShowVendor(player, creature, CREATURE_VENDOR_PVP_PVEGEARBYARENA_264_OFFSET_CLOAKS); break;
+        case GOSSIP_ACTION_INFO_DEF + 10: ShowVendor(player, creature, CREATURE_VENDOR_PVP_PVEGEARBYARENA_264_OFFTIER); break;
+        case GOSSIP_ACTION_INFO_DEF + 11: ShowVendor(player, creature, CREATURE_VENDOR_PVP_PVEGEARBYARENA_264_WEAPONS); break;
+        case GOSSIP_ACTION_INFO_DEF + 12: ShowVendor(player, creature, CREATURE_VENDOR_PVP_PVEGEARBYARENA_264_TRINKETS); break;
+
+        case GOSSIP_ACTION_INFO_DEF + 13: ShowVendor(player, creature, CREATURE_VENDOR_PVP_PVEGEARBYARENA_271_277_OFFSET_BELTS_BOOTS_BRACERS); break;
+        case GOSSIP_ACTION_INFO_DEF + 14: ShowVendor(player, creature, CREATURE_VENDOR_PVP_PVEGEARBYARENA_271_277_OFFSET_RINGS_NECKS); break;
+        case GOSSIP_ACTION_INFO_DEF + 15: ShowVendor(player, creature, CREATURE_VENDOR_PVP_PVEGEARBYARENA_271_277_OFFSET_CLOAKS); break;
+        case GOSSIP_ACTION_INFO_DEF + 16: ShowVendor(player, creature, CREATURE_VENDOR_PVP_PVEGEARBYARENA_271_277_OFFTIER); break;
+        case GOSSIP_ACTION_INFO_DEF + 17: ShowVendor(player, creature, CREATURE_VENDOR_PVP_PVEGEARBYARENA_271_277_WEAPONS); break;
+        case GOSSIP_ACTION_INFO_DEF + 18: ShowVendor(player, creature, CREATURE_VENDOR_PVP_PVEGEARBYARENA_271_277_TRINKETS); break;
         default: OnGossipHello(player, creature); break;
         }
 
