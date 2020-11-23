@@ -42,8 +42,7 @@
 
 #define EMBLEM_OF_FROST_ENTRY 49426
 #define EMBLEM_OF_TRIUMPH_ENTRY 47241
-//#define AMNESIA_COIN_ENTRY 37742
-//#define LEGENDARY_TOKEN_ENTRY 37711
+#define ETHEREAL_CREDIT_ENTRY 38186
 #define AMNESIA_COIN_ENTRY 32569
 #define LEGENDARY_TOKEN_ENTRY 32572
 
@@ -183,6 +182,11 @@ public:
                         GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 9, confirmText, 0, false);
                 }
 
+                AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Comprar 25 Creditos Etereos usando:" : "Buy 25 Ethereal Credits using:", GOSSIP_SENDER_MAIN, -1);
+                AddGossipItemFor(player, GOSSIP_ICON_VENDOR,
+                    isSpanish ? "|TInterface\\icons\\inv_misc_frostemblem_01:20|t [Emblema de escarcha] x 50." : "|TInterface\\icons\\inv_misc_frostemblem_01:20|t [Emblem of Frost] x 50.",
+                    GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 10, confirmText, 0, false);
+
                 AddGossipItemFor(player, GOSSIP_ICON_TALK,
                     isSpanish ? "|TInterface/ICONS/Thrown_1H_Harpoon_D_01Blue:20|t Hasta Luego!" : "|TInterface/ICONS/Thrown_1H_Harpoon_D_01Blue:20|t Nevermind!",
                     GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 8);
@@ -299,6 +303,12 @@ public:
                 SendMenu(player, creature);
                 break;
 
+            case GOSSIP_ACTION_INFO_DEF + 10:
+                // Buy 25 Ethereal Credit with 50 Emblem of Frost
+                DoExchange(player, EMBLEM_OF_FROST_ENTRY, 50, ETHEREAL_CREDIT_ENTRY, 25);
+                //player->PlayerTalkClass->SendCloseGossip();
+                SendMenu(player, creature);
+                break;
             }
 
         }

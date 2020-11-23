@@ -377,7 +377,7 @@ class boss_halion : public CreatureScript
                         break;
                     case EVENT_BREATH:
                         me->CastSpell(me->GetVictim(), SPELL_FLAME_BREATH, false);
-                        events.ScheduleEvent(EVENT_BREATH, urand(10000, 12000));
+                        events.ScheduleEvent(EVENT_BREATH, urand(13000, 17000));
                         break;
                     case EVENT_ACTIVATE_FIREWALL:
                         instance->HandleGameObject(instance->GetData64(GO_FLAME_RING), false, nullptr);
@@ -536,7 +536,7 @@ class boss_twilight_halion : public CreatureScript
                         break;
                     case EVENT_BREATH:
                         me->CastSpell(me->GetVictim(), SPELL_DARK_BREATH, false);
-                        _events.ScheduleEvent(EVENT_BREATH, urand(10000, 12000));
+                        _events.ScheduleEvent(EVENT_BREATH, urand(13000, 17000));
                         break;
                     case EVENT_SOUL_CONSUMPTION:
                         if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 1, 100.0f, true, SPELL_TWILIGHT_REALM))

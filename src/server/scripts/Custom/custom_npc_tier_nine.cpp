@@ -36,35 +36,8 @@ public:
             player->GetSession()->SendListInventory(creature->GetGUID(), CREATURE_VENDOR_T9_HORDE);
             player->PlayerTalkClass->SendCloseGossip();
         }
-        //SendGossipMenuFor(player, DEFAULT_MESSAGE, creature->GetGUID());
         return true;
     }
-
-    //bool IsSpanishPlayer(Player* player)
-    //{
-    //    LocaleConstant locale = player->GetSession()->GetSessionDbLocaleIndex();
-    //    return (locale == LOCALE_esES || locale == LOCALE_esMX);
-    //}
-
-    //bool OnGossipSelect(Player* player, Creature* creature, uint32 sender, uint32 action) override
-    //{
-    //    ClearGossipMenuFor(player);
-
-    //    switch (action)
-    //    {
-    //    case GOSSIP_ACTION_INFO_DEF + 4:
-    //        player->GetSession()->SendListInventory(creature->GetGUID(), CREATURE_VENDOR_WARRIOR);
-    //        player->PlayerTalkClass->SendCloseGossip();
-    //        break;
-    //    case GOSSIP_ACTION_INFO_DEF + 5:
-    //        player->GetSession()->SendListInventory(creature->GetGUID(), CREATURE_VENDOR_PALADIN);
-    //        player->PlayerTalkClass->SendCloseGossip();
-    //        break;
-  
-    //    }
-
-    //    return true;
-    //};
 
     struct custom_npc_tier_nineAI : public ScriptedAI
     {
