@@ -13009,6 +13009,7 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
             else if (shirtEntry == 100050) SetObjectScale(0.15f);
             else if (shirtEntry == 100051) SetObjectScale(0.2f);
             else if (shirtEntry == 100052) SetObjectScale(0.15f);
+            else if (shirtEntry == 100055) SetObjectScale(0.45f);
 
             else SetObjectScale(1.0f);
             
@@ -13077,6 +13078,10 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
             case 100050: SetDisplayId(16137); break;    // Thaddius
             case 100051: SetDisplayId(29615); break;    // Jaraxxus
             case 100052: SetDisplayId(15945); break;    // Kel'Thuzad
+
+            case 100053: SetDisplayId(21588); break;    // Gul'dan
+            case 100054: SetDisplayId(28213); break;    // Sylvanas
+            case 100055: SetDisplayId(30721); break;    // Arthas
 
 
             case 100100: SetDisplayId(21267); break;    // Fel Orc
