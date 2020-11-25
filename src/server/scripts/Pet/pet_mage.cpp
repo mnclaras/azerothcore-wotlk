@@ -49,11 +49,12 @@ class npc_pet_mage_mirror_image : public CreatureScript
 
         struct npc_pet_mage_mirror_imageAI : CasterAI
         {
-            npc_pet_mage_mirror_imageAI(Creature* creature) : CasterAI(creature) { }
+            npc_pet_mage_mirror_imageAI(Creature* creature) : CasterAI(creature)
+            {
+                _targetGUID = 0;
+                _checktarget = 0;
+            }
 
-            uint32 selectionTimer;
-            uint64 _ebonGargoyleGUID;
-            uint32 checktarget;
             uint32 dist = urand(1, 5);
 
             void InitializeAI()
@@ -89,41 +90,28 @@ class npc_pet_mage_mirror_image : public CreatureScript
 
                 me->SetReactState(REACT_DEFENSIVE);
 
-                // Xinef: Inherit Master's Threat List (not yet implemented)
-                //owner->CastSpell((Unit*)NULL, SPELL_MAGE_MASTERS_THREAT_LIST, true);
-                HostileReference* ref = owner->getHostileRefManager().getFirst();
-                while (ref)
+                me->m_Events.AddEvent(new DeathEvent(*me), me->m_Events.CalculateTime(29500));
+            }
+
+            uint64 GetElementalTargetGUID()
+            {
+                uint64 elementalTargetGUID = 0;
+
+                std::list<Unit*> targets;
+                acore::AnyFriendlyUnitInObjectRangeCheck ghoul_check(me, me, 50);
+                acore::UnitListSearcher<acore::AnyFriendlyUnitInObjectRangeCheck> searcher(me, targets, ghoul_check);
+                me->VisitNearbyObject(50, searcher);
+                for (std::list<Unit*>::const_iterator iter = targets.begin(); iter != targets.end(); ++iter)
                 {
-                    if (Unit* unit = ref->GetSource()->GetOwner())
-                        unit->AddThreat(me, ref->getThreat() - ref->getTempThreatModifier());
-                    ref = ref->next();
+                    if ((*iter)->GetEntry() == 510) // elemental entry
+                        if ((*iter)->GetOwnerGUID() == me->GetOwnerGUID()) // same owner
+                        {
+                            elementalTargetGUID = (*iter)->GetTarget();
+                            break;
+                        }
                 }
 
-                _ebonGargoyleGUID = 0;
-
-                // Xinef: copy caster auras
-                Unit::VisibleAuraMap const* visibleAuraMap = owner->GetVisibleAuras();
-                for (Unit::VisibleAuraMap::const_iterator itr = visibleAuraMap->begin(); itr != visibleAuraMap->end(); ++itr)
-                    if (Aura* visAura = itr->second->GetBase())
-                    {
-                        // Ebon Gargoyle
-                        if (visAura->GetId() == 49206 && me->GetUInt32Value(UNIT_CREATED_BY_SPELL) == SPELL_SUMMON_MIRROR_IMAGE1)
-                        {
-                            if (Unit* gargoyle = visAura->GetCaster())
-                                _ebonGargoyleGUID = gargoyle->GetGUID();
-                            continue;
-                        }
-                        SpellScriptsBounds bounds = sObjectMgr->GetSpellScriptsBounds(visAura->GetId());
-                        if (bounds.first != bounds.second)
-                            continue;
-                        std::vector<int32> const* spellTriggered = sSpellMgr->GetSpellLinked(visAura->GetId() + SPELL_LINK_AURA);
-                        if (!spellTriggered || !spellTriggered->empty())
-                            continue;
-                        if (Aura* newAura = me->AddAura(visAura->GetId(), me))
-                            newAura->SetDuration(visAura->GetDuration());
-                    }
-
-                me->m_Events.AddEvent(new DeathEvent(*me), me->m_Events.CalculateTime(29500));
+                return elementalTargetGUID;
             }
 
             // Do not reload Creature templates on evade mode enter - prevent visual lost
@@ -144,36 +132,46 @@ class npc_pet_mage_mirror_image : public CreatureScript
 
             void MySelectNextTarget()
             {
-                if (_ebonGargoyleGUID)
-                {
-                    Unit* gargoyle = ObjectAccessor::GetUnit(*me, _ebonGargoyleGUID);
-                    if (gargoyle && gargoyle->GetAI())
-                        gargoyle->GetAI()->AttackStart(me);
-                    _ebonGargoyleGUID = 0;
-                }
                 Unit* owner = me->GetOwner();
+
                 if (owner && owner->GetTypeId() == TYPEID_PLAYER)
                 {
+                    Unit* elementalTarget = ObjectAccessor::GetUnit(*me, GetElementalTargetGUID());
                     Unit* selection = owner->ToPlayer()->GetSelectedUnit();
-
-                    if (selection)
+                    if (elementalTarget && me->IsValidAttackTarget(elementalTarget) && !elementalTarget->HasBreakableByDamageCrowdControlAura())
                     {
-                        me->getThreatManager().resetAllAggro();
-                        me->AddThreat(selection, 1000000.0f);
-
-                        if (owner->IsInCombat())
-                            AttackStart(selection);
+                        if (elementalTarget != me->GetVictim())
+                        {
+                            me->GetMotionMaster()->Clear(false);
+                            SetGazeOn(elementalTarget);
+                        }
                     }
-
-                    if (!owner->IsInCombat() && !me->GetVictim())
+                    else if (selection && selection != me->GetVictim() && me->IsValidAttackTarget(selection) && (!me->GetVictim() || !me->IsValidAttackTarget(me->GetVictim()) || !owner->CanSeeOrDetect(me->GetVictim())) && !selection->HasBreakableByDamageCrowdControlAura())
+                    {
+                        me->GetMotionMaster()->Clear(false);
+                        SetGazeOn(selection);
+                    }
+                    else if ((!me->GetVictim() && !owner->IsInCombat()) || (me->GetVictim() && !owner->CanSeeOrDetect(me->GetVictim()) || (me->GetVictim() && me->GetVictim()->HasBreakableByDamageCrowdControlAura())))
+                    {
+                        if (me->GetVictim() && me->GetVictim()->HasBreakableByDamageCrowdControlAura())
+                        {
+                            me->InterruptNonMeleeSpells(true);
+                        }
                         EnterEvadeMode();
+                    }
                 }
+            }
+
+            void AttackStart(Unit* who)
+            {
+                _targetGUID = who->GetGUID();
+                CasterAI::AttackStart(who);
             }
 
             void Reset()
             {
-                selectionTimer = 0;
-                checktarget = 0;
+                _checktarget = 0;
+                MySelectNextTarget();
             }
 
             void UpdateAI(uint32 diff)
@@ -182,15 +180,21 @@ class npc_pet_mage_mirror_image : public CreatureScript
                 if (events.GetTimer() < 1200)
                     return;
 
+                if (!UpdateVictimWithGaze())
+                {
+                    MySelectNextTarget();
+                    return;
+                }
+
                 if (!me->IsInCombat() || !me->GetVictim())
                 {
                     MySelectNextTarget();
                     return;
                 }
 
-                checktarget += diff;
+                _checktarget += diff;
 
-                if (checktarget >= 1000)
+                if (_checktarget >= 1000)
                 {
                     if (me->GetVictim()->HasBreakableByDamageCrowdControlAura() || !me->GetVictim()->IsAlive())
                     {
@@ -209,6 +213,10 @@ class npc_pet_mage_mirror_image : public CreatureScript
                     me->CastSpell(me->GetVictim(), spellId, false);
                 }
             }
+
+        private:
+            uint64 _targetGUID;
+            uint32 _checktarget;
         };
 
         CreatureAI* GetAI(Creature* creature) const

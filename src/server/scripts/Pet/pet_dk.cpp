@@ -46,7 +46,7 @@ class npc_pet_dk_ebon_gargoyle : public CreatureScript
                 _targetGUID = 0;
             }
 
-            void MovementInformMovementInform(uint32 type, uint32 point)
+            void MovementInform(uint32 type, uint32 point)
             {
                 if (type == POINT_MOTION_TYPE && point == 1)
                 {
