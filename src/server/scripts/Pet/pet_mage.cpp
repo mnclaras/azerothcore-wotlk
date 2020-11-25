@@ -24,7 +24,9 @@ enum MageSpells
     SPELL_SUMMON_MIRROR_IMAGE1          = 58831,
     SPELL_SUMMON_MIRROR_IMAGE2          = 58833,
     SPELL_SUMMON_MIRROR_IMAGE3          = 58834,
-    SPELL_SUMMON_MIRROR_IMAGE_GLYPH     = 65047
+    SPELL_SUMMON_MIRROR_IMAGE_GLYPH     = 65047,
+    SPELL_MAGE_FROST_BOLT               = 59638,
+    SPELL_MAGE_FIRE_BLAST               = 59637
 };
 
 class DeathEvent : public BasicEvent
@@ -177,6 +179,18 @@ class npc_pet_mage_mirror_image : public CreatureScript
                 MySelectNextTarget();
             }
 
+            void EnterCombat(Unit* who) override
+            {
+                if (me->GetVictim() && !me->GetVictim()->HasBreakableByDamageCrowdControlAura(me))
+                {
+                    me->CastSpell(who, SPELL_MAGE_FIRE_BLAST, false);
+                    _events.ScheduleEvent(SPELL_MAGE_FROST_BOLT, 0);
+                    _events.ScheduleEvent(SPELL_MAGE_FIRE_BLAST, 6500);
+                }
+                else
+                    EnterEvadeMode();
+            }
+
             void UpdateAI(uint32 diff)
             {
                 _events.Update(diff);
@@ -210,11 +224,28 @@ class npc_pet_mage_mirror_image : public CreatureScript
                 if (me->HasUnitState(UNIT_STATE_CASTING))
                     return;
 
-                if (uint32 spellId = _events.GetEvent())
+
+               /* if (uint32 spellId = _events.GetEvent())
                 {
                     _events.RescheduleEvent(spellId, spellId == 59637 ? 6500 : 2500);
                     me->CastSpell(me->GetVictim(), spellId, false);
+                }*/
+
+                if (uint32 spellId = _events.ExecuteEvent())
+                {
+                    if (spellId == SPELL_MAGE_FROST_BOLT)
+                    {
+                        _events.ScheduleEvent(SPELL_MAGE_FROST_BOLT, 2500);
+                        DoCastVictim(spellId);
+                    }
+                    else if (spellId == SPELL_MAGE_FIRE_BLAST)
+                    {
+                        DoCastVictim(spellId);
+                        _events.ScheduleEvent(SPELL_MAGE_FIRE_BLAST, 6500);
+                    }
                 }
+
+                
             }
 
         private:
