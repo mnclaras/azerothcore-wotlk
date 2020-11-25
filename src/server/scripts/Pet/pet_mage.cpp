@@ -146,17 +146,22 @@ class npc_pet_mage_mirror_image : public CreatureScript
                         {
                             me->GetMotionMaster()->Clear(false);
                             SetGazeOn(elementalTarget);
+                            _targetGUID = elementalTarget->GetGUID();
+                            target = elementalTarget;
                         }
                     }
                     else if (selection && selection != me->GetVictim() && me->IsValidAttackTarget(selection) && (!me->GetVictim() || !me->IsValidAttackTarget(me->GetVictim()) || !owner->CanSeeOrDetect(me->GetVictim())) && !selection->HasBreakableByDamageCrowdControlAura())
                     {
                         me->GetMotionMaster()->Clear(false);
                         SetGazeOn(selection);
+                        _targetGUID = selection->GetGUID();
+                        target = selection;
                     }
                     else if ((!me->GetVictim() && !owner->IsInCombat())
                         || (me->GetVictim() && !owner->CanSeeOrDetect(me->GetVictim()))
                         || (me->GetVictim() && me->GetVictim()->HasBreakableByDamageCrowdControlAura()))
                     {
+                        target = nullptr;
                         if (me->GetVictim() && me->GetVictim()->HasBreakableByDamageCrowdControlAura())
                         {
                             me->InterruptNonMeleeSpells(true);
@@ -168,6 +173,7 @@ class npc_pet_mage_mirror_image : public CreatureScript
 
             void AttackStart(Unit* who)
             {
+                target = who;
                 _targetGUID = who->GetGUID();
                 ScriptedAI::AttackStart(who);
             }
@@ -203,7 +209,7 @@ class npc_pet_mage_mirror_image : public CreatureScript
                     return;
                 }
 
-                if (!me->IsInCombat() || !me->GetVictim())
+                if (!me->IsInCombat() || !me->GetVictim() || !target)
                 {
                     MySelectNextTarget();
                     return;
@@ -235,12 +241,14 @@ class npc_pet_mage_mirror_image : public CreatureScript
                 {
                     if (spellId == SPELL_MAGE_FROST_BOLT)
                     {
+                        me->CastSpell(target, spellId, false);
                         _events.ScheduleEvent(SPELL_MAGE_FROST_BOLT, 2500);
-                        DoCastVictim(spellId);
+                        //DoCastVictim(spellId);
                     }
                     else if (spellId == SPELL_MAGE_FIRE_BLAST)
                     {
-                        DoCastVictim(spellId);
+                        me->CastSpell(target, spellId, false);
+                        //DoCastVictim(spellId);
                         _events.ScheduleEvent(SPELL_MAGE_FIRE_BLAST, 6500);
                     }
                 }
@@ -252,6 +260,7 @@ class npc_pet_mage_mirror_image : public CreatureScript
             uint64 _targetGUID;
             uint32 _checktarget;
             EventMap _events;
+            Unit* target;
         };
 
         CreatureAI* GetAI(Creature* creature) const
