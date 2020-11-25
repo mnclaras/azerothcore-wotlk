@@ -47,9 +47,9 @@ class npc_pet_mage_mirror_image : public CreatureScript
     public:
         npc_pet_mage_mirror_image() : CreatureScript("npc_pet_mage_mirror_image") { }
 
-        struct npc_pet_mage_mirror_imageAI : CasterAI
+        struct npc_pet_mage_mirror_imageAI : ScriptedAI
         {
-            npc_pet_mage_mirror_imageAI(Creature* creature) : CasterAI(creature)
+            npc_pet_mage_mirror_imageAI(Creature* creature) : ScriptedAI(creature)
             {
                 _targetGUID = 0;
                 _checktarget = 0;
@@ -59,7 +59,7 @@ class npc_pet_mage_mirror_image : public CreatureScript
 
             void InitializeAI()
             {
-                CasterAI::InitializeAI();
+                ScriptedAI::InitializeAI();
                 Unit* owner = me->GetOwner();
                 if (!owner)
                     return;
@@ -98,8 +98,8 @@ class npc_pet_mage_mirror_image : public CreatureScript
                 uint64 elementalTargetGUID = 0;
 
                 std::list<Unit*> targets;
-                acore::AnyFriendlyUnitInObjectRangeCheck ghoul_check(me, me, 50);
-                acore::UnitListSearcher<acore::AnyFriendlyUnitInObjectRangeCheck> searcher(me, targets, ghoul_check);
+                acore::AnyFriendlyUnitInObjectRangeCheck elemental_check(me, me, 50);
+                acore::UnitListSearcher<acore::AnyFriendlyUnitInObjectRangeCheck> searcher(me, targets, elemental_check);
                 me->VisitNearbyObject(50, searcher);
                 for (std::list<Unit*>::const_iterator iter = targets.begin(); iter != targets.end(); ++iter)
                 {
@@ -151,7 +151,9 @@ class npc_pet_mage_mirror_image : public CreatureScript
                         me->GetMotionMaster()->Clear(false);
                         SetGazeOn(selection);
                     }
-                    else if ((!me->GetVictim() && !owner->IsInCombat()) || (me->GetVictim() && !owner->CanSeeOrDetect(me->GetVictim()) || (me->GetVictim() && me->GetVictim()->HasBreakableByDamageCrowdControlAura())))
+                    else if ((!me->GetVictim() && !owner->IsInCombat())
+                        || (me->GetVictim() && !owner->CanSeeOrDetect(me->GetVictim()))
+                        || (me->GetVictim() && me->GetVictim()->HasBreakableByDamageCrowdControlAura()))
                     {
                         if (me->GetVictim() && me->GetVictim()->HasBreakableByDamageCrowdControlAura())
                         {
@@ -165,19 +167,20 @@ class npc_pet_mage_mirror_image : public CreatureScript
             void AttackStart(Unit* who)
             {
                 _targetGUID = who->GetGUID();
-                CasterAI::AttackStart(who);
+                ScriptedAI::AttackStart(who);
             }
 
             void Reset()
             {
                 _checktarget = 0;
+                _events.Reset();
                 MySelectNextTarget();
             }
 
             void UpdateAI(uint32 diff)
             {
-                events.Update(diff);
-                if (events.GetTimer() < 1200)
+                _events.Update(diff);
+                if (_events.GetTimer() < 1200)
                     return;
 
                 if (!UpdateVictimWithGaze())
@@ -207,9 +210,9 @@ class npc_pet_mage_mirror_image : public CreatureScript
                 if (me->HasUnitState(UNIT_STATE_CASTING))
                     return;
 
-                if (uint32 spellId = events.GetEvent())
+                if (uint32 spellId = _events.GetEvent())
                 {
-                    events.RescheduleEvent(spellId, spellId == 59637 ? 6500 : 2500);
+                    _events.RescheduleEvent(spellId, spellId == 59637 ? 6500 : 2500);
                     me->CastSpell(me->GetVictim(), spellId, false);
                 }
             }
@@ -217,6 +220,7 @@ class npc_pet_mage_mirror_image : public CreatureScript
         private:
             uint64 _targetGUID;
             uint32 _checktarget;
+            EventMap _events;
         };
 
         CreatureAI* GetAI(Creature* creature) const
