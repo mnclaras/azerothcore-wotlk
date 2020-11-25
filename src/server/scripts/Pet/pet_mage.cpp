@@ -201,12 +201,12 @@ class npc_pet_mage_mirror_image : public CreatureScript
                         return;
                     }
 
-                    if (me->GetVictim()->HasBreakableByDamageCrowdControlAura() || !me->GetVictim()->IsAlive())
-                    {
-                        MySelectNextTarget();
-                        me->InterruptNonMeleeSpells(true); // Stop casting if target is CC or not Alive.
-                        return;
-                    }
+                    //if (me->GetVictim()->HasBreakableByDamageCrowdControlAura() || !me->GetVictim()->IsAlive())
+                    //{
+                    //    MySelectNextTarget();
+                    //    me->InterruptNonMeleeSpells(true); // Stop casting if target is CC or not Alive.
+                    //    return;
+                    //}
                 }
 
                 if (me->HasUnitState(UNIT_STATE_CASTING | UNIT_STATE_LOST_CONTROL))
@@ -216,7 +216,6 @@ class npc_pet_mage_mirror_image : public CreatureScript
                 {
                     if (spellId == SPELL_MAGE_FROST_BOLT)
                     {
-                        me->CastSpell(me->GetVictim(), 51963, false);
                         DoCastVictim(spellId, false);
                         _events.ScheduleEvent(SPELL_MAGE_FROST_BOLT, 2500);
                     }
