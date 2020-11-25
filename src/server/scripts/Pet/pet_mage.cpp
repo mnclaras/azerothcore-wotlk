@@ -53,6 +53,7 @@ class npc_pet_mage_mirror_image : public CreatureScript
         {
             npc_pet_mage_mirror_imageAI(Creature* creature) : ScriptedAI(creature)
             {
+                _selectionTimer = 0;
                 _checktarget = 0;
             }
 
@@ -137,6 +138,11 @@ class npc_pet_mage_mirror_image : public CreatureScript
 
                 if (owner && owner->GetTypeId() == TYPEID_PLAYER)
                 {
+                    if (me->GetVictim() && me->GetVictim()->HasBreakableByDamageCrowdControlAura() || !me->GetVictim()->IsAlive())
+                    {
+                        me->InterruptNonMeleeSpells(true); // Stop casting if target is CC or not Alive.
+                    }
+
                     Unit* elementalTarget = ObjectAccessor::GetUnit(*me, GetElementalTargetGUID());
                     Unit* selection = owner->ToPlayer()->GetSelectedUnit();
                     if (elementalTarget && me->IsValidAttackTarget(elementalTarget) && !elementalTarget->HasBreakableByDamageCrowdControlAura())
@@ -156,10 +162,6 @@ class npc_pet_mage_mirror_image : public CreatureScript
                         || (me->GetVictim() && !owner->CanSeeOrDetect(me->GetVictim()))
                         || (me->GetVictim() && me->GetVictim()->HasBreakableByDamageCrowdControlAura()))
                     {
-                        if (me->GetVictim() && me->GetVictim()->HasBreakableByDamageCrowdControlAura())
-                        {
-                            me->InterruptNonMeleeSpells(true);
-                        }
                         EnterEvadeMode();
                     }
                 }
@@ -167,6 +169,7 @@ class npc_pet_mage_mirror_image : public CreatureScript
 
             void Reset()
             {
+                _selectionTimer = 0;
                 _checktarget = 0;
                 _events.Reset();
                 me->SetReactState(REACT_PASSIVE);
@@ -192,21 +195,22 @@ class npc_pet_mage_mirror_image : public CreatureScript
                     return;
 
                 _checktarget += diff;
+                _selectionTimer += diff;
+
+                if (!UpdateVictimWithGaze())
+                {
+                    MySelectNextTarget();
+                    return;
+                }
 
                 if (_checktarget >= 1000)
                 {
-                    if (!UpdateVictimWithGaze())
+                    
+                    if (_selectionTimer >= 1000)
                     {
                         MySelectNextTarget();
-                        return;
+                        _selectionTimer = 0;
                     }
-
-                    //if (me->GetVictim()->HasBreakableByDamageCrowdControlAura() || !me->GetVictim()->IsAlive())
-                    //{
-                    //    MySelectNextTarget();
-                    //    me->InterruptNonMeleeSpells(true); // Stop casting if target is CC or not Alive.
-                    //    return;
-                    //}
                 }
 
                 if (me->HasUnitState(UNIT_STATE_CASTING | UNIT_STATE_LOST_CONTROL))
@@ -231,6 +235,7 @@ class npc_pet_mage_mirror_image : public CreatureScript
 
         private:
             uint32 _checktarget;
+            uint32 _selectionTimer;
             EventMap _events;
         };
 
