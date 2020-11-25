@@ -10,6 +10,7 @@ enum Quests
     QUEST_WIN_5_BG = 80002,
     QUEST_WIN_50_BG = 80003,
     QUEST_KILL_100_PLAYERS = 80004,
+    QUEST_WIN_10_ARENA_2V3_3V3 = 80007,
 };
 
 enum EmblemEntries
@@ -33,23 +34,31 @@ public:
 
         if (bg->isArena() && bg->isRated() && bgTeamId == winnerTeamId)
         {
-            if (player->GetQuestStatus(QUEST_WIN_10_ARENA) == QUEST_STATUS_INCOMPLETE)
+            if (player->GetQuestStatus(QUEST_WIN_10_ARENA) == QUEST_STATUS_INCOMPLETE) // Quest 10 Arena
                 player->KilledMonsterCredit(QUEST_WIN_10_ARENA, 0);
 
-            if (player->GetQuestStatus(QUEST_WIN_50_ARENA) == QUEST_STATUS_INCOMPLETE)
+            if (player->GetQuestStatus(QUEST_WIN_50_ARENA) == QUEST_STATUS_INCOMPLETE) // Quest 50 Arena
                 player->KilledMonsterCredit(QUEST_WIN_50_ARENA, 0);
 
             uint32 rnd = urand(0, 100);
             switch (bg->GetArenaType())
             {
-            case ARENA_TYPE_2v2: // 20% Gladiator's Chest 2v2
-                if (rnd < 20) player->AddItem(GLADIATOR_CHEST_ENTRY, 1);
+            case ARENA_TYPE_2v2: 
+                if (rnd < 20) player->AddItem(GLADIATOR_CHEST_ENTRY, 1); // 20% Gladiator's Chest 2v2
+
+                if (player->GetQuestStatus(QUEST_WIN_10_ARENA_2V3_3V3) == QUEST_STATUS_INCOMPLETE) // Quest 10 Arena 2v2-3v3
+                    player->KilledMonsterCredit(QUEST_WIN_10_ARENA_2V3_3V3, 0);
+
                 break;
-            case ARENA_TYPE_3v3: // 25% Gladiator's Chest 3v3
-                if (rnd < 25) player->AddItem(GLADIATOR_CHEST_ENTRY, 1);
+            case ARENA_TYPE_3v3: 
+                if (rnd < 25) player->AddItem(GLADIATOR_CHEST_ENTRY, 1); // 25% Gladiator's Chest 3v3
+
+                if (player->GetQuestStatus(QUEST_WIN_10_ARENA_2V3_3V3) == QUEST_STATUS_INCOMPLETE) // Quest 10 Arena 2v2-3v3
+                    player->KilledMonsterCredit(QUEST_WIN_10_ARENA_2V3_3V3, 0);
+
                 break;
-            case ARENA_TYPE_5v5: // 10% Gladiator's Chest 1v1
-                if (rnd < 10) player->AddItem(GLADIATOR_CHEST_ENTRY, 1);
+            case ARENA_TYPE_5v5: 
+                if (rnd < 10) player->AddItem(GLADIATOR_CHEST_ENTRY, 1); // 10% Gladiator's Chest 1v1
                 break;
             }
         }
