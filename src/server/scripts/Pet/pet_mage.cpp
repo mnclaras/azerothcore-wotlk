@@ -182,6 +182,7 @@ class npc_pet_mage_mirror_image : public CreatureScript
             {
                 _checktarget = 0;
                 _events.Reset();
+                me->SetReactState(REACT_PASSIVE);
                 MySelectNextTarget();
             }
 
