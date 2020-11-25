@@ -189,7 +189,7 @@ class npc_pet_mage_mirror_image : public CreatureScript
             {
                 if (me->GetVictim() && !me->GetVictim()->HasBreakableByDamageCrowdControlAura(me))
                 {
-                    me->CastSpell(who, SPELL_MAGE_FIRE_BLAST, false);
+                    me->CastSpell(target, SPELL_MAGE_FIRE_BLAST, false);
                     _events.ScheduleEvent(SPELL_MAGE_FROST_BOLT, 0);
                     _events.ScheduleEvent(SPELL_MAGE_FIRE_BLAST, 6500);
                 }
