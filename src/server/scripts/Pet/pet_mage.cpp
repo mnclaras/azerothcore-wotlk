@@ -138,11 +138,6 @@ class npc_pet_mage_mirror_image : public CreatureScript
 
                 if (owner && owner->GetTypeId() == TYPEID_PLAYER)
                 {
-                    if (me->GetVictim() && me->GetVictim()->HasBreakableByDamageCrowdControlAura() || !me->GetVictim()->IsAlive())
-                    {
-                        me->InterruptNonMeleeSpells(true); // Stop casting if target is CC or not Alive.
-                    }
-
                     Unit* elementalTarget = ObjectAccessor::GetUnit(*me, GetElementalTargetGUID());
                     Unit* selection = owner->ToPlayer()->GetSelectedUnit();
                     if (elementalTarget && me->IsValidAttackTarget(elementalTarget) && !elementalTarget->HasBreakableByDamageCrowdControlAura())
@@ -197,7 +192,8 @@ class npc_pet_mage_mirror_image : public CreatureScript
                 _checktarget += diff;
                 _selectionTimer += diff;
 
-                if (!UpdateVictimWithGaze())
+
+                if (!UpdateVictimWithGaze() || !me->IsInCombat() || !me->GetVictim())
                 {
                     MySelectNextTarget();
                     return;
@@ -205,11 +201,19 @@ class npc_pet_mage_mirror_image : public CreatureScript
 
                 if (_checktarget >= 1000)
                 {
-                    
+                    if (me->GetVictim()->HasBreakableByDamageCrowdControlAura() || !me->GetVictim()->IsAlive())
+                    {
+                        MySelectNextTarget();
+                        me->InterruptNonMeleeSpells(true); // Stop casting if target is CC or not Alive.
+                        _selectionTimer = 0;
+                        return;
+                    }
+
                     if (_selectionTimer >= 1000)
                     {
                         MySelectNextTarget();
                         _selectionTimer = 0;
+                        return;
                     }
                 }
 
