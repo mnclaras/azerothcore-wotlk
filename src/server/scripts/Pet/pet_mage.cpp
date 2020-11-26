@@ -144,14 +144,20 @@ class npc_pet_mage_mirror_image : public CreatureScript
                     {
                         if (elementalTarget != me->GetVictim())
                         {
-                            me->GetMotionMaster()->Clear(false);
-                            SetGazeOn(elementalTarget);
+                            if (owner->IsInCombat())
+                            {
+                                me->GetMotionMaster()->Clear(false);
+                                SetGazeOn(elementalTarget);
+                            }
                         }
                     }
                     else if (selection && selection != me->GetVictim() && me->IsValidAttackTarget(selection) && (!me->GetVictim() || !me->IsValidAttackTarget(me->GetVictim()) || !owner->CanSeeOrDetect(me->GetVictim())) && !selection->HasBreakableByDamageCrowdControlAura())
                     {
-                        me->GetMotionMaster()->Clear(false);
-                        SetGazeOn(selection);
+                        if (owner->IsInCombat())
+                        {
+                            me->GetMotionMaster()->Clear(false);
+                            SetGazeOn(selection);
+                        }
                     }
                     else if ((!me->GetVictim() && !owner->IsInCombat())
                         || (me->GetVictim() && !owner->CanSeeOrDetect(me->GetVictim()))
