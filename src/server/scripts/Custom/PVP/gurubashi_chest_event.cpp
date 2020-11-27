@@ -98,8 +98,10 @@ public:
                 stream << "|cffFF0000[Arena Gurubashi]:|r |cffFFFF00El|r |cffFF0000Evento del Cofre|r |cff00FF00ha comenzado!|r";
                 sWorld->SendServerMessage(SERVER_MSG_STRING, stream.str().c_str());
 
+                std::ostringstream streamRange;
+                stream << "|cffFFFF00El|r |cffFF0000Evento del Cofre|r |cff00FF00ha comenzado!|r";
                 WorldPacket data;
-                ChatHandler::BuildChatPacket(data, CHAT_MSG_RAID_BOSS_EMOTE, LANG_UNIVERSAL, me, NULL, stream.str().c_str());
+                ChatHandler::BuildChatPacket(data, CHAT_MSG_RAID_BOSS_EMOTE, LANG_UNIVERSAL, me, NULL, streamRange.str().c_str());
                 me->SendMessageToSetInRange(&data, 500, false);
             }
             else
