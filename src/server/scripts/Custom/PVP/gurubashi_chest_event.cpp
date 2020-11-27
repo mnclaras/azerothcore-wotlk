@@ -57,7 +57,7 @@ public:
     {
         gurubashi_chest_eventAI(Creature* creature) : ScriptedAI(creature) { }
 
-        uint32 summonTimer = 120000;
+        uint32 summonTimer = 10800000;
 
         bool firstAdvertisementEmmited = false;
         bool secondAdvertisementEmmited = false;
@@ -66,7 +66,23 @@ public:
 
         void Reset()
         {
-            summonTimer = 120000; // 2 Minutes for spawning on server restart
+            time_t t = time(nullptr);
+            tm aTm;
+            localtime_r(&t, &aTm);
+
+            // 11:40:40 -> 19 MINUTES AND 20 SECONDS TO START
+            uint32 milliseconds_to_start = 0;
+
+            // 3 - (11%3) = 3-2 = 1 * 3600 = 3600 SECONDS (1 HOUR)
+            milliseconds_to_start = (3 - (aTm.tm_hour % 3)) * HOUR;
+            // 3600 - (60 - (60-40)) = 3600 - (60-20) = 3600 - (40 * 60) = 3600 - 2400 = 1200 SECONDS (20 MINUTES)
+            milliseconds_to_start -= ((60 - (60 - aTm.tm_min)) * MINUTE);
+            // 1200 - (60 - (60-40)) = 1200 - (60-20) = 1200 - 40 = 1160 SECONDS (19 MINUTES AND 20 SECONDS)
+            milliseconds_to_start -= (60 - (60 - aTm.tm_sec));
+            // 1160 * 1000 = 1160000 MILLISECONDS TO START
+            milliseconds_to_start *= IN_MILLISECONDS;
+      
+            summonTimer = milliseconds_to_start; // Spawn time left -- 12 pm, 3 pm, 6 pm, 9 pm, 12 am, 3 am, 6 am, 9 am
             firstAdvertisementEmmited = false;
             secondAdvertisementEmmited = false;
             thirdAdvertisementEmmited = false;
@@ -86,9 +102,9 @@ public:
                     0,                              // Rotation1
                     0,                              // Rotation2
                     0,                              // Rotation3
-                    10740000);                      // RespawnTime
+                    10800000);                      // RespawnTime
 
-                summonTimer = 10740000;
+                summonTimer = 10800000;
                 firstAdvertisementEmmited = false;
                 secondAdvertisementEmmited = false;
                 thirdAdvertisementEmmited = false;
