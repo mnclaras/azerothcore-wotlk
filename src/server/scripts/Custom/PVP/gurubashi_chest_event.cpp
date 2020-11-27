@@ -57,12 +57,12 @@ public:
     {
         gurubashi_chest_eventAI(Creature* creature) : ScriptedAI(creature) { }
 
-        uint32 summonTimer;
+        uint32 summonTimer = 120000;
 
-        bool firstAdvertisementEmmited;
-        bool secondAdvertisementEmmited;
-        bool thirdAdvertisementEmmited;
-        bool fourthAdvertisementEmmited;
+        bool firstAdvertisementEmmited = false;
+        bool secondAdvertisementEmmited = false;
+        bool thirdAdvertisementEmmited = false;
+        bool fourthAdvertisementEmmited = false;
 
         void Reset()
         {
