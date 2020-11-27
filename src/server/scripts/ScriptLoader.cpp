@@ -1211,6 +1211,7 @@ void AddSC_custom_shop_collapsed_vendor();
 void AddSC_custom_hallows_end_event();
 void AddSC_custom_double_emblems_alliance();
 void AddSC_Arena_AntiDraw();
+void AddSC_gurubashi_chest_event();
 
 void AddCustomScripts()
 {
@@ -1236,5 +1237,6 @@ void AddCustomScripts()
 	AddSC_custom_hallows_end_event();
     AddSC_custom_double_emblems_alliance();
 	AddSC_Arena_AntiDraw();
+    AddSC_gurubashi_chest_event();
 #endif
 }

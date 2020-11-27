@@ -19,6 +19,7 @@ set(scripts_STAT_SRCS
   ${AC_SCRIPTS_DIR}/Custom/PVP/arenaladder.cpp
   ${AC_SCRIPTS_DIR}/Custom/PVP/pvp_area.cpp
   ${AC_SCRIPTS_DIR}/Custom/PVP/bg_arena_reward.cpp
+  ${AC_SCRIPTS_DIR}/Custom/PVP/gurubashi_chest_event.cpp
   ${AC_SCRIPTS_DIR}/Custom/HolidayEvents/custom_hallows_end_event.cpp
   ${AC_SCRIPTS_DIR}/Custom/custom_player_tools.cpp
   ${AC_SCRIPTS_DIR}/Custom/custom_amnesia_coin_exchange.cpp
