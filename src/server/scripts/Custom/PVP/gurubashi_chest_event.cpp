@@ -61,8 +61,7 @@ public:
 
         void Reset()
         {
-            //summonTimer = 600000; // 10 Minutes for spawning on server restart
-            summonTimer = 0; // Instant Spawn on server restart
+            summonTimer = 120000; // 2 Minutes for spawning on server restart
         }
 
         void UpdateAI(const uint32 diff)
@@ -81,29 +80,36 @@ public:
                     10740000);                      // RespawnTime
 
                 summonTimer = 10740000;
+
+                std::ostringstream stream;
+                stream << "|cffFF0000[Arena Gurubashi]:|r |cffFFFF00El|r |cffFF0000Evento del Cofre|r |cff00FF00ha comenzado!|r";
+                sWorld->SendServerMessage(SERVER_MSG_STRING, stream.str().c_str());
             }
             else
             {
-                std::ostringstream stream;
                 if (summonTimer < 900000)
                 {
-                    stream << "|cffFFFF00[Arena Gurubashi]:|r El |cffFF0000Evento del Cofre|r va a comenzar en |cff00FF0015 minutos!|r";
-                    sWorld->SendServerMessage(SERVER_MSG_STRING, stream.str().c_str());
+                    std::ostringstream stream1;
+                    stream1 << "|cffFF0000[Arena Gurubashi]:|r |cffFFFF00El|r |cffFF0000Evento del Cofre|r |cffFFFF00va a comenzar en|r |cff00FF0015 minutos!|r";
+                    sWorld->SendServerMessage(SERVER_MSG_STRING, stream1.str().c_str());
                 }
                 else if (summonTimer < 600000)
                 {
-                    stream << "|cffFFFF00[Arena Gurubashi]:|r El |cffFF0000Evento del Cofre|r va a comenzar en |cff00FF0010 minutos!|r";
-                    sWorld->SendServerMessage(SERVER_MSG_STRING, stream.str().c_str());
+                    std::ostringstream stream2;
+                    stream2 << "|cffFF0000[Arena Gurubashi]:|r |cffFFFF00El|r |cffFF0000Evento del Cofre|r |cffFFFF00va a comenzar en|r |cff00FF0010 minutos!|r";
+                    sWorld->SendServerMessage(SERVER_MSG_STRING, stream2.str().c_str());
                 }
                 else if (summonTimer < 300000)
                 {
-                    stream << "|cffFFFF00[Arena Gurubashi]:|r El |cffFF0000Evento del Cofre|r va a comenzar en |cff00FF005 minutos!|r";
-                    sWorld->SendServerMessage(SERVER_MSG_STRING, stream.str().c_str());
+                    std::ostringstream stream3;
+                    stream3 << "|cffFF0000[Arena Gurubashi]:|r |cffFFFF00El|r |cffFF0000Evento del Cofre|r |cffFFFF00va a comenzar en|r |cff00FF005 minutos!|r";
+                    sWorld->SendServerMessage(SERVER_MSG_STRING, stream3.str().c_str());
                 }
                 else if (summonTimer < 60000)
                 {
-                    stream << "|cffFFFF00[Arena Gurubashi]:|r El |cffFF0000Evento del Cofre|r va a comenzar en |cff00FF001 minuto!|r";
-                    sWorld->SendServerMessage(SERVER_MSG_STRING, stream.str().c_str());
+                    std::ostringstream stream4;
+                    stream4 << "|cffFF0000[Arena Gurubashi]:|r |cffFFFF00El|r |cffFF0000Evento del Cofre|r |cffFFFF00va a comenzar en|r |cff00FF001 minuto!|r";
+                    sWorld->SendServerMessage(SERVER_MSG_STRING, stream4.str().c_str());
                 }
 
                 summonTimer -= diff;
