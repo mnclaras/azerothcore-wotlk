@@ -100,33 +100,41 @@ public:
             }
             else
             {
-                if (isBetween(summonTimer, 600001, 900000) && !firstAdvertisementEmmited)
+                if (summonTimer <= 900000)
                 {
-                    std::ostringstream stream1;
-                    stream1 << "|cffFF0000[Arena Gurubashi]:|r |cffFFFF00El|r |cffFF0000Evento del Cofre|r |cffFFFF00va a comenzar en|r |cff00FF0015 minutos!|r";
-                    sWorld->SendServerMessage(SERVER_MSG_STRING, stream1.str().c_str());
-                    firstAdvertisementEmmited = true;
-                }
-                else if (isBetween(summonTimer, 300001, 600000) && !secondAdvertisementEmmited)
-                {
-                    std::ostringstream stream2;
-                    stream2 << "|cffFF0000[Arena Gurubashi]:|r |cffFFFF00El|r |cffFF0000Evento del Cofre|r |cffFFFF00va a comenzar en|r |cff00FF0010 minutos!|r";
-                    sWorld->SendServerMessage(SERVER_MSG_STRING, stream2.str().c_str());
-                    secondAdvertisementEmmited = true;
-                }
-                else if (isBetween(summonTimer, 60001, 300000) && !thirdAdvertisementEmmited)
-                {
-                    std::ostringstream stream3;
-                    stream3 << "|cffFF0000[Arena Gurubashi]:|r |cffFFFF00El|r |cffFF0000Evento del Cofre|r |cffFFFF00va a comenzar en|r |cff00FF005 minutos!|r";
-                    sWorld->SendServerMessage(SERVER_MSG_STRING, stream3.str().c_str());
-                    thirdAdvertisementEmmited = true;
-                }
-                else if (isBetween(summonTimer, 0, 60000) && !fourthAdvertisementEmmited)
-                {
-                    std::ostringstream stream4;
-                    stream4 << "|cffFF0000[Arena Gurubashi]:|r |cffFFFF00El|r |cffFF0000Evento del Cofre|r |cffFFFF00va a comenzar en|r |cff00FF001 minuto!|r";
-                    sWorld->SendServerMessage(SERVER_MSG_STRING, stream4.str().c_str());
-                    fourthAdvertisementEmmited = true;
+                    if (isBetween(summonTimer, 600001, 900000) && !firstAdvertisementEmmited)
+                    {
+                        std::ostringstream stream1;
+                        stream1 << "|cffFF0000[Arena Gurubashi]:|r |cffFFFF00El|r |cffFF0000Evento del Cofre|r |cffFFFF00va a comenzar en|r |cff00FF0015 minutos!|r";
+                        sWorld->SendServerMessage(SERVER_MSG_STRING, stream1.str().c_str());
+                        sWorld->SendZoneText(ZONE_STRANGLETHORN, stream1.str().c_str());
+
+                        firstAdvertisementEmmited = true;
+                    }
+                    else if (isBetween(summonTimer, 300001, 600000) && !secondAdvertisementEmmited)
+                    {
+                        std::ostringstream stream2;
+                        stream2 << "|cffFF0000[Arena Gurubashi]:|r |cffFFFF00El|r |cffFF0000Evento del Cofre|r |cffFFFF00va a comenzar en|r |cff00FF0010 minutos!|r";
+                        sWorld->SendServerMessage(SERVER_MSG_STRING, stream2.str().c_str());
+                        sWorld->SendZoneText(ZONE_STRANGLETHORN, stream2.str().c_str());
+                        secondAdvertisementEmmited = true;
+                    }
+                    else if (isBetween(summonTimer, 60001, 300000) && !thirdAdvertisementEmmited)
+                    {
+                        std::ostringstream stream3;
+                        stream3 << "|cffFF0000[Arena Gurubashi]:|r |cffFFFF00El|r |cffFF0000Evento del Cofre|r |cffFFFF00va a comenzar en|r |cff00FF005 minutos!|r";
+                        sWorld->SendServerMessage(SERVER_MSG_STRING, stream3.str().c_str());
+                        sWorld->SendZoneText(ZONE_STRANGLETHORN, stream3.str().c_str());
+                        thirdAdvertisementEmmited = true;
+                    }
+                    else if (isBetween(summonTimer, 0, 60000) && !fourthAdvertisementEmmited)
+                    {
+                        std::ostringstream stream4;
+                        stream4 << "|cffFF0000[Arena Gurubashi]:|r |cffFFFF00El|r |cffFF0000Evento del Cofre|r |cffFFFF00va a comenzar en|r |cff00FF001 minuto!|r";
+                        sWorld->SendServerMessage(SERVER_MSG_STRING, stream4.str().c_str());
+                        sWorld->SendZoneText(ZONE_STRANGLETHORN, stream4.str().c_str());
+                        fourthAdvertisementEmmited = true;
+                    }
                 }
 
                 summonTimer -= diff;
