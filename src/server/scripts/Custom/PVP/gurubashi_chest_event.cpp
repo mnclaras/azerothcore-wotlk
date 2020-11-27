@@ -59,9 +59,18 @@ public:
 
         uint32 summonTimer;
 
+        bool firstAdvertisementEmmited;
+        bool secondAdvertisementEmmited;
+        bool thirdAdvertisementEmmited;
+        bool fourthAdvertisementEmmited;
+
         void Reset()
         {
             summonTimer = 120000; // 2 Minutes for spawning on server restart
+            firstAdvertisementEmmited = false;
+            secondAdvertisementEmmited = false;
+            thirdAdvertisementEmmited = false;
+            fourthAdvertisementEmmited = false;
         }
 
         void UpdateAI(const uint32 diff)
@@ -80,6 +89,10 @@ public:
                     10740000);                      // RespawnTime
 
                 summonTimer = 10740000;
+                firstAdvertisementEmmited = false;
+                secondAdvertisementEmmited = false;
+                thirdAdvertisementEmmited = false;
+                fourthAdvertisementEmmited = false;
 
                 std::ostringstream stream;
                 stream << "|cffFF0000[Arena Gurubashi]:|r |cffFFFF00El|r |cffFF0000Evento del Cofre|r |cff00FF00ha comenzado!|r";
@@ -87,39 +100,42 @@ public:
             }
             else
             {
-                if (summonTimer < 900000)
+                if (isBetween(summonTimer, 600001, 900000) && !firstAdvertisementEmmited)
                 {
                     std::ostringstream stream1;
                     stream1 << "|cffFF0000[Arena Gurubashi]:|r |cffFFFF00El|r |cffFF0000Evento del Cofre|r |cffFFFF00va a comenzar en|r |cff00FF0015 minutos!|r";
                     sWorld->SendServerMessage(SERVER_MSG_STRING, stream1.str().c_str());
+                    firstAdvertisementEmmited = true;
                 }
-                else if (summonTimer < 600000)
+                else if (isBetween(summonTimer, 300001, 600000) && !secondAdvertisementEmmited)
                 {
                     std::ostringstream stream2;
                     stream2 << "|cffFF0000[Arena Gurubashi]:|r |cffFFFF00El|r |cffFF0000Evento del Cofre|r |cffFFFF00va a comenzar en|r |cff00FF0010 minutos!|r";
                     sWorld->SendServerMessage(SERVER_MSG_STRING, stream2.str().c_str());
+                    secondAdvertisementEmmited = true;
                 }
-                else if (summonTimer < 300000)
+                else if (isBetween(summonTimer, 60001, 300000) && !thirdAdvertisementEmmited)
                 {
                     std::ostringstream stream3;
                     stream3 << "|cffFF0000[Arena Gurubashi]:|r |cffFFFF00El|r |cffFF0000Evento del Cofre|r |cffFFFF00va a comenzar en|r |cff00FF005 minutos!|r";
                     sWorld->SendServerMessage(SERVER_MSG_STRING, stream3.str().c_str());
+                    thirdAdvertisementEmmited = true;
                 }
-                else if (summonTimer < 60000)
+                else if (isBetween(summonTimer, 0, 60000) && !fourthAdvertisementEmmited)
                 {
                     std::ostringstream stream4;
                     stream4 << "|cffFF0000[Arena Gurubashi]:|r |cffFFFF00El|r |cffFF0000Evento del Cofre|r |cffFFFF00va a comenzar en|r |cff00FF001 minuto!|r";
                     sWorld->SendServerMessage(SERVER_MSG_STRING, stream4.str().c_str());
+                    fourthAdvertisementEmmited = true;
                 }
 
                 summonTimer -= diff;
             }
         }
 
-        bool IsSpanishPlayer(Player* player)
+        bool isBetween(uint32 value, uint32 first, uint32 second)
         {
-            LocaleConstant locale = player->GetSession()->GetSessionDbLocaleIndex();
-            return (locale == LOCALE_esES || locale == LOCALE_esMX);
+            return value >= first && value <= second;
         }
     };
 
