@@ -7041,7 +7041,7 @@ bool Unit::HandleDummyAuraProc(Unit* victim, uint32 damage, AuraEffect* triggere
                 case 20185:
                 {
                     //if (!victim || !victim->IsAlive() || victim->HasSpellCooldown(20267))
-                    if (!victim || !victim->IsAlive()))
+                    if (!victim || !victim->IsAlive())
                         return false;
                     // 2% of base mana
                     basepoints0 = int32(victim->CountPctFromMaxHealth(2));
