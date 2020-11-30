@@ -40,8 +40,17 @@
 enum GurubashiChestEventInfo
 {
     ZONE_STRANGLETHORN = 33,
-
     GAMEOBJECT_GURUBASHI_CHEST = 179697,
+};
+
+enum Events
+{
+    EVENT_NONE,
+    EVENT_15_MINUTES_TO_START,
+    EVENT_10_MINUTES_TO_START,
+    EVENT_5_MINUTES_TO_START,
+    EVENT_1_MINUTES_TO_START,
+    EVENT_SUMMON_CHEST
 };
 
 static const Position chestPos = { -13202.9f, 276.757f, 21.8571f, 2.77507f };
@@ -57,15 +66,10 @@ public:
     {
         gurubashi_chest_eventAI(Creature* creature) : ScriptedAI(creature) { }
 
-        uint32 summonTimer = 10800000;
-
-        bool firstAdvertisementEmmited = false;
-        bool secondAdvertisementEmmited = false;
-        bool thirdAdvertisementEmmited = false;
-        bool fourthAdvertisementEmmited = false;
-
         void Reset()
         {
+            _events.Reset();
+
             time_t t = time(nullptr);
             tm aTm;
             localtime_r(&t, &aTm);
@@ -81,87 +85,92 @@ public:
             milliseconds_to_start -= (60 - (60 - aTm.tm_sec));
             // 1160 * 1000 = 1160000 MILLISECONDS TO START
             milliseconds_to_start *= IN_MILLISECONDS;
-      
-            summonTimer = milliseconds_to_start; // Spawn time left -- 12 pm, 3 pm, 6 pm, 9 pm, 12 am, 3 am, 6 am, 9 am
-            firstAdvertisementEmmited = false;
-            secondAdvertisementEmmited = false;
-            thirdAdvertisementEmmited = false;
-            fourthAdvertisementEmmited = false;
+
+            if (milliseconds_to_start > (15 * MINUTE * IN_MILLISECONDS))
+                _events.ScheduleEvent(EVENT_15_MINUTES_TO_START, (milliseconds_to_start - (15 * MINUTE * IN_MILLISECONDS)));
+
+            if (milliseconds_to_start > (10 * MINUTE * IN_MILLISECONDS))
+                _events.ScheduleEvent(EVENT_10_MINUTES_TO_START, (milliseconds_to_start - (10 * MINUTE * IN_MILLISECONDS)));
+
+            if (milliseconds_to_start > (5 * MINUTE * IN_MILLISECONDS))
+                _events.ScheduleEvent(EVENT_5_MINUTES_TO_START, (milliseconds_to_start - (5 * MINUTE * IN_MILLISECONDS)));
+
+            if (milliseconds_to_start > (1 * MINUTE * IN_MILLISECONDS))
+                _events.ScheduleEvent(EVENT_1_MINUTES_TO_START, (milliseconds_to_start - (1 * MINUTE * IN_MILLISECONDS)));
+
+            if (milliseconds_to_start > 0)
+                _events.ScheduleEvent(EVENT_SUMMON_CHEST, milliseconds_to_start);
         }
 
         void UpdateAI(const uint32 diff)
         {
-            if (summonTimer <= diff)
+            _events.Update(diff);
+
+            while (uint32 eventId = _events.ExecuteEvent())
             {
-                me->SummonGameObject(GAMEOBJECT_GURUBASHI_CHEST,
-                    chestPos.GetPositionX(),        // X
-                    chestPos.GetPositionY(),        // Y
-                    chestPos.GetPositionZ(),        // Z
-                    chestPos.GetOrientation(),      // ANG
-                    0,                              // Rotation0
-                    0,                              // Rotation1
-                    0,                              // Rotation2
-                    0,                              // Rotation3
-                    10800000);                      // RespawnTime
-
-                summonTimer = 10800000;
-                firstAdvertisementEmmited = false;
-                secondAdvertisementEmmited = false;
-                thirdAdvertisementEmmited = false;
-                fourthAdvertisementEmmited = false;
-
-                std::ostringstream stream;
-                stream << "|cffFF0000[Arena Gurubashi]:|r |cffFFFF00El|r |cffFF0000Evento del Cofre|r |cff00FF00ha comenzado!|r";
-                sWorld->SendServerMessage(SERVER_MSG_STRING, stream.str().c_str());
-
-                std::ostringstream streamRange;
-                streamRange << "|cffFFFF00El|r |cffFF0000Evento del Cofre|r |cff00FF00ha comenzado!|r";
-                WorldPacket data;
-                ChatHandler::BuildChatPacket(data, CHAT_MSG_RAID_BOSS_EMOTE, LANG_UNIVERSAL, me, NULL, streamRange.str().c_str());
-                me->SendMessageToSetInRange(&data, 500, false);
-            }
-            else
-            {
-                if (summonTimer <= 900000)
+                switch (eventId)
                 {
-                    if (isBetween(summonTimer, 600001, 900000) && !firstAdvertisementEmmited)
-                    {
-                        std::ostringstream stream1;
-                        stream1 << "|cffFF0000[Arena Gurubashi]:|r |cffFFFF00El|r |cffFF0000Evento del Cofre|r |cffFFFF00va a comenzar en|r |cff00FF0015 minutos!|r";
-                        sWorld->SendServerMessage(SERVER_MSG_STRING, stream1.str().c_str());
-                        firstAdvertisementEmmited = true;
-                    }
-                    else if (isBetween(summonTimer, 300001, 600000) && !secondAdvertisementEmmited)
-                    {
-                        std::ostringstream stream2;
-                        stream2 << "|cffFF0000[Arena Gurubashi]:|r |cffFFFF00El|r |cffFF0000Evento del Cofre|r |cffFFFF00va a comenzar en|r |cff00FF0010 minutos!|r";
-                        sWorld->SendServerMessage(SERVER_MSG_STRING, stream2.str().c_str());
-                        secondAdvertisementEmmited = true;
-                    }
-                    else if (isBetween(summonTimer, 60001, 300000) && !thirdAdvertisementEmmited)
-                    {
-                        std::ostringstream stream3;
-                        stream3 << "|cffFF0000[Arena Gurubashi]:|r |cffFFFF00El|r |cffFF0000Evento del Cofre|r |cffFFFF00va a comenzar en|r |cff00FF005 minutos!|r";
-                        sWorld->SendServerMessage(SERVER_MSG_STRING, stream3.str().c_str());
-                        thirdAdvertisementEmmited = true;
-                    }
-                    else if (isBetween(summonTimer, 0, 60000) && !fourthAdvertisementEmmited)
-                    {
-                        std::ostringstream stream4;
-                        stream4 << "|cffFF0000[Arena Gurubashi]:|r |cffFFFF00El|r |cffFF0000Evento del Cofre|r |cffFFFF00va a comenzar en|r |cff00FF001 minuto!|r";
-                        sWorld->SendServerMessage(SERVER_MSG_STRING, stream4.str().c_str());
-                        fourthAdvertisementEmmited = true;
-                    }
+                case EVENT_15_MINUTES_TO_START:
+                    BroadcastMessageLeftTime("15");
+                    break;
+                case EVENT_10_MINUTES_TO_START:
+                    BroadcastMessageLeftTime("10");
+                    break;
+                case EVENT_5_MINUTES_TO_START:
+                    BroadcastMessageLeftTime("5");
+                    break;
+                case EVENT_1_MINUTES_TO_START:
+                    BroadcastMessageLeftOneMinute();
+                    break;
+                case EVENT_SUMMON_CHEST:
+                    SummonChest();
+                    Reset();
+                    break;
                 }
-
-                summonTimer -= diff;
             }
         }
 
-        bool isBetween(uint32 value, uint32 first, uint32 second)
+        void SummonChest()
         {
-            return value >= first && value <= second;
+            std::ostringstream stream;
+            stream << "|cffFF0000[Arena Gurubashi]:|r |cffFFFF00El|r |cffFF0000Evento del Cofre|r |cff00FF00ha comenzado!|r";
+            sWorld->SendServerMessage(SERVER_MSG_STRING, stream.str().c_str());
+
+            std::ostringstream streamRange;
+            streamRange << "|cffFFFF00El|r |cffFF0000Evento del Cofre|r |cff00FF00ha comenzado!|r";
+            WorldPacket data;
+            ChatHandler::BuildChatPacket(data, CHAT_MSG_RAID_BOSS_EMOTE, LANG_UNIVERSAL, me, NULL, streamRange.str().c_str());
+            me->SendMessageToSetInRange(&data, 500, false);
+
+            me->SummonGameObject(GAMEOBJECT_GURUBASHI_CHEST,
+                chestPos.GetPositionX(),        // X
+                chestPos.GetPositionY(),        // Y
+                chestPos.GetPositionZ(),        // Z
+                chestPos.GetOrientation(),      // ANG
+                0,                              // Rotation0
+                0,                              // Rotation1
+                0,                              // Rotation2
+                0,                              // Rotation3
+                10800000);                      // RespawnTime
         }
+
+        void BroadcastMessageLeftTime(std::string timeLeft)
+        {
+            std::ostringstream stream;
+            stream << "|cffFF0000[Arena Gurubashi]:|r |cffFFFF00El|r |cffFF0000Evento del Cofre|r |cffFFFF00va a comenzar en|r |cff00FF00" << timeLeft << " minutos!|r";
+            sWorld->SendServerMessage(SERVER_MSG_STRING, stream.str().c_str());
+        }
+
+        void BroadcastMessageLeftOneMinute()
+        {
+            std::ostringstream stream;
+            stream << "|cffFF0000[Arena Gurubashi]:|r |cffFFFF00El|r |cffFF0000Evento del Cofre|r |cffFFFF00va a comenzar en|r |cff00FF001 minuto!|r";
+            sWorld->SendServerMessage(SERVER_MSG_STRING, stream.str().c_str());
+        }
+
+
+    private:
+        EventMap _events;
     };
 
     CreatureAI* GetAI(Creature* creature) const
