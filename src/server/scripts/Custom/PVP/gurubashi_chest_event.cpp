@@ -55,8 +55,6 @@ enum Events
 
 static const Position chestPos = { -13202.9f, 276.757f, 21.8571f, 2.77507f };
 
-#define EMBLEM_OF_TRIUMPH_ENTRY 47241
-
 class gurubashi_chest_event : public CreatureScript
 {
 public:
