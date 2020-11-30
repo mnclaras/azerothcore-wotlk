@@ -7052,14 +7052,14 @@ bool Unit::HandleDummyAuraProc(Unit* victim, uint32 damage, AuraEffect* triggere
                 // Judgement of Wisdom
                 case 20186:
                 {
-                    //if (!victim || !victim->IsAlive() || victim->getPowerType() != POWER_MANA || victim->HasSpellCooldown(20268))
-                    if (!victim || !victim->IsAlive() || victim->getPowerType() != POWER_MANA)
+                    if (!victim || !victim->IsAlive() || victim->getPowerType() != POWER_MANA || victim->HasSpellCooldown(20268))
+                    //if (!victim || !victim->IsAlive() || victim->getPowerType() != POWER_MANA)
                         return false;
 
                     // 2% of base mana
                     basepoints0 = int32(CalculatePct(victim->GetCreateMana(), 2));
                     victim->CastCustomSpell(victim, 20268, &basepoints0, nullptr, nullptr, true, 0, triggeredByAura);
-                    //victim->AddSpellCooldown(20268, 0, 4*IN_MILLISECONDS);
+                    victim->AddSpellCooldown(20268, 0, 4*IN_MILLISECONDS);
                     return true;
                 }
                 // Holy Power (Redemption Armor set)
