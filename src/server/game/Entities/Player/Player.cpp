@@ -12973,7 +12973,7 @@ void Player::RemoveItem(uint8 bag, uint8 slot, bool update, bool swap)
 
 void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
 {   
-    if (slot == 3)
+    if (slot == EQUIPMENT_SLOT_BODY)
     {
         if (shirtEntry >= 100000 && shirtEntry <= 100100)
         {
@@ -13133,7 +13133,7 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
 
 void Player::DeMorphIllusionShirt(uint8 slot, uint32 shirtEntry)
 {
-    if (slot == 3 && shirtEntry >= 100000 && shirtEntry <= 100100)
+    if (slot == EQUIPMENT_SLOT_BODY && shirtEntry >= 100000 && shirtEntry <= 100100)
     {
         // Poción hacerte pequeño (tragonublo)
         RemoveAurasDueToSpell(16595);

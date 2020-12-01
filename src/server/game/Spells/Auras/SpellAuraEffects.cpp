@@ -1957,6 +1957,7 @@ void AuraEffect::HandleAuraModShapeshift(AuraApplication const* aurApp, uint8 mo
                     case FORM_MOONKIN:
                         if (target->GetMap() && !target->GetMap()->IsBattlegroundOrArena())
                         {
+                            // Not ing BG or Arena
                             if (Item* pItem = target->ToPlayer()->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_BODY))
                             {
                                 if (pItem->GetEntry() >= 100000 && pItem->GetEntry() <= 100100)
@@ -1974,7 +1975,7 @@ void AuraEffect::HandleAuraModShapeshift(AuraApplication const* aurApp, uint8 mo
 
                 if (shouldTransform)
                 {
-                    target->SetDisplayId(modelid);
+                    target->SetDisplayId(modelid);                    
                 }
             }
         }

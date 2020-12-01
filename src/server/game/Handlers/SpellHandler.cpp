@@ -124,7 +124,15 @@ void WorldSession::HandleUseItemOpcode(WorldPacket& recvPacket)
         return;
     }
 
+    // Free Action Potion Not Useable in Battlegrounds
     if (pItem->GetEntry() == 5634 && pUser->InBattleground() && !pUser->InArena())
+    {
+        pUser->SendEquipError(EQUIP_ERR_NOT_DURING_ARENA_MATCH, pItem, NULL);
+        return;
+    }
+
+    // MorphIllusionShirts are not usable in bg or arena
+    if ((pUser->InBattleground() || pUser->InArena()) && pItem->GetEntry() >= 100000 && pItem->GetEntry() <= 100100)
     {
         pUser->SendEquipError(EQUIP_ERR_NOT_DURING_ARENA_MATCH, pItem, NULL);
         return;
