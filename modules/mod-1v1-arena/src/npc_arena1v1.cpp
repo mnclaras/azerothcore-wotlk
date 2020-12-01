@@ -388,24 +388,29 @@ private:
             return false;
         }
 
-        // Check if at least one talent tab has 51 talent points
-        bool atLeast50TalentsInOneSpec = false;
-        for (TalentTabCount::const_iterator talentTab = talentTabs.begin(); talentTab != talentTabs.end(); ++talentTab)
-        {           
-            if (talentTab->second >= 51)
+        bool allowHybridPalaDk = true;
+
+        if (!allowHybridPalaDk)
+        {
+            // Check if at least one talent tab has 51 talent points
+            bool atLeast50TalentsInOneSpec = false;
+            for (TalentTabCount::const_iterator talentTab = talentTabs.begin(); talentTab != talentTabs.end(); ++talentTab)
             {
-                atLeast50TalentsInOneSpec = true;
+                if (talentTab->second >= 51)
+                {
+                    atLeast50TalentsInOneSpec = true;
+                }
+            }
+
+            if (!atLeast50TalentsInOneSpec && (player->getClass() == CLASS_PALADIN || player->getClass() == CLASS_DEATH_KNIGHT))
+            {
+                bool isSpanish = IsSpanishPlayer(player);
+                ChatHandler(player->GetSession()).SendSysMessage(isSpanish ? "No puedes anotar arena sin tener al menos 51 puntos de talento en la rama principal."
+                    : "You can not join because you have not at least 51 talent points in your main branch.");
+                return false;
             }
         }
 
-        if (!atLeast50TalentsInOneSpec && (player->getClass() == CLASS_PALADIN || player->getClass() == CLASS_DEATH_KNIGHT))
-        {
-            bool isSpanish = IsSpanishPlayer(player);
-            ChatHandler(player->GetSession()).SendSysMessage(isSpanish ? "No puedes anotar arena sin tener al menos 51 puntos de talento en la rama principal."
-                : "You can not join because you have not at least 51 talent points in your main branch.");
-            return false;
-        }
-        
         return true;
     }
 
