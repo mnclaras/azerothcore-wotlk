@@ -294,7 +294,7 @@ void Battleground::Update(uint32 diff)
         {
             float minuteStartTimer = 15;
             if (GetArenaType() == ARENA_TYPE_5v5)
-                minuteStartTimer = 10;
+                minuteStartTimer = 3;
 
             if (player->InArena())
             {
@@ -722,6 +722,31 @@ inline void Battleground::_ProcessJoin(uint32 diff)
                     }
 
                     player->UpdateObjectVisibility(true);
+
+                    // Remove illusion shirt if entering in arena
+                    Item* pItem = player->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_BODY);
+                    if (pItem && pItem->GetEntry() >= 100000 && pItem->GetEntry() <= 100100)
+                    {
+                        ItemPosCountVec off_dest;
+                        uint8 off_msg = player->CanStoreItem(NULL_BAG, NULL_SLOT, off_dest, pItem, false);
+                        if (off_msg == EQUIP_ERR_OK)
+                        {
+                            player->RemoveItem(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_BODY, true);
+                            player->StoreItem(off_dest, pItem, true);
+                        }
+                        else
+                        {
+                            player->MoveItemFromInventory(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_BODY, true);
+                            SQLTransaction trans = CharacterDatabase.BeginTransaction();
+                            pItem->DeleteFromInventoryDB(trans);                   // deletes item from character's inventory
+                            pItem->SaveToDB(trans);                                // recursive and not have transaction guard into self, item not in inventory and can be save standalone
+
+                            std::string subject = player->GetSession()->GetAcoreString(LANG_NOT_EQUIPPED_ITEM);
+                            MailDraft(subject, "There were problems with equipping one or several items").AddItem(pItem).SendMailTo(trans, player, MailSender(player, MAIL_STATIONERY_GM), MAIL_CHECK_MASK_COPIED);
+
+                            CharacterDatabase.CommitTransaction(trans);
+                        }
+                    }
                 }
 
             for (SpectatorList::const_iterator itr = m_Spectators.begin(); itr != m_Spectators.end(); ++itr)
