@@ -98,6 +98,12 @@ public:
 
             if (milliseconds_to_start > 0)
                 _events.ScheduleEvent(EVENT_SUMMON_CHEST, milliseconds_to_start);
+
+            std::string str = "";
+            str = "|cffFF0000[Arena Gurubashi]:|r |cffFFFF00Evento reiniciado. Nuevo tiempo de spawn en " + std::to_string(milliseconds_to_start) + " ms.|r";
+            WorldPacket data(SMSG_NOTIFICATION, (str.size() + 1));
+            data << str;
+            sWorld->SendGlobalGMMessage(&data);
         }
 
         void UpdateAI(const uint32 diff)
