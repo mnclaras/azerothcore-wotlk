@@ -11904,7 +11904,7 @@ InventoryResult Player::CanEquipItem(uint8 slot, uint16 &dest, Item* pItem, bool
                             return EQUIP_ERR_NOT_DURING_ARENA_MATCH;
 
                         // MorphIllusionShirts are not usable in bg or arena
-                        if ((bg->isArena() || bg->isBattleground()) && bg->GetStatus() == STATUS_IN_PROGRESS && pItem->GetEntry() >= 100000 && pItem->GetEntry() <= 100100)
+                        if ((bg->isArena() || bg->isBattleground()) && (bg->GetStatus() == STATUS_IN_PROGRESS || bg->GetStatus() == STATUS_WAIT_JOIN) && pItem->GetEntry() >= 100000 && pItem->GetEntry() <= 100100)
                         {
                             return EQUIP_ERR_NOT_DURING_ARENA_MATCH;
                         }
