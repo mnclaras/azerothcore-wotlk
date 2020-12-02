@@ -131,13 +131,6 @@ void WorldSession::HandleUseItemOpcode(WorldPacket& recvPacket)
         return;
     }
 
-    // MorphIllusionShirts are not usable in bg or arena
-    if ((pUser->InBattleground() || pUser->InArena()) && pItem->GetEntry() >= 100000 && pItem->GetEntry() <= 100100)
-    {
-        pUser->SendEquipError(EQUIP_ERR_NOT_DURING_ARENA_MATCH, pItem, NULL);
-        return;
-    }
-
     if (pUser->IsInCombat())
     {
         for (int i = 0; i < MAX_ITEM_PROTO_SPELLS; ++i)
