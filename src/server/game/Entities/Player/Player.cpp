@@ -13019,7 +13019,7 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
             else if (shirtEntry == 100052) SetObjectScale(0.15f);
             else if (shirtEntry == 100055) SetObjectScale(0.45f);
             else if (shirtEntry == 100056) SetObjectScale(2.3f);
-            else if (shirtEntry == 100057) SetObjectScale(2.6f);
+            else if (shirtEntry == 100057) SetObjectScale(2.8f);
             
 
             else SetObjectScale(1.0f);
