@@ -169,6 +169,7 @@ public:
         {
             std::string errorText = isSpanish ? ACTION_ERROR_ALREADY_HAVE_TEXT_SPANISH : ACTION_ERROR_ALREADY_HAVE_TEXT_ENGLISH;
             player->GetSession()->SendNotification(errorText.c_str());
+            return;
         }
 
         uint32 slot = GetTrinketEquipmentSlot(player);
