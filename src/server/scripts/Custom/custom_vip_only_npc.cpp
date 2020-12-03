@@ -164,11 +164,15 @@ public:
         if (slot != NULL_SLOT)
         {
             uint16 eDest;
-            InventoryResult msg = player->CanEquipNewItem(slot, eDest, 1111, false);
-            if (msg != EQUIP_ERR_OK || !player->EquipNewItem(eDest, 1111, true))
+            InventoryResult msg = player->CanEquipNewItem(slot, eDest, itemEntry, false);
+            if (msg != EQUIP_ERR_OK || !player->EquipNewItem(eDest, itemEntry, true))
             {
                 player->GetSession()->SendNotification(errorText.c_str());
             }
+        }
+        else
+        {
+            player->GetSession()->SendNotification(errorText.c_str());
         }
     }
 
