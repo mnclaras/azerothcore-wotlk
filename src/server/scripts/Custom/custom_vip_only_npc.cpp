@@ -28,8 +28,14 @@
 #define DEFAULT_MESSAGE 907
 #define ACTION_CONFIRM_TEXT_SPANISH "¿Estas seguro de que quieres obtener el abalorio?"
 #define ACTION_CONFIRM_TEXT_ENGLISH "Are you sure you want to take the trinket?"
-#define ACTION_ERROR_TEXT_SPANISH "Debes desequipar al menos un abalorio para obtener este objeto."
-#define ACTION_ERROR_TEXT_ENGLISH "You must at least unequip one trinket to get this item."
+#define ACTION_ERROR_NO_SPACE_TEXT_SPANISH "Debes desequipar al menos un abalorio para obtener este objeto."
+#define ACTION_ERROR_NO_SPACE_TEXT_ENGLISH "You must at least unequip one trinket to get this item."
+#define ACTION_ERROR_TEXT_SPANISH "Ha habido un problema equipando el abalorio."
+#define ACTION_ERROR_TEXT_ENGLISH "There was a problem equipping the trinket."
+#define ACTION_ERROR_ALREADY_HAVE_TEXT_SPANISH "Solo se puede tener un abalorio de este tipo. Revisa tus bolsas y banco personal."
+#define ACTION_ERROR_ALREADY_HAVE_TEXT_ENGLISH "You can only have one trinket of this type. Check your bags and personal bank."
+
+
 
 enum TocTrinkets
 {
@@ -158,24 +164,31 @@ public:
     void EquipItem(Player* player, uint32 itemEntry)
     {
         bool isSpanish = IsSpanishPlayer(player);
-        std::string errorText = isSpanish ? ACTION_ERROR_TEXT_SPANISH : ACTION_ERROR_TEXT_ENGLISH;
+
+        if (player->HasItemCount(itemEntry, 1, true))
+        {
+            std::string errorText = isSpanish ? ACTION_ERROR_ALREADY_HAVE_TEXT_SPANISH : ACTION_ERROR_ALREADY_HAVE_TEXT_ENGLISH;
+            player->GetSession()->SendNotification(errorText.c_str());
+        }
 
         uint32 slot = GetTrinketEquipmentSlot(player);
         if (slot != NULL_SLOT)
         {
-            uint16 eDest;
-            InventoryResult msg = player->CanEquipNewItem(NULL_SLOT, eDest, itemEntry, false);
-            if (msg == EQUIP_ERR_OK)
-            {
-                player->EquipNewItem(eDest, itemEntry, true);
-            }
-            else
-            {
-                player->GetSession()->SendNotification(errorText.c_str());
-            }
+            //uint16 eDest;
+            //InventoryResult msg = player->CanEquipNewItem(NULL_SLOT, eDest, itemEntry, false);
+            //if (msg == EQUIP_ERR_OK)
+            //{
+                player->EquipNewItem(slot, itemEntry, true);
+            //}
+            //else
+            //{
+            //    std::string errorText = isSpanish ? ACTION_ERROR_TEXT_SPANISH : ACTION_ERROR_TEXT_ENGLISH;
+            //    player->GetSession()->SendNotification(errorText.c_str());
+            //}
         }
         else
         {
+            std::string errorText = isSpanish ? ACTION_ERROR_NO_SPACE_TEXT_SPANISH : ACTION_ERROR_NO_SPACE_TEXT_ENGLISH;
             player->GetSession()->SendNotification(errorText.c_str());
         }
     }
