@@ -227,6 +227,23 @@ public:
             if (player->GetTeamId() == TEAM_ALLIANCE)
             {
                 AddGossipItemFor(player, GOSSIP_ICON_VENDOR,
+                    isSpanish ? "|TInterface\\icons\\inv_misc_bone_skull_02:20|t [Veredicto de la Muerte]" : "|TInterface\\icons\\inv_misc_bone_skull_02:20|t [Death's Verdict]",
+                    GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 4, confirmText, 0, false);
+                AddGossipItemFor(player, GOSSIP_ICON_VENDOR,
+                    isSpanish ? "|TInterface\\icons\\inv_crown_13:20|t [Reino de los sin vida]" : "|TInterface\\icons\\inv_crown_13:20|t [Reign of the Unliving]",
+                    GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5, confirmText, 0, false);
+                AddGossipItemFor(player, GOSSIP_ICON_VENDOR,
+                    isSpanish ? "|TInterface\\icons\\achievement_dungeon_ulduar77_25man:20|t [Consuelo de los derrotados]" : "|TInterface\\icons\\achievement_dungeon_ulduar77_25man:20|t [Solace of the Defeated]",
+                    GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 6, confirmText, 0, false);
+                AddGossipItemFor(player, GOSSIP_ICON_VENDOR,
+                    isSpanish ? "|TInterface\\icons\\inv_scarab_crystal:20|t [Escarabajo trabador de Satrina]" : "|TInterface\\icons\\inv_scarab_crystal:20|t [Satrina's Impeding Scarab]",
+                    GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 7, confirmText, 0, false);
+
+                SendGossipMenuFor(player, DEFAULT_MESSAGE, creature->GetGUID());
+            }
+            else if (player->GetTeamId() == TEAM_HORDE)
+            {
+                AddGossipItemFor(player, GOSSIP_ICON_VENDOR,
                     isSpanish ? "|TInterface\\icons\\inv_misc_bone_skull_02:20|t [Eleccion de la muerte]" : "|TInterface\\icons\\inv_misc_bone_skull_02:20|t [Death's Choice]",
                     GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF, confirmText, 0, false);
                 AddGossipItemFor(player, GOSSIP_ICON_VENDOR,
@@ -238,22 +255,7 @@ public:
                 AddGossipItemFor(player, GOSSIP_ICON_VENDOR,
                     isSpanish ? "|TInterface\\icons\\inv_scarab_crystal:20|t [Vitalidad de gigante]" : "|TInterface\\icons\\inv_scarab_crystal:20|t [Juggernaut's Vitality]",
                     GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3, confirmText, 0, false);
-                SendGossipMenuFor(player, DEFAULT_MESSAGE, creature->GetGUID());
-            }
-            else if (player->GetTeamId() == TEAM_HORDE)
-            {
-                AddGossipItemFor(player, GOSSIP_ICON_VENDOR,
-                    isSpanish ? "|TInterface\\icons\\inv_misc_bone_skull_02:20|t [Death's Verdict]" : "|TInterface\\icons\\inv_misc_bone_skull_02:20|t [Death's Verdict]",
-                    GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 4, confirmText, 0, false);
-                AddGossipItemFor(player, GOSSIP_ICON_VENDOR,
-                    isSpanish ? "|TInterface\\icons\\inv_crown_13:20|t [Reino de los sin vida]" : "|TInterface\\icons\\inv_crown_13:20|t [Reign of the Unliving]",
-                    GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5, confirmText, 0, false);
-                AddGossipItemFor(player, GOSSIP_ICON_VENDOR,
-                    isSpanish ? "|TInterface\\icons\\achievement_dungeon_ulduar77_25man:20|t [Consuelo de los derrotados]" : "|TInterface\\icons\\achievement_dungeon_ulduar77_25man:20|t [Solace of the Defeated]",
-                    GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 6, confirmText, 0, false);
-                AddGossipItemFor(player, GOSSIP_ICON_VENDOR,
-                    isSpanish ? "|TInterface\\icons\\inv_scarab_crystal:20|t [Escarabajo trabador de Satrina]" : "|TInterface\\icons\\inv_scarab_crystal:20|t [Satrina's Impeding Scarab]",
-                    GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 7, confirmText, 0, false);
+                
                 SendGossipMenuFor(player, DEFAULT_MESSAGE, creature->GetGUID());
             }
             else
