@@ -28,7 +28,7 @@
 #define DEFAULT_MESSAGE 907
 #define ACTION_CONFIRM_TEXT_SPANISH "¿Estas seguro de que quieres obtener el abalorio?"
 #define ACTION_CONFIRM_TEXT_ENGLISH "Are you sure you want to take the trinket?"
-#define ACTION_ERROR_TEXT_SPANISH "Debes des-equipar al menos un abalorio para obtener este objeto."
+#define ACTION_ERROR_TEXT_SPANISH "Debes desequipar al menos un abalorio para obtener este objeto."
 #define ACTION_ERROR_TEXT_ENGLISH "You must at least unequip one trinket to get this item."
 
 enum TocTrinkets
@@ -164,7 +164,7 @@ public:
         if (slot != NULL_SLOT)
         {
             uint16 eDest;
-            InventoryResult msg = player->CanEquipNewItem(slot, eDest, itemEntry, false);
+            InventoryResult msg = player->CanEquipNewItem(NULL_SLOT, eDest, itemEntry, false);
             if (msg == EQUIP_ERR_OK)
             {
                 player->EquipNewItem(eDest, itemEntry, true);
