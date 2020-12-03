@@ -45,12 +45,6 @@ enum TocTrinkets
 };
 
 
-bool IsSpanishPlayer(Player* player)
-{
-    LocaleConstant locale = player->GetSession()->GetSessionDbLocaleIndex();
-    return (locale == LOCALE_esES || locale == LOCALE_esMX);
-}
-
 bool IsVipPlayer(Player* player)
 {
     QueryResult result = CharacterDatabase.PQuery("SELECT AccountId FROM premium WHERE active = 1 AND AccountId = %u", player->GetSession()->GetAccountId());
@@ -80,6 +74,12 @@ class custom_vip_only_npc : public CreatureScript
 {
 public:
     custom_vip_only_npc() : CreatureScript("npc_vip") { }
+
+    bool IsSpanishPlayer(Player* player)
+    {
+        LocaleConstant locale = player->GetSession()->GetSessionDbLocaleIndex();
+        return (locale == LOCALE_esES || locale == LOCALE_esMX);
+    }
 
     bool OnGossipHello(Player* player, Creature* creature) override
     {
@@ -170,6 +170,12 @@ public:
                 player->GetSession()->SendNotification(errorText.c_str());
             }
         }
+    }
+
+    bool IsSpanishPlayer(Player* player)
+    {
+        LocaleConstant locale = player->GetSession()->GetSessionDbLocaleIndex();
+        return (locale == LOCALE_esES || locale == LOCALE_esMX);
     }
 
     bool OnGossipHello(Player* player, Creature* creature) override
