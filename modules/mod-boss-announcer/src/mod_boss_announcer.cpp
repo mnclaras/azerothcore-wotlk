@@ -55,20 +55,23 @@ public:
 
                 std::ostringstream stream;
 
-
                 Player* leader = player;
                 uint64 leaderGuid = player->GetGroup() ? player->GetGroup()->GetLeaderGUID() : player->GetGUID();
-                if (leaderGuid != player->GetGUID())
+
+                if (leaderGuid != player->GetGUID() && player->GetGroup())
                     leader = ObjectAccessor::FindPlayerInOrOutOfWorld(player->GetGroup()->GetLeaderGUID());
 
                 if (!leader) leader = player;
 
                 if (leader && leader->GetGuild()) g_name = leader->GetGuildName();
 
-                stream << "La hermandad |cff" << guild_colour << "" << g_name <<
-                    "|r ha derrotado a |CFF" << boss_colour << "[" << boss_name <<
-                    "]|r en modo |cff" << alive_text << IsNormal << "|r " << IsHeroicMode;
-                sWorld->SendServerMessage(SERVER_MSG_STRING, stream.str().c_str());
+                if (leader && AccountMgr::IsPlayerAccount(leader->GetSession()->GetSecurity()))
+                {
+                    stream << "La hermandad |cff" << guild_colour << "" << g_name <<
+                        "|r ha derrotado a |CFF" << boss_colour << "[" << boss_name <<
+                        "]|r en modo |cff" << alive_text << IsNormal << "|r " << IsHeroicMode;
+                    sWorld->SendServerMessage(SERVER_MSG_STRING, stream.str().c_str());
+                }
             }
         }
     }

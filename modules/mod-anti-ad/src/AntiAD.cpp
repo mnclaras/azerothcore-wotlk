@@ -71,12 +71,17 @@ public:
     {
         // display warning at the center of the screen, hacky way?
         std::string str = "";
-        //str = "|cFFFFFC00[Player]:|cFF00FFFF[|cFF60FF00" + std::string(player->GetName().c_str()) + "|cFF00FFFF] mensaje prohibido: [" + std::string(ADMessage.c_str()) + "]";
         str = "|cFFFFFC00[Player]:|cFF00FFFF[|cFF60FF00" + std::string(player->GetName().c_str()) + "|cFF00FFFF] mensaje prohibido: [" + std::string(FullMessage.c_str()) + "]";
 
         uint32 accountId = player->GetSession()->GetAccountId();
         if (accountId && accountId > 0)
-            CharacterDatabase.PQuery("INSERT INTO `chat_censure_log` (`account`,`text`) VALUES (%u, '%s')", accountId, FullMessage.c_str());
+        {
+            PreparedStatement* stmt = CharacterDatabase.GetPreparedStatement(CHAR_INS_CHAT_CENSURE_LOG);
+            stmt->setUInt32(0, accountId);
+            CharacterDatabase.EscapeString(FullMessage);
+            stmt->setString(1, FullMessage);
+            CharacterDatabase.Execute(stmt);
+        }
 
         WorldPacket data(SMSG_NOTIFICATION, (str.size() + 1));
         data << str;
