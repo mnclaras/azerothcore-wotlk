@@ -134,7 +134,10 @@ enum Events
     EVENT_INTRO_PROGRESS_1      = 41,
     EVENT_INTRO_PROGRESS_2      = 42,
     EVENT_INTRO_PROGRESS_3      = 43,
-    EVENT_INTRO_PROGRESS_4      = 44
+    EVENT_INTRO_PROGRESS_4      = 44,
+
+    // Living Inferno
+    EVENT_LIVING_INFERNO_MOVE   = 50
 };
 
 enum Misc
@@ -1472,27 +1475,61 @@ class npc_living_inferno : public CreatureScript
 public:
     npc_living_inferno() : CreatureScript("npc_living_inferno") { }
 
-     struct npc_living_infernoAI : public ScriptedAI
+    struct npc_living_infernoAI : public ScriptedAI
     {
         npc_living_infernoAI(Creature* creature) : ScriptedAI(creature) { }
 
-         void IsSummonedBy(Unit* /*summoner*/)
+        void InitializeAI() override
+        {
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+            ScriptedAI::InitializeAI();
+            me->SetReactState(REACT_PASSIVE);
+
+            events.ScheduleEvent(EVENT_LIVING_INFERNO_MOVE, 2500);
+        }
+
+        void IsSummonedBy(Unit* /*summoner*/)
         {
             me->SetInCombatWithZone();
             me->CastSpell(me, SPELL_BLAZING_AURA, true);
 
-             if (InstanceScript* instance = me->GetInstanceScript())
+            if (InstanceScript* instance = me->GetInstanceScript())
                 if (Creature* controller = ObjectAccessor::GetCreature(*me, instance->GetData64(NPC_HALION_CONTROLLER)))
                     controller->AI()->JustSummoned(me);
         }
 
-         void JustDied(Unit* /*killer*/)
+        void UpdateAI(uint32 diff) override
+        {
+            if (!UpdateVictim())
+                return;
+
+            events.Update(diff);
+
+            if (me->HasUnitState(UNIT_STATE_CASTING))
+                return;
+
+            switch (events.GetEvent())
+            {
+            case EVENT_LIVING_INFERNO_MOVE:
+                me->SetReactState(REACT_DEFENSIVE);
+                me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+                events.PopEvent();
+                return;
+            }
+
+            if (!me->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE))
+                DoMeleeAttackIfReady();
+        }
+
+        void JustDied(Unit* /*killer*/)
         {
             me->DespawnOrUnsummon(1);
         }
+    private:
+        EventMap events;
     };
 
-     CreatureAI* GetAI(Creature* creature) const
+    CreatureAI* GetAI(Creature* creature) const
     {
         return GetInstanceAI<npc_living_infernoAI>(creature);
     }
