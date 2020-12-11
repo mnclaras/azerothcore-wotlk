@@ -308,7 +308,7 @@ void Battleground::Update(uint32 diff)
                     if (!player->HasAura(36814))
                     {
                         player->AddAura(36814, player);
-                        player->GetSession()->SendAreaTriggerMessage("La sanacion se van a reducir progresivamente desde ahora! ~ 10%");
+                        player->GetSession()->SendAreaTriggerMessage("La sanacion se van a reducir progresivamente desde ahora! ~ 10");
                     }                 
                 }
                 // 2 Stacks
@@ -319,7 +319,7 @@ void Battleground::Update(uint32 diff)
                     if (demAura && demAura->GetStackAmount() == 1)
                     {
                         player->AddAura(36814, player);
-                        player->GetSession()->SendAreaTriggerMessage("Sanacion disminuida! ~ 20%");
+                        player->GetSession()->SendAreaTriggerMessage("Sanacion disminuida! ~ 20");
                     }
                     else player->SetAuraStack(36814, player, 2);
                 }
@@ -331,7 +331,7 @@ void Battleground::Update(uint32 diff)
                     if (demAura && demAura->GetStackAmount() == 2)
                     {
                         player->AddAura(36814, player);
-                        player->GetSession()->SendAreaTriggerMessage("Sanacion disminuida! ~ 30%");
+                        player->GetSession()->SendAreaTriggerMessage("Sanacion disminuida! ~ 30");
                     }
                     else player->SetAuraStack(36814, player, 3);
                 }
@@ -343,7 +343,7 @@ void Battleground::Update(uint32 diff)
                     if (demAura && demAura->GetStackAmount() == 3)
                     {
                         player->AddAura(36814, player);
-                        player->GetSession()->SendAreaTriggerMessage("Sanacion disminuida! ~ 40%");
+                        player->GetSession()->SendAreaTriggerMessage("Sanacion disminuida! ~ 40");
                     }
                     else player->SetAuraStack(36814, player, 4);
                 }
@@ -355,7 +355,7 @@ void Battleground::Update(uint32 diff)
                     if (demAura && demAura->GetStackAmount() == 4)
                     {
                         player->AddAura(36814, player);
-                        player->GetSession()->SendAreaTriggerMessage("Sanacion disminuida! ~ 50%");
+                        player->GetSession()->SendAreaTriggerMessage("Sanacion disminuida! ~ 50");
                     }
                     else player->SetAuraStack(36814, player, 5);
                 }
@@ -367,7 +367,7 @@ void Battleground::Update(uint32 diff)
                     if (demAura && demAura->GetStackAmount() == 5)
                     {
                         player->AddAura(36814, player);
-                        player->GetSession()->SendAreaTriggerMessage("Sanacion disminuida! ~ 60%");
+                        player->GetSession()->SendAreaTriggerMessage("Sanacion disminuida! ~ 60");
                     }
                     else player->SetAuraStack(36814, player, 6);
                 }
@@ -379,7 +379,7 @@ void Battleground::Update(uint32 diff)
                     if (demAura && demAura->GetStackAmount() == 6)
                     {
                         player->AddAura(36814, player);
-                        player->GetSession()->SendAreaTriggerMessage("Sanacion disminuida! ~ 70%");
+                        player->GetSession()->SendAreaTriggerMessage("Sanacion disminuida! ~ 70");
                     }
                     else player->SetAuraStack(36814, player, 7);
                 }
@@ -391,7 +391,7 @@ void Battleground::Update(uint32 diff)
                     if (demAura && demAura->GetStackAmount() == 7)
                     {
                         player->AddAura(36814, player);
-                        player->GetSession()->SendAreaTriggerMessage("Sanacion disminuida! Ya no se va a disminuir mas veces. ~ 80%");
+                        player->GetSession()->SendAreaTriggerMessage("Sanacion disminuida! Ya no se va a disminuir mas veces. ~ 80");
                     }
                     else player->SetAuraStack(36814, player, 8);
                 }
