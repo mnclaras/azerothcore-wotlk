@@ -13022,6 +13022,7 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
             else if (shirtEntry == 100057) SetObjectScale(2.8f);
             else if (shirtEntry == 100058) SetObjectScale(0.4f);
             else if (shirtEntry == 100059) SetObjectScale(1.5f);
+            else if (shirtEntry == 100060) SetObjectScale(2.0f);
             
 
             else SetObjectScale(1.0f);
@@ -13097,6 +13098,7 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
             case 100057: SetDisplayId(10990); break;    // Panda Bear
             case 100058: SetDisplayId(13644); break;    // Grinch Evento Navidad
             case 100059: SetDisplayId(13730); break;    // Snowman Evento Navidad
+            case 100060: SetDisplayId(15807); break;    // Ayudante Evento Navidad
 
 
             case 100100: SetDisplayId(21267); break;    // Fel Orc
