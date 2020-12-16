@@ -98,8 +98,8 @@ enum Phases
 
 enum Summons
 {
-    NPC_BOSS_BUSY_EVERGREEN_ADD = 00000, // Calabacino Explosivo
-    NPC_BOSS_BUSY_EVERGREEN_ADD_MINI = 20000, // Calabacino Explosivo
+    NPC_BOSS_BUSY_EVERGREEN_ADD = 2200010, // Rebelde enfadado (Add Grande)
+    NPC_BOSS_BUSY_EVERGREEN_ADD_MINI = 2200011, // Rata gigante(Add Pequeño)
 };
 
 #define DEFAULT_MESSAGE 907
