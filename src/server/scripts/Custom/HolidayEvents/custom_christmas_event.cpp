@@ -271,7 +271,7 @@ public:
             switch (summon->GetEntry())
             {
             case NPC_BOSS_BUSY_EVERGREEN_ADD:
-                if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, NonTankTargetSelector(me)))
+                if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 1, 100.0f, true))
                     summon->AI()->AttackStart(target);
                 break;
             default:
@@ -445,7 +445,7 @@ public:
             switch (summon->GetEntry())
             {
             case NPC_BOSS_BUSY_EVERGREEN_ADD_MINI:
-                if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 0, NonTankTargetSelector(me)))
+                if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 1, 100.0f, true))
                     summon->AI()->AttackStart(target);
                 break;
             default:
