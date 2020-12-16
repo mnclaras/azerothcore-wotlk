@@ -29,7 +29,7 @@
 #include <random>
 
 enum Spells
-{   
+{
     SPELL_FROST_AURA_25 = 55799,
     SPELL_CLEAVE_ARMOR = 74367,
     SPELL_ARCTIC_BREATH = 66689,
@@ -309,7 +309,7 @@ public:
                 {
                 case EVENT_SPELL_FROSTBOLT_VOLLEY:
                     me->CastSpell((Unit*)nullptr, SPELL_FROSTBOLT_VOLLEY, false);
-					_events.ScheduleEvent(EVENT_SPELL_FROSTBOLT_VOLLEY, 12000, PHASE_FOUR);
+                    _events.ScheduleEvent(EVENT_SPELL_FROSTBOLT_VOLLEY, 12000, PHASE_FOUR);
                     break;
                 case EVENT_SUMMONS:
                     me->MonsterYell("Venid esbirros...", LANG_UNIVERSAL, 0);
@@ -318,27 +318,20 @@ public:
                     break;
                 case EVENT_SNOWBALL:
                 {
-                    std::vector<Player*> validPlayers;
-                    Map::PlayerList const& pList = me->GetMap()->GetPlayers();
-                    for (Map::PlayerList::const_iterator itr = pList.begin(); itr != pList.end(); ++itr)
-                        if (Player* plr = itr->GetSource())
-                            if (plr->IsAlive() && !plr->IsGameMaster() && plr->GetExactDist2dSq(me) < (150.0f * 150.0f))
-                                validPlayers.push_back(plr);
+                    std::list<Player*> myList;
+                    const Map::PlayerList& pl = me->GetMap()->GetPlayers();
+                    for (Map::PlayerList::const_iterator itr = pl.begin(); itr != pl.end(); ++itr)
+                        if (Player* p = itr->GetSource())
+                            if (p->IsAlive() && p != me->GetVictim() && !p->IsGameMaster() && p->GetDistance(me) < 150.0f)
+                                myList.push_back(p);
 
-                    std::vector<Player*>::iterator begin = validPlayers.begin(), end = validPlayers.end();
-
-                    std::random_device rd;
-                    std::shuffle(begin, end, std::default_random_engine{ rd() });
-
-                    for (uint8 i = 0; i < 2 && i < validPlayers.size(); i++)
-                    {
-                        Unit* target = validPlayers[i];
-                        me->CastSpell(me->GetVictim(), SPELL_SNOWBALL, false);
-                    }
+                    acore::Containers::RandomResizeList(myList, 3);
+                    for (std::list<Player*>::iterator itr = myList.begin(); itr != myList.end(); ++itr)
+                        me->CastSpell(*itr, SPELL_SNOWBALL, false);
 
                     _events.ScheduleEvent(EVENT_SNOWBALL, 10000, PHASE_TWO);
-                }
-                break;
+                    break;
+                }   
                 case EVENT_SPELL_SIF_BLIZZARD:
                     me->CastSpell(me->GetVictim(), SPELL_SIF_BLIZZARD, false);
                     _events.ScheduleEvent(EVENT_SPELL_SIF_BLIZZARD, 15000, PHASE_TWO);
