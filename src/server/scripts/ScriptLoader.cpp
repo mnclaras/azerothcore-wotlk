@@ -1209,6 +1209,7 @@ void AddSC_custom_npc_leave_spectator();
 void AddSC_custom_npc_tier_nine();
 void AddSC_custom_shop_collapsed_vendor();
 void AddSC_custom_hallows_end_event();
+void AddSC_custom_christmas_event();
 void AddSC_custom_double_emblems_alliance();
 void AddSC_Arena_AntiDraw();
 void AddSC_gurubashi_chest_event();
@@ -1235,6 +1236,7 @@ void AddCustomScripts()
 	AddSC_custom_npc_tier_nine();
 	AddSC_custom_shop_collapsed_vendor();
 	AddSC_custom_hallows_end_event();
+    AddSC_custom_christmas_event();
     AddSC_custom_double_emblems_alliance();
 	AddSC_Arena_AntiDraw();
     AddSC_gurubashi_chest_event();
