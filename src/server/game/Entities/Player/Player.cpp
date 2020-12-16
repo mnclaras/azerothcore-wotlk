@@ -13020,6 +13020,8 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
             else if (shirtEntry == 100055) SetObjectScale(0.45f);
             else if (shirtEntry == 100056) SetObjectScale(2.3f);
             else if (shirtEntry == 100057) SetObjectScale(2.8f);
+            else if (shirtEntry == 100058) SetObjectScale(0.4f);
+            else if (shirtEntry == 100059) SetObjectScale(1.5f);
             
 
             else SetObjectScale(1.0f);
@@ -13079,7 +13081,6 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
             case 100041: SetDisplayId(28641); break;    // Algalon
             case 100042: SetDisplayId(21900); break;    // Calabaza Evento Halloween - Calabacino
             case 100043: SetDisplayId(30790); break;    // Deathbringer Saurfang
-            // Legendarias
             case 100044: SetDisplayId(21666); break;    // Elfo Guitarrista
             case 100045: SetDisplayId(21659); break;    // No Muerto Guitarrista
             case 100046: SetDisplayId(21662); break;    // Troll Guitarrista
@@ -13089,12 +13090,13 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
             case 100050: SetDisplayId(16137); break;    // Thaddius
             case 100051: SetDisplayId(29615); break;    // Jaraxxus
             case 100052: SetDisplayId(15945); break;    // Kel'Thuzad
-
             case 100053: SetDisplayId(21588); break;    // Gul'dan
             case 100054: SetDisplayId(28213); break;    // Sylvanas
             case 100055: SetDisplayId(30721); break;    // Arthas
             case 100056: SetDisplayId(16189); break;    // Polar Bear
             case 100057: SetDisplayId(10990); break;    // Panda Bear
+            case 100058: SetDisplayId(13644); break;    // Grinch Evento Navidad
+            case 100059: SetDisplayId(13730); break;    // Snowman Evento Navidad
 
 
             case 100100: SetDisplayId(21267); break;    // Fel Orc
