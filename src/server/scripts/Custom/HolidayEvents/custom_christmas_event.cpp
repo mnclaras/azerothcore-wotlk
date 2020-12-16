@@ -630,9 +630,9 @@ public:
     {
         bool isSpanish = IsSpanishPlayer(player);
         AddGossipItemFor(player, GOSSIP_ICON_TRAINER,
-            isSpanish ? "Llevame a Busy Evergreen." : "Take me to Busy Evergreen.",
+            isSpanish ? "Llevame a Bushy Evergreen." : "Take me to Bushy Evergreen.",
             GOSSIP_SENDER_MAIN, 2,
-            isSpanish ? "Deseas ir a combatir a Busy Evergreen?" : "Do you want to face Busy Evergreen?",
+            isSpanish ? "Deseas ir a combatir a Bushy Evergreen?" : "Do you want to face Bushy Evergreen?",
             0, false);
         SendGossipMenuFor(player, DEFAULT_MESSAGE, creature->GetGUID());
         return true;
