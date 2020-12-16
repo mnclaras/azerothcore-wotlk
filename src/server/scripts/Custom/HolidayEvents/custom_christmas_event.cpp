@@ -256,7 +256,7 @@ public:
             {
                 me->MonsterYell("FASE 3. No voy a permitir que os salgais con la vuestra!", LANG_UNIVERSAL, 0);
                 _events.CancelEventGroup(PHASE_TWO);
-                _events.CancelEventGroup(PHASE_FOUR);
+                //_events.CancelEventGroup(PHASE_FOUR);
                 _events.SetPhase(PHASE_THREE);
 
                 _events.ScheduleEvent(EVENT_OVERLOAD, 5000, PHASE_THREE);
@@ -309,7 +309,7 @@ public:
                 {
                 case EVENT_SPELL_FROSTBOLT_VOLLEY:
                     me->CastSpell((Unit*)nullptr, SPELL_FROSTBOLT_VOLLEY, false);
-                    _events.ScheduleEvent(EVENT_SPELL_FROSTBOLT_VOLLEY, 12000);
+					_events.ScheduleEvent(EVENT_SPELL_FROSTBOLT_VOLLEY, 12000, PHASE_FOUR);
                     break;
                 case EVENT_SUMMONS:
                     me->MonsterYell("Venid esbirros...", LANG_UNIVERSAL, 0);
@@ -323,8 +323,7 @@ public:
                     for (Map::PlayerList::const_iterator itr = pList.begin(); itr != pList.end(); ++itr)
                         if (Player* plr = itr->GetSource())
                             if (plr->IsAlive() && !plr->IsGameMaster() && plr->GetExactDist2dSq(me) < (150.0f * 150.0f))
-                                if (!me->GetVictim() || me->GetVictim()->GetGUID() != plr->GetGUID())
-                                    validPlayers.push_back(plr);
+                                validPlayers.push_back(plr);
 
                     std::vector<Player*>::iterator begin = validPlayers.begin(), end = validPlayers.end();
 
@@ -431,8 +430,6 @@ public:
 
         void EnterCombat(Unit* /*who*/) override
         {
-            me->MonsterYell("Que comience el juego...", LANG_UNIVERSAL, 0);
-
             Summons.DespawnAll();
             _events.Reset();
             _events.ScheduleEvent(EVENT_SUMMONS, 500);
