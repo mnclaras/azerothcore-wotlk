@@ -667,11 +667,66 @@ public:
     }
 };
 
+class custom_christmas_event_teleporter_climbing : public CreatureScript
+{
+public:
+    custom_christmas_event_teleporter_climbing() : CreatureScript("custom_christmas_event_teleporter_climbing") { }
+
+    bool IsSpanishPlayer(Player* player)
+    {
+        LocaleConstant locale = player->GetSession()->GetSessionDbLocaleIndex();
+        return (locale == LOCALE_esES || locale == LOCALE_esMX);
+    }
+
+    bool OnGossipHello(Player* player, Creature* creature) override
+    {
+        bool isSpanish = IsSpanishPlayer(player);
+        AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Circuito escalada" : "Climbing circuit", GOSSIP_SENDER_MAIN, 2);
+        AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Laberinto" : "Maze", GOSSIP_SENDER_MAIN, 3);
+        SendGossipMenuFor(player, DEFAULT_MESSAGE, creature->GetGUID());
+        return true;
+    }
+
+    bool OnGossipSelect(Player* player, Creature* creature, uint32 sender, uint32 action) override
+    {
+        player->PlayerTalkClass->ClearMenus();
+
+        if (sender == GOSSIP_SENDER_MAIN)
+        {
+            switch (action)
+            {
+            case 2:
+                player->TeleportTo(0, 1886.958496f, 2402.888672f, 132.478195f, 1.313352f);
+                CloseGossipMenuFor(player);
+                break;
+            case 3:
+                player->TeleportTo(0, 4011.873535f, -4636.044434f, 169.651260f, 4.647181f);
+                CloseGossipMenuFor(player);
+                break;
+            }
+        }
+
+        return true;
+    }
+
+    struct custom_christmas_event_teleporter_climbingAI : public ScriptedAI
+    {
+        custom_christmas_event_teleporter_climbingAI(Creature* creature) : ScriptedAI(creature) { }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new custom_christmas_event_teleporter_climbingAI(creature);
+    }
+};
+
+
 void AddSC_custom_christmas_event()
 {
     new custom_christmas_event_teleporter_grinch();
     new custom_christmas_event_teleporter_rebels();
     new custom_christmas_event_teleporter_busy_evergreen();
+    new custom_christmas_event_teleporter_climbing();
     new custom_christmas_event_boss_grinch();
     new custom_christmas_event_boss_busy_evergreen();
     new custom_christmas_event_boss_busy_evergreen_add();
