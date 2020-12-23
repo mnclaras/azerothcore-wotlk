@@ -124,6 +124,12 @@ enum Misc
     DATA_KOLOGARN_ARMS_ACHIEV           = 57,
 };
 
+enum EventGroups
+{
+    EVENT_GROUP_NONE = 1,
+    EVENT_GROUP_ARMS = 3
+};
+
 class boss_kologarn : public CreatureScript
 {
 public:
@@ -323,7 +329,7 @@ public:
                     if (me->IsInCombat())
                     {
                         Talk(SAY_LEFT_ARM_GONE);
-                        events.ScheduleEvent(EVENT_RESTORE_ARM_LEFT, 50000);
+                        events.ScheduleEvent(EVENT_RESTORE_ARM_LEFT, 50000, EVENT_GROUP_ARMS);
                     }
                 }
                 else
@@ -332,13 +338,13 @@ public:
                     if (me->IsInCombat())
                     {
                         Talk(SAY_RIGHT_ARM_GONE);
-                        events.ScheduleEvent(EVENT_RESTORE_ARM_RIGHT, 50000);
+                        events.ScheduleEvent(EVENT_RESTORE_ARM_RIGHT, 50000, EVENT_GROUP_ARMS);
                     }
                 }
 
                 me->CastSpell(me, SPELL_ARM_DEAD, true);
                 if (!_right && !_left)
-                    events.ScheduleEvent(EVENT_STONE_SHOUT, 5000);
+                    events.ScheduleEvent(EVENT_STONE_SHOUT, 5000, EVENT_GROUP_NONE);
             }
         }
 
@@ -356,11 +362,11 @@ public:
             if (m_pInstance)
                 m_pInstance->SetData(TYPE_KOLOGARN, IN_PROGRESS);
 
-            events.ScheduleEvent(EVENT_SMASH, 8000);
-            events.ScheduleEvent(EVENT_SWEEP, 17000);
-            events.ScheduleEvent(EVENT_GRIP, 15000);
-            events.ScheduleEvent(EVENT_FOCUSED_EYEBEAM, 25000);
-            events.ScheduleEvent(EVENT_PREPARE_BREATH, 3000);
+            events.ScheduleEvent(EVENT_SMASH, 8000, EVENT_GROUP_NONE);
+            events.ScheduleEvent(EVENT_SWEEP, 17000, EVENT_GROUP_NONE);
+            events.ScheduleEvent(EVENT_GRIP, 15000, EVENT_GROUP_NONE);
+            events.ScheduleEvent(EVENT_FOCUSED_EYEBEAM, 25000, EVENT_GROUP_NONE);
+            events.ScheduleEvent(EVENT_PREPARE_BREATH, 3000, EVENT_GROUP_NONE);
             //events.ScheduleEvent(EVENT_ENRAGE, x); no info
 
             Talk(SAY_AGGRO);
@@ -395,7 +401,7 @@ public:
                     }
 
                     me->CastSpell(me->GetVictim(), SPELL_STONE_SHOUT, false);
-                    events.ScheduleEvent(EVENT_STONE_SHOUT, 2000);
+                    events.ScheduleEvent(EVENT_STONE_SHOUT, 2000, EVENT_GROUP_NONE);
                     break;
                 case EVENT_SMASH:
                     if (_left && _right)
@@ -403,8 +409,8 @@ public:
                     else if (_left || _right)
                         me->CastSpell(me->GetVictim(), SPELL_ONEARMED_OVERHEAD_SMASH, false);
 
-                    events.DelayEvents(1000);
-                    events.ScheduleEvent(EVENT_SMASH, 14000);
+                    events.DelayEvents(1000, EVENT_GROUP_NONE);
+                    events.ScheduleEvent(EVENT_SMASH, 14000, EVENT_GROUP_NONE);
                     return;
                 case EVENT_SWEEP:
                     if (_left)
@@ -416,11 +422,11 @@ public:
                             Talk(SAY_SHOCKWAVE);
                     }
 
-                    events.DelayEvents(1000);
-                    events.ScheduleEvent(EVENT_SWEEP, 17000);
+                    events.DelayEvents(1000, EVENT_GROUP_NONE);
+                    events.ScheduleEvent(EVENT_SWEEP, 17000, EVENT_GROUP_NONE);
                     return;
                 case EVENT_GRIP:
-                    events.ScheduleEvent(EVENT_GRIP, 25000);
+                    events.ScheduleEvent(EVENT_GRIP, 25000, EVENT_GROUP_NONE);
                     if (!_right)
                         break;
 
@@ -430,7 +436,7 @@ public:
                     return;
                 case EVENT_FOCUSED_EYEBEAM:
                     {
-                        events.ScheduleEvent(EVENT_FOCUSED_EYEBEAM, 13000 + rand() % 5000);
+                        events.ScheduleEvent(EVENT_FOCUSED_EYEBEAM, 13000 + rand() % 5000, EVENT_GROUP_NONE);
                         Unit* target = nullptr;
                         Map::PlayerList const& pList = me->GetMap()->GetPlayers();
                         for(auto itr = pList.begin(); itr != pList.end(); ++itr)
@@ -457,7 +463,7 @@ public:
                         }
 
                         Talk(EMOTE_EYES);
-                        events.DelayEvents(12000, 0);
+                        events.DelayEvents(12000, EVENT_GROUP_NONE);
                         return;
                     }
                 case EVENT_RESTORE_ARM_LEFT:

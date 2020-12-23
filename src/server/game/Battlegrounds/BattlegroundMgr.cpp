@@ -479,7 +479,7 @@ Battleground* BattlegroundMgr::CreateNewBattleground(BattlegroundTypeId original
                 maxPlayersPerTeam = 3;
                 break;
             case ARENA_TYPE_5v5:
-                maxPlayersPerTeam = 5;
+                maxPlayersPerTeam = 1;
                 break;
         }
         sScriptMgr->OnSetArenaMaxPlayersPerTeam(arenaType, maxPlayersPerTeam);
@@ -855,6 +855,11 @@ void BattlegroundMgr::ScheduleArenaQueueUpdate(uint32 arenaRatedTeamId, Battlegr
 uint32 BattlegroundMgr::GetRatingDiscardTimer() const
 {
     return sWorld->getIntConfig(CONFIG_ARENA_RATING_DISCARD_TIMER);
+}
+
+uint32 BattlegroundMgr::GetMaxRatingDifference() const
+{
+    return sWorld->getIntConfig(CONFIG_ARENA_MAX_RATING_DIFFERENCE);
 }
 
 uint32 BattlegroundMgr::GetPrematureFinishTime() const

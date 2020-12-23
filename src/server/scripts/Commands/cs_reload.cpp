@@ -30,6 +30,7 @@ EndScriptData */
 #include "WardenCheckMgr.h"
 #include "WaypointManager.h"
 #include "GameGraveyard.h"
+#include "../../../modules/mod-spell-regulator/src/SpellRegulator.h"
 
 class reload_commandscript : public CommandScript
 {
@@ -141,6 +142,7 @@ public:
             { "spell_threats",                SEC_ADMINISTRATOR, true,  &HandleReloadSpellThreatsCommand,               "" },
             { "spell_group_stack_rules",      SEC_ADMINISTRATOR, true,  &HandleReloadSpellGroupStackRulesCommand,       "" },
             { "acore_string",                 SEC_ADMINISTRATOR, true,  &HandleReloadAcoreStringCommand,              "" },
+            { "spell_regulator",			  SEC_ADMINISTRATOR, true,  &HandleReloadSpellRegulator,                    "" },
             { "warden_action",                SEC_ADMINISTRATOR, true,  &HandleReloadWardenactionCommand,               "" },
             { "waypoint_scripts",             SEC_ADMINISTRATOR, true,  &HandleReloadWpScriptsCommand,                  "" },
             { "waypoint_data",                SEC_ADMINISTRATOR, true,  &HandleReloadWpCommand,                         "" },
@@ -188,6 +190,7 @@ public:
         HandleReloadAutobroadcastCommand(handler, "");
         HandleReloadBroadcastTextCommand(handler, "");
         HandleReloadBattlegroundTemplate(handler, "");
+        HandleReloadSpellRegulator(handler, "");
         return true;
     }
 
@@ -279,6 +282,7 @@ public:
         HandleReloadSpellThreatsCommand(handler, "a");
         HandleReloadSpellGroupStackRulesCommand(handler, "a");
         HandleReloadSpellPetAurasCommand(handler, "a");
+        HandleReloadSpellRegulator(handler, "");
         return true;
     }
 
@@ -922,6 +926,15 @@ public:
         sLog->outString("Re-Loading Spell pet auras...");
         sSpellMgr->LoadSpellPetAuras();
         handler->SendGlobalGMSysMessage("DB table `spell_pet_auras` reloaded.");
+        return true;
+    }
+
+    static bool HandleReloadSpellRegulator(ChatHandler* handler, char const* /*args*/)
+    {
+        #define sSpellRegulator SpellRegulator::instance()
+
+        sSpellRegulator->LoadFromDB();
+        handler->SendGlobalGMSysMessage("DB table `spell_regulator` reloaded.");
         return true;
     }
 

@@ -139,7 +139,20 @@ void WorldSession::HandleArenaTeamInviteOpcode(WorldPacket& recvData)
         return;
     }
 
-    if (arenaTeam->GetMembersSize() >= arenaTeam->GetType() * 2)
+    uint8 maxPlayers = 0;
+
+    switch (arenaTeam->GetType())
+    {
+    case ARENA_TYPE_2v2:
+    case ARENA_TYPE_3v3:
+        maxPlayers = arenaTeam->GetType() * 2;
+        break;
+    case ARENA_TYPE_5v5:
+        maxPlayers = 1;
+        break;
+    }
+
+    if (arenaTeam->GetMembersSize() >= maxPlayers)
     {
         SendArenaTeamCommandResult(ERR_ARENA_TEAM_CREATE_S, arenaTeam->GetName(), "", ERR_ARENA_TEAM_TOO_MANY_MEMBERS_S);
         return;

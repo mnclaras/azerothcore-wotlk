@@ -62,6 +62,19 @@ public:
     {
         npc_pet_pri_shadowfiendAI(Creature* creature) : PetAI(creature) { }
 
+        void InitializeAI()
+        {
+            if (Unit* owner = me->ToTempSummon()->GetSummoner())
+            {
+                uint32 hp = uint32(owner->GetMaxHealth() * 0.6665f);
+                me->SetMaxHealth(hp);
+                me->SetHealth(hp);
+                me->SetLevel(owner->getLevel());
+            }
+
+            PetAI::InitializeAI();
+        }
+
         void Reset() override
         {
             PetAI::Reset();

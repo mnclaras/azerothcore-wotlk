@@ -41,6 +41,8 @@ public:
             _despawnTimer = 36000; // 30 secs + 4 fly out + 2 initial attack timer
             _despawning = false;
             _initialSelection = true;
+            _initialImmune = true;
+            _initialNotImmune = true;
             _targetGUID = 0;
         }
 
@@ -76,18 +78,49 @@ public:
             _initialCastTimer = 0;
         }
 
+        uint64 GetGhoulTargetGUID()
+        {
+            uint64 ghoulTargetGUID = 0;
+
+            std::list<Unit*> targets;
+            acore::AnyFriendlyUnitInObjectRangeCheck ghoul_check(me, me, 50);
+            acore::UnitListSearcher<acore::AnyFriendlyUnitInObjectRangeCheck> searcher(me, targets, ghoul_check);
+            me->VisitNearbyObject(50, searcher);
+            for (std::list<Unit*>::const_iterator iter = targets.begin(); iter != targets.end(); ++iter)
+            {
+                if ((*iter)->GetEntry() == 26125) // ghoul entry
+                    if ((*iter)->GetOwnerGUID() == me->GetOwnerGUID()) // same owner
+                    {
+                        ghoulTargetGUID = (*iter)->GetTarget();
+                        break;
+                    }
+            }
+
+            return ghoulTargetGUID;
+        }
+
         void MySelectNextTarget()
         {
             Unit* owner = me->GetOwner();
-            if (owner && owner->GetTypeId() == TYPEID_PLAYER && (!me->GetVictim() || me->GetVictim()->IsImmunedToSpell(sSpellMgr->GetSpellInfo(51963)) || !me->IsValidAttackTarget(me->GetVictim()) || !owner->CanSeeOrDetect(me->GetVictim())))
+            if (owner && owner->GetTypeId() == TYPEID_PLAYER)
             {
+                Unit* ghoulTarget = ObjectAccessor::GetUnit(*me, GetGhoulTargetGUID());
                 Unit* selection = owner->ToPlayer()->GetSelectedUnit();
-                if (selection && selection != me->GetVictim() && me->IsValidAttackTarget(selection))
+
+                if (ghoulTarget && me->IsValidAttackTarget(ghoulTarget))
+                {
+                    if (ghoulTarget != me->GetVictim())
+                    {
+                        me->GetMotionMaster()->Clear(false);
+                        SetGazeOn(ghoulTarget);
+                    }
+                }
+                else if (selection && selection != me->GetVictim() && me->IsValidAttackTarget(selection)
+                    && (!me->GetVictim() || me->GetVictim()->IsImmunedToSpell(sSpellMgr->GetSpellInfo(51963)) || !me->IsValidAttackTarget(me->GetVictim()) || !owner->CanSeeOrDetect(me->GetVictim())))
                 {
                     me->GetMotionMaster()->Clear(false);
                     SetGazeOn(selection);
                 }
-
                 else if (!me->GetVictim() || !owner->CanSeeOrDetect(me->GetVictim()))
                 {
                     me->CombatStop(true);
@@ -166,9 +199,23 @@ public:
                         break;
                     }
             }
+
+            if (_initialImmune)
+            {
+                _initialImmune = false;
+                me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE);
+            }
+
             if (_despawnTimer > 4000)
             {
                 _despawnTimer -= diff;
+
+                if (_initialCastTimer >= 2000 && _initialNotImmune)
+                {
+                    _initialNotImmune = false;
+                    me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_NON_ATTACKABLE | UNIT_FLAG_NOT_SELECTABLE);
+                }
+
                 if (!UpdateVictimWithGaze())
                 {
                     MySelectNextTarget();
@@ -204,6 +251,8 @@ public:
         uint32 _initialCastTimer;
         bool _despawning;
         bool _initialSelection;
+        bool _initialImmune;
+        bool _initialNotImmune;
     };
 
     CreatureAI* GetAI(Creature* creature) const override

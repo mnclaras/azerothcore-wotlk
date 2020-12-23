@@ -3493,6 +3493,14 @@ void SpellMgr::LoadDbcDataCorrections()
         spellInfo->AttributesEx3 |= SPELL_ATTR3_STACK_FOR_DIFF_CASTERS;
     });
 
+    // Dementia (1v1)
+    ApplySpellFix({ 37408 }, [](SpellEntry* spellInfo)
+    {
+        spellInfo->DurationIndex = 21; // Infinite
+        spellInfo->procCharges = 8; // Stack up to 8 times
+        spellInfo->StackAmount = 8; // Stack up to 8 times
+    });
+
     // Ascendance (Talisman of Ascendance trinket)
     ApplySpellFix({ 28200 }, [](SpellEntry* spellInfo)
     {
@@ -4112,6 +4120,14 @@ void SpellMgr::LoadDbcDataCorrections()
     ApplySpellFix({ 70650 }, [](SpellEntry* spellInfo)
     {
         spellInfo->EffectApplyAuraName[0] = SPELL_AURA_ADD_PCT_MODIFIER;
+    });
+
+    // Corpse explosion
+    ApplySpellFix({ 70650 }, [](SpellEntry* spellInfo)
+    {
+        spellInfo->EffectRadiusIndex[0] = EFFECT_RADIUS_10_YARDS;   // 10yd
+        spellInfo->EffectRadiusIndex[1] = EFFECT_RADIUS_10_YARDS;   // 10yd
+        spellInfo->EffectRadiusIndex[2] = EFFECT_RADIUS_10_YARDS;   // 10yd
     });
 
     ApplySpellFix({ 45297, 45284 }, [](SpellEntry* spellInfo)

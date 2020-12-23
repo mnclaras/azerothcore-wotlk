@@ -285,6 +285,134 @@ void Battleground::Update(uint32 diff)
 
     PostUpdateImpl(diff);
 
+    // Dementia
+
+    // 1v1 Starts after 2 minutes, rest after 15 minutes.
+    // 1v1: First 4 stacks every 20 seconds. Last 4 stacks every 30 seconds.
+    // 2v2, 3v3: 1 stack every minute.
+    bool is1v1 = (GetArenaType() == ARENA_TYPE_5v5);
+    float startT = is1v1 ? 2 : 15;
+
+    // DEBUG TIMERS:
+    for (BattlegroundPlayerMap::const_iterator itr = GetPlayers().begin(); itr != GetPlayers().end(); ++itr)
+    {
+        if (Player* player = ObjectAccessor::FindPlayer(itr->first))
+        {
+            if (player->InArena() && !player->IsSpectator())
+            {
+                Aura* demAura = player->GetAura(36814); // 41406
+
+                // 1 Stack
+                if ((GetStartTime() >= (startT + 0.0f) * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= (startT + 0.1f) * MINUTE * IN_MILLISECONDS))
+                {
+                    if (!player->HasAura(36814))
+                    {
+                        player->AddAura(36814, player);
+                        player->GetSession()->SendAreaTriggerMessage("La sanacion se van a reducir progresivamente desde ahora! ~ 10");
+                    }
+                }
+                // 2 Stacks
+                if (((is1v1) && (GetStartTime() >= (startT + 0.3333f) * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= (startT + 0.4333f) * MINUTE * IN_MILLISECONDS))
+                    ||
+                    ((!is1v1) && (GetStartTime() >= (startT + 1.0f) * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= (startT + 1.1f) * MINUTE * IN_MILLISECONDS)))
+                {
+                    if (demAura && demAura->GetStackAmount() == 1)
+                    {
+                        player->AddAura(36814, player);
+                        player->GetSession()->SendAreaTriggerMessage("Sanacion disminuida! ~ 20");
+                    }
+                    else player->SetAuraStack(36814, player, 2);
+                }
+                // 3 Stacks
+                if (((is1v1) && (GetStartTime() >= (startT + 0.6666f) * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= (startT + 0.7666f) * MINUTE * IN_MILLISECONDS))
+                    ||
+                    ((!is1v1) && (GetStartTime() >= (startT + 2.0f) * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= (startT + 2.1f) * MINUTE * IN_MILLISECONDS)))
+                {
+                    if (demAura && demAura->GetStackAmount() == 2)
+                    {
+                        player->AddAura(36814, player);
+                        player->GetSession()->SendAreaTriggerMessage("Sanacion disminuida! ~ 30");
+                    }
+                    else player->SetAuraStack(36814, player, 3);
+                }
+                // 4 Stacks
+                if (((is1v1) && (GetStartTime() >= (startT + 1.0f) * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= (startT + 1.1f) * MINUTE * IN_MILLISECONDS))
+                    ||
+                    ((!is1v1) && (GetStartTime() >= (startT + 3.0f) * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= (startT + 3.1f) * MINUTE * IN_MILLISECONDS)))
+                {
+                    if (demAura && demAura->GetStackAmount() == 3)
+                    {
+                        player->AddAura(36814, player);
+                        player->GetSession()->SendAreaTriggerMessage("Sanacion disminuida! ~ 40");
+                    }
+                    else player->SetAuraStack(36814, player, 4);
+                }
+                // 5 Stacks
+                if (((is1v1) && (GetStartTime() >= (startT + 1.5f) * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= (startT + 1.6f) * MINUTE * IN_MILLISECONDS))
+                    ||
+                    ((!is1v1) && (GetStartTime() >= (startT + 4.0f) * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= (startT + 4.1f) * MINUTE * IN_MILLISECONDS)))
+                {
+                    if (demAura && demAura->GetStackAmount() == 4)
+                    {
+                        player->AddAura(36814, player);
+                        player->GetSession()->SendAreaTriggerMessage("Sanacion disminuida! ~ 50");
+                    }
+                    else player->SetAuraStack(36814, player, 5);
+                }
+                // 6 Stacks
+                if (((is1v1) && (GetStartTime() >= (startT + 2.0f) * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= (startT + 2.1f) * MINUTE * IN_MILLISECONDS))
+                    ||
+                    ((!is1v1) && (GetStartTime() >= (startT + 5.0f) * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= (startT + 5.1f) * MINUTE * IN_MILLISECONDS)))
+                {
+                    if (demAura && demAura->GetStackAmount() == 5)
+                    {
+                        player->AddAura(36814, player);
+                        player->GetSession()->SendAreaTriggerMessage("Sanacion disminuida! ~ 60");
+                    }
+                    else player->SetAuraStack(36814, player, 6);
+                }
+                // 7 Stacks
+                if (((is1v1) && (GetStartTime() >= (startT + 2.5f) * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= (startT + 2.6f) * MINUTE * IN_MILLISECONDS))
+                    ||
+                    ((!is1v1) && (GetStartTime() >= (startT + 6.0f) * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= (startT + 6.1f) * MINUTE * IN_MILLISECONDS)))
+                {
+                    if (demAura && demAura->GetStackAmount() == 6)
+                    {
+                        player->AddAura(36814, player);
+                        player->GetSession()->SendAreaTriggerMessage("Sanacion disminuida! ~ 70");
+                    }
+                    else player->SetAuraStack(36814, player, 7);
+                }
+                // 8 Stacks
+                if (((is1v1) && (GetStartTime() >= (startT + 3.0f) * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= (startT + 3.1f) * MINUTE * IN_MILLISECONDS))
+                    ||
+                    ((!is1v1) && (GetStartTime() >= (startT + 7.0f) * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= (startT + 7.1f) * MINUTE * IN_MILLISECONDS)))
+                {
+                    if (demAura && demAura->GetStackAmount() == 7)
+                    {
+                        player->AddAura(36814, player);
+                        player->GetSession()->SendAreaTriggerMessage("Sanacion disminuida! Ya no se va a disminuir mas veces. ~ 80");
+                    }
+                    else player->SetAuraStack(36814, player, 8);
+                }
+
+                //if (Pet* pet = ObjectAccessor::FindPet(itr->first))
+                //{
+                //    Aura* pemAura = pet->GetAura(36814);
+                //    if (!pet->HasAura(36814)) pet->AddAura(36814, pet);
+                //    else if (pet->IsSummon()) pet->AddAura(36814, pet);
+                //}
+
+                //if (Pet* pet = ObjectAccessor::FindPet(itr->first))
+                //{
+                //    Aura* pemAura = pet->GetAura(36814);
+                //    if (pet && pemAura->GetStackAmount() == 7) pet->AddAura(36814, pet);
+                //    else if (pet->IsSummon()) pet->AddAura(36814, pet);
+                //}
+            }
+        }
+    }
+
     sScriptMgr->OnBattlegroundUpdate(this, diff);
 }
 
@@ -1382,7 +1510,22 @@ void Battleground::ReadyMarkerClicked(Player* p)
         return;
     readyMarkerClickedSet.insert(p->GetGUIDLow());
     uint32 count = readyMarkerClickedSet.size();
-    uint32 req = GetArenaType() * 2;
+    uint8 req = 0;
+
+    //uint32 req = GetArenaType()*2;
+    switch (GetArenaType())
+    {
+    case ARENA_TYPE_2v2:
+        req = 4;
+        break;
+    case ARENA_TYPE_3v3:
+        req = 6;
+        break;
+    case ARENA_TYPE_5v5:
+        req = 2;
+        break;
+    }
+
     p->GetSession()->SendNotification("You are marked as ready %u/%u", count, req);
     if (count == req)
     {

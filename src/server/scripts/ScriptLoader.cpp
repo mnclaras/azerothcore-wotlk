@@ -1192,10 +1192,24 @@ void AddOutdoorPvPScripts()
 
 
 //~ void AddSC_MySuperScript();
+void AddSC_custom_npc_tools_reset();
+void AddSC_custom_vip_only_npc();
+void AddSC_arena_spectator_script();
+void AddSC_arena_team_ranks();
+void AddSC_Arena_AntiDraw();
+void AddSC_custom_hallows_end_event();
+void AddSC_custom_christmas_event();
 
 void AddCustomScripts()
 {
 #ifdef SCRIPTS
     //~ AddSC_MySuperScript();
+    AddSC_custom_npc_tools_reset();
+    AddSC_custom_vip_only_npc();
+    AddSC_arena_spectator_script();
+    AddSC_arena_team_ranks();
+    AddSC_Arena_AntiDraw();
+    AddSC_custom_hallows_end_event();
+    AddSC_custom_christmas_event();
 #endif
 }

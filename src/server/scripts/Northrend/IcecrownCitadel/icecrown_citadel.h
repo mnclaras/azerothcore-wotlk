@@ -6,6 +6,7 @@
 #define ICECROWN_CITADEL_H_
 
 #include "Player.h"
+#include "Group.h"
 #include "Chat.h"
 #include "SpellAuras.h"
 #include "SpellScript.h"

@@ -102,7 +102,7 @@ public:
             switch (events.ExecuteEvent())
             {
                 case EVENT_MORTAL_WOUND:
-                    me->CastSpell(me->GetVictim(), SPELL_MORTAL_WOUND, false);
+                    //me->CastSpell(me->GetVictim(), SPELL_MORTAL_WOUND, false);
                     events.ScheduleEvent(EVENT_MORTAL_WOUND, 8000);
                     break;
                 case EVENT_SURGE:

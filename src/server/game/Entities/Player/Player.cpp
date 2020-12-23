@@ -22321,6 +22321,7 @@ uint32 Player::GetMaxPersonalArenaRatingRequirement(uint32 minarenaslot) const
     uint32 max_personal_rating = 0;
     for (uint8 i = minarenaslot; i < MAX_ARENA_SLOT; ++i)
     {
+        if (i == 2) continue;
         if (ArenaTeam* at = sArenaTeamMgr->GetArenaTeamById(GetArenaTeamId(i)))
         {
             uint32 p_rating = GetArenaPersonalRating(i);
@@ -23465,7 +23466,7 @@ void Player::ApplyEquipCooldown(Item* pItem)
             continue;
 
         // xinef: apply hidden cooldown for procs
-        if (spellData.SpellTrigger == ITEM_SPELLTRIGGER_ON_EQUIP)
+        if (spellData.SpellTrigger == ITEM_SPELLTRIGGER_ON_EQUIP && spellData.SpellId != 71903)
         {
             // xinef: uint32(-1) special marker for proc cooldowns
             AddSpellCooldown(spellData.SpellId, uint32(-1), 30 * IN_MILLISECONDS);
@@ -26878,6 +26879,14 @@ void Player::ActivateSpec(uint8 spec)
     if (spec > GetSpecsCount())
         return;
 
+    if (InBattlegroundQueueForBattlegroundQueueType(BATTLEGROUND_QUEUE_5v5))
+    {
+        LocaleConstant locale = GetSession()->GetSessionDbLocaleIndex();
+        bool isSpanish = (locale == LOCALE_esES || locale == LOCALE_esMX);
+        ChatHandler(GetSession()).PSendSysMessage(isSpanish ? "No puedes cambiar de talentos mientras estas anotado en 1v1" : "Cannot change spec while in 1v1.");
+        return;
+    }
+
     // xinef: interrupt currently casted spell just in case
     if (IsNonMeleeSpellCast(false))
         InterruptNonMeleeSpells(false);
@@ -26961,11 +26970,24 @@ void Player::ActivateSpec(uint8 spec)
     }
 
     // xinef: apply glyphs from second spec
-    if(GetActiveSpec() != oldSpec)
+    //if(GetActiveSpec() != oldSpec)
+    //    for (uint8 slot = 0; slot < MAX_GLYPH_SLOT_INDEX; ++slot)
+    //        if (uint32 glyphId = m_Glyphs[GetActiveSpec()][slot])
+    //            if (GlyphPropertiesEntry const* glyphEntry = sGlyphPropertiesStore.LookupEntry(glyphId))
+    //                CastSpell(this, glyphEntry->SpellId, TriggerCastFlags(TRIGGERED_FULL_MASK & ~(TRIGGERED_IGNORE_SHAPESHIFT | TRIGGERED_IGNORE_CASTER_AURASTATE)));
+
+    if (GetActiveSpec() != oldSpec)
+    {
         for (uint8 slot = 0; slot < MAX_GLYPH_SLOT_INDEX; ++slot)
-            if (uint32 glyphId = m_Glyphs[GetActiveSpec()][slot])
+        {
+            uint32 glyphId = m_Glyphs[GetActiveSpec()][slot];
+            if (glyphId)
                 if (GlyphPropertiesEntry const* glyphEntry = sGlyphPropertiesStore.LookupEntry(glyphId))
                     CastSpell(this, glyphEntry->SpellId, TriggerCastFlags(TRIGGERED_FULL_MASK & ~(TRIGGERED_IGNORE_SHAPESHIFT | TRIGGERED_IGNORE_CASTER_AURASTATE)));
+
+            SetGlyph(slot, glyphId, true);
+        }
+    }
 
     m_usedTalentCount = spentTalents;
     InitTalentForLevel();

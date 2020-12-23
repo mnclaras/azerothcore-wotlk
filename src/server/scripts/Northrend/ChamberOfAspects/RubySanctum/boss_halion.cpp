@@ -12,7 +12,8 @@
 #include "ScriptedCreature.h"
 #include "ruby_sanctum.h"
 #include "Player.h"
-
+#include "Group.h"
+#include "ObjectAccessor.h"
 
 enum Texts
 {
@@ -132,7 +133,10 @@ enum Events
     EVENT_INTRO_PROGRESS_1      = 41,
     EVENT_INTRO_PROGRESS_2      = 42,
     EVENT_INTRO_PROGRESS_3      = 43,
-    EVENT_INTRO_PROGRESS_4      = 44
+    EVENT_INTRO_PROGRESS_4      = 44,
+
+    // Living Inferno
+    EVENT_LIVING_INFERNO_MOVE = 50
 };
 
 enum Misc
@@ -373,7 +377,7 @@ public:
                     break;
                 case EVENT_BREATH:
                     me->CastSpell(me->GetVictim(), SPELL_FLAME_BREATH, false);
-                    events.ScheduleEvent(EVENT_BREATH, urand(10000, 12000));
+                    events.ScheduleEvent(EVENT_BREATH, urand(13000, 17000));
                     break;
                 case EVENT_ACTIVATE_FIREWALL:
                     instance->HandleGameObject(instance->GetData64(GO_FLAME_RING), false, nullptr);
@@ -381,8 +385,12 @@ public:
                     break;
                 case EVENT_METEOR_STRIKE:
                     _livingEmberCount = summons.GetEntryCount(NPC_LIVING_EMBER);
-                    me->CastCustomSpell(SPELL_METEOR_STRIKE_TARGETING, SPELLVALUE_MAX_TARGETS, 1, me, false);
-                    Talk(SAY_METEOR_STRIKE);
+                    if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 1, 100.0f, true, -SPELL_TWILIGHT_REALM))
+                    {
+                        _meteorStrikePos = target->GetPosition();
+                        me->CastSpell(_meteorStrikePos.GetPositionX(), _meteorStrikePos.GetPositionY(), _meteorStrikePos.GetPositionZ(), SPELL_METEOR_STRIKE, false, NULL, NULL, me->GetGUID());
+                        Talk(SAY_METEOR_STRIKE);
+                    }
                     events.ScheduleEvent(EVENT_METEOR_STRIKE, 40000);
                     break;
                 case EVENT_FIERY_COMBUSTION:
@@ -408,6 +416,7 @@ public:
     private:
         EventMap _events2;
         uint32 _livingEmberCount;
+        Position _meteorStrikePos;
     };
 
     CreatureAI* GetAI(Creature* creature) const override
@@ -526,7 +535,7 @@ public:
                     break;
                 case EVENT_BREATH:
                     me->CastSpell(me->GetVictim(), SPELL_DARK_BREATH, false);
-                    _events.ScheduleEvent(EVENT_BREATH, urand(10000, 12000));
+                    _events.ScheduleEvent(EVENT_BREATH, urand(13000, 17000));
                     break;
                 case EVENT_SOUL_CONSUMPTION:
                     if (Unit* target = SelectTarget(SELECT_TARGET_RANDOM, 1, 100.0f, true, SPELL_TWILIGHT_REALM))
@@ -872,7 +881,28 @@ public:
             if (!GetUnitOwner()->GetInstanceScript() || !GetUnitOwner()->GetInstanceScript()->IsEncounterInProgress())
                 return;
 
-            GetUnitOwner()->CastSpell(GetUnitOwner(), RAND(SPELL_SUMMON_METEOR_FLAME1, SPELL_SUMMON_METEOR_FLAME2, SPELL_SUMMON_METEOR_FLAME2, SPELL_SUMMON_METEOR_FLAME2, SPELL_SUMMON_METEOR_FLAME3), true);
+            GetUnitOwner()->CastSpell(GetUnitOwner(), RAND(
+                SPELL_SUMMON_METEOR_FLAME1,
+                SPELL_SUMMON_METEOR_FLAME1,
+                SPELL_SUMMON_METEOR_FLAME1,
+                SPELL_SUMMON_METEOR_FLAME2,
+                SPELL_SUMMON_METEOR_FLAME2,
+                SPELL_SUMMON_METEOR_FLAME2,
+                SPELL_SUMMON_METEOR_FLAME2,
+                SPELL_SUMMON_METEOR_FLAME2,
+                SPELL_SUMMON_METEOR_FLAME2,
+                SPELL_SUMMON_METEOR_FLAME2,
+                SPELL_SUMMON_METEOR_FLAME2,
+                SPELL_SUMMON_METEOR_FLAME2,
+                SPELL_SUMMON_METEOR_FLAME2,
+                SPELL_SUMMON_METEOR_FLAME2,
+                SPELL_SUMMON_METEOR_FLAME2,
+                SPELL_SUMMON_METEOR_FLAME2,
+                SPELL_SUMMON_METEOR_FLAME2,
+                SPELL_SUMMON_METEOR_FLAME3,
+                SPELL_SUMMON_METEOR_FLAME3,
+                SPELL_SUMMON_METEOR_FLAME3
+            ), true);
         }
 
         void Register() override
@@ -1444,6 +1474,15 @@ public:
     {
         npc_living_infernoAI(Creature* creature) : ScriptedAI(creature) { }
 
+        void InitializeAI() override
+        {
+            me->SetFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+            ScriptedAI::InitializeAI();
+            me->SetReactState(REACT_PASSIVE);
+
+            events.ScheduleEvent(EVENT_LIVING_INFERNO_MOVE, 2500);
+        }
+
         void IsSummonedBy(Unit* /*summoner*/) override
         {
             me->SetInCombatWithZone();
@@ -1454,10 +1493,35 @@ public:
                     controller->AI()->JustSummoned(me);
         }
 
+        void UpdateAI(uint32 diff) override
+        {
+            if (!UpdateVictim())
+                return;
+
+            events.Update(diff);
+
+            if (me->HasUnitState(UNIT_STATE_CASTING))
+                return;
+
+            switch (events.ExecuteEvent())
+            {
+            case EVENT_LIVING_INFERNO_MOVE:
+                me->SetReactState(REACT_DEFENSIVE);
+                me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE);
+                return;
+            }
+
+            if (!me->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_DISABLE_MOVE))
+                DoMeleeAttackIfReady();
+        }
+
         void JustDied(Unit* /*killer*/) override
         {
             me->DespawnOrUnsummon(1);
         }
+
+    private:
+        EventMap events;
     };
 
     CreatureAI* GetAI(Creature* creature) const override

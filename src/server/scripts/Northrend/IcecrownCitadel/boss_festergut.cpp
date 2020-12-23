@@ -431,7 +431,7 @@ public:
             me->setActive(true);
             me->CastSpell(me, SPELL_PLAGUE_STENCH, true);
             events.ScheduleEvent(EVENT_DECIMATE, urand(20000, 25000));
-            events.ScheduleEvent(EVENT_MORTAL_WOUND, urand(1500, 2500));
+            events.ScheduleEvent(EVENT_MORTAL_WOUND, urand(3000, 7000));
         }
 
         void UpdateAI(uint32 diff) override
@@ -454,7 +454,7 @@ public:
                         break;
                     case EVENT_MORTAL_WOUND:
                         me->CastSpell(me->GetVictim(), SPELL_MORTAL_WOUND, false);
-                        events.ScheduleEvent(EVENT_MORTAL_WOUND, urand(1500, 2500));
+                        events.ScheduleEvent(EVENT_MORTAL_WOUND, urand(3000, 7000));
                         break;
                     default:
                         break;

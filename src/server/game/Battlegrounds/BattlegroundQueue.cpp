@@ -154,7 +154,18 @@ GroupQueueInfo* BattlegroundQueue::AddGroup(Player* leader, Group* grp, PvPDiffi
     // announce world (this doesn't need mutex)
     if (isRated && sWorld->getBoolConfig(CONFIG_ARENA_QUEUE_ANNOUNCER_ENABLE))
         if (ArenaTeam* team = sArenaTeamMgr->GetArenaTeamById(arenateamid))
-            sWorld->SendWorldText(LANG_ARENA_QUEUE_ANNOUNCE_WORLD_JOIN, team->GetName().c_str(), ginfo->ArenaType, ginfo->ArenaType, ginfo->ArenaTeamRating);
+        {
+            uint8 arenaType = 0;
+            switch (ginfo->ArenaType)
+            {
+            case ARENA_TYPE_2v2: arenaType = 2; break;
+            case ARENA_TYPE_3v3: arenaType = 3; break;
+            case ARENA_TYPE_5v5: arenaType = 1; break;
+            }
+            // Do not show message in 1v1
+            if (arenaType != 1)
+                sWorld->SendWorldText(LANG_ARENA_QUEUE_ANNOUNCE_WORLD_JOIN, team->GetName().c_str(), arenaType, arenaType, ginfo->ArenaTeamRating);
+        }
 
     //add players from group to ginfo
     if (grp)
@@ -300,7 +311,18 @@ void BattlegroundQueue::RemovePlayer(uint64 guid, bool sentToBg, uint32 playerQu
     // announce to world if arena team left queue for rated match, show only once
     if (groupInfo->ArenaType && groupInfo->IsRated && groupInfo->Players.empty() && sWorld->getBoolConfig(CONFIG_ARENA_QUEUE_ANNOUNCER_ENABLE))
         if (ArenaTeam* team = sArenaTeamMgr->GetArenaTeamById(groupInfo->ArenaTeamId))
-            sWorld->SendWorldText(LANG_ARENA_QUEUE_ANNOUNCE_WORLD_EXIT, team->GetName().c_str(), groupInfo->ArenaType, groupInfo->ArenaType, groupInfo->ArenaTeamRating);
+        {
+            uint8 arenaType = 0;
+            switch (groupInfo->ArenaType)
+            {
+            case ARENA_TYPE_2v2: arenaType = 2; break;
+            case ARENA_TYPE_3v3: arenaType = 3; break;
+            case ARENA_TYPE_5v5: arenaType = 1; break;
+            }
+            // Do not show message in 1v1
+            if (arenaType != 1)
+                sWorld->SendWorldText(LANG_ARENA_QUEUE_ANNOUNCE_WORLD_EXIT, team->GetName().c_str(), arenaType, arenaType, groupInfo->ArenaTeamRating);
+        }
 
     // if player leaves queue and he is invited to a rated arena match, then count it as he lost
     if (groupInfo->IsInvitedToBGInstanceGUID && groupInfo->IsRated && !sentToBg)
@@ -786,7 +808,8 @@ void BattlegroundQueue::BattlegroundQueueUpdate(BattlegroundBracketId bracket_id
 
         const uint32 currMSTime = World::GetGameTimeMS();
         const uint32 discardTime = sBattlegroundMgr->GetRatingDiscardTimer();
-        const uint32 maxDefaultRatingDifference = (MaxPlayersPerTeam > 2 ? 300 : 200);
+        //const uint32 maxDefaultRatingDifference = (MaxPlayersPerTeam > 2 ? 300 : 200);
+        const uint32 maxDefaultRatingDifference = sBattlegroundMgr->GetMaxRatingDifference();
         const uint32 maxCountedMMR = 2500;
 
         // we need to find 2 teams which will play next game

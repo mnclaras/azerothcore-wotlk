@@ -64,7 +64,7 @@ nbproject/
 cmake-build-debug/*
 cmake-build-debug-coverage/*
 coverage-report/
-
+.vs
 #
 # Eclipse
 #
@@ -93,3 +93,11 @@ local.properties
 #  !modules/yourmodule
 #
 # ==================
+!modules/mod-1v1-arena
+!modules/mod-anti-ad
+!modules/mod-anticheat
+!modules/mod-boss-announcer
+!modules/mod-factions-icons-channel
+!modules/mod-pvp-titles
+!modules/mod-spell-regulator
+!modules/mod-transmog
