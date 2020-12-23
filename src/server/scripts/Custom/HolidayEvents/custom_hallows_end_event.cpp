@@ -693,5 +693,5 @@ void AddSC_custom_hallows_end_event()
     new custom_hallows_end_event_boss_two();
     new custom_hallows_end_event_boss_two_add();
     new custom_hallows_end_event_teleporter();
-	new custom_hallows_end_event_quests();
+	//new custom_hallows_end_event_quests();
 }

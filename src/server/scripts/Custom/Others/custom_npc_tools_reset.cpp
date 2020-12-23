@@ -232,5 +232,5 @@ void AddSC_custom_npc_tools_reset()
 {
 	new custom_npc_tools_reset_combat();
 	new custom_npc_tools_reset_instances();
-	new custom_npc_tools_reset_cds()
+	new custom_npc_tools_reset_cds();
 }
