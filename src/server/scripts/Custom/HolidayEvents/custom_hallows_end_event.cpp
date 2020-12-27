@@ -515,7 +515,7 @@ public:
             ScriptedAI::EnterEvadeMode();
         }
 
-        void SpellHitTarget(Unit* target, SpellInfo const* spell) override
+        void SpellHitTarget(Unit* /*target*/, SpellInfo const* spell) override
         {
             switch (spell->Id)
             {
