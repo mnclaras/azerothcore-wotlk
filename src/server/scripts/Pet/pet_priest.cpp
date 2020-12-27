@@ -62,7 +62,7 @@ public:
     {
         npc_pet_pri_shadowfiendAI(Creature* creature) : PetAI(creature) { }
 
-        void InitializeAI()
+        void InitializeAI() override
         {
             if (Unit* owner = me->ToTempSummon()->GetSummoner())
             {

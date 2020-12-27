@@ -208,7 +208,7 @@ public:
                 EnterEvadeMode();
         }
 
-        void UpdateAI(uint32 diff)
+        void UpdateAI(uint32 diff) override
         {
             _events.Update(diff);
             if (_events.GetTimer() < 1200)
