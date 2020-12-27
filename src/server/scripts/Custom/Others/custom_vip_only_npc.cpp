@@ -167,8 +167,7 @@ public:
 
         if (player->HasItemCount(itemEntry, 1, true))
         {
-            player->GetSession()->SendNotification(isSpanish ? "Solo se puede tener un abalorio de este tipo. Revisa tus bolsas y banco personal." :
-                "You can only have one trinket of this type. Check your bags and personal bank.");
+            player->GetSession()->SendNotification(isSpanish ? ACTION_ERROR_ALREADY_HAVE_TEXT_SPANISH : ACTION_ERROR_ALREADY_HAVE_TEXT_ENGLISH);
             return;
         }
 
@@ -189,9 +188,7 @@ public:
         }
         else
         {
-            std::string errorText = isSpanish ? ACTION_ERROR_NO_SPACE_TEXT_SPANISH : ACTION_ERROR_NO_SPACE_TEXT_ENGLISH;
-            player->GetSession()->SendNotification(isSpanish ? "Debes desequipar al menos un abalorio para obtener este objeto."
-                : "You must at least unequip one trinket to get this item.");
+            player->GetSession()->SendNotification(isSpanish ? ACTION_ERROR_NO_SPACE_TEXT_SPANISH : ACTION_ERROR_NO_SPACE_TEXT_ENGLISH);
         }
     }
 
