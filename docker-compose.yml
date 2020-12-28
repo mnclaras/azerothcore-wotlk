@@ -14,9 +14,12 @@ services:
       - ${DB_EXTERNAL_PORT:-3306}:3306
     environment:
       - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD:-password}
+        
+      - MYSQL_USER=${DB_USER}
+      - MYSQL_PASSWORD=${DB_PASSWORD:-password}
     volumes:
       - type: volume
-        source: ac-database
+        source: ./ac-databases
         target: /var/lib/mysql
 
   ac-worldserver:
@@ -48,6 +51,7 @@ services:
         target: /azeroth-server/data
     depends_on:
       - ac-database
+
 
   ac-authserver:
     image: azerothcore/authserver

@@ -101,3 +101,7 @@ local.properties
 !modules/mod-pvp-titles
 !modules/mod-spell-regulator
 !modules/mod-transmog
+
+
+ac-databases/*
+.env
