@@ -204,6 +204,11 @@ public:
                     isSpanish ? "|TInterface\\icons\\inv_misc_frostemblem_01:20|t [Emblema de escarcha] x 50." : "|TInterface\\icons\\inv_misc_frostemblem_01:20|t [Emblem of Frost] x 50.",
                     GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 10, confirmText, 0, false);
 
+                AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Comprar 100 Puntos de arena usando:" : "Buy 100 Arena points using:", GOSSIP_SENDER_MAIN, -1);
+                AddGossipItemFor(player, GOSSIP_ICON_VENDOR,
+                    isSpanish ? "|TInterface\\icons\\achievement_arena_2v2_7:20|t [Puntos de honor] x 10000." : "|TInterface\\icons\\achievement_arena_2v2_7:20|t [Honor points] x 10000.",
+                    GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 11, confirmText, 0, false);
+
                 AddGossipItemFor(player, GOSSIP_ICON_TALK,
                     isSpanish ? "|TInterface/ICONS/Thrown_1H_Harpoon_D_01Blue:20|t Hasta Luego!" : "|TInterface/ICONS/Thrown_1H_Harpoon_D_01Blue:20|t Nevermind!",
                     GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 8);
@@ -323,6 +328,22 @@ public:
             case GOSSIP_ACTION_INFO_DEF + 10:
                 // Buy 25 Ethereal Credit with 50 Emblem of Frost
                 DoExchange(player, EMBLEM_OF_FROST_ENTRY, 50, ETHEREAL_CREDIT_ENTRY, 25);
+                //player->PlayerTalkClass->SendCloseGossip();
+                SendMenu(player, creature);
+                break;
+
+            case GOSSIP_ACTION_INFO_DEF + 11:
+                // Buy 100 Arena points with 10000 Honor Points
+                if (player->GetHonorPoints() >= 10000)
+                {
+                    player->ModifyHonorPoints(-10000);
+                    player->ModifyArenaPoints(100);
+                    player->GetSession()->SendNotification(isSpanish ? ACTION_COMPLETE_TEXT_SPANISH : ACTION_COMPLETE_TEXT_ENGLISH);
+                }
+                else
+                {
+                    player->GetSession()->SendNotification(isSpanish ? ACTION_ERROR_TEXT_SPANISH : ACTION_ERROR_TEXT_ENGLISH);
+                }
                 //player->PlayerTalkClass->SendCloseGossip();
                 SendMenu(player, creature);
                 break;
