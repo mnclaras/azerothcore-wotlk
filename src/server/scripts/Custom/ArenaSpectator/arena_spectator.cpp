@@ -626,7 +626,7 @@ public:
         return true;
     }
 
-    bool OnGossipSelectCode(Player* player, Creature* creature, uint32 sender, uint32 action, const char* code) override
+    bool OnGossipSelectCode(Player* player, Creature* /*creature*/, uint32 sender, uint32 action, const char* code) override
     {
         if (!player)
             return true;
@@ -645,7 +645,7 @@ public:
 
                 for (int i = 0; i < 13; i++)
                 {
-                    if (playerName[i] == NULL)
+                    if (playerName[i] == '0' || playerName[i] == '\0')
                         break;
                     if (i == 0 && playerName[i] > 96)
                         playerName[0] -= 32;
@@ -953,7 +953,6 @@ public:
                         haveNextPage = true;
 
                     }
-                    uint32 testGuid = target->GetGUID();
                     if (TypePlayer >= page * GamesOnPage)
                         AddGossipItemFor(player, GOSSIP_ICON_BATTLE, target->GetName() + "(" + GetClassNameById(target) + ")", GOSSIP_SENDER_MAIN, NPC_SPECTATOR_ACTION_SELECTED_PLAYER + target->GetGUID());
                 }
