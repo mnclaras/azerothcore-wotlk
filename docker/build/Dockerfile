@@ -13,12 +13,11 @@ ADD modules /azerothcore/modules
 ADD CMakeLists.txt /azerothcore/CMakeLists.txt
 
 ARG ENABLE_SCRIPTS=1
-ENV ENABLE_SCRIPTS=$ENABLE_SCRIPTS
+ENV ENABLE_SCRIPTS=1
 
 ENTRYPOINT  cd azerothcore/build && \
             # run cmake
-            #cmake ../ -DCMAKE_INSTALL_PREFIX=/azeroth-server -DCMAKE_C_COMPILER=/usr/bin/clang-6.0 -DCMAKE_CXX_COMPILER=/usr/bin/clang++-6.0 -DTOOLS=0 -DSCRIPTS=$ENABLE_SCRIPTS -DWITH_WARNINGS=1 -DCMAKE_C_FLAGS="-Werror" -DCMAKE_CXX_FLAGS="-Werror" && \
-            cmake ../ -DCMAKE_INSTALL_PREFIX=/azeroth-server -DCMAKE_C_COMPILER=/usr/bin/clang-6.0 -DCMAKE_CXX_COMPILER=/usr/bin/clang++-6.0 -DTOOLS=0 -DSCRIPTS=$ENABLE_SCRIPTS -DWITH_WARNINGS=1 && \
+            cmake ../ -DCMAKE_INSTALL_PREFIX=/azeroth-server -DCMAKE_C_COMPILER=/usr/bin/clang-6.0 -DCMAKE_CXX_COMPILER=/usr/bin/clang++-6.0 -DTOOLS=0 -DSCRIPTS=1 -DWITH_WARNINGS=1 -DCMAKE_C_FLAGS="-Werror" -DCMAKE_CXX_FLAGS="-Werror" && \
             # calculate the optimal number of threads
             MTHREADS=`grep -c ^processor /proc/cpuinfo`; MTHREADS=$(($MTHREADS + 2)) && \
             # run compilation

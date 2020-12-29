@@ -1,14 +1,30 @@
 #!/usr/bin/env bash
 
+# if [ "$(id -u)" != "0" ] && [ "$OSTYPE" != "msys" ] ; then
+#     echo "Please run the script with sudo"
+# else
+#     rm -rf ./docker/build/cache/CMakeFiles
+#     rm -rf ./docker/build/cache/deps
+#     rm -rf ./docker/build/cache/src
+#     rm ./docker/build/cache/*.cmake
+#     rm ./docker/build/cache/*.txt
+#     rm ./docker/build/cache/*.h
+#     rm ./docker/build/cache/*.cpp
+#     rm ./docker/build/cache/Makefile
+# fi
+
+# Args
+# $1: Cache folder
 if [ "$(id -u)" != "0" ] && [ "$OSTYPE" != "msys" ] ; then
     echo "Please run the script with sudo"
 else
-    rm -rf ./docker/build/cache/CMakeFiles
-    rm -rf ./docker/build/cache/deps
-    rm -rf ./docker/build/cache/src
-    rm ./docker/build/cache/*.cmake
-    rm ./docker/build/cache/*.txt
-    rm ./docker/build/cache/*.h
-    rm ./docker/build/cache/*.cpp
-    rm ./docker/build/cache/Makefile
+    rm -rf ./docker/build/$1/CMakeFiles
+    rm -rf ./docker/build/$1/deps
+    rm -rf ./docker/build/$1/src
+    rm -rf ./docker/build/$1/modules
+    rm ./docker/build/$1/*.cmake
+    rm ./docker/build/$1/*.txt
+    rm ./docker/build/$1/*.h
+    rm ./docker/build/$1/*.cpp
+    rm ./docker/build/$1/Makefile
 fi
