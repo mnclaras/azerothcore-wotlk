@@ -146,4 +146,4 @@ local.properties
 !modules/mod-transmog
 
 
-ac-database/*
+test/ac-database/*

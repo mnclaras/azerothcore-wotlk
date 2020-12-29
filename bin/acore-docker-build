@@ -19,4 +19,4 @@ docker run \
     -v /"$(pwd)"/docker/build/cache-$1:/azerothcore/build \
     -v /"$(pwd)"/docker/worldserver-$1/bin:/binworldserver \
     -v /"$(pwd)"/docker/authserver-$1/bin:/binauthserver \
-    $1
+    acbuild-$1
