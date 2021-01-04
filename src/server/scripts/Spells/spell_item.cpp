@@ -1668,7 +1668,7 @@ public:
         {
 
             SpellInfo const* spellInfo = eventInfo.GetHealInfo()->GetSpellInfo();
-            if (!spellInfo || !spellInfo->HasEffect(SPELL_EFFECT_HEAL))
+            if (!spellInfo || (!spellInfo->HasEffect(SPELL_EFFECT_HEAL) && !spellInfo->HasAura(SPELL_AURA_PERIODIC_HEAL)))
                 return false;
 
             return eventInfo.GetHealInfo() && eventInfo.GetHealInfo()->GetHeal() > 0;
