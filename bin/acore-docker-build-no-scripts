@@ -1,9 +1,12 @@
 #!/usr/bin/env bash
 
-docker build --build-arg ENABLE_SCRIPTS=0 -t acbuild -f docker/build/Dockerfile .
+# Args
+# $1 blizz blizz-ptr custom custom-blizz
+
+docker build --build-arg ENABLE_SCRIPTS=0 -t acbuild-$1 -f docker/build/Dockerfile .
 
 docker run \
-    -v /"$(pwd)"/docker/build/cache:/azerothcore/build \
-    -v /"$(pwd)"/docker/worldserver/bin:/binworldserver \
-    -v /"$(pwd)"/docker/authserver/bin:/binauthserver \
-    acbuild
+    -v /"$(pwd)"/docker/build/cache-$1:/azerothcore/build \
+    -v /"$(pwd)"/docker/worldserver-$1/bin:/binworldserver \
+    -v /"$(pwd)"/docker/authserver-$1/bin:/binauthserver \
+    acbuild-$1

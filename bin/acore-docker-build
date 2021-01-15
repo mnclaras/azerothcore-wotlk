@@ -1,18 +1,8 @@
 #!/usr/bin/env bash
 
-# docker build -t acbuild -f docker/build/Dockerfile .
-
-# docker run \
-#     -v /"$(pwd)"/docker/build/cache:/azerothcore/build \
-#     -v /"$(pwd)"/docker/worldserver/bin:/binworldserver \
-#     -v /"$(pwd)"/docker/authserver/bin:/binauthserver \
-#     acbuild
-
 # Args
-# $1: Docker image. Ex: acbuild
-# $2: Cache folder. Ex: cache
-# $3: Worldserver folder. Ex: worldserver
-# $4: Authserver folder. Ex: authserver
+# $1 blizz blizz-ptr custom custom-blizz
+
 docker build -t acbuild-$1 -f docker/build/Dockerfile .
 
 docker run \

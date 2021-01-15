@@ -1,12 +1,11 @@
-version: '3.2'
+version: '3.8'
 
 services:
-
   ac-database:
     image: azerothcore/database
     restart: unless-stopped
     build:
-      context: ../
+      context: ../../
       dockerfile: ./docker/database/Dockerfile
     networks:
       - ac-network
@@ -16,11 +15,13 @@ services:
       - MYSQL_ROOT_PASSWORD=${DB_ROOT_PASSWORD:-password}
     volumes:
       - type: volume
-        source: ./ac-database
+        source: ac-database
         target: /var/lib/mysql
 
 volumes:
   ac-database:
+    name: ac-database
 
 networks:
   ac-network:
+    name: ac-network
