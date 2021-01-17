@@ -3,6 +3,7 @@ version: '3.8'
 services:
   ac-database:
     image: azerothcore/database
+    container_name: ac-database
     restart: unless-stopped
     build:
       context: ../../

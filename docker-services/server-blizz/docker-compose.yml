@@ -5,6 +5,7 @@ services:
     stdin_open: true
     tty: true
     image: azerothcore/worldserver-blizz
+    container_name: ac-worldserver-blizz
     restart: unless-stopped
     privileged: true
     build:
@@ -32,6 +33,7 @@ services:
 
   ac-authserver-blizz:
     image: azerothcore/authserver-blizz
+    container_name: ac-authserver-blizz
     restart: unless-stopped
     build:
       context: ${AUTHSERVER_BUILD_CONTEXT:-./docker/authserver}
