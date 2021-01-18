@@ -9,10 +9,8 @@ cp docker/authserver-blizz/etc/authserver.conf.dockerdist docker/authserver-bliz
 
 # Blizz-PTR
 cp src/server/worldserver/worldserver.conf.dist docker/worldserver-blizz-ptr/etc/worldserver.conf.dist
-cp src/server/authserver/authserver.conf.dist docker/authserver-blizz-ptr/etc/authserver.conf.dist
 
 cp docker/worldserver-blizz-ptr/etc/worldserver.conf.dockerdist docker/worldserver-blizz-ptr/etc/worldserver.conf
-cp docker/authserver-blizz-ptr/etc/authserver.conf.dockerdist docker/authserver-blizz-ptr/etc/authserver.conf
 
 # Custom
 cp src/server/worldserver/worldserver.conf.dist docker/worldserver-custom/etc/worldserver.conf.dist
@@ -23,7 +21,5 @@ cp docker/authserver-custom/etc/authserver.conf.dockerdist docker/authserver-cus
 
 # Custom-PTR
 cp src/server/worldserver/worldserver.conf.dist docker/worldserver-custom-ptr/etc/worldserver.conf.dist
-cp src/server/authserver/authserver.conf.dist docker/authserver-custom-ptr/etc/authserver.conf.dist
 
 cp docker/worldserver-custom-ptr/etc/worldserver.conf.dockerdist docker/worldserver-custom-ptr/etc/worldserver.conf
-cp docker/authserver-custom-ptr/etc/authserver.conf.dockerdist docker/authserver-custom-ptr/etc/authserver.conf
