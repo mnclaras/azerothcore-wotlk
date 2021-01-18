@@ -42,7 +42,7 @@ class arena1v1announce : public PlayerScript
 public:
     arena1v1announce() : PlayerScript("arena1v1announce") { }
 
-    void OnLogin(Player* pPlayer) override
+    void OnLogin(Player* /*pPlayer*/) override
     {
         // if (sConfigMgr->GetBoolDefault("Arena1v1Announcer.Enable", true))
             // ChatHandler(pPlayer->GetSession()).SendSysMessage("This server is running the |cff4CFF00Arena 1v1 |rmodule.");

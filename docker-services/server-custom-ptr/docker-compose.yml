@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  ac-worldserver-custom-ptr:
+    stdin_open: true
+    tty: true
+    image: azerothcore/worldserver-custom-ptr
+    container_name: ac-worldserver-custom-ptr
+    restart: unless-stopped
+    privileged: true
+    build:
+      context: ${WORLDSERVER_BUILD_CONTEXT:-./docker/worldserver}
+      dockerfile: Dockerfile
+    networks:
+      - ac-network
+    ports:
+      - ${WORLD_EXTERNAL_PORT:-8085}:8085
+      - ${SOAP_EXTERNAL_PORT:-7878}:7878
+      - ${RA_EXTERNAL_PORT:-3443}:3443
+    volumes:
+      - type: bind
+        source: ${WORLDSERVER_BIN:-./docker/worldserver/bin}
+        target: /azeroth-server/bin
+      - type: bind
+        source: ${WORLDSERVER_ETC:-./docker/worldserver/etc}
+        target: /azeroth-server/etc
+      - type: bind
+        source: ${WORLDSERVER_LOGS:-./docker/worldserver/logs}
+        target: /azeroth-server/logs
+      - type: bind
+        source: ${WORLDSERVER_DATA:-./docker/worldserver/data}
+        target: /azeroth-server/data
+
+  ac-authserver-custom-ptr:
+    image: azerothcore/authserver-custom-ptr
+    container_name: ac-authserver-custom-ptr
+    restart: unless-stopped
+    build:
+      context: ${AUTHSERVER_BUILD_CONTEXT:-./docker/authserver}
+      dockerfile: Dockerfile
+    networks:
+      - ac-network
+    ports:
+      - ${AUTH_EXTERNAL_PORT:-3724}:3724
+    volumes:
+      - type: bind
+        source: ${AUTHSERVER_BIN:-./docker/authserver/bin}
+        target: /azeroth-server/bin
+      - type: bind
+        source: ${AUTHSERVER_ETC:-./docker/authserver/etc}
+        target: /azeroth-server/etc
+      - type: bind
+        source: ${AUTHSERVER_LOGS:-./docker/authserver/logs}
+        target: /azeroth-server/logs
+
+networks:
+  ac-network:
+    external:
+      name: ac-network

@@ -44,7 +44,7 @@ public:
         CheckMessage(player, msg, lang, NULL, NULL, NULL, channel);
     }
 
-    void CheckMessage(Player* player, std::string& msg, uint32 lang, Player* /*receiver*/, Group* /*group*/, Guild* /*guild*/, Channel* channel)
+    void CheckMessage(Player* player, std::string& msg, uint32 /*lang*/, Player* /*receiver*/, Group* /*group*/, Guild* /*guild*/, Channel* /*channel*/)
     {
         //if account is game master let them say what ever they like just incase they need to send the website
         //if (player->GetSession()->GetSecurity() >= 1)
@@ -67,7 +67,7 @@ public:
         }
     }
 
-    void SendGMTexts(Player* player, std::string ADMessage, std::string FullMessage)
+    void SendGMTexts(Player* player, std::string /*ADMessage*/, std::string FullMessage)
     {
         // display warning at the center of the screen, hacky way?
         std::string str = "";
@@ -147,7 +147,7 @@ public:
         do
         {
             Field* field = result->Fetch();
-            uint8 id = field[0].GetUInt8();
+            //uint8 id = field[0].GetUInt8();
             chat.push_back(field[1].GetString());
 
             count++;
@@ -181,7 +181,7 @@ public:
         return commandTable;
     }
 
-    static bool HandleReloadCommand(ChatHandler* handler, char const* args)
+    static bool HandleReloadCommand(ChatHandler* handler, char const* /*args*/)
     {
         Player* me = handler->GetSession()->GetPlayer();
 
@@ -196,7 +196,7 @@ public:
         do
         {
             Field* field = result->Fetch();
-            uint8 id = field[0].GetUInt8();
+            //uint8 id = field[0].GetUInt8();
             chat.push_back(field[1].GetString());
 
             count++;

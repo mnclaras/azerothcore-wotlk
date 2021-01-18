@@ -515,7 +515,7 @@ public:
             ScriptedAI::EnterEvadeMode();
         }
 
-        void SpellHitTarget(Unit* target, SpellInfo const* spell) override
+        void SpellHitTarget(Unit* /*target*/, SpellInfo const* spell) override
         {
             switch (spell->Id)
             {
@@ -639,7 +639,7 @@ public:
         return true;
     }
 
-    bool OnGossipSelect(Player* player, Creature* creature, uint32 sender, uint32 action) override
+    bool OnGossipSelect(Player* player, Creature* /*creature*/, uint32 sender, uint32 action) override
     {
         player->PlayerTalkClass->ClearMenus();
 

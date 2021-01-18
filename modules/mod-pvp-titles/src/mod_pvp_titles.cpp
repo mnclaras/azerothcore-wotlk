@@ -19,6 +19,7 @@ enum Ranks
 	RANK_12 = 30000,
 	RANK_13 = 42000,
 	RANK_14 = 60000,
+	RANK_15 = 100000,
 };
 
 class PVPTitles : public PlayerScript
@@ -132,6 +133,12 @@ public:
 					Killer->SetTitle(sCharTitlesStore.LookupEntry(28));
 				else
 					Killer->SetTitle(sCharTitlesStore.LookupEntry(14));
+				break;
+			case RANK_15:
+				if (team == TEAM_HORDE)
+					Killer->SetTitle(sCharTitlesStore.LookupEntry(127));
+				else
+					Killer->SetTitle(sCharTitlesStore.LookupEntry(126));
 				break;
 			}
 		}

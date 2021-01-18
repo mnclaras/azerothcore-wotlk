@@ -8,7 +8,7 @@ class AntiDrawSystem : public PlayerScript
 public:
     AntiDrawSystem() : PlayerScript("AntiDrawSystem") {}
 
-    void OnUpdateZone(Player* player, uint32 newZone, uint32 newArea)
+    void OnUpdateZone(Player* player, uint32 /*newZone*/, uint32 /*newArea*/)
     {
         Pet* pet = player->GetPet();
 

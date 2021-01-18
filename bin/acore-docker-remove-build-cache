@@ -1,10 +1,18 @@
 #!/usr/bin/env bash
 
-sudo rm -rf ./docker/build/cache/CMakeFiles
-sudo rm -rf ./docker/build/cache/deps
-sudo rm -rf ./docker/build/cache/src
-sudo rm ./docker/build/cache/*.cmake
-sudo rm ./docker/build/cache/*.txt
-sudo rm ./docker/build/cache/*.h
-sudo rm ./docker/build/cache/*.cpp
-sudo rm ./docker/build/cache/Makefile
+# Args
+# $1: Cache folder (server)
+
+if [ "$(id -u)" != "0" ] && [ "$OSTYPE" != "msys" ] ; then
+    echo "Please run the script with sudo"
+else
+    rm -rf ./docker/build/cache-$1/CMakeFiles
+    rm -rf ./docker/build/cache-$1/deps
+    rm -rf ./docker/build/cache-$1/src
+    rm -rf ./docker/build/cache-$1/modules
+    rm ./docker/build/cache-$1/*.cmake
+    rm ./docker/build/cache-$1/*.txt
+    rm ./docker/build/cache-$1/*.h
+    rm ./docker/build/cache-$1/*.cpp
+    rm ./docker/build/cache-$1/Makefile
+fi

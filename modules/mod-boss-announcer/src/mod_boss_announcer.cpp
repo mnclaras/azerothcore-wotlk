@@ -32,7 +32,7 @@ public:
             if (boss->GetMap()->IsRaid() && boss->getLevel() > 80 && boss->IsDungeonBoss())
             {
                 //lets get the info we want
-                Map* map = player->GetMap();
+                //Map* map = player->GetMap();
                 std::string g_name = "< Sin Hermandad >";
                 std::string boss_name = boss->GetName();
                 std::string IsHeroicMode;
