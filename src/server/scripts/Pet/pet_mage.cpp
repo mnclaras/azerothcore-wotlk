@@ -59,7 +59,7 @@ class npc_pet_mage_mirror_image : public CreatureScript
 
             uint32 dist = urand(1, 5);
 
-            void InitializeAI()
+            void InitializeAI() override
             {
                 ScriptedAI::InitializeAI();
                 Unit* owner = me->GetOwner();
@@ -117,7 +117,7 @@ class npc_pet_mage_mirror_image : public CreatureScript
             }
 
             // Do not reload Creature templates on evade mode enter - prevent visual lost
-            void EnterEvadeMode()
+            void EnterEvadeMode() override
             {
                 if (me->IsInEvadeMode() || !me->IsAlive())
                     return;
@@ -168,7 +168,7 @@ class npc_pet_mage_mirror_image : public CreatureScript
                 }
             }
 
-            void Reset()
+            void Reset() override
             {
                 _selectionTimer = 0;
                 _checktarget = 0;
@@ -189,7 +189,7 @@ class npc_pet_mage_mirror_image : public CreatureScript
                     EnterEvadeMode();
             }
 
-            void UpdateAI(uint32 diff)
+            void UpdateAI(uint32 diff) override
             {
                 _events.Update(diff);
                 if (_events.GetTimer() < 1200)

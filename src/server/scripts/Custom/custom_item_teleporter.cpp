@@ -116,10 +116,10 @@ public:
 		bool isVipPlayer = false;
 
         uint8 plyr = player->getRace();
-        float x = player->GetPositionX();
-        float y = player->GetPositionY();
-        float z = player->GetPositionZ();
-        float o = player->GetOrientation();
+        // float x = player->GetPositionX();
+        // float y = player->GetPositionY();
+        // float z = player->GetPositionZ();
+        // float o = player->GetOrientation();
 
         QueryResult result;
 

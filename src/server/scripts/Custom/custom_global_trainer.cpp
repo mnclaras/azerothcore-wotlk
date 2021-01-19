@@ -112,7 +112,7 @@ public:
         return (locale == LOCALE_esES || locale == LOCALE_esMX);
     }
 
-    bool OnGossipSelect(Player* player, Creature* creature, uint32 sender, uint32 action) override
+    bool OnGossipSelect(Player* player, Creature* creature, uint32 /*sender*/, uint32 action) override
     {
         ClearGossipMenuFor(player);
 

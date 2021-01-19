@@ -656,7 +656,7 @@ class npc_gunship : public CreatureScript
                             if (!event_broadcasted)
                             {
                                 //lets get the info we want
-                                Map* map = p->GetMap();
+                                //Map* map = p->GetMap();
                                 std::string g_name = "< Sin Hermandad >";
                                 std::string boss_name = "Gunship Battle";
                                 std::string IsHeroicMode;

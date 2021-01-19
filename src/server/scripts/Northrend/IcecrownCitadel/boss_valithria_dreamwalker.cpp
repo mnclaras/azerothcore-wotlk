@@ -353,7 +353,7 @@ class boss_valithria_dreamwalker : public CreatureScript
                             if (!event_broadcasted)
                             {
                                 //lets get the info we want
-                                Map* map = p->GetMap();
+                                //Map* map = p->GetMap();
                                 std::string g_name = "< Sin Hermandad >";
                                 std::string boss_name = "Valithria Dreamwalker";
                                 std::string IsHeroicMode;

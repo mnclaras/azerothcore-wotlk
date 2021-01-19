@@ -83,7 +83,7 @@ public:
         return true;
     }
 
-    bool OnGossipSelect(Player* player, Creature* creature, uint32 sender, uint32 action) override
+    bool OnGossipSelect(Player* player, Creature* creature, uint32 /*sender*/, uint32 action) override
     {
         player->PlayerTalkClass->ClearMenus();
 
@@ -102,10 +102,10 @@ public:
             
 
             uint8 plyr = player->getRace();
-            float x = player->GetPositionX();
-            float y = player->GetPositionY();
-            float z = player->GetPositionZ();
-            float o = player->GetOrientation();
+            // float x = player->GetPositionX();
+            // float y = player->GetPositionY();
+            // float z = player->GetPositionZ();
+            // float o = player->GetOrientation();
 
             QueryResult result;
 

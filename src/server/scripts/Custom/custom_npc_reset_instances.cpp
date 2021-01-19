@@ -46,7 +46,7 @@ public:
         return true;
     }
 
-    bool OnGossipSelect(Player* player, Creature* creature, uint32 sender, uint32 action) override
+    bool OnGossipSelect(Player* player, Creature* /*creature*/, uint32 sender, uint32 action) override
     {
         player->PlayerTalkClass->ClearMenus();
 
@@ -57,7 +57,6 @@ public:
             switch (action)
             {
             case 2: // Reset Instances
-                uint32 diff = 2;
                 for (uint8 i = 0; i < MAX_DIFFICULTY; ++i)
                 {
                     BoundInstancesMap const& m_boundInstances = sInstanceSaveMgr->PlayerGetBoundInstances(player->GetGUIDLow(), Difficulty(i));

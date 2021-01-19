@@ -678,7 +678,7 @@ class boss_the_lich_king : public CreatureScript
                         if (!event_broadcasted)
                         {
                             //lets get the info we want
-                            Map* map = p->GetMap();
+                            //Map* map = p->GetMap();
                             std::string g_name = "< Sin Hermandad >";
                             std::string boss_name = "The Lich King";
                             std::string IsHeroicMode;

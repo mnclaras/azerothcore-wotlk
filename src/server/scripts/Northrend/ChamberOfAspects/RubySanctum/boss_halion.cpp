@@ -1488,7 +1488,7 @@ public:
             events.ScheduleEvent(EVENT_LIVING_INFERNO_MOVE, 2500);
         }
 
-        void IsSummonedBy(Unit* /*summoner*/)
+        void IsSummonedBy(Unit* /*summoner*/) override
         {
             me->SetInCombatWithZone();
             me->CastSpell(me, SPELL_BLAZING_AURA, true);
@@ -1521,7 +1521,7 @@ public:
                 DoMeleeAttackIfReady();
         }
 
-        void JustDied(Unit* /*killer*/)
+        void JustDied(Unit* /*killer*/) override
         {
             me->DespawnOrUnsummon(1);
         }

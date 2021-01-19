@@ -80,7 +80,7 @@ class CustomLogin : public PlayerScript
 public:
     CustomLogin() : PlayerScript("CustomLogin") { }
 
-    void OnFirstLogin(Player* player)
+    void OnFirstLogin(Player* player) override
     {
 
         // Learn skills
@@ -269,7 +269,7 @@ public:
         // }
     }
 
-    void OnLogin(Player* player)
+    void OnLogin(Player* /*player*/) override
     {
         // If enabled..
         // if (sConfigMgr->GetBoolDefault("CustomLogin.Enable", true))
@@ -300,7 +300,7 @@ public:
         // }
     }
 
-    void OnLogout(Player* player)
+    void OnLogout(Player* /*player*/) override
     {
         // if (sConfigMgr->GetBoolDefault("CustomLogin.Enable", true))
         // {

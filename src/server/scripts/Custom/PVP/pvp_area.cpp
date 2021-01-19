@@ -160,7 +160,7 @@ public:
     }
 
     // When player leaves PvP Island and his GUID was stored as the GUID of a killer, the killcount will be reset
-    void OnUpdateZone(Player* player, uint32 newZone, uint32 newArea)
+    void OnUpdateZone(Player* player, uint32 /*newZone*/, uint32 newArea)
     {
         if (newArea != AREA_PVP_ISLAND || newArea != AREA_WILD_SHORE)
             if (player->GetGUID() == killerGUID)
@@ -370,7 +370,7 @@ public:
     {
         npc_teleport_pvp_islandAI(Creature* creature) : ScriptedAI(creature) { }
 
-        void UpdateAI(const uint32 diff)
+        void UpdateAI(const uint32 /*diff*/)
         {
             if (Player* player = me->SelectNearestPlayer(0.7f))
             {
@@ -398,7 +398,7 @@ public:
     {
         npc_teleport_mallAI(Creature* creature) : ScriptedAI(creature) { }
 
-        void UpdateAI(const uint32 diff)
+        void UpdateAI(const uint32 /*diff*/) override
         {
             if (Player* player = me->SelectNearestPlayer(0.7f))
             {

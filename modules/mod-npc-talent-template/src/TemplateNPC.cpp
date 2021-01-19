@@ -1564,7 +1564,7 @@ public:
         return commandTable;
     }
 
-    static bool HandleCopyCommand(ChatHandler* handler, const char* _args)
+    static bool HandleCopyCommand(ChatHandler* handler, const char* /*_args*/)
     {
         Player* caller = handler->GetSession()->GetPlayer();
         if (!caller)

@@ -167,8 +167,7 @@ public:
 
         if (player->HasItemCount(itemEntry, 1, true))
         {
-            std::string errorText = isSpanish ? ACTION_ERROR_ALREADY_HAVE_TEXT_SPANISH : ACTION_ERROR_ALREADY_HAVE_TEXT_ENGLISH;
-            player->GetSession()->SendNotification(errorText.c_str());
+			player->GetSession()->SendNotification(isSpanish ? ACTION_ERROR_ALREADY_HAVE_TEXT_SPANISH : ACTION_ERROR_ALREADY_HAVE_TEXT_ENGLISH);
             return;
         }
 
@@ -189,8 +188,7 @@ public:
         }
         else
         {
-            std::string errorText = isSpanish ? ACTION_ERROR_NO_SPACE_TEXT_SPANISH : ACTION_ERROR_NO_SPACE_TEXT_ENGLISH;
-            player->GetSession()->SendNotification(errorText.c_str());
+            player->GetSession()->SendNotification(isSpanish ? ACTION_ERROR_NO_SPACE_TEXT_SPANISH : ACTION_ERROR_NO_SPACE_TEXT_ENGLISH);
         }
     }
 

@@ -47,7 +47,6 @@ public:
     void OnBattlegroundEndReward(Battleground* bg, Player* player, TeamId winnerTeamId) override
     {
         TeamId bgTeamId = player->GetBgTeamId();
-        uint32 RewardCount = 0;
 
         if (bg->isArena() && bg->isRated() && bgTeamId == winnerTeamId)
         {

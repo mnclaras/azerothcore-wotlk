@@ -33,7 +33,7 @@ class LearnSpellsOnLevelUp : public PlayerScript
         }
     }
 
-    void OnLevelChanged(Player* player, uint8 oldLevel) override
+    void OnLevelChanged(Player* /*player*/, uint8 /*oldLevel*/) override
     {
         // if (sConfigMgr->GetBoolDefault("LearnSpells.Enable", true))
         // {
