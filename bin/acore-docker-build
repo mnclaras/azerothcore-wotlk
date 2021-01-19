@@ -3,7 +3,7 @@
 # Args
 # $1 blizz blizz-ptr custom custom-blizz
 
-docker build -t acbuild-$1 -f docker/build/Dockerfile .
+DOCKER_BUILDKIT=1 docker build -t acbuild-$1 -f docker/build/Dockerfile .
 
 docker run \
     -v /"$(pwd)"/docker/build/cache-$1:/azerothcore/build \

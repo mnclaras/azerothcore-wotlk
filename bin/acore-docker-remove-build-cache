@@ -10,9 +10,9 @@ else
     rm -rf ./docker/build/cache-$1/deps
     rm -rf ./docker/build/cache-$1/src
     rm -rf ./docker/build/cache-$1/modules
-    rm ./docker/build/cache-$1/*.cmake
-    rm ./docker/build/cache-$1/*.txt
-    rm ./docker/build/cache-$1/*.h
-    rm ./docker/build/cache-$1/*.cpp
-    rm ./docker/build/cache-$1/Makefile
+    rm -f ./docker/build/cache-$1/*.cmake
+    rm -f ./docker/build/cache-$1/*.txt
+    rm -f ./docker/build/cache-$1/*.h
+    rm -f ./docker/build/cache-$1/*.cpp
+    rm -f ./docker/build/cache-$1/Makefile
 fi
