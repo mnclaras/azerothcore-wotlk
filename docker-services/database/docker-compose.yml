@@ -23,7 +23,7 @@ services:
   # Do not delete, it can be useful in a future.
 
   # mysql-cron-backup:
-  #   build: ${MYSQL_CRON_BACKUP_BUILD_CONTEXT:-./docker-mysql-cron-backup}
+  #   build: ${MYSQL_CRON_BACKUP_BUILD_CONTEXT:-./docker-cron-backup}
   #   image: mysql-cron-backup
   #   container_name: mysql-cron-backup
   #   depends_on:
