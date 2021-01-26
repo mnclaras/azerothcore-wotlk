@@ -21,7 +21,7 @@ services:
 
   # Cron task: Backup every day. We are not using it because the backups will be of the VOLUMES, not sql files.
   # Do not delete, it can be useful in a future.
-   
+
   # mysql-cron-backup:
   #   build: ${MYSQL_CRON_BACKUP_BUILD_CONTEXT:-./docker-mysql-cron-backup}
   #   image: mysql-cron-backup
