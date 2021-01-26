@@ -19,6 +19,32 @@ services:
         source: ac-database
         target: /var/lib/mysql
 
+  # Cron task: Backup every day. We are not using it because the backups will be of the VOLUMES, not sql files.
+  # Do not delete, it can be useful in a future.
+
+  # mysql-cron-backup:
+  #   build: ${MYSQL_CRON_BACKUP_BUILD_CONTEXT:-./docker-cron-backup}
+  #   image: mysql-cron-backup
+  #   container_name: mysql-cron-backup
+  #   depends_on:
+  #     - ac-database
+  #   volumes:
+  #     - ${VOLUME_PATH}/backup:/backup
+  #   networks:
+  #     - ac-network
+  #   environment:
+  #     - MYSQL_HOST=ac-database
+  #     - MYSQL_USER=root
+  #     - MYSQL_PASS=${DB_ROOT_PASSWORD:-password}
+  #     - MAX_BACKUPS=7
+  #     - INIT_BACKUP=1
+  #     # Every day at 00:00
+  #     - CRON_TIME=0 0 * * *
+  #     # Make it small
+  #     - GZIP_LEVEL=9
+  #     - TIMEOUT=500s
+  #   restart: unless-stopped
+    
 volumes:
   ac-database:
     name: ac-database
