@@ -28,6 +28,12 @@ enum Quests
     QUEST_WIN_50_BG = 80003,
     QUEST_KILL_100_PLAYERS = 80004,
     QUEST_WIN_10_ARENA_2V3_3V3 = 80007,
+    QUEST_PVP_WIN_3_BG = 80010,
+    QUEST_PVP_WIN_20_BG = 230007,
+    QUEST_PVP_WIN_10_ARENA = 80012,
+    QUEST_PVP_WIN_10_ARENA_2V2_3V3 = 80013,
+    QUEST_PVP_KILL_2000_PLAYERS_IN_BG_ARENA = 80014,
+    QUEST_PVP_WIN_100_BG = 80015,
 };
 
 enum EmblemEntries
@@ -56,6 +62,9 @@ public:
             if (player->GetQuestStatus(QUEST_WIN_50_ARENA) == QUEST_STATUS_INCOMPLETE) // Quest 50 Arena
                 player->KilledMonsterCredit(QUEST_WIN_50_ARENA, 0);
 
+            if (player->GetQuestStatus(QUEST_PVP_WIN_10_ARENA) == QUEST_STATUS_INCOMPLETE) // Quest PVP 10 Arena
+                player->KilledMonsterCredit(QUEST_PVP_WIN_10_ARENA, 0);
+
             uint32 rnd = urand(0, 100);
             switch (bg->GetArenaType())
             {
@@ -65,12 +74,18 @@ public:
                 if (player->GetQuestStatus(QUEST_WIN_10_ARENA_2V3_3V3) == QUEST_STATUS_INCOMPLETE) // Quest 10 Arena 2v2-3v3
                     player->KilledMonsterCredit(QUEST_WIN_10_ARENA_2V3_3V3, 0);
 
+                if (player->GetQuestStatus(QUEST_PVP_WIN_10_ARENA_2V2_3V3) == QUEST_STATUS_INCOMPLETE) // Quest PVP 10 Arena 2v2-3v3
+                    player->KilledMonsterCredit(QUEST_PVP_WIN_10_ARENA_2V2_3V3, 0);       
+
                 break;
             case ARENA_TYPE_3v3: 
                 if (rnd < 25) player->AddItem(GLADIATOR_CHEST_ENTRY, 1); // 25% Gladiator's Chest 3v3
 
                 if (player->GetQuestStatus(QUEST_WIN_10_ARENA_2V3_3V3) == QUEST_STATUS_INCOMPLETE) // Quest 10 Arena 2v2-3v3
                     player->KilledMonsterCredit(QUEST_WIN_10_ARENA_2V3_3V3, 0);
+
+                if (player->GetQuestStatus(QUEST_PVP_WIN_10_ARENA_2V2_3V3) == QUEST_STATUS_INCOMPLETE) // Quest PVP 10 Arena 2v2-3v3
+                    player->KilledMonsterCredit(QUEST_PVP_WIN_10_ARENA_2V2_3V3, 0);
 
                 break;
             case ARENA_TYPE_5v5: 
@@ -86,6 +101,15 @@ public:
 
             if (player->GetQuestStatus(QUEST_WIN_50_BG) == QUEST_STATUS_INCOMPLETE)
                 player->KilledMonsterCredit(QUEST_WIN_50_BG, 0);
+
+            if (player->GetQuestStatus(QUEST_PVP_WIN_3_BG) == QUEST_STATUS_INCOMPLETE)
+                player->KilledMonsterCredit(QUEST_PVP_WIN_3_BG, 0);
+
+            if (player->GetQuestStatus(QUEST_PVP_WIN_20_BG) == QUEST_STATUS_INCOMPLETE)
+                player->KilledMonsterCredit(QUEST_PVP_WIN_20_BG, 0);
+
+            if (player->GetQuestStatus(QUEST_PVP_WIN_100_BG) == QUEST_STATUS_INCOMPLETE)
+                player->KilledMonsterCredit(QUEST_PVP_WIN_100_BG, 0);
 
             // First RDF Win of the day
             if (!player->GetRandomWinner())
@@ -112,6 +136,12 @@ public:
             killer->KilledMonsterCredit(QUEST_KILL_100_PLAYERS, 0);
 
         uint32 rnd = urand(0, 100);
+
+        if (killer->GetMap() && killer->GetMap()->IsBattlegroundOrArena())
+        {
+            if (killer->GetQuestStatus(QUEST_PVP_KILL_2000_PLAYERS_IN_BG_ARENA) == QUEST_STATUS_INCOMPLETE)
+                killer->KilledMonsterCredit(QUEST_PVP_KILL_2000_PLAYERS_IN_BG_ARENA, 0);
+        }
 
         switch (killer->GetZoneId())
         {

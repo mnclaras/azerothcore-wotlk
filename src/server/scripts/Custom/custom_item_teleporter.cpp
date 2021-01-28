@@ -61,6 +61,8 @@ public:
       
         AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Shop Tanaris" : "Shop Tanaris", GOSSIP_SENDER_MAIN, 5000);
         AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Shop Utgarde" : "Shop Utgarde", GOSSIP_SENDER_MAIN, 5001);
+        AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Shop PvP" : "Shop PvP", GOSSIP_SENDER_MAIN, 5002);
+
 
         QueryResult result = CharacterDatabase.PQuery("SELECT AccountId FROM premium WHERE active = 1 AND AccountId = %u", player->GetSession()->GetAccountId());
 
@@ -131,6 +133,7 @@ public:
         case 999:
             AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Shop Tanaris" : "Shop Tanaris", GOSSIP_SENDER_MAIN, 5000);
             AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Shop Utgarde" : "Shop Utgarde", GOSSIP_SENDER_MAIN, 5001);
+            AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Shop PvP" : "Shop PvP", GOSSIP_SENDER_MAIN, 5002);
 
             result = CharacterDatabase.PQuery("SELECT AccountId FROM premium WHERE active = 1 AND AccountId = %u", player->GetSession()->GetAccountId());
             if (result) {
@@ -1026,9 +1029,15 @@ public:
             CloseGossipMenuFor(player);
             break;
 
+        case 5002: // Shop PvP
+            player->TeleportTo(1, -9604.881836f, -2782.960205f, 8.195462f, 0.010976f);
+            CloseGossipMenuFor(player);
+            break;
+
         case 0:
             AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Shop Tanaris" : "Shop Tanaris", GOSSIP_SENDER_MAIN, 5000);
             AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Shop Utgarde" : "Shop Utgarde", GOSSIP_SENDER_MAIN, 5001);
+            AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Shop PvP" : "Shop PvP", GOSSIP_SENDER_MAIN, 5002);
 
             result = CharacterDatabase.PQuery("SELECT AccountId FROM premium WHERE active = 1 AND AccountId = %u", player->GetSession()->GetAccountId());
             if (result) {

@@ -178,5 +178,7 @@ public:
 
 void AddSC_custom_double_emblems_alliance()
 {
-    new custom_double_emblems_alliance();
+    // Deactivated for now
+    // Look also at Gunship, Valithria and Lich King for logic
+    //new custom_double_emblems_alliance();
 }

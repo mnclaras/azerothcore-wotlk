@@ -7622,10 +7622,26 @@ void Player::UpdateArea(uint32 newArea)
     // previously this was in UpdateZone (but after UpdateArea) so nothing will break
 
     // Disable PvP flags in Sanctuary and
-    // Tanaris Island (South Seas - 2317: https://trinitycore.fandom.com/es/wiki/AreaTable.dbc), Shop VIP (3478), Shop Utgarde Keep (3983)
-    if (isSanctuary || (GetAreaId() == 2317) || (GetAreaId() == 3478) || (GetAreaId() == 1120) || (GetAreaId() == 368) || (GetAreaId() == 1227)
-        || (GetAreaId() == 2557) || (GetAreaId() == 3217) || (GetAreaId() == 307) || GetAreaId() == 3983)    // in sanctuary
-    //if (isSanctuary)    // in sanctuary
+    // https://trinitycore.fandom.com/es/wiki/AreaTable.dbc
+
+    bool forceInSanctuary = false;
+    switch (GetAreaId())
+    {
+    case 2317: // Shop Tanaris - South Seas
+    case 3478: // Shop VIP
+    case 1120: // Climb Event - Sardor Isle - Feralas
+    case 368:  // Event - Echo Isles - Durotar
+    case 1227: // Event - Bay of Storms - Azshara
+    case 2557: // Climb Event - Dire Maul - Feralas
+    case 3217: // Climb Event - Dire Maul - Feralas
+    case 307:  // Event - The Overlook Cliffs - The Hinterlands
+    case 3983: // Shop Utgarde Keep
+    case 989:  // Shop Uldum - Tanaris
+        forceInSanctuary = true;
+        break;
+    }
+
+    if (isSanctuary || forceInSanctuary)    // in sanctuary
     {
         SetByteFlag(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_SANCTUARY);
         pvpInfo.IsInNoPvPArea = true;
