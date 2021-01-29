@@ -178,8 +178,8 @@ public:
             switch (action)
             {
             case 2:
-                //player->PrepareQuestMenu(creature->GetGUID());
-                //player->SendPreparedQuest(creature->GetGUID());
+                player->PrepareQuestMenu(creature->GetGUID());
+                player->SendPreparedQuest(creature->GetGUID());
                 CloseGossipMenuFor(player);
                 break;
             case 1:
