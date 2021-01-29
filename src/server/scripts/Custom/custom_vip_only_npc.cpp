@@ -139,6 +139,70 @@ public:
     }
 };
 
+class custom_vip_only_npc_talk : public CreatureScript
+{
+public:
+    custom_vip_only_npc_talk() : CreatureScript("npc_vip_talk") { }
+
+    bool IsSpanishPlayer(Player* player)
+    {
+        LocaleConstant locale = player->GetSession()->GetSessionDbLocaleIndex();
+        return (locale == LOCALE_esES || locale == LOCALE_esMX);
+    }
+
+    bool OnGossipHello(Player* player, Creature* creature) override
+    {
+        if (!player)
+            return false;
+
+        if (IsVipPlayer(player))
+        {
+            AddGossipItemFor(player, GOSSIP_ICON_MONEY_BAG, "VIP", GOSSIP_SENDER_MAIN, 2);
+        }
+        else
+        {
+            AddGossipItemFor(player, GOSSIP_ICON_MONEY_BAG, "BYE", GOSSIP_SENDER_MAIN, 1);
+        }
+        SendGossipMenuFor(player, DEFAULT_MESSAGE, creature->GetGUID());
+        return true;
+    }
+
+    bool OnGossipSelect(Player* player, Creature* creature, uint32 sender, uint32 action) override
+    {
+        ClearGossipMenuFor(player);
+
+        if (sender == GOSSIP_SENDER_MAIN)
+        {
+            bool isSpanish = IsSpanishPlayer(player);
+
+            switch (action)
+            {
+            case 2:
+                //player->PrepareQuestMenu(creature->GetGUID());
+                //player->SendPreparedQuest(creature->GetGUID());
+                CloseGossipMenuFor(player);
+                break;
+            case 1:
+                TeleportToShop(player, isSpanish);
+                CloseGossipMenuFor(player);
+                break;
+            }
+        }
+
+        return true;
+    }
+
+    struct custom_vip_only_npc_talkAI : public ScriptedAI
+    {
+        custom_vip_only_npc_talkAI(Creature* creature) : ScriptedAI(creature) { }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new custom_vip_only_npc_talkAI(creature);
+    }
+};
+
 
 class custom_vip_toc_trinkets_npc : public CreatureScript
 {
@@ -329,4 +393,5 @@ void AddSC_custom_vip_only_npc()
 {
     new custom_vip_only_npc();
     new custom_vip_toc_trinkets_npc();
+    new custom_vip_only_npc_talk();
 }
