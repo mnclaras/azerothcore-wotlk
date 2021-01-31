@@ -13039,6 +13039,11 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
             else if (shirtEntry == 100058) SetObjectScale(0.4f);
             else if (shirtEntry == 100059) SetObjectScale(1.5f);
             else if (shirtEntry == 100060) SetObjectScale(2.0f);
+            else if (shirtEntry == 100061) SetObjectScale(0.65f);
+            else if (shirtEntry == 100062) SetObjectScale(0.45f);
+            else if (shirtEntry == 100063) SetObjectScale(0.45f);
+            else if (shirtEntry == 100064) SetObjectScale(0.55f);
+            else if (shirtEntry == 100065) SetObjectScale(0.55f);
             
 
             else SetObjectScale(1.0f);
@@ -13115,7 +13120,11 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
             case 100058: SetDisplayId(13644); break;    // Grinch Evento Navidad
             case 100059: SetDisplayId(13730); break;    // Snowman Evento Navidad
             case 100060: SetDisplayId(15807); break;    // Ayudante Evento Navidad
-
+            case 100061: SetDisplayId(21576); break;    // Teron
+            case 100062: SetDisplayId(21418); break;    // Veras
+            case 100063: SetDisplayId(20514); break;    // Leotheras
+            case 100064: SetDisplayId(30858); break;    // Valaran
+            case 100065: SetDisplayId(30857); break;    // Keleseh           
 
             case 100100: SetDisplayId(21267); break;    // Fel Orc
             }
