@@ -67,7 +67,7 @@ public:
                 if (!target || target->IsBeingTeleported() || !target->IsAlive())
                     return;
 
-                if (AccountMgr::IsPlayerAccount(target->GetSession()->GetSecurity())
+                if (!AccountMgr::IsAdminAccount(target->GetSession()->GetSecurity())
                     && !eventWinners.firstGUID)
                 {
                     eventWinners.firstGUID = target->GetGUID();
@@ -128,7 +128,7 @@ public:
                 if (!target || target->IsBeingTeleported() || !target->IsAlive())
                     return;
 
-                if (AccountMgr::IsPlayerAccount(target->GetSession()->GetSecurity())
+                if (!AccountMgr::IsAdminAccount(target->GetSession()->GetSecurity())
                     && (eventWinners.firstGUID && eventWinners.firstGUID != target->GetGUID()))
                 {
                     eventWinners.secondGUID = target->GetGUID();
@@ -189,7 +189,7 @@ public:
                 if (!target || target->IsBeingTeleported() || !target->IsAlive())
                     return;
 
-                if (AccountMgr::IsPlayerAccount(target->GetSession()->GetSecurity())
+                if (!AccountMgr::IsAdminAccount(target->GetSession()->GetSecurity())
                     && (eventWinners.firstGUID && eventWinners.firstGUID != target->GetGUID())
                     && (eventWinners.secondGUID && eventWinners.secondGUID != target->GetGUID()))
                 {
