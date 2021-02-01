@@ -35,6 +35,7 @@
 #include "Group.h"
 #include "GroupMgr.h"
 #include "GameObjectAI.h"
+#include "Player.h"
 
 
 struct PvPIslandInfo

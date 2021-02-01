@@ -1213,6 +1213,7 @@ void AddSC_custom_christmas_event();
 void AddSC_custom_double_emblems_alliance();
 void AddSC_Arena_AntiDraw();
 void AddSC_gurubashi_chest_event();
+void AddSC_event_automation();
 
 void AddCustomScripts()
 {
@@ -1240,5 +1241,6 @@ void AddCustomScripts()
     AddSC_custom_double_emblems_alliance();
 	AddSC_Arena_AntiDraw();
     AddSC_gurubashi_chest_event();
+    AddSC_event_automation();
 #endif
 }
