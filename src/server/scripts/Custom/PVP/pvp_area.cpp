@@ -235,12 +235,15 @@ public:
 
                     killer->AddItem(EMBLEM_OF_TRIUMPH_ENTRY, 3);
 
-                    for (GroupReference* itr = group->GetFirstMember(); itr != nullptr; itr = itr->next())
-                        if (Player* member = itr->GetSource())
-                            if (member->IsInMap(killer) && killer->GetGUID() != member->GetGUID())
-                            {
-                                member->AddItem(EMBLEM_OF_TRIUMPH_ENTRY, 3);
-                            }
+                    if (group)
+                    {
+                        for (GroupReference* itr = group->GetFirstMember(); itr != nullptr; itr = itr->next())
+                            if (Player* member = itr->GetSource())
+                                if (member->IsInMap(killer) && killer->GetGUID() != member->GetGUID())
+                                {
+                                    member->AddItem(EMBLEM_OF_TRIUMPH_ENTRY, 3);
+                                }
+                    }
                 }
 
                 KillingStreak[killerGUID].killCount++; // Increment kill count by one on every kill
