@@ -238,6 +238,7 @@ class boss_lady_deathwhisper : public CreatureScript
                     darnavan->DespawnOrUnsummon();
                 _darnavanGUID = 0;
                 _waveCounter = 0;
+                _nextVengefulShadeTargetGUID.clear();
                 _Reset();
                 me->SetPower(POWER_MANA, me->GetMaxPower(POWER_MANA));
                 events.SetPhase(PHASE_ONE);
@@ -464,16 +465,20 @@ class boss_lady_deathwhisper : public CreatureScript
                 Unit* target = nullptr;
                 if (summon->GetEntry() == NPC_VENGEFUL_SHADE)
                 {
-                    float minrange = 250.0f;
-                    Map::PlayerList const& pl = me->GetMap()->GetPlayers();
-                    for (Map::PlayerList::const_iterator itr = pl.begin(); itr != pl.end(); ++itr)
-                        if (Player* p = itr->GetSource())
-                            if (p != me->GetVictim() && summon->GetExactDist(p) < minrange && me->CanCreatureAttack(p) && me->_CanDetectFeignDeathOf(p))
-                            {
-                                target = p;
-                                minrange = summon->GetExactDist(p);
-                            }
-
+                    //float minrange = 250.0f;
+                    //Map::PlayerList const& pl = me->GetMap()->GetPlayers();
+                    //for (Map::PlayerList::const_iterator itr = pl.begin(); itr != pl.end(); ++itr)
+                    //    if (Player* p = itr->GetSource())
+                    //        if (p != me->GetVictim() && summon->GetExactDist(p) < minrange && me->CanCreatureAttack(p) && me->_CanDetectFeignDeathOf(p))
+                    //        {
+                    //            target = p;
+                    //            minrange = summon->GetExactDist(p);
+                    //        }
+                    if (_nextVengefulShadeTargetGUID.empty())
+                        return;
+                    target = _nextVengefulShadeTargetGUID.front();
+                    summon->AI()->SetGUID(target->GetGUID());
+                    _nextVengefulShadeTargetGUID.pop_front();
 
                     summon->ToTempSummon()->DespawnOrUnsummon(30000);
                 }
@@ -646,12 +651,15 @@ class boss_lady_deathwhisper : public CreatureScript
                     const int32 val = 100;
                     target->CastCustomSpell(target, 73261, &val, nullptr, nullptr, true); // scale aura, +100% size
                 }
+                else if (spell->Id == SPELL_SUMMON_SHADE)
+                    _nextVengefulShadeTargetGUID.push_back(target);
             }
 
         private:
             bool _introDone;
             uint64 _darnavanGUID;
             uint32 _waveCounter;
+            std::list<Unit*> _nextVengefulShadeTargetGUID;
         };
 
         CreatureAI* GetAI(Creature* creature) const override
