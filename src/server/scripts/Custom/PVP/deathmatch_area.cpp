@@ -247,24 +247,34 @@ public:
     {
         bool isSpanish = IsSpanishPlayer(player);
 
-        AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Ir a la zona del evento." : "Go to event zone.", GOSSIP_SENDER_INFO, 2000,
+        AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, "---- TELEPORT ----", GOSSIP_SENDER_MAIN, 5000);
+        AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Ir a la zona del evento." : "Go to event zone.", GOSSIP_SENDER_MAIN, 2000,
             isSpanish ? "Seguro?" : "Are you sure?", 0, false);
+        AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, "---- TELEPORT ----", GOSSIP_SENDER_MAIN, 5000);
         SendGossipMenuFor(player, DEFAULT_MESSAGE, creature->GetGUID());
         return true;
     }
 
-    bool OnGossipSelect(Player* player, Creature* /*creature*/, uint32 sender, uint32 action) override
+    bool OnGossipSelect(Player* player, Creature* creature, uint32 sender, uint32 action) override
     {
-        if (sender == GOSSIP_SENDER_INFO)
+        if (sender == GOSSIP_SENDER_MAIN)
         {
             player->PlayerTalkClass->ClearMenus();
             switch (action)
             {
             case 2000:
-                player->TeleportTo(MAP_DEATHMATCH, -106.8676f, -104.6085f, -133.6136f, 0.0157f);
-                CloseGossipMenuFor(player);
+                player->TeleportTo(MAP_DEATHMATCH, -106.8676f, -104.6085f, -133.6136f, 0.0157f);               
+                break;
+            case 5000:
+                // return to OnGossipHello menu, otherwise it will freeze every menu
+                OnGossipHello(player, creature);
+                break;
+            default:
+                // return to OnGossipHello menu, otherwise it will freeze every menu
+                OnGossipHello(player, creature);
                 break;
             }
+            CloseGossipMenuFor(player);
             return true;
         }
         return false;
