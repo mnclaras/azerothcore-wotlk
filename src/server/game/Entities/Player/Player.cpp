@@ -7575,7 +7575,8 @@ void Player::UpdateArea(uint32 newArea)
 
     AreaTableEntry const* area = sAreaTableStore.LookupEntry(newArea);
     bool oldFFAPvPArea = pvpInfo.IsInFFAPvPArea;
-    pvpInfo.IsInFFAPvPArea = (area && (area->flags & AREA_FLAG_ARENA)) || (GetAreaId() == 297);
+    // Isla PVP o Evento Deathmatch
+    pvpInfo.IsInFFAPvPArea = (area && (area->flags & AREA_FLAG_ARENA)) || (GetAreaId() == 297) || (GetAreaId() == 3817);
     UpdatePvPState(true);
 
     // xinef: check if we were in ffa arena and we left
@@ -22582,7 +22583,7 @@ void Player::UpdatePvPState(bool onlyFFA)
                 (*itr)->SetByteValue(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_FFA_PVP);
         }
     }
-    else if (IsFFAPvP() || (GetAreaId() == 297))
+    else if (IsFFAPvP() || (GetAreaId() == 297) || (GetAreaId() == 3817))
     {
         RemoveByteFlag(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_FFA_PVP);
         for (ControlSet::iterator itr = m_Controlled.begin(); itr != m_Controlled.end(); ++itr)

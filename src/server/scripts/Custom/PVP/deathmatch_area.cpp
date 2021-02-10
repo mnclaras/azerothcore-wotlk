@@ -147,17 +147,17 @@ public:
     }
 
 
-    void OnUpdateZone(Player* player, uint32 /*newZone*/, uint32 newArea)
+    void OnUpdateArea(Player* player, uint32 oldArea, uint32 newArea)
     {
-        if (newArea == AREA_DEATHMATCH)
+        if (sGameEventMgr->IsActiveEvent(GAME_EVENT_DEATHMATCH))
         {
-            Group* group = player->GetGroup();
-            if (group) {
-                group->RemoveMember(player->GetGUID());
-            }
-
-            if (sGameEventMgr->IsActiveEvent(GAME_EVENT_DEATHMATCH))
+            if (oldArea != AREA_DEATHMATCH && newArea == AREA_DEATHMATCH)
             {
+                Group* group = player->GetGroup();
+                if (group) {
+                    group->RemoveMember(player->GetGUID());
+                }
+
                 if (!player || player->IsBeingTeleported() || !player->IsAlive())
                     return;
 
@@ -178,7 +178,7 @@ public:
                 // Temporary basic cooldown reset
                 player->RemoveArenaSpellCooldowns(true);
             }
-        }
+        }   
     }
 
     void OnPVPKill(Player* killer, Player* victim)
