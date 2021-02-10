@@ -34,6 +34,9 @@ enum Quests
     QUEST_PVP_WIN_10_ARENA_2V2_3V3 = 80013,
     QUEST_PVP_KILL_2000_PLAYERS_IN_BG_ARENA = 80014,
     QUEST_PVP_WIN_100_BG = 80015,
+    QUEST_DEATHMATCH_AREA_BEGIN = 80016,
+    QUEST_DEATHMATCH_AREA_END = 80025,
+    QUEST_DEATHMATCH_AREA_NPC_CREDIT = 80016
 };
 
 enum EmblemEntries
@@ -43,6 +46,15 @@ enum EmblemEntries
     ETHEREAL_CREDIT_ENTRY = 38186,
     AMNESIA_COIN_ENTRY = 32569,
     GLADIATOR_CHEST_ENTRY = 32544
+};
+
+enum ArenaAndBgRewardVariables
+{
+    AREA_DEATHMATCH = 3817,
+    MAP_DEATHMATCH = 13,
+    MAP_TANARIS = 1,
+
+    GAME_EVENT_DEATHMATCH = 000000000
 };
 
 class ArenaAndBgRewards : public BGScript
@@ -157,6 +169,15 @@ public:
             break;
         default:
             break;
+        }
+
+        // Deathmatch area quests
+        if (killer->GetAreaId() == AREA_DEATHMATCH && sGameEventMgr->IsActiveEvent(GAME_EVENT_DEATHMATCH)) // Testing with event active
+        { 
+            for (uint32 questId = QUEST_DEATHMATCH_AREA_BEGIN; questId <= QUEST_DEATHMATCH_AREA_END; questId++) {
+                if (killer->GetQuestStatus(questId) == QUEST_STATUS_INCOMPLETE)
+                    killer->KilledMonsterCredit(QUEST_DEATHMATCH_AREA_NPC_CREDIT, 0);
+            }
         }
     }
 
