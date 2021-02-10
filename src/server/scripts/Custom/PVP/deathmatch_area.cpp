@@ -93,6 +93,9 @@ public:
     {
         _victim->ResurrectPlayer(1.0f, false);
 
+        // Temporary basic cooldown reset
+        _victim->RemoveArenaSpellCooldowns(true);
+
         // Spawn on random point
         int i = urand(0, MAX_PLAYER_SPAWN_POINTS - 1);
         _victim->TeleportTo(MAP_DEATHMATCH,
@@ -107,8 +110,7 @@ public:
         if (_victim->getClass() == CLASS_DRUID)
             _victim->SetPower(POWER_MANA, _victim->GetMaxPower(POWER_MANA));
 
-        // Temporary basic cooldown reset
-        _victim->RemoveArenaSpellCooldowns(true);
+       
 
         return true;
     }
@@ -161,6 +163,9 @@ public:
                 if (!player || player->IsBeingTeleported() || !player->IsAlive())
                     return;
 
+                // Temporary basic cooldown reset
+                player->RemoveArenaSpellCooldowns(true);
+
                 int i = urand(0, MAX_PLAYER_SPAWN_POINTS - 1);
                 player->TeleportTo(MAP_DEATHMATCH,
                     playerSpawnPoint[i].GetPositionX(),
@@ -174,9 +179,6 @@ public:
                 player->ResetAllPowers();
                 if (player->getClass() == CLASS_DRUID)
                     player->SetPower(POWER_MANA, player->GetMaxPower(POWER_MANA));
-
-                // Temporary basic cooldown reset
-                player->RemoveArenaSpellCooldowns(true);
             }
         }   
     }

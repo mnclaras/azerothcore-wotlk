@@ -54,7 +54,7 @@ enum ArenaAndBgRewardVariables
     MAP_DEATHMATCH = 13,
     MAP_TANARIS = 1,
 
-    GAME_EVENT_DEATHMATCH = 000000000
+    GAME_EVENT_DEATHMATCH = 77
 };
 
 class ArenaAndBgRewards : public BGScript
