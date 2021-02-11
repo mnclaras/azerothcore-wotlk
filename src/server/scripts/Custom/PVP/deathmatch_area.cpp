@@ -54,33 +54,53 @@ enum DeathmatchAreaVariables
     DEFAULT_MESSAGE = 907
 };
 
-const int MAX_PLAYER_SPAWN_POINTS = 4;
+const int MAX_PLAYER_SPAWN_POINTS = 43;
 static const Position playerSpawnPoint[MAX_PLAYER_SPAWN_POINTS] =
 {
-    { -106.8676f, -104.6085f, -133.6136f, 0.0157f },
-    { -121.4688f, 114.4886f, -135.2685f, 6.2714f },
-    { 98.1109f, 113.5380f, -134.3560f, 0.0000f },
-    { 112.9034f, -115.2211f, -132.3255f, 4.8027f },
-   /* {f, f, f, f},
-    {f, f, f, f},
-    {f, f, f, f},
-    {f, f, f, f},
-    {f, f, f, f},
-    {f, f, f, f},
-    {f, f, f, f},
-    {f, f, f, f},
-    {f, f, f, f},
-    {f, f, f, f},
-    {f, f, f, f},
-    {f, f, f, f},
-    {f, f, f, f},
-    {f, f, f, f},
-    {f, f, f, f},
-    {f, f, f, f},*/
+    { -133.3434,	-134.3434,	-130.3434f,	0.7696f },
+    { -132.3434f,	-71.3434f,	-130.3434f,	6.2635f },
+    { -131.3434f,	-19.3434f,	-130.3434f,	6.2674f },
+    { -130.3434f,	40.3434f,	-130.3434f,	6.2674f },
+    { -130.3434f,	86.3434f,	-130.3434f,	6.2674f },
+    { -130.3434f,	129.3434f,	-130.3434f,	6.2674f },
+    { -86.3434f,	135.3434f,	-130.3434f,	4.6417f },
+    { -23.3434f,	130.3434f,	-130.3434f,	4.6417f },
+    { 32.3434f,		130.3434f,	-130.3434f,	4.6417f },
+    { 86.3434f,		130.3434f,	-130.3434f,	4.6417f },
+    { 128.3434f,	130.3434f,	-130.3434f,	4.0809f },
+    { 133.3434f,	92.3434f,	-130.3434f,	3.1149f },
+    { 133.3434f,	36.3434f,	-130.3434f,	3.1149f },
+    { 133.3434f,	-25.3434f,	-130.3434f,	3.1149f },
+    { 133.3434f,	-88.3434f,	-130.3434f,	3.1149f },
+    { 130.3434f,	-132.3434f,	-130.3434f,	2.3805f },
+    { 94.3434f,		-136.3434f,	-130.3434f,	1.5598f },
+    { 51.3434f,		-136.3434f,	-130.3434f,	1.5598f },
+    { -10.3434f,	-136.3434f,	-130.3434f,	1.5598f },
+    { -76.3434f,	-136.3434f,	-130.3434f,	1.5598f },
+    { -102.3434f,	-104.3434f,	-130.3434f,	0.7744f },
+    { -118.3434f,	-45.3434f,	-130.3434f,	6.2682f },
+    { -117.3434f,	11.3434f,	-130.3434f,	6.2682f },
+    { -118.3434f,	70.3434f,	-130.3434f,	0.0086f },
+    { -70.3434f,	113.3434f,	-130.3434f,	4.7171f },
+    { -12.3434f,	114.3434f,	-130.3434f,	4.7171f },
+    { 31.3434f,		113.3434f,	-130.3434f,	4.7171f },
+    { 88.3434f,		113.3434f,	-130.3434f,	4.7171f },
+    { 114.3434f,	53.3434f,	-130.3434f,	3.1306f },
+    { 115.3434f,	5.3434f,	-130.3434f,	3.1306f },
+    { 116.3434f,	-43.3434f,	-130.3434f,	3.1306f },
+    { 114.3434f,	-94.3434f,	-130.3434f,	3.1306f },
+    { 67.3434f,		-119.3434f,	-130.3434f,	1.5928f },
+    { 25.3434f,		-119.3434f,	-130.3434f,	1.5928f },
+    { -22.3434f,	-119.3434f,	-130.3434f,	1.5928f },
+    { -73.3434f,	-119.3434f,	-130.3434f,	1.5928f },
+    { -115.3434f,	-119.3434f,	-130.3434f,	0.9527f },
+    { -42.3434f,	1.3434f,	-130.3434f,	1.8527f },
+    { 32.3434f,		0.9834f,	-130.3434f,	3.7527f },
+    { 34.3434f,		-63.3434f,	-130.3434f,	2.5527f },
+    { -35.3434f,	-68.3434f,	-130.3434f,	0.7527f },
+    { 11.3434f,		-94.3434f,	-130.3434f,	1.5927f },
+    { -6.3434f,		14.3434f,	-130.3434f,	4.7527f },
 };
-
-//static const Position startingPos = { f, f, f, f};
-//_victim->TeleportTo(MAP_DEATHMATCH, startingPos.GetPositionX(), startingPos.GetPositionY(), startingPos.GetPositionZ(), startingPos.GetOrientation());
 
 static const Position shop = { -11823.9f, -4779.58f, 5.9206f, 1.1357f };
 
@@ -109,8 +129,6 @@ public:
         _victim->ResetAllPowers();
         if (_victim->getClass() == CLASS_DRUID)
             _victim->SetPower(POWER_MANA, _victim->GetMaxPower(POWER_MANA));
-
-       
 
         return true;
     }
@@ -147,7 +165,6 @@ public:
         LocaleConstant locale = player->GetSession()->GetSessionDbLocaleIndex();
         return (locale == LOCALE_esES || locale == LOCALE_esMX);
     }
-
 
     void OnUpdateArea(Player* player, uint32 oldArea, uint32 newArea)
     {
@@ -290,68 +307,6 @@ public:
         return new deathmatch_event_teleporterAI(creature);
     }
 };
-
-//class npc_teleport_pvp_island : public CreatureScript
-//{
-//public:
-//    npc_teleport_pvp_island() : CreatureScript("npc_teleport_pvp_island") { }
-//
-//    struct npc_teleport_pvp_islandAI : public ScriptedAI
-//    {
-//        npc_teleport_pvp_islandAI(Creature* creature) : ScriptedAI(creature) { }
-//
-//        void UpdateAI(const uint32 /*diff*/)
-//        {
-//            if (Player* player = me->SelectNearestPlayer(0.7f))
-//            {
-//                if (!player || player->IsBeingTeleported() || !player->IsAlive())
-//                    return;
-//                
-//                int i = urand(0, MAX_PLAYER_SPAWN_POINTS - 1);
-//                player->TeleportTo(0, playerSpawnPoint[i].GetPositionX(), playerSpawnPoint[i].GetPositionY(), playerSpawnPoint[i].GetPositionZ(), playerSpawnPoint[i].GetOrientation());
-//            }
-//        }
-//    };
-//
-//    CreatureAI* GetAI(Creature* creature) const
-//    {
-//        return new npc_teleport_pvp_islandAI(creature);
-//    }
-//};
-//
-//class npc_teleport_mall : public CreatureScript
-//{
-//public:
-//    npc_teleport_mall() : CreatureScript("npc_teleport_mall") { }
-//
-//    struct npc_teleport_mallAI : public ScriptedAI
-//    {
-//        npc_teleport_mallAI(Creature* creature) : ScriptedAI(creature) { }
-//
-//        void UpdateAI(const uint32 /*diff*/) override
-//        {
-//            if (Player* player = me->SelectNearestPlayer(0.7f))
-//            {
-//                if (!player || player->IsBeingTeleported() || !player->IsAlive())
-//                    return;
-//
-//                // We make it spam this message when player is on-top of the teleporter
-//                if (player->IsInCombat())
-//                {
-//                    player->GetSession()->SendNotification(STRING_IN_COMBAT);
-//                    return;
-//                }
-//                player->GetSession()->SendNotification("You left the warzone.");
-//                player->TeleportTo(1, -11823.9, -4779.58, 5.9206, 1.1357);
-//            }
-//        }
-//    };
-//
-//    CreatureAI* GetAI(Creature* creature) const
-//    {
-//        return new npc_teleport_mallAI(creature);
-//    }
-//};
 
 void AddSC_deathmatch_area()
 {
