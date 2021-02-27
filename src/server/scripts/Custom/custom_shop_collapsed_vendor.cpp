@@ -74,7 +74,21 @@ enum Spells
     CREATURE_VENDOR_PVP_PVEGEARBYARENA_271_277_OFFSET_RINGS_NECKS           = 604009,
     CREATURE_VENDOR_PVP_PVEGEARBYARENA_271_277_OFFSET_CLOAKS                = 604010,
     CREATURE_VENDOR_PVP_PVEGEARBYARENA_271_277_OFFTIER                      = 604011,
-      
+
+    CREATURE_VENDOR_PVE_PVEGEARBYAMNESIA_251_TO_284_TRINKETS                = 240000,
+    CREATURE_VENDOR_PVE_PVEGEARBYAMNESIA_251_TO_284_RINGS                   = 240001,
+    CREATURE_VENDOR_PVE_PVEGEARBYAMNESIA_251_TO_284_NECKS                   = 240002,
+    CREATURE_VENDOR_PVE_PVEGEARBYAMNESIA_251_TO_284_CLOAKS                  = 240003,
+    CREATURE_VENDOR_PVE_PVEGEARBYAMNESIA_251_TO_284_BRACERS                 = 240004,
+    CREATURE_VENDOR_PVE_PVEGEARBYAMNESIA_251_TO_284_WAISTS                  = 240005,
+    CREATURE_VENDOR_PVE_PVEGEARBYAMNESIA_251_TO_284_BOOTS                   = 240006,
+    CREATURE_VENDOR_PVE_PVEGEARBYAMNESIA_251_TO_284_1HWEAPONS               = 240007,
+    CREATURE_VENDOR_PVE_PVEGEARBYAMNESIA_251_TO_284_2HWEAPONS               = 240008,
+    CREATURE_VENDOR_PVE_PVEGEARBYAMNESIA_251_TO_284_RWEAPONS                = 240009,
+    CREATURE_VENDOR_PVE_PVEGEARBYAMNESIA_251_TO_284_OFFHANDS                = 240010,
+    CREATURE_VENDOR_PVE_PVEGEARBYAMNESIA_251_TO_284_SHIELDS                 = 240011,
+    CREATURE_VENDOR_PVE_PVEGEARBYAMNESIA_251_TO_284_OFFTIER                 = 240013,
+
     CREATURE_VENDOR_PVE_T9_HORDE        = 601632,
     CREATURE_VENDOR_PVE_T9_ALLIANCE     = 601585,
     CREATURE_VENDOR_PVE_OFFSET          = 100008,          
@@ -357,6 +371,7 @@ public:
         ShowOption(player, isSpanish ? "[Escudos]" : "[Shields]", 13);
         ShowOption(player, isSpanish ? "[Reliquias]" : "[Relics]", 14);
         ShowOption(player, isSpanish ? "[Abalorios]" : "[Trinkets]", 15);
+        ShowOption(player, isSpanish ? "[251-284] Equipo PVE por AmnesiaCoins" : "[251-284] PVE Gear by AmnesiaCoins", 100);
 
         SendGossipMenuFor(player, DEFAULT_MESSAGE, creature->GetGUID());
         return true;
@@ -385,6 +400,42 @@ public:
         case GOSSIP_ACTION_INFO_DEF + 13: ShowVendor(player, creature, CREATURE_VENDOR_PVE_SHIELDS); break;
         case GOSSIP_ACTION_INFO_DEF + 14: ShowVendor(player, creature, CREATURE_VENDOR_PVE_RELICS); break;
         case GOSSIP_ACTION_INFO_DEF + 15: ShowVendor(player, creature, CREATURE_VENDOR_PVE_TRINKETS); break;
+
+        case GOSSIP_ACTION_INFO_DEF + 16: ShowVendor(player, creature, CREATURE_VENDOR_PVE_PVEGEARBYAMNESIA_251_TO_284_OFFTIER); break;
+        case GOSSIP_ACTION_INFO_DEF + 17: ShowVendor(player, creature, CREATURE_VENDOR_PVE_PVEGEARBYAMNESIA_251_TO_284_RINGS); break;
+        case GOSSIP_ACTION_INFO_DEF + 18: ShowVendor(player, creature, CREATURE_VENDOR_PVE_PVEGEARBYAMNESIA_251_TO_284_NECKS); break;
+        case GOSSIP_ACTION_INFO_DEF + 19: ShowVendor(player, creature, CREATURE_VENDOR_PVE_PVEGEARBYAMNESIA_251_TO_284_CLOAKS); break;
+        case GOSSIP_ACTION_INFO_DEF + 20: ShowVendor(player, creature, CREATURE_VENDOR_PVE_PVEGEARBYAMNESIA_251_TO_284_BRACERS); break;
+        case GOSSIP_ACTION_INFO_DEF + 21: ShowVendor(player, creature, CREATURE_VENDOR_PVE_PVEGEARBYAMNESIA_251_TO_284_WAISTS); break;
+        case GOSSIP_ACTION_INFO_DEF + 22: ShowVendor(player, creature, CREATURE_VENDOR_PVE_PVEGEARBYAMNESIA_251_TO_284_BOOTS); break;
+        case GOSSIP_ACTION_INFO_DEF + 23: ShowVendor(player, creature, CREATURE_VENDOR_PVE_PVEGEARBYAMNESIA_251_TO_284_1HWEAPONS); break;
+        case GOSSIP_ACTION_INFO_DEF + 24: ShowVendor(player, creature, CREATURE_VENDOR_PVE_PVEGEARBYAMNESIA_251_TO_284_2HWEAPONS); break;
+        case GOSSIP_ACTION_INFO_DEF + 25: ShowVendor(player, creature, CREATURE_VENDOR_PVE_PVEGEARBYAMNESIA_251_TO_284_RWEAPONS); break;
+        case GOSSIP_ACTION_INFO_DEF + 26: ShowVendor(player, creature, CREATURE_VENDOR_PVE_PVEGEARBYAMNESIA_251_TO_284_OFFHANDS); break;
+        case GOSSIP_ACTION_INFO_DEF + 27: ShowVendor(player, creature, CREATURE_VENDOR_PVE_PVEGEARBYAMNESIA_251_TO_284_SHIELDS); break;
+        case GOSSIP_ACTION_INFO_DEF + 30: ShowVendor(player, creature, CREATURE_VENDOR_PVE_PVEGEARBYAMNESIA_251_TO_284_TRINKETS); break;
+
+        case GOSSIP_ACTION_INFO_DEF + 100:
+        {
+            bool isSpanish = IsSpanishPlayer(player);
+            ClearGossipMenuFor(player);
+            ShowOption(player, isSpanish ? "[Off-Tier]" : "[Off-Tier]", 16);
+            ShowOption(player, isSpanish ? "[Anillos]" : "[Rings]", 17);
+            ShowOption(player, isSpanish ? "[Collares]" : "[Necks]", 18);
+            ShowOption(player, isSpanish ? "[Capas]" : "[Cloaks]", 19);
+            ShowOption(player, isSpanish ? "[Brazales]" : "[Bracers]", 20);
+            ShowOption(player, isSpanish ? "[Cinturones]" : "[Belts]", 21);
+            ShowOption(player, isSpanish ? "[Botas]" : "[Boots]", 22);
+            ShowOption(player, isSpanish ? "[Armas 1 Mano]" : "[1 Hand Weapons]", 23);
+            ShowOption(player, isSpanish ? "[Armas 2 Manos]" : "[2 Hand Weapons]", 24);
+            ShowOption(player, isSpanish ? "[Armas a distancia]" : "[Ranged Weapons]", 25);
+            ShowOption(player, isSpanish ? "[Mano izquierda]" : "[Offhands]", 26);
+            ShowOption(player, isSpanish ? "[Escudos]" : "[Shields]", 27);
+            ShowOption(player, isSpanish ? "[Abalorios]" : "[Trinkets]", 28);
+            AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Inicio" : "Home Page", GOSSIP_SENDER_MAIN, 101);
+            SendGossipMenuFor(player, DEFAULT_MESSAGE, creature->GetGUID());
+            break;
+        }
         default: OnGossipHello(player, creature); break;
         }
 
