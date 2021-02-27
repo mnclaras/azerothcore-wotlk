@@ -1208,6 +1208,22 @@ void WorldSession::HandlePlayerLoginFromDB(LoginQueryHolder* holder)
     if (pCurrChar->HasAtLoginFlag(AT_LOGIN_FIRST))
     {
         pCurrChar->RemoveAtLoginFlag(AT_LOGIN_FIRST);
+
+        if (pCurrChar->HasAtLoginFlag(AT_LOGIN_RENAME))
+        {
+            std::string nameUpdate_AT_LOGIN_UPDATE_NAME;
+            uint32 accID_Update_AT_LOGIN_UPDATE_NAME;
+            QueryResult result = CharacterDatabase.PQuery("SELECT name,account FROM characters WHERE `guid` = '%u'", pCurrChar->GetGUIDLow());
+            if (result)
+            {
+                nameUpdate_AT_LOGIN_UPDATE_NAME = (*result)[0].GetString();
+                accID_Update_AT_LOGIN_UPDATE_NAME = (*result)[1].GetUInt32();
+                sWorld->UpdateGlobalPlayerData(pCurrChar->GetGUIDLow(), PLAYER_UPDATE_DATA_NAME, nameUpdate_AT_LOGIN_UPDATE_NAME, pCurrChar->getLevel(), pCurrChar->getGender(), pCurrChar->getRace(), pCurrChar->getClass());
+                sWorld->AddGlobalPlayerData(pCurrChar->GetGUIDLow(), accID_Update_AT_LOGIN_UPDATE_NAME, nameUpdate_AT_LOGIN_UPDATE_NAME, pCurrChar->getGender(), pCurrChar->getRace(), pCurrChar->getClass(), pCurrChar->getLevel(), 0, 0);
+            }
+            pCurrChar->RemoveAtLoginFlag(AT_LOGIN_RENAME);
+        }
+
         sScriptMgr->OnFirstLogin(pCurrChar);
     }
 
