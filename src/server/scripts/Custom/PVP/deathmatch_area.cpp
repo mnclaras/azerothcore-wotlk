@@ -111,7 +111,14 @@ public:
 
     bool Execute(uint64 /*time*/, uint32 /*diff*/)
     {
-        _victim->ResurrectPlayer(1.0f, false);
+        while (_victim->IsFlying() || _victim->IsFalling()) {
+            std::this_thread::sleep_for(Microseconds(100));
+        }
+
+        if (!_victim->IsAlive())
+        {
+            _victim->ResurrectPlayer(1.0f, false);
+        }
 
         // Temporary basic cooldown reset
         _victim->RemoveArenaSpellCooldowns(true);
@@ -129,6 +136,10 @@ public:
         _victim->ResetAllPowers();
         if (_victim->getClass() == CLASS_DRUID)
             _victim->SetPower(POWER_MANA, _victim->GetMaxPower(POWER_MANA));
+
+        // This will cause warlocks and hunters to have their last-used pet to be re-summoned
+        if (_victim->getClass() == CLASS_HUNTER || _victim->getClass() == CLASS_WARLOCK)
+            _victim->m_Events.AddEvent(new deathmatch_resurrect_event_pet(_victim), _victim->m_Events.CalculateTime(1000));
 
         return true;
     }
@@ -233,8 +244,8 @@ public:
             {
                 victim->m_Events.AddEvent(new deathmatch_resurrect_event(victim), victim->m_Events.CalculateTime(1000));
 
-                if (victim->getClass() == CLASS_HUNTER || victim->getClass() == CLASS_WARLOCK)
-                    victim->m_Events.AddEvent(new deathmatch_resurrect_event_pet(victim), victim->m_Events.CalculateTime(2000));
+                //if (victim->getClass() == CLASS_HUNTER || victim->getClass() == CLASS_WARLOCK)
+                //    victim->m_Events.AddEvent(new deathmatch_resurrect_event_pet(victim), victim->m_Events.CalculateTime(2000));
 
                 return;
             }
@@ -242,9 +253,9 @@ public:
             // This will cause the victim to be resurrected, teleported and health set to 100% after 1 second of dieing
             victim->m_Events.AddEvent(new deathmatch_resurrect_event(victim), victim->m_Events.CalculateTime(1000));
 
-            // This will cause warlocks and hunters to have their last-used pet to be re-summoned when arriving on the island
-            if (victim->getClass() == CLASS_HUNTER || victim->getClass() == CLASS_WARLOCK)
-                victim->m_Events.AddEvent(new deathmatch_resurrect_event_pet(victim), victim->m_Events.CalculateTime(2000));
+            // This will cause warlocks and hunters to have their last-used pet to be re-summoned
+            //if (victim->getClass() == CLASS_HUNTER || victim->getClass() == CLASS_WARLOCK)
+            //    victim->m_Events.AddEvent(new deathmatch_resurrect_event_pet(victim), victim->m_Events.CalculateTime(2000));
         }
     }
 }; 
