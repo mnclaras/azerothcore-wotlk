@@ -104,6 +104,21 @@ static const Position playerSpawnPoint[MAX_PLAYER_SPAWN_POINTS] =
 
 static const Position shop = { -11823.9f, -4779.58f, 5.9206f, 1.1357f };
 
+class deathmatch_resurrect_event_pet : public BasicEvent
+{
+public:
+    deathmatch_resurrect_event_pet(Player* victim) : _victim(victim) { }
+
+    bool Execute(uint64 /*time*/, uint32 /*diff*/)
+    {
+        _victim->CastSpell(_victim, SPELL_SUMMON_PET, false); // Summons last used pet
+        return true;
+    }
+
+private:
+    Player* _victim;
+};
+
 class deathmatch_resurrect_event : public BasicEvent
 {
 public:
@@ -141,21 +156,6 @@ public:
         if (_victim->getClass() == CLASS_HUNTER || _victim->getClass() == CLASS_WARLOCK)
             _victim->m_Events.AddEvent(new deathmatch_resurrect_event_pet(_victim), _victim->m_Events.CalculateTime(1000));
 
-        return true;
-    }
-
-private:
-    Player* _victim;
-};
-
-class deathmatch_resurrect_event_pet : public BasicEvent
-{
-public:
-    deathmatch_resurrect_event_pet(Player* victim) : _victim(victim) { }
-
-    bool Execute(uint64 /*time*/, uint32 /*diff*/)
-    {
-        _victim->CastSpell(_victim, SPELL_SUMMON_PET, false); // Summons last used pet
         return true;
     }
 
