@@ -356,6 +356,7 @@ public:
     {
         bool isSpanish = IsSpanishPlayer(player);
 
+        ShowOption(player, isSpanish ? "[251-284] Equipo PVE por AmnesiaCoins" : "[251-284] PVE Gear by AmnesiaCoins", 100);
         ShowOption(player, isSpanish ? "[T9]" : "[T9]", 1);
         ShowOption(player, isSpanish ? "[Off-Tier]" : "[Off-Tier]", 2);
         ShowOption(player, isSpanish ? "[Anillos]" : "[Rings]", 3);
@@ -371,7 +372,6 @@ public:
         ShowOption(player, isSpanish ? "[Escudos]" : "[Shields]", 13);
         ShowOption(player, isSpanish ? "[Reliquias]" : "[Relics]", 14);
         ShowOption(player, isSpanish ? "[Abalorios]" : "[Trinkets]", 15);
-        ShowOption(player, isSpanish ? "[251-284] Equipo PVE por AmnesiaCoins" : "[251-284] PVE Gear by AmnesiaCoins", 100);
 
         SendGossipMenuFor(player, DEFAULT_MESSAGE, creature->GetGUID());
         return true;
