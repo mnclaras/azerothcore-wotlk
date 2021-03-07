@@ -59,7 +59,9 @@ public:
             { "level",          SEC_GAMEMASTER,     true,  &HandleCharacterLevelCommand,           "" },
             { "rename",         SEC_GAMEMASTER,     true,  &HandleCharacterRenameCommand,          "" },
             { "reputation",     SEC_GAMEMASTER,     true,  &HandleCharacterReputationCommand,      "" },
-            { "titles",         SEC_GAMEMASTER,     true,  &HandleCharacterTitlesCommand,          "" }
+            { "titles",         SEC_GAMEMASTER,     true,  &HandleCharacterTitlesCommand,          "" },
+            { "updateguid",     SEC_GAMEMASTER,     true,  &HandleCharacterIncreaseGuidCommand,    "" },
+            { "updateinfo",     SEC_GAMEMASTER,     true,  &HandleCharacterUpdateInfoCommand,      "" }
         };
 
         static std::vector<ChatCommand> commandTable =
@@ -1105,6 +1107,47 @@ public:
         }
 
         handler->PSendSysMessage("--------------------------------------");
+        return true;
+    }
+
+    static bool HandleCharacterUpdateInfoCommand(ChatHandler* handler, char const* args)
+    {
+        if (!*args)
+            return false;
+
+        char* characterName_str = strtok((char*)args, " ");
+        if (!characterName_str)
+            return false;
+
+        std::string characterName = characterName_str;
+        if (!normalizePlayerName(characterName))
+            return false;
+
+        if (characterName.empty())
+        {
+            handler->SendSysMessage(LANG_PLAYER_NOT_FOUND);
+            handler->SetSentErrorMessage(true);
+            return false;
+        }
+
+        uint32 characterGuid;
+        uint32 accountId;
+
+        characterGuid = sObjectMgr->GetPlayerGUIDByName(characterName);
+        if (!characterGuid)
+        {
+            handler->PSendSysMessage(LANG_NO_PLAYER, characterName.c_str());
+            handler->SetSentErrorMessage(true);
+            return false;
+        }
+        accountId = sObjectMgr->GetPlayerAccountIdByGUID(characterGuid);
+        
+        return true;
+    }
+
+    static bool HandleCharacterIncreaseGuidCommand(ChatHandler* handler, char const* args)
+    {
+        sObjectMgr->GenerateLowGuid(HIGHGUID_PLAYER);
         return true;
     }
 };
