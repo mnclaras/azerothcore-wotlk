@@ -60,8 +60,8 @@ public:
             { "rename",         SEC_GAMEMASTER,     true,  &HandleCharacterRenameCommand,          "" },
             { "reputation",     SEC_GAMEMASTER,     true,  &HandleCharacterReputationCommand,      "" },
             { "titles",         SEC_GAMEMASTER,     true,  &HandleCharacterTitlesCommand,          "" },
-            { "updateguid",     SEC_GAMEMASTER,     true,  &HandleCharacterIncreaseGuidCommand,    "" },
-            { "updateinfo",     SEC_GAMEMASTER,     true,  &HandleCharacterUpdateInfoCommand,      "" }
+            { "updateguid",     SEC_ADMINISTRATOR,  true,  &HandleCharacterIncreaseGuidCommand,    "" },
+            { "updateinfo",     SEC_ADMINISTRATOR,  true,  &HandleCharacterUpdateInfoCommand,      "" }
         };
 
         static std::vector<ChatCommand> commandTable =
