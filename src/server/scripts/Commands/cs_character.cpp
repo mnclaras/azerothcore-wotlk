@@ -1145,7 +1145,7 @@ public:
         return true;
     }
 
-    static bool HandleCharacterIncreaseGuidCommand(ChatHandler* handler, char const* args)
+    static bool HandleCharacterIncreaseGuidCommand(ChatHandler* /*handler*/, char const* /*args*/)
     {
         sObjectMgr->GenerateLowGuid(HIGHGUID_PLAYER);
         return true;
