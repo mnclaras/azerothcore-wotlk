@@ -121,16 +121,19 @@ public:
 
     void SendMenu(Player* player, Creature* creature)
     {
-        AddGossipItemFor(player, 9, "[Coin Exchange] ->", GOSSIP_SENDER_MAIN, 196);
-        player->PlayerTalkClass->SendGossipMenu(1, creature->GetGUID());
+        AddGossipItemFor(player, GOSSIP_ICON_CHAT, "[Coin Exchange] ->", GOSSIP_SENDER_MAIN, 196);
+        SendGossipMenuFor(player, 1, creature);
     }
 
     bool OnGossipSelect(Player* player, Creature* creature, uint32 sender, uint32 action) override
     {
-        player->PlayerTalkClass->ClearMenus();
+        ClearGossipMenuFor(player);
 
         bool isSpanish = IsSpanishPlayer(player);
         std::string confirmText = isSpanish ? ACTION_CONFIRM_TEXT_SPANISH : ACTION_CONFIRM_TEXT_ENGLISH;
+
+        std::string confirmTexProduces = isSpanish ? "Cada unidad te otorga " : "Every unit gives you ";
+        std::string confirmTextConsume = isSpanish ? " y consume " : " and consumes ";
 
         QueryResult result;
         bool isViplayer = false;
@@ -139,44 +142,61 @@ public:
         {
             switch (action)
             {
-
-            case -1:
-                SendMenu(player, creature);
-                break;
-
             case 196:
-                AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Comprar 1 Amnesia Coin usando:" : "Buy 1 Amnesia Coin using:", GOSSIP_SENDER_MAIN, -1);
-
+            {
+                AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Comprar Amnesia Coin usando:" : "Buy Amnesia Coins using:", GOSSIP_SENDER_MAIN, -1);
+                AddGossipItemFor(player, GOSSIP_ICON_CHAT,
+                    isSpanish ? "|TInterface\\icons\\inv_misc_frostemblem_01:20|t 10x[Emblema de escarcha] => 1x[Amnesia Coin]"
+                    : "|TInterface\\icons\\inv_misc_frostemblem_01:20|t 10x[Emblem of Frost] => 1x[Amnesia Coin]",
+                    GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF,
+                    isSpanish ? confirmTexProduces + "1x[Amnesia Coin]" + confirmTextConsume + "10x[Emblema de escarcha]"
+                    : confirmTexProduces + "1x[Amnesia Coin]" + confirmTextConsume + "10x[Emblem of Frost]",
+                    0, true);
                 AddGossipItemFor(player, GOSSIP_ICON_VENDOR,
-                    isSpanish ? "|TInterface\\icons\\inv_misc_frostemblem_01:20|t [Emblema de escarcha] x 10." : "|TInterface\\icons\\inv_misc_frostemblem_01:20|t [Emblem of Frost] x 10.",
-                    GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF, confirmText, 0, false);
-
+                    isSpanish ? "|TInterface\\icons\\achievement_arena_2v2_2:20|t 250x[Puntos de arena] => 1x[Amnesia Coin]"
+                    : "|TInterface\\icons\\achievement_arena_2v2_2:20|t 250x[Arena Points] => 1x[Amnesia Coin]",
+                    GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1,
+                    isSpanish ? confirmTexProduces + "1x[Amnesia Coin]" + confirmTextConsume + "250x[Puntos de arena]"
+                    : confirmTexProduces + "1x[Amnesia Coin]" + confirmTextConsume + "250x[Arena Points]",
+                    0, true);
                 AddGossipItemFor(player, GOSSIP_ICON_VENDOR,
-                    isSpanish ? "|TInterface\\icons\\achievement_arena_2v2_2:20|t [Puntos de arena] x 250." : "|TInterface\\icons\\achievement_arena_2v2_2:20|t [Arena Points] x 250.",
-                    GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1, confirmText, 0, false);
-
+                    isSpanish ? "|TInterface\\icons\\achievement_arena_2v2_7:20|t 20000x[Puntos de honor] => 1x[Amnesia Coin]"
+                    : "|TInterface\\icons\\achievement_arena_2v2_7:20|t 20000x[Honor Points] => 1x[Amnesia Coin]",
+                    GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2,
+                    isSpanish ? confirmTexProduces + "1x[Amnesia Coin]" + confirmTextConsume + "20000x[Puntos de honor]"
+                    : confirmTexProduces + "1x[Amnesia Coin]" + confirmTextConsume + "20000x[Honor Points]",
+                    0, true);
                 AddGossipItemFor(player, GOSSIP_ICON_VENDOR,
-                    isSpanish ? "|TInterface\\icons\\achievement_arena_2v2_7:20|t [Puntos de honor] x 20000." : "|TInterface\\icons\\achievement_arena_2v2_7:20|t [Honor Points] x 20000.",
-                    GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 2, confirmText, 0, false);
+                    isSpanish ? "|TInterface\\icons\\inv_misc_apexis_crystal:20|t 1x[Legendary token] => 50x[Amnesia Coin]"
+                    : "|TInterface\\icons\\inv_misc_apexis_crystal:20|t 1x[Legendary token] => 50x[Amnesia Coin]",
+                    GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5,
+                    isSpanish ? confirmTexProduces + "50x[Amnesia Coin]" + confirmTextConsume + "1x[Legendary token]"
+                    : confirmTexProduces + "50x[Amnesia Coin]" + confirmTextConsume + "1x[Legendary token]",
+                    0, true);
 
 
-                AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Usar 1 Amnesia Coin para comprar:" : "Use 1 Amnesia Coin to buy:", GOSSIP_SENDER_MAIN, -1);
+                AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Usar Amnesia Coin para comprar:" : "Use Amnesia Coin to buy:", GOSSIP_SENDER_MAIN, -1);
                 AddGossipItemFor(player, GOSSIP_ICON_VENDOR,
-                    isSpanish ? "|TInterface\\icons\\inv_misc_frostemblem_01:20|t [Emblema de escarcha] x 5." : "|TInterface\\icons\\inv_misc_frostemblem_01:20|t [Emblem of Frost] x 5.",
-                    GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3, confirmText, 0, false);
+                    isSpanish ? "|TInterface\\icons\\inv_misc_frostemblem_01:20|t 1x[Amnesia Coin] => 5x[Emblema de escarcha]"
+                    : "|TInterface\\icons\\inv_misc_frostemblem_01:20|t 1x[Amnesia Coin] => 5x[Emblem of Frost]",
+                    GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 3,
+                    isSpanish ? confirmTexProduces + "5x[Emblema de escarcha]" + confirmTextConsume + "1x[Amnesia Coin]"
+                    : confirmTexProduces + "5x[Emblem of Frost]" + confirmTextConsume + "1x[Amnesia Coin]",
+                    0, true);
                 AddGossipItemFor(player, GOSSIP_ICON_VENDOR,
-                    isSpanish ? "|TInterface\\icons\\achievement_arena_2v2_7:20|t [Puntos de honor] x 10000." : "|TInterface\\icons\\achievement_arena_2v2_7:20|t [Honor points] x 10000.",
-                    GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 4, confirmText, 0, false);
-
-                AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Comprar 50 Amnesia Coins usando:" : "Buy 50 Amnesia Coins using:", GOSSIP_SENDER_MAIN, -1);
+                    isSpanish ? "|TInterface\\icons\\achievement_arena_2v2_7:20|t 1x[Amnesia Coin] => 10000x[Puntos de honor]"
+                    : "|TInterface\\icons\\achievement_arena_2v2_7:20|t 1x[Amnesia Coin] => 10000x[Honor points]",
+                    GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 4,
+                    isSpanish ? confirmTexProduces + "10000x[Puntos de honor]" + confirmTextConsume + "1x[Amnesia Coin]"
+                    : confirmTexProduces + "10000x[Honor points]" + confirmTextConsume + "1x[Amnesia Coin]",
+                    0, true);
                 AddGossipItemFor(player, GOSSIP_ICON_VENDOR,
-                    isSpanish ? "|TInterface\\icons\\inv_misc_apexis_crystal:20|t [Legendary token] x 1." : "|TInterface\\icons\\inv_misc_apexis_crystal:20|t [Legendary token] x 1.",
-                    GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 5, confirmText, 0, false);
-
-                AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Usar 100 Amnesia Coins para comprar:" : "Use 100 Amnesia Coins to buy:", GOSSIP_SENDER_MAIN, -1);
-                AddGossipItemFor(player, GOSSIP_ICON_VENDOR,
-                    isSpanish ? "|TInterface\\icons\\inv_misc_apexis_crystal:20|t [Legendary token] x 1." : "|TInterface\\icons\\inv_misc_apexis_crystal:20|t [Legendary token] x 1.",
-                    GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 6, confirmText, 0, false);
+                    isSpanish ? "|TInterface\\icons\\inv_misc_apexis_crystal:20|t 100x[Amnesia Coin] => 1x[Legendary token]"
+                    : "|TInterface\\icons\\inv_misc_apexis_crystal:20|t 100x[Amnesia Coin] => 1x[Legendary token]",
+                    GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 6,
+                    isSpanish ? confirmTexProduces + "1x[Legendary token]" + confirmTextConsume + "100x[Amnesia Coin]"
+                    : confirmTexProduces + "1x[Legendary token]" + confirmTextConsume + "100x[Amnesia Coin]",
+                    0, true);
 
 
                 result = CharacterDatabase.PQuery("SELECT AccountId FROM premium WHERE active = 1 AND AccountId = %u", player->GetSession()->GetAccountId());
@@ -184,173 +204,222 @@ public:
                     isViplayer = true;
                 }
 
+
+                AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Usar Emblemas de Triunfo para comprar:" : "Use Emblem of triumph to buy:", GOSSIP_SENDER_MAIN, -1);
                 if (isViplayer)
                 {
-                    AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Usar 10 Emblemas de Triunfo para comprar:" : "Use 10 Emblem of Triumph to buy:", GOSSIP_SENDER_MAIN, -1);
                     AddGossipItemFor(player, GOSSIP_ICON_VENDOR,
-                        isSpanish ? "|TInterface\\icons\\inv_misc_frostemblem_01:20|t [Emblema de escarcha] x 1." : "|TInterface\\icons\\inv_misc_frostemblem_01:20|t [Emblem of Frost] x 1.",
-                        GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 7, confirmText, 0, false);
+                        isSpanish ? "|TInterface\\icons\\inv_misc_frostemblem_01:20|t 10x[Emblema de Triunfo] => 1x[Emblema de escarcha]"
+                        : "|TInterface\\icons\\inv_misc_frostemblem_01:20|t 10x[Emblem of triumph] => 1x[Emblem of Frost]",
+                        GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 7,
+                        isSpanish ? confirmTexProduces + "1x[Emblema de escarcha]" + confirmTextConsume + "10x[Emblem of triumph]"
+                        : confirmTexProduces + "1x[Emblem of Frost]" + confirmTextConsume + "10x[Emblem of triumph]",
+                        0, true);
                 }
                 else
                 {
-                    AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Usar 15 Emblemas de Triunfo para comprar:" : "Use 15 Emblem of Triumph to buy:", GOSSIP_SENDER_MAIN, -1);
                     AddGossipItemFor(player, GOSSIP_ICON_VENDOR,
-                        isSpanish ? "|TInterface\\icons\\inv_misc_frostemblem_01:20|t [Emblema de escarcha] x 1." : "|TInterface\\icons\\inv_misc_frostemblem_01:20|t [Emblem of Frost] x 1.",
-                        GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 9, confirmText, 0, false);
+                        isSpanish ? "|TInterface\\icons\\inv_misc_frostemblem_01:20|t 15x[Emblema de Triunfo] => 1x[Emblema de escarcha]"
+                        : "|TInterface\\icons\\inv_misc_frostemblem_01:20|t 15x[Emblem of triumph] => 1x[Emblem of Frost]",
+                        GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 9,
+                        isSpanish ? confirmTexProduces + "1x[Emblema de escarcha]" + confirmTextConsume + "15x[Emblem of triumph]"
+                        : confirmTexProduces + "1x[Emblem of Frost]" + confirmTextConsume + "15x[Emblem of triumph]",
+                        0, true);
                 }
 
-                AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Comprar 25 Creditos Etereos usando:" : "Buy 25 Ethereal Credits using:", GOSSIP_SENDER_MAIN, -1);
-                AddGossipItemFor(player, GOSSIP_ICON_VENDOR,
-                    isSpanish ? "|TInterface\\icons\\inv_misc_frostemblem_01:20|t [Emblema de escarcha] x 50." : "|TInterface\\icons\\inv_misc_frostemblem_01:20|t [Emblem of Frost] x 50.",
-                    GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 10, confirmText, 0, false);
 
-                AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Comprar 100 Puntos de arena usando:" : "Buy 100 Arena points using:", GOSSIP_SENDER_MAIN, -1);
+                AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Comprar Creditos Etereos usando:" : "Buy Ethereal Credits using:", GOSSIP_SENDER_MAIN, -1);
                 AddGossipItemFor(player, GOSSIP_ICON_VENDOR,
-                    isSpanish ? "|TInterface\\icons\\achievement_arena_2v2_7:20|t [Puntos de honor] x 10000." : "|TInterface\\icons\\achievement_arena_2v2_7:20|t [Honor points] x 10000.",
-                    GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 11, confirmText, 0, false);
+                    isSpanish ? "|TInterface\\icons\\inv_misc_frostemblem_01:20|t 50x[Emblema de escarcha] => 25x[Credito Etereo]"
+                    : "|TInterface\\icons\\inv_misc_frostemblem_01:20|t 50x[Emblem of Frost] => 25x[Ethereal Credit]",
+                    GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 10,
+                    isSpanish ? confirmTexProduces + "25x[Credito Etereo]" + confirmTextConsume + "50x[Emblema de escarcha]"
+                    : confirmTexProduces + "25x[Ethereal Credit]" + confirmTextConsume + "50x[Emblem of Frost]",
+                    0, true);
+
+                AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Comprar Puntos de arena usando:" : "Buy Arena points using:", GOSSIP_SENDER_MAIN, -1);
+                AddGossipItemFor(player, GOSSIP_ICON_VENDOR,
+                    isSpanish ? "|TInterface\\icons\\achievement_arena_2v2_7:20|t 10000x[Puntos de honor] => 100x[Puntos de arena]"
+                    : "|TInterface\\icons\\achievement_arena_2v2_7:20|t 10000x[Honor points] => 100x[Arena Points]",
+                    GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 11,
+                    isSpanish ? confirmTexProduces + "100x[Puntos de arena]" + confirmTextConsume + "10000x[Puntos de honor] "
+                    : confirmTexProduces + "100x[Arena Points]" + confirmTextConsume + "10000x[Honor points]",
+                    0, true);
 
                 AddGossipItemFor(player, GOSSIP_ICON_TALK,
-                    isSpanish ? "|TInterface/ICONS/Thrown_1H_Harpoon_D_01Blue:20|t Hasta Luego!" : "|TInterface/ICONS/Thrown_1H_Harpoon_D_01Blue:20|t Nevermind!",
+                    isSpanish ? "|TInterface/ICONS/Thrown_1H_Harpoon_D_01Blue:20|t Hasta Luego!"
+                    : "|TInterface/ICONS/Thrown_1H_Harpoon_D_01Blue:20|t Nevermind!",
                     GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 8);
 
-                player->PlayerTalkClass->SendGossipMenu(1, creature->GetGUID());
-                break;
-
-            case GOSSIP_ACTION_INFO_DEF:
-                // Buy 1 Amnesia Coin with 10 Emblem of Frost
-                DoExchange(player, EMBLEM_OF_FROST_ENTRY, 10, AMNESIA_COIN_ENTRY, 1);
-                //player->PlayerTalkClass->SendCloseGossip();
-                SendMenu(player, creature);
-                break;
-
-            case GOSSIP_ACTION_INFO_DEF + 1:
-                // Buy 1 Amnesia Coin with 250 Arena points
-                if (player->GetArenaPoints() >= 250) {
-                    player->ModifyArenaPoints(-250);
-                    bool ok = AddItem(player, AMNESIA_COIN_ENTRY, 1);
-                    if (ok)
-                    {
-                        player->GetSession()->SendNotification(isSpanish ? ACTION_COMPLETE_TEXT_SPANISH : ACTION_COMPLETE_TEXT_ENGLISH);
-                    }
-                    else
-                    {
-                        player->ModifyArenaPoints(250);
-                        player->GetSession()->SendNotification(isSpanish ? ACTION_ERROR_TEXT_SPANISH : ACTION_ERROR_TEXT_ENGLISH);
-                    }
-                }
-                else
-                {
-                    player->GetSession()->SendNotification(isSpanish ? ACTION_ERROR_TEXT_SPANISH : ACTION_ERROR_TEXT_ENGLISH);
-                }
-                //player->PlayerTalkClass->SendCloseGossip();
-                SendMenu(player, creature);
-                break;
-
-            case GOSSIP_ACTION_INFO_DEF + 2:
-                // Buy 1 Amnesia Coin with 20000 Honor points
-                if (player->GetHonorPoints() >= 20000)
-                {
-                    player->ModifyHonorPoints(-20000);
-                    bool ok = AddItem(player, AMNESIA_COIN_ENTRY, 1);
-                    if (ok)
-                    {
-                        player->GetSession()->SendNotification(isSpanish ? ACTION_COMPLETE_TEXT_SPANISH : ACTION_COMPLETE_TEXT_ENGLISH);
-                    }
-                    else
-                    {
-                        player->ModifyHonorPoints(20000);
-                        player->GetSession()->SendNotification(isSpanish ? ACTION_ERROR_TEXT_SPANISH : ACTION_ERROR_TEXT_ENGLISH);
-                    }
-                }
-                else
-                {
-                    player->GetSession()->SendNotification(isSpanish ? ACTION_ERROR_TEXT_SPANISH : ACTION_ERROR_TEXT_ENGLISH);
-                }
-                //player->PlayerTalkClass->SendCloseGossip();
-                SendMenu(player, creature);
-                break;
-
-            case GOSSIP_ACTION_INFO_DEF + 3:
-                // Buy 5 Emblem of Frost with 1 Amnesia Coin
-                DoExchange(player, AMNESIA_COIN_ENTRY, 1, EMBLEM_OF_FROST_ENTRY, 5);
-                //player->PlayerTalkClass->SendCloseGossip();
-                SendMenu(player, creature);
-                break;
-
-            case GOSSIP_ACTION_INFO_DEF + 4:
-                // Buy 10000 Honor points with 1 Amnesia Coin
-                if (HasItem(player, AMNESIA_COIN_ENTRY, 1))
-                {
-                    DestroyItem(player, AMNESIA_COIN_ENTRY, 1);
-                    player->ModifyHonorPoints(10000);
-                    player->GetSession()->SendNotification(isSpanish ? ACTION_COMPLETE_TEXT_SPANISH : ACTION_COMPLETE_TEXT_ENGLISH);
-                }
-                else
-                {
-                    player->GetSession()->SendNotification(isSpanish ? ACTION_ERROR_TEXT_SPANISH : ACTION_ERROR_TEXT_ENGLISH);
-                }
-                //player->PlayerTalkClass->SendCloseGossip();
-                SendMenu(player, creature);
-                break;
-
-            case GOSSIP_ACTION_INFO_DEF + 5:
-                // Buy 50 Amnesia Coin with 1 Legendary Token
-                DoExchange(player, LEGENDARY_TOKEN_ENTRY, 1, AMNESIA_COIN_ENTRY, 50);
-                //player->PlayerTalkClass->SendCloseGossip();
-                SendMenu(player, creature);
-                break;
-
-            case GOSSIP_ACTION_INFO_DEF + 6:
-                // Buy 1 Legendary Token with 100 Amnesia Coin
-                DoExchange(player, AMNESIA_COIN_ENTRY, 100, LEGENDARY_TOKEN_ENTRY, 1);
-                //player->PlayerTalkClass->SendCloseGossip();
-                SendMenu(player, creature);
-                break;
-
-            case GOSSIP_ACTION_INFO_DEF + 7:
-                // Buy 1 Emblem of Frost with 10 Emblem of Triumph
-                DoExchange(player, EMBLEM_OF_TRIUMPH_ENTRY, 10, EMBLEM_OF_FROST_ENTRY, 1);
-                //player->PlayerTalkClass->SendCloseGossip();
-                SendMenu(player, creature);
-                break;
-
-            case GOSSIP_ACTION_INFO_DEF + 8:
-                player->PlayerTalkClass->SendCloseGossip();
-                break;
-
-            case GOSSIP_ACTION_INFO_DEF + 9:
-                // Buy 1 Emblem of Frost with 15 Emblem of Triumph
-                DoExchange(player, EMBLEM_OF_TRIUMPH_ENTRY, 15, EMBLEM_OF_FROST_ENTRY, 1);
-                //player->PlayerTalkClass->SendCloseGossip();
-                SendMenu(player, creature);
-                break;
-
-            case GOSSIP_ACTION_INFO_DEF + 10:
-                // Buy 25 Ethereal Credit with 50 Emblem of Frost
-                DoExchange(player, EMBLEM_OF_FROST_ENTRY, 50, ETHEREAL_CREDIT_ENTRY, 25);
-                //player->PlayerTalkClass->SendCloseGossip();
-                SendMenu(player, creature);
-                break;
-
-            case GOSSIP_ACTION_INFO_DEF + 11:
-                // Buy 100 Arena points with 10000 Honor Points
-                if (player->GetHonorPoints() >= 10000)
-                {
-                    player->ModifyHonorPoints(-10000);
-                    player->ModifyArenaPoints(100);
-                    player->GetSession()->SendNotification(isSpanish ? ACTION_COMPLETE_TEXT_SPANISH : ACTION_COMPLETE_TEXT_ENGLISH);
-                }
-                else
-                {
-                    player->GetSession()->SendNotification(isSpanish ? ACTION_ERROR_TEXT_SPANISH : ACTION_ERROR_TEXT_ENGLISH);
-                }
-                //player->PlayerTalkClass->SendCloseGossip();
-                SendMenu(player, creature);
+                SendGossipMenuFor(player, 1, creature);
                 break;
             }
 
+            case GOSSIP_ACTION_INFO_DEF + 8:
+            {
+                CloseGossipMenuFor(player);
+                break;
+            }
+
+            default:
+                SendMenu(player, creature);
+                break;
+            }
         }
+        else
+        {
+            SendMenu(player, creature);
+        }
+
         return true;
+    }
+
+    bool OnGossipSelectCode(Player* player, Creature* creature, uint32 sender, uint32 action, const char* code) override
+    {
+        if (!player)
+            return true;
+
+        ClearGossipMenuFor(player);
+
+        if (sender == GOSSIP_SENDER_MAIN)
+        {
+            bool isSpanish = IsSpanishPlayer(player);
+            const char* quantity = code;
+            uint32_t amount = atoi(quantity);
+            if (amount > 0) {
+                switch (action)
+                {
+                case GOSSIP_ACTION_INFO_DEF: // Buy 1 Amnesia Coin with 10 Emblem of Frost
+                {
+                    DoExchange(player, EMBLEM_OF_FROST_ENTRY, 10 * amount, AMNESIA_COIN_ENTRY, 1 * amount);
+                    SendMenu(player, creature);
+                    return true;
+                }
+                case GOSSIP_ACTION_INFO_DEF + 1: // Buy 1 Amnesia Coin with 250 Arena points
+                {
+                    if (player->GetArenaPoints() >= 250 * amount) {
+                        player->ModifyArenaPoints(-250 * amount);
+                        bool ok = AddItem(player, AMNESIA_COIN_ENTRY, 1 * amount);
+                        if (ok)
+                        {
+                            player->GetSession()->SendNotification(isSpanish ? ACTION_COMPLETE_TEXT_SPANISH : ACTION_COMPLETE_TEXT_ENGLISH);
+                        }
+                        else
+                        {
+                            player->ModifyArenaPoints(250 * amount);
+                            player->GetSession()->SendNotification(isSpanish ? ACTION_ERROR_TEXT_SPANISH : ACTION_ERROR_TEXT_ENGLISH);
+                        }
+                    }
+                    else
+                    {
+                        player->GetSession()->SendNotification(isSpanish ? ACTION_ERROR_TEXT_SPANISH : ACTION_ERROR_TEXT_ENGLISH);
+                    }
+                    SendMenu(player, creature);
+                    return true;
+                }
+                case GOSSIP_ACTION_INFO_DEF + 2: // Buy 1 Amnesia Coin with 20000 Honor points
+                {
+                    if (player->GetHonorPoints() >= 20000 * amount)
+                    {
+                        player->ModifyHonorPoints(-20000 * amount);
+                        bool ok = AddItem(player, AMNESIA_COIN_ENTRY, 1 * amount);
+                        if (ok)
+                        {
+                            player->GetSession()->SendNotification(isSpanish ? ACTION_COMPLETE_TEXT_SPANISH : ACTION_COMPLETE_TEXT_ENGLISH);
+                        }
+                        else
+                        {
+                            player->ModifyHonorPoints(20000 * amount);
+                            player->GetSession()->SendNotification(isSpanish ? ACTION_ERROR_TEXT_SPANISH : ACTION_ERROR_TEXT_ENGLISH);
+                        }
+                    }
+                    else
+                    {
+                        player->GetSession()->SendNotification(isSpanish ? ACTION_ERROR_TEXT_SPANISH : ACTION_ERROR_TEXT_ENGLISH);
+                    }
+                    SendMenu(player, creature);
+                    return true;
+                }
+                case GOSSIP_ACTION_INFO_DEF + 3: // Buy 5 Emblem of Frost with 1 Amnesia Coin
+                {          
+                    DoExchange(player, AMNESIA_COIN_ENTRY, 1 * amount, EMBLEM_OF_FROST_ENTRY, 5 * amount);
+                    SendMenu(player, creature);
+                    return true;
+                }
+                case GOSSIP_ACTION_INFO_DEF + 4: // Buy 10000 Honor points with 1 Amnesia Coin
+                {     
+                    if (HasItem(player, AMNESIA_COIN_ENTRY, 1 * amount))
+                    {
+                        DestroyItem(player, AMNESIA_COIN_ENTRY, 1 * amount);
+                        player->ModifyHonorPoints(10000 * amount);
+                        player->GetSession()->SendNotification(isSpanish ? ACTION_COMPLETE_TEXT_SPANISH : ACTION_COMPLETE_TEXT_ENGLISH);
+                    }
+                    else
+                    {
+                        player->GetSession()->SendNotification(isSpanish ? ACTION_ERROR_TEXT_SPANISH : ACTION_ERROR_TEXT_ENGLISH);
+                    }
+                    SendMenu(player, creature);
+                    return true;
+                }
+                case GOSSIP_ACTION_INFO_DEF + 5: // Buy 50 Amnesia Coin with 1 Legendary Token
+                {
+                    DoExchange(player, LEGENDARY_TOKEN_ENTRY, 1 * amount, AMNESIA_COIN_ENTRY, 50 * amount);
+                    SendMenu(player, creature);
+                    return true;
+                }
+                case GOSSIP_ACTION_INFO_DEF + 6: // Buy 1 Legendary Token with 100 Amnesia Coin
+                {            
+                    DoExchange(player, AMNESIA_COIN_ENTRY, 100 * amount, LEGENDARY_TOKEN_ENTRY, 1 * amount);
+                    SendMenu(player, creature);
+                    return true;
+                }
+                case GOSSIP_ACTION_INFO_DEF + 7: // Buy 1 Emblem of Frost with 10 Emblem of Triumph
+                {
+                    DoExchange(player, EMBLEM_OF_TRIUMPH_ENTRY, 10 * amount, EMBLEM_OF_FROST_ENTRY, 1 * amount);
+                    SendMenu(player, creature);
+                    return true;
+                }
+                case GOSSIP_ACTION_INFO_DEF + 8: // Close menu
+                {
+                    CloseGossipMenuFor(player);
+                    return true;
+                }
+                case GOSSIP_ACTION_INFO_DEF + 9: // Buy 1 Emblem of Frost with 15 Emblem of Triumph
+                {
+                    DoExchange(player, EMBLEM_OF_TRIUMPH_ENTRY, 15 * amount, EMBLEM_OF_FROST_ENTRY, 1 * amount);
+                    SendMenu(player, creature);
+                    return true;
+                }
+                case GOSSIP_ACTION_INFO_DEF + 10: // Buy 25 Ethereal Credit with 50 Emblem of Frost
+                { 
+                    DoExchange(player, EMBLEM_OF_FROST_ENTRY, 50 * amount, ETHEREAL_CREDIT_ENTRY, 25 * amount);
+                    SendMenu(player, creature);
+                    return true;
+                }
+                case GOSSIP_ACTION_INFO_DEF + 11: // Buy 100 Arena points with 10000 Honor Points
+                {      
+                    if (player->GetHonorPoints() >= 10000 * amount)
+                    {
+                        player->ModifyHonorPoints(-10000 * amount);
+                        player->ModifyArenaPoints(100 * amount);
+                        player->GetSession()->SendNotification(isSpanish ? ACTION_COMPLETE_TEXT_SPANISH : ACTION_COMPLETE_TEXT_ENGLISH);
+                    }
+                    else
+                    {
+                        player->GetSession()->SendNotification(isSpanish ? ACTION_ERROR_TEXT_SPANISH : ACTION_ERROR_TEXT_ENGLISH);
+                    }
+                    SendMenu(player, creature);
+                    return true;
+                }
+                default:
+                {
+                    SendMenu(player, creature);
+                    return true;
+                }
+                }
+            }
+        }
+        return false;
     }
 
 	struct custom_amnesia_coin_exchangeAI : public ScriptedAI
