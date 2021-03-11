@@ -321,7 +321,7 @@ public:
                 }
                 case GOSSIP_ACTION_INFO_DEF + 4: // Buy 10000 Honor points with 1 Amnesia Coin
                 {     
-                    if (HasItem(player, AMNESIA_COIN_ENTRY, 1 * amount))
+                    if (HasItem(player, AMNESIA_COIN_ENTRY, 1 * amount) && (player->GetHonorPoints() + (10000 * amount)) > 1000000)
                     {
                         DestroyItem(player, AMNESIA_COIN_ENTRY, 1 * amount);
                         player->ModifyHonorPoints(10000 * amount);
@@ -371,7 +371,7 @@ public:
                 }
                 case GOSSIP_ACTION_INFO_DEF + 11: // Buy 100 Arena points with 10000 Honor Points
                 {      
-                    if (player->GetHonorPoints() >= 10000 * amount)
+                    if (player->GetHonorPoints() >= 10000 * amount && (player->GetArenaPoints() + (100 * amount)) > 10000)
                     {
                         player->ModifyHonorPoints(-10000 * amount);
                         player->ModifyArenaPoints(100 * amount);
