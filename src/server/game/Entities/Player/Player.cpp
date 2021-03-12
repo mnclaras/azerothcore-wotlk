@@ -13125,10 +13125,13 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
             case 100064: SetDisplayId(30858); break;    // Valaran
             case 100065: SetDisplayId(30857); break;    // Keleseh           
 
-            case 100066:
+            case 100090:
+            {
                 SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(62300);
                 if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this);
                 break;
+            }
+
             case 100100: SetDisplayId(21267); break;    // Fel Orc
             }
 
@@ -13156,7 +13159,7 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
             RemoveAurasDueToSpell(36901);
             RemoveAurasDueToSpell(36895);
 
-            // Shirt 100066
+            // Shirt 100090
             RemoveAurasDueToSpell(62300);
 
             SetObjectScale(1.0f);
@@ -13197,7 +13200,7 @@ void Player::DeMorphIllusionShirt(uint8 slot, uint32 shirtEntry)
         // Especias de bebe
         RemoveAurasDueToSpell(60122);
 
-        // Shirt 100066
+        // Shirt 100090
         RemoveAurasDueToSpell(62300);
 
         SetObjectScale(1.0f);
