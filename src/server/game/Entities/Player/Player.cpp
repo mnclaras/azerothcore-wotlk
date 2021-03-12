@@ -13045,10 +13045,8 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
             else if (shirtEntry == 100063) SetObjectScale(0.45f);
             else if (shirtEntry == 100064) SetObjectScale(0.55f);
             else if (shirtEntry == 100065) SetObjectScale(0.55f);
-            
-
             else SetObjectScale(1.0f);
-            
+
             switch (shirtEntry)
             {
             case 100000: SetDisplayId(19723); break;    // Male Human
@@ -13127,11 +13125,14 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
             case 100064: SetDisplayId(30858); break;    // Valaran
             case 100065: SetDisplayId(30857); break;    // Keleseh           
 
+            case 100066:
+                SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(62300);
+                if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this);
+                break;
             case 100100: SetDisplayId(21267); break;    // Fel Orc
             }
 
-            SetNativeDisplayId(GetDisplayId());
-            
+            SetNativeDisplayId(GetDisplayId());   
         }
         else
         {
@@ -13154,6 +13155,9 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
             RemoveAurasDueToSpell(36900);
             RemoveAurasDueToSpell(36901);
             RemoveAurasDueToSpell(36895);
+
+            // Shirt 100066
+            RemoveAurasDueToSpell(62300);
 
             SetObjectScale(1.0f);
 
@@ -13193,8 +13197,10 @@ void Player::DeMorphIllusionShirt(uint8 slot, uint32 shirtEntry)
         // Especias de bebe
         RemoveAurasDueToSpell(60122);
 
-        SetObjectScale(1.0f);
+        // Shirt 100066
+        RemoveAurasDueToSpell(62300);
 
+        SetObjectScale(1.0f);
         
         uint32 originalDisplayId = GetOriginalDisplayId();
         if (originalDisplayId && originalDisplayId > 0)
