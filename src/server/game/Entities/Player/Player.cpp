@@ -13175,17 +13175,46 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
         {
             switch (shirtEntry)
             {
-            case 100101:
-            {
-                SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(62300);
-                if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this);
-                break;
-            }
+            case 100101:    // Fuego rojo
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(62300); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100102:    // Sombraescarcha
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(65593); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100103:    // Aura lunar
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(65630); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100104:    // Tuneladora
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(68302); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100105:    // Calavera
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(69105); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100106:    // Calavera XXL
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(69663); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100107:    // Sombra rojiza
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(69658); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100108:    // Agonia de sombras mini
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(72521); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100109:    // Agonia de sombras
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(72523); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100110:    // Escudo de fuego
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(71706); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100111:    // VIP (caminar de pie sin moverte)
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(64361); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100112:    // Premium (caminar muerto)
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(64393); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
             }
         }
         else
         {
             RemoveAurasDueToSpell(62300);   // Tabard 100101
+            RemoveAurasDueToSpell(65593);   // Tabard 100102
+            RemoveAurasDueToSpell(65630);   // Tabard 100103
+            RemoveAurasDueToSpell(68302);   // Tabard 100104
+            RemoveAurasDueToSpell(69105);   // Tabard 100105
+            RemoveAurasDueToSpell(69663);   // Tabard 100106
+            RemoveAurasDueToSpell(69658);   // Tabard 100107
+            RemoveAurasDueToSpell(72521);   // Tabard 100108
+            RemoveAurasDueToSpell(72523);   // Tabard 100109
+            RemoveAurasDueToSpell(71706);   // Tabard 100110
+            RemoveAurasDueToSpell(64361);   // Tabard 100111
+            RemoveAurasDueToSpell(64393);   // Tabard 100112
         }
     }
 }
@@ -13226,6 +13255,17 @@ void Player::DeMorphIllusionShirt(uint8 slot, uint32 shirtEntry)
     else if (slot == EQUIPMENT_SLOT_TABARD && shirtEntry >= 100101 && shirtEntry <= 100199)
     {
         RemoveAurasDueToSpell(62300);   // Tabard 100101
+        RemoveAurasDueToSpell(65593);   // Tabard 100102
+        RemoveAurasDueToSpell(65630);   // Tabard 100103
+        RemoveAurasDueToSpell(68302);   // Tabard 100104
+        RemoveAurasDueToSpell(69105);   // Tabard 100105
+        RemoveAurasDueToSpell(69663);   // Tabard 100106
+        RemoveAurasDueToSpell(69658);   // Tabard 100107
+        RemoveAurasDueToSpell(72521);   // Tabard 100108
+        RemoveAurasDueToSpell(72523);   // Tabard 100109
+        RemoveAurasDueToSpell(71706);   // Tabard 100110
+        RemoveAurasDueToSpell(64361);   // Tabard 100111
+        RemoveAurasDueToSpell(64393);   // Tabard 100112
     }
 }
 
