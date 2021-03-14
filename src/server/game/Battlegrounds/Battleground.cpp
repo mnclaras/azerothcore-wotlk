@@ -751,6 +751,31 @@ inline void Battleground::_ProcessJoin(uint32 diff)
                     }
                     player->DeMorphIllusionShirt(EQUIPMENT_SLOT_BODY, pItem->GetEntry());
                 }
+
+                Item* pItemTabard = player->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_TABARD);
+                if (pItemTabard && pItemTabard->GetEntry() >= 100101 && pItemTabard->GetEntry() <= 100199)
+                {
+                    ItemPosCountVec off_dest;
+                    uint8 off_msg = player->CanStoreItem(NULL_BAG, NULL_SLOT, off_dest, pItemTabard, false);
+                    if (off_msg == EQUIP_ERR_OK)
+                    {
+                        player->RemoveItem(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_TABARD, true);
+                        player->StoreItem(off_dest, pItemTabard, true);
+                    }
+                    else
+                    {
+                        player->MoveItemFromInventory(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_TABARD, true);
+                        SQLTransaction trans = CharacterDatabase.BeginTransaction();
+                        pItemTabard->DeleteFromInventoryDB(trans);                   // deletes item from character's inventory
+                        pItemTabard->SaveToDB(trans);                                // recursive and not have transaction guard into self, item not in inventory and can be save standalone
+
+                        std::string subject = player->GetSession()->GetAcoreString(LANG_NOT_EQUIPPED_ITEM);
+                        MailDraft(subject, "There were problems with equipping one or several items").AddItem(pItemTabard).SendMailTo(trans, player, MailSender(player, MAIL_STATIONERY_GM), MAIL_CHECK_MASK_COPIED);
+
+                        CharacterDatabase.CommitTransaction(trans);
+                    }
+                    player->DeMorphIllusionShirt(EQUIPMENT_SLOT_TABARD, pItemTabard->GetEntry());
+                }
             }
         }
     }
@@ -1389,6 +1414,31 @@ void Battleground::AddPlayer(Player* player)
             CharacterDatabase.CommitTransaction(trans);
         }
         player->DeMorphIllusionShirt(EQUIPMENT_SLOT_BODY, pItem->GetEntry());
+    }
+
+    Item* pItemTabard = player->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_TABARD);
+    if (pItemTabard && pItemTabard->GetEntry() >= 100101 && pItemTabard->GetEntry() <= 100199)
+    {
+        ItemPosCountVec off_dest;
+        uint8 off_msg = player->CanStoreItem(NULL_BAG, NULL_SLOT, off_dest, pItemTabard, false);
+        if (off_msg == EQUIP_ERR_OK)
+        {
+            player->RemoveItem(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_TABARD, true);
+            player->StoreItem(off_dest, pItemTabard, true);
+        }
+        else
+        {
+            player->MoveItemFromInventory(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_TABARD, true);
+            SQLTransaction trans = CharacterDatabase.BeginTransaction();
+            pItemTabard->DeleteFromInventoryDB(trans);                   // deletes item from character's inventory
+            pItemTabard->SaveToDB(trans);                                // recursive and not have transaction guard into self, item not in inventory and can be save standalone
+
+            std::string subject = player->GetSession()->GetAcoreString(LANG_NOT_EQUIPPED_ITEM);
+            MailDraft(subject, "There were problems with equipping one or several items").AddItem(pItemTabard).SendMailTo(trans, player, MailSender(player, MAIL_STATIONERY_GM), MAIL_CHECK_MASK_COPIED);
+
+            CharacterDatabase.CommitTransaction(trans);
+        }
+        player->DeMorphIllusionShirt(EQUIPMENT_SLOT_TABARD, pItemTabard->GetEntry());
     }
 
     sScriptMgr->OnBattlegroundBeforeAddPlayer(this, player);

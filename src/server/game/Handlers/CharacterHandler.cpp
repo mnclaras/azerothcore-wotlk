@@ -1199,7 +1199,15 @@ void WorldSession::HandlePlayerLoginFromDB(LoginQueryHolder* holder)
     {
         if (item->GetEntry() >= 100000 && item->GetEntry() <= 100100)
         {
-            pCurrChar->MorphIllusionShirt(3, item->GetEntry());
+            pCurrChar->MorphIllusionShirt(EQUIPMENT_SLOT_BODY, item->GetEntry());
+        }
+    }
+
+    if (Item* item = pCurrChar->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_TABARD))
+    {
+        if (item->GetEntry() >= 100101 && item->GetEntry() <= 100199)
+        {
+            pCurrChar->MorphIllusionShirt(EQUIPMENT_SLOT_TABARD, item->GetEntry());
         }
     }
 

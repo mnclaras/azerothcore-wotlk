@@ -11921,7 +11921,9 @@ InventoryResult Player::CanEquipItem(uint8 slot, uint16 &dest, Item* pItem, bool
                             return EQUIP_ERR_NOT_DURING_ARENA_MATCH;
 
                         // MorphIllusionShirts are not usable in bg or arena
-                        if ((bg->isArena() || bg->isBattleground()) && (bg->GetStatus() == STATUS_IN_PROGRESS || bg->GetStatus() == STATUS_WAIT_JOIN) && pItem->GetEntry() >= 100000 && pItem->GetEntry() <= 100100)
+                        if ((bg->isArena() || bg->isBattleground())
+                            && (bg->GetStatus() == STATUS_IN_PROGRESS || bg->GetStatus() == STATUS_WAIT_JOIN)
+                            && pItem->GetEntry() >= 100000 && pItem->GetEntry() <= 100199)
                         {
                             return EQUIP_ERR_NOT_DURING_ARENA_MATCH;
                         }
@@ -13125,13 +13127,6 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
             case 100064: SetDisplayId(30858); break;    // Valaran
             case 100065: SetDisplayId(30857); break;    // Keleseh           
 
-            case 100090:
-            {
-                SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(62300);
-                if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this);
-                break;
-            }
-
             case 100100: SetDisplayId(21267); break;    // Fel Orc
             }
 
@@ -13159,12 +13154,8 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
             RemoveAurasDueToSpell(36901);
             RemoveAurasDueToSpell(36895);
 
-            // Shirt 100090
-            RemoveAurasDueToSpell(62300);
-
             SetObjectScale(1.0f);
-
-            
+    
             uint32 originalDisplayId = GetOriginalDisplayId();
             if (originalDisplayId && originalDisplayId > 0)
             {
@@ -13175,8 +13166,26 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
             if (originalNativeDisplayId && originalNativeDisplayId > 0)
             {
                 SetNativeDisplayId(originalNativeDisplayId);
+            }         
+        }
+    }
+    else if (slot == EQUIPMENT_SLOT_TABARD)
+    {
+        if (shirtEntry >= 100101 && shirtEntry <= 100199)
+        {
+            switch (shirtEntry)
+            {
+            case 100101:
+            {
+                SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(62300);
+                if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this);
+                break;
             }
-            
+            }
+        }
+        else
+        {
+            RemoveAurasDueToSpell(62300);   // Tabard 100101
         }
     }
 }
@@ -13200,9 +13209,6 @@ void Player::DeMorphIllusionShirt(uint8 slot, uint32 shirtEntry)
         // Especias de bebe
         RemoveAurasDueToSpell(60122);
 
-        // Shirt 100090
-        RemoveAurasDueToSpell(62300);
-
         SetObjectScale(1.0f);
         
         uint32 originalDisplayId = GetOriginalDisplayId();
@@ -13215,8 +13221,11 @@ void Player::DeMorphIllusionShirt(uint8 slot, uint32 shirtEntry)
         if (originalNativeDisplayId && originalNativeDisplayId > 0)
         {
             SetNativeDisplayId(originalNativeDisplayId);
-        }
-        
+        }      
+    }
+    else if (slot == EQUIPMENT_SLOT_TABARD && shirtEntry >= 100101 && shirtEntry <= 100199)
+    {
+        RemoveAurasDueToSpell(62300);   // Tabard 100101
     }
 }
 
