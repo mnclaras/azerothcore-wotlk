@@ -130,7 +130,16 @@ enum Spells
     CREATURE_VENDOR_TRANSMOG_PVE_T7     = 601581,          
     CREATURE_VENDOR_TRANSMOG_PVE_T75    = 601582,          
     CREATURE_VENDOR_TRANSMOG_PVE_T8     = 601583,          
-    CREATURE_VENDOR_TRANSMOG_PVE_T85    = 601584,          
+    CREATURE_VENDOR_TRANSMOG_PVE_T85    = 601584,
+
+    CREATURE_VENDOR_TRANSMOG_CLASSIC1       = 1000403,
+    CREATURE_VENDOR_TRANSMOG_CLASSIC2       = 110003,
+    CREATURE_VENDOR_TRANSMOG_TBC1           = 601557,
+    CREATURE_VENDOR_TRANSMOG_TBC2           = 110002,
+    CREATURE_VENDOR_TRANSMOG_WOTLK1         = 1000402,
+    CREATURE_VENDOR_TRANSMOG_WOTLK2         = 110001,
+    CREATURE_VENDOR_TRANSMOG_OTHERWEAPONS1  = 601556,
+    CREATURE_VENDOR_TRANSMOG_OTHERWEAPONS2  = 110000,
     
     CREATURE_VENDOR_ICC_T10_251         = 601588,
     CREATURE_VENDOR_ICC_T10_264         = 601589,      
@@ -573,6 +582,166 @@ public:
     }
 };
 
+class custom_shop_collapsed_vendor_transmog_classic : public CreatureScript
+{
+public:
+    custom_shop_collapsed_vendor_transmog_classic() : CreatureScript("npc_collapsed_vendor_transmog_classic") { }
+
+    bool OnGossipHello(Player* player, Creature* creature) override
+    {
+        bool isSpanish = IsSpanishPlayer(player);
+
+        ShowOption(player, isSpanish ? "[PARTE 1]" : "[PART 1]", 1);
+        ShowOption(player, isSpanish ? "[PARTE 2]" : "[PART 2]", 2);
+
+        SendGossipMenuFor(player, DEFAULT_MESSAGE, creature->GetGUID());
+        return true;
+    }
+
+    bool OnGossipSelect(Player* player, Creature* creature, uint32 /*sender*/, uint32 action) override
+    {
+        ClearGossipMenuFor(player);
+        switch (action)
+        {
+        case GOSSIP_ACTION_INFO_DEF + 1: ShowVendor(player, creature, CREATURE_VENDOR_TRANSMOG_CLASSIC1); break;
+        case GOSSIP_ACTION_INFO_DEF + 2: ShowVendor(player, creature, CREATURE_VENDOR_TRANSMOG_CLASSIC2); break;
+        default: OnGossipHello(player, creature); break;
+        }
+
+        return true;
+    };
+
+    struct custom_shop_collapsed_vendor_transmog_classicAI : public ScriptedAI
+    {
+        custom_shop_collapsed_vendor_transmog_classicAI(Creature* creature) : ScriptedAI(creature) { }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new custom_shop_collapsed_vendor_transmog_classicAI(creature);
+    }
+};
+
+class custom_shop_collapsed_vendor_transmog_tbc : public CreatureScript
+{
+public:
+    custom_shop_collapsed_vendor_transmog_tbc() : CreatureScript("npc_collapsed_vendor_transmog_tbc") { }
+
+    bool OnGossipHello(Player* player, Creature* creature) override
+    {
+        bool isSpanish = IsSpanishPlayer(player);
+
+        ShowOption(player, isSpanish ? "[PARTE 1]" : "[PART 1]", 1);
+        ShowOption(player, isSpanish ? "[PARTE 2]" : "[PART 2]", 2);
+
+        SendGossipMenuFor(player, DEFAULT_MESSAGE, creature->GetGUID());
+        return true;
+    }
+
+    bool OnGossipSelect(Player* player, Creature* creature, uint32 /*sender*/, uint32 action) override
+    {
+        ClearGossipMenuFor(player);
+        switch (action)
+        {
+        case GOSSIP_ACTION_INFO_DEF + 1: ShowVendor(player, creature, CREATURE_VENDOR_TRANSMOG_TBC1); break;
+        case GOSSIP_ACTION_INFO_DEF + 2: ShowVendor(player, creature, CREATURE_VENDOR_TRANSMOG_TBC2); break;
+        default: OnGossipHello(player, creature); break;
+        }
+
+        return true;
+    };
+
+    struct custom_shop_collapsed_vendor_transmog_tbcAI : public ScriptedAI
+    {
+        custom_shop_collapsed_vendor_transmog_tbcAI(Creature* creature) : ScriptedAI(creature) { }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new custom_shop_collapsed_vendor_transmog_tbcAI(creature);
+    }
+};
+
+class custom_shop_collapsed_vendor_transmog_wotlk : public CreatureScript
+{
+public:
+    custom_shop_collapsed_vendor_transmog_wotlk() : CreatureScript("npc_collapsed_vendor_transmog_wotlk") { }
+
+    bool OnGossipHello(Player* player, Creature* creature) override
+    {
+        bool isSpanish = IsSpanishPlayer(player);
+
+        ShowOption(player, isSpanish ? "[PARTE 1]" : "[PART 1]", 1);
+        ShowOption(player, isSpanish ? "[PARTE 2]" : "[PART 2]", 2);
+
+        SendGossipMenuFor(player, DEFAULT_MESSAGE, creature->GetGUID());
+        return true;
+    }
+
+    bool OnGossipSelect(Player* player, Creature* creature, uint32 /*sender*/, uint32 action) override
+    {
+        ClearGossipMenuFor(player);
+        switch (action)
+        {
+        case GOSSIP_ACTION_INFO_DEF + 1: ShowVendor(player, creature, CREATURE_VENDOR_TRANSMOG_WOTLK1); break;
+        case GOSSIP_ACTION_INFO_DEF + 2: ShowVendor(player, creature, CREATURE_VENDOR_TRANSMOG_WOTLK2); break;
+        default: OnGossipHello(player, creature); break;
+        }
+
+        return true;
+    };
+
+    struct custom_shop_collapsed_vendor_transmog_wotlkAI : public ScriptedAI
+    {
+        custom_shop_collapsed_vendor_transmog_wotlkAI(Creature* creature) : ScriptedAI(creature) { }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new custom_shop_collapsed_vendor_transmog_wotlkAI(creature);
+    }
+};
+
+class custom_shop_collapsed_vendor_transmog_otherweapons : public CreatureScript
+{
+public:
+    custom_shop_collapsed_vendor_transmog_otherweapons() : CreatureScript("npc_collapsed_vendor_transmog_otherweapons") { }
+
+    bool OnGossipHello(Player* player, Creature* creature) override
+    {
+        bool isSpanish = IsSpanishPlayer(player);
+
+        ShowOption(player, isSpanish ? "[PARTE 1]" : "[PART 1]", 1);
+        ShowOption(player, isSpanish ? "[PARTE 2]" : "[PART 2]", 2);
+
+        SendGossipMenuFor(player, DEFAULT_MESSAGE, creature->GetGUID());
+        return true;
+    }
+
+    bool OnGossipSelect(Player* player, Creature* creature, uint32 /*sender*/, uint32 action) override
+    {
+        ClearGossipMenuFor(player);
+        switch (action)
+        {
+        case GOSSIP_ACTION_INFO_DEF + 1: ShowVendor(player, creature, CREATURE_VENDOR_TRANSMOG_OTHERWEAPONS1); break;
+        case GOSSIP_ACTION_INFO_DEF + 2: ShowVendor(player, creature, CREATURE_VENDOR_TRANSMOG_OTHERWEAPONS2); break;
+        default: OnGossipHello(player, creature); break;
+        }
+
+        return true;
+    };
+
+    struct custom_shop_collapsed_vendor_transmog_otherweaponsAI : public ScriptedAI
+    {
+        custom_shop_collapsed_vendor_transmog_otherweaponsAI(Creature* creature) : ScriptedAI(creature) { }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new custom_shop_collapsed_vendor_transmog_otherweaponsAI(creature);
+    }
+};
+
 class custom_shop_collapsed_vendor_tier10 : public CreatureScript
 {
 public:
@@ -699,13 +868,17 @@ public:
 
 void AddSC_custom_shop_collapsed_vendor()
 {
-    new custom_shop_collapsed_vendor_gems();            // npc_collapsed_vendor_gems
-    new custom_shop_collapsed_vendor_professions();     // npc_collapsed_vendor_professions
-    new custom_shop_collapsed_vendor_pvp();             // npc_collapsed_vendor_pvp
-    new custom_shop_collapsed_vendor_pve();             // npc_collapsed_vendor_pve
-    new custom_shop_collapsed_vendor_transmog_pvp();    // npc_collapsed_vendor_transmog_pvp
-    new custom_shop_collapsed_vendor_transmog_pve();    // npc_collapsed_vendor_transmog_pve
-    new custom_shop_collapsed_vendor_tier10();          // npc_collapsed_vendor_tier10
-    new custom_shop_collapsed_vendor_mounts();          // npc_collapsed_vendor_mounts
-    new custom_shop_collapsed_vendor_pets();            // npc_collapsed_vendor_pets
+    new custom_shop_collapsed_vendor_gems();                    // npc_collapsed_vendor_gems
+    new custom_shop_collapsed_vendor_professions();             // npc_collapsed_vendor_professions
+    new custom_shop_collapsed_vendor_pvp();                     // npc_collapsed_vendor_pvp
+    new custom_shop_collapsed_vendor_pve();                     // npc_collapsed_vendor_pve
+    new custom_shop_collapsed_vendor_transmog_pvp();            // npc_collapsed_vendor_transmog_pvp
+    new custom_shop_collapsed_vendor_transmog_pve();            // npc_collapsed_vendor_transmog_pve
+    new custom_shop_collapsed_vendor_tier10();                  // npc_collapsed_vendor_tier10
+    new custom_shop_collapsed_vendor_mounts();                  // npc_collapsed_vendor_mounts
+    new custom_shop_collapsed_vendor_pets();                    // npc_collapsed_vendor_pets
+    new custom_shop_collapsed_vendor_transmog_classic();        // npc_collapsed_vendor_transmog_classic
+    new custom_shop_collapsed_vendor_transmog_tbc();            // npc_collapsed_vendor_transmog_tbc
+    new custom_shop_collapsed_vendor_transmog_wotlk();          // npc_collapsed_vendor_transmog_wotlk
+    new custom_shop_collapsed_vendor_transmog_otherweapons();   // npc_collapsed_vendor_transmog_otherweapons
 }
