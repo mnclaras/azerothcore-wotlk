@@ -2751,7 +2751,6 @@ void Player::Regenerate(Powers power)
         return;
 
     addvalue += m_powerFraction[power];
-    uint32 integerValue = uint32(fabs(addvalue));
 
     // Reduce health regen with dementia aura (max 80% ~ 8 stacks)
     if (addvalue > 0.0f && power == POWER_MANA)
