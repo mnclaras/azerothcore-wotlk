@@ -2753,6 +2753,20 @@ void Player::Regenerate(Powers power)
     addvalue += m_powerFraction[power];
     uint32 integerValue = uint32(fabs(addvalue));
 
+    // Reduce health regen with dementia aura (max 80% ~ 8 stacks)
+    if (addvalue > 0.0f && power == POWER_MANA)
+    {
+        if (Aura* dementiaAura = GetAura(36814))
+        {
+            if (dementiaAura->GetStackAmount() > 0)
+            {
+                addvalue -= (addvalue * dementiaAura->GetStackAmount() * 0.1f);
+            }
+        }
+    }
+
+    uint32 integerValue = uint32(fabs(addvalue));
+
     if (addvalue < 0.0f)
     {
         if (curValue > integerValue)
@@ -2827,6 +2841,18 @@ void Player::RegenerateHealth()
 
     if (addvalue < 0)
         addvalue = 0;
+
+    // Reduce health regen with dementia aura (max 80% ~ 8 stacks)
+    if (addvalue > 0.0f)
+    {
+        if (Aura* dementiaAura = GetAura(36814))
+        {
+            if (dementiaAura->GetStackAmount() > 0)
+            {
+                addvalue -= (addvalue * dementiaAura->GetStackAmount() * 0.1f);
+            }
+        }
+    }
 
     ModifyHealth(int32(addvalue));
 }
