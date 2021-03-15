@@ -21,7 +21,9 @@ docker/build/cache-custom-ptr
 
 docker/authserver/bin
 docker/authserver-blizz/bin
+docker/authserver-blizz-ptr/bin
 docker/authserver-custom/bin
+docker/authserver-custom-ptr/bin
 
 docker/worldserver/bin
 docker/worldserver-blizz/bin
