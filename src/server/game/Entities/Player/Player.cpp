@@ -13059,6 +13059,14 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
             else if (shirtEntry == 100063) SetObjectScale(0.45f);
             else if (shirtEntry == 100064) SetObjectScale(0.55f);
             else if (shirtEntry == 100065) SetObjectScale(0.55f);
+            else if (shirtEntry == 100068) SetObjectScale(0.45f);
+            else if (shirtEntry == 100069) SetObjectScale(0.5f);
+            else if (shirtEntry == 100070) SetObjectScale(0.55f);
+            else if (shirtEntry == 100072) SetObjectScale(0.9f);
+            else if (shirtEntry == 100073) SetObjectScale(0.9f);
+            else if (shirtEntry == 100074) SetObjectScale(0.5f);
+            else if (shirtEntry == 100075) SetObjectScale(0.75f);
+
             else SetObjectScale(1.0f);
 
             switch (shirtEntry)
@@ -13137,7 +13145,18 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
             case 100062: SetDisplayId(21418); break;    // Veras
             case 100063: SetDisplayId(20514); break;    // Leotheras
             case 100064: SetDisplayId(30858); break;    // Valaran
-            case 100065: SetDisplayId(30857); break;    // Keleseh           
+            case 100065: SetDisplayId(30857); break;    // Keleseh
+            case 100066: SetDisplayId(31172); break;    // Demon male elf
+            case 100067: SetDisplayId(31173); break;    // Demon female elf
+            case 100068: SetDisplayId(23473); break;    // Demon female draenei // Scale 0.45
+            case 100069: SetDisplayId(14555); break;    // Black demon // Scale 0.5
+            case 100070: SetDisplayId(7970); break;     // Guardia vil // Scale 0.55
+            case 100071: SetDisplayId(5430); break;     // Espíritu vengativo 
+            case 100072: SetDisplayId(4629); break;     // Fantasma pesadilla // Scale 0.9
+            case 100073: SetDisplayId(12190); break;    // Diablillo en llamas // Scale 0.9
+            case 100074: SetDisplayId(15465); break;    // Guardaenjambre qiraji // Scale 0.5
+            case 100075: SetDisplayId(28227); break;    // Alexstrasza // Scale 0.75
+            case 100076: SetDisplayId(240); break;      // Orco guerrero
 
             case 100100: SetDisplayId(21267); break;    // Fel Orc
             }
@@ -13185,6 +13204,7 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
     {
         if (shirtEntry >= 100101 && shirtEntry <= 100199)
         {
+            bool reApplyMorph = false;
             switch (shirtEntry)
             {
             case 100101:    // Fuego rojo
@@ -13206,11 +13226,138 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
             case 100109:    // Agonia de sombras
             { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(72523); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
             case 100110:    // Escudo de fuego
-            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(71706); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
-            case 100111:    // VIP (caminar de pie sin moverte)
-            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(64361); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
-            case 100112:    // Premium (caminar muerto)
-            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(64393); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(58712); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); reApplyMorph = true;  break; }
+            case 100111:    // Aura Élite
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(34664); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100112:    // Aura Premium
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(40858); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100113:    // Inmolar 
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(16003); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100114:    // Zzz 
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(25148); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100115:    // Humillo
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(12898); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100116:    // Espiral mental
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(21051); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100117:    // Fantasma azul
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(22650); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100118:    // Humo verde
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(25039); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100119:    // Mini inmolar
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(28330); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100120:    // Fantasma rojo
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(30987); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100121:    // Ciclón
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(32332); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100122:    // Eléctrico
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(32368); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100123:    // Ganador de evento
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(32582); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100124:    // Bandera alianza
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(32609); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100125:    // Bandera horda
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(32610); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100126:    // Aura azul
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(33569); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100127:    // Aura roja
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(33827); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100128:    // Aura morada
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(35766); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100129:    // Alma de Draenei
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(35841); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100130:    // Humo rojiazulado
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(39205); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100131:    // Monedas giratorias
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(39918); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100132:    // Infestación morada
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(39920); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100133:    // Confundido
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(47044); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100134:    // Abrumadora
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(47503); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100135:    // Escudo de humo morado
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(47704); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100136:    // Escudo de humo rojo
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(47705); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100137:    // Escudo de humo azul
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(47706); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100138:    // Mariposas
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(48795); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100139:    // Asustado
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(49774); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100140:    // Tiki 1
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(52614); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100141:    // Tiki 2
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(52617); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100142:    // Tiki 3
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(52618); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100143:    // Fantasma
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(54134); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100144:    // Fantasma X
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(53444); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100145:    // Fantasma XX
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(56700); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100146:    // Corredor
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(53611); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100147:    // Epilepsia
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(55949); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100148:    // Sanando
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(56740); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100149:    // DIOS
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(56914); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100150:    // Ola de fuego
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(57494); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100151:    // Onda humeante
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(57551); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100152:    // Alma morada
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(60857); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100153:    // Chispas rojas
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(61023); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100154:    // Soy un portal
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(61236); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100155:    // Visión verde
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(61358); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100156:    // Sprint
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(62192); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100157:    // Aura celeridad
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(62398); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100158:    // Lluvia de hojas
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(62579); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100159:    // Nube
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(62640); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100160:    // Nube de saronita
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(63096); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100161:    // Luz verde
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(63893); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100162:    // Caliz de almas
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(69859); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100163:    // Bola roja chispeante
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(71986); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100164:    // Escudo burbuja  (IGUAL QUE LA 100110 aura escudo de fuego)
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(74621); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100165:    // Llameante
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(75041); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100166:    // Esfera morada
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(57887); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); reApplyMorph = true;  break; }
+            }
+
+            if (reApplyMorph)
+            {
+                SetDisplayId(21267); // Random morph to prevent movement issues with auras.
+
+                bool shouldDeMorph = true;
+                if (Item* tabard = GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_BODY))
+                {
+                    if (tabard->GetEntry() >= 100000 && tabard->GetEntry() <= 100100)
+                    {
+                        MorphIllusionShirt(EQUIPMENT_SLOT_BODY, tabard->GetEntry());
+                        shouldDeMorph = false;
+                    }
+                }
+                if (shouldDeMorph)
+                {
+                    DeMorph();
+                }
             }
         }
         else
@@ -13227,6 +13374,60 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
             RemoveAurasDueToSpell(71706);   // Tabard 100110
             RemoveAurasDueToSpell(64361);   // Tabard 100111
             RemoveAurasDueToSpell(64393);   // Tabard 100112
+            RemoveAurasDueToSpell(16003);   // Tabard 100113
+            RemoveAurasDueToSpell(25148);   // Tabard 100114
+            RemoveAurasDueToSpell(12898);   // Tabard 100115
+            RemoveAurasDueToSpell(21051);   // Tabard 100116
+            RemoveAurasDueToSpell(22650);   // Tabard 100117
+            RemoveAurasDueToSpell(25039);   // Tabard 100118
+            RemoveAurasDueToSpell(28330);   // Tabard 100119
+            RemoveAurasDueToSpell(30987);   // Tabard 100120
+            RemoveAurasDueToSpell(32332);   // Tabard 100121
+            RemoveAurasDueToSpell(32368);   // Tabard 100122
+            RemoveAurasDueToSpell(32582);   // Tabard 100123
+            RemoveAurasDueToSpell(32609);   // Tabard 100124
+            RemoveAurasDueToSpell(32610);   // Tabard 100125
+            RemoveAurasDueToSpell(33569);   // Tabard 100126
+            RemoveAurasDueToSpell(33827);   // Tabard 100127
+            RemoveAurasDueToSpell(35766);   // Tabard 100128
+            RemoveAurasDueToSpell(35841);   // Tabard 100129
+            RemoveAurasDueToSpell(39205);   // Tabard 100130
+            RemoveAurasDueToSpell(39918);   // Tabard 100131
+            RemoveAurasDueToSpell(39920);   // Tabard 100132
+            RemoveAurasDueToSpell(47044);   // Tabard 100133
+            RemoveAurasDueToSpell(47503);   // Tabard 100134
+            RemoveAurasDueToSpell(47704);   // Tabard 100135
+            RemoveAurasDueToSpell(47705);   // Tabard 100136
+            RemoveAurasDueToSpell(47706);   // Tabard 100137
+            RemoveAurasDueToSpell(48795);   // Tabard 100138
+            RemoveAurasDueToSpell(49774);   // Tabard 100139
+            RemoveAurasDueToSpell(52614);   // Tabard 100140
+            RemoveAurasDueToSpell(52617);   // Tabard 100141
+            RemoveAurasDueToSpell(52618);   // Tabard 100142
+            RemoveAurasDueToSpell(54134);   // Tabard 100143
+            RemoveAurasDueToSpell(53444);   // Tabard 100144
+            RemoveAurasDueToSpell(56700);   // Tabard 100145
+            RemoveAurasDueToSpell(53611);   // Tabard 100146
+            RemoveAurasDueToSpell(55949);   // Tabard 100147
+            RemoveAurasDueToSpell(56740);   // Tabard 100148
+            RemoveAurasDueToSpell(56914);   // Tabard 100149
+            RemoveAurasDueToSpell(57494);   // Tabard 100150
+            RemoveAurasDueToSpell(57551);   // Tabard 100151
+            RemoveAurasDueToSpell(60857);   // Tabard 100152
+            RemoveAurasDueToSpell(61023);   // Tabard 100153
+            RemoveAurasDueToSpell(61236);   // Tabard 100154
+            RemoveAurasDueToSpell(61358);   // Tabard 100155
+            RemoveAurasDueToSpell(62192);   // Tabard 100156
+            RemoveAurasDueToSpell(62398);   // Tabard 100157
+            RemoveAurasDueToSpell(62579);   // Tabard 100158
+            RemoveAurasDueToSpell(62640);   // Tabard 100159
+            RemoveAurasDueToSpell(63096);   // Tabard 100160
+            RemoveAurasDueToSpell(63893);   // Tabard 100161
+            RemoveAurasDueToSpell(69859);   // Tabard 100162
+            RemoveAurasDueToSpell(71986);   // Tabard 100163
+            RemoveAurasDueToSpell(74621);   // Tabard 100164
+            RemoveAurasDueToSpell(75041);   // Tabard 100165
+            RemoveAurasDueToSpell(57887);   // Tabard 100166
         }
     }
 }
@@ -13278,6 +13479,60 @@ void Player::DeMorphIllusionShirt(uint8 slot, uint32 shirtEntry)
         RemoveAurasDueToSpell(71706);   // Tabard 100110
         RemoveAurasDueToSpell(64361);   // Tabard 100111
         RemoveAurasDueToSpell(64393);   // Tabard 100112
+        RemoveAurasDueToSpell(16003);   // Tabard 100113
+        RemoveAurasDueToSpell(25148);   // Tabard 100114
+        RemoveAurasDueToSpell(12898);   // Tabard 100115
+        RemoveAurasDueToSpell(21051);   // Tabard 100116
+        RemoveAurasDueToSpell(22650);   // Tabard 100117
+        RemoveAurasDueToSpell(25039);   // Tabard 100118
+        RemoveAurasDueToSpell(28330);   // Tabard 100119
+        RemoveAurasDueToSpell(30987);   // Tabard 100120
+        RemoveAurasDueToSpell(32332);   // Tabard 100121
+        RemoveAurasDueToSpell(32368);   // Tabard 100122
+        RemoveAurasDueToSpell(32582);   // Tabard 100123
+        RemoveAurasDueToSpell(32609);   // Tabard 100124
+        RemoveAurasDueToSpell(32610);   // Tabard 100125
+        RemoveAurasDueToSpell(33569);   // Tabard 100126
+        RemoveAurasDueToSpell(33827);   // Tabard 100127
+        RemoveAurasDueToSpell(35766);   // Tabard 100128
+        RemoveAurasDueToSpell(35841);   // Tabard 100129
+        RemoveAurasDueToSpell(39205);   // Tabard 100130
+        RemoveAurasDueToSpell(39918);   // Tabard 100131
+        RemoveAurasDueToSpell(39920);   // Tabard 100132
+        RemoveAurasDueToSpell(47044);   // Tabard 100133
+        RemoveAurasDueToSpell(47503);   // Tabard 100134
+        RemoveAurasDueToSpell(47704);   // Tabard 100135
+        RemoveAurasDueToSpell(47705);   // Tabard 100136
+        RemoveAurasDueToSpell(47706);   // Tabard 100137
+        RemoveAurasDueToSpell(48795);   // Tabard 100138
+        RemoveAurasDueToSpell(49774);   // Tabard 100139
+        RemoveAurasDueToSpell(52614);   // Tabard 100140
+        RemoveAurasDueToSpell(52617);   // Tabard 100141
+        RemoveAurasDueToSpell(52618);   // Tabard 100142
+        RemoveAurasDueToSpell(54134);   // Tabard 100143
+        RemoveAurasDueToSpell(53444);   // Tabard 100144
+        RemoveAurasDueToSpell(56700);   // Tabard 100145
+        RemoveAurasDueToSpell(53611);   // Tabard 100146
+        RemoveAurasDueToSpell(55949);   // Tabard 100147
+        RemoveAurasDueToSpell(56740);   // Tabard 100148
+        RemoveAurasDueToSpell(56914);   // Tabard 100149
+        RemoveAurasDueToSpell(57494);   // Tabard 100150
+        RemoveAurasDueToSpell(57551);   // Tabard 100151
+        RemoveAurasDueToSpell(60857);   // Tabard 100152
+        RemoveAurasDueToSpell(61023);   // Tabard 100153
+        RemoveAurasDueToSpell(61236);   // Tabard 100154
+        RemoveAurasDueToSpell(61358);   // Tabard 100155
+        RemoveAurasDueToSpell(62192);   // Tabard 100156
+        RemoveAurasDueToSpell(62398);   // Tabard 100157
+        RemoveAurasDueToSpell(62579);   // Tabard 100158
+        RemoveAurasDueToSpell(62640);   // Tabard 100159
+        RemoveAurasDueToSpell(63096);   // Tabard 100160
+        RemoveAurasDueToSpell(63893);   // Tabard 100161
+        RemoveAurasDueToSpell(69859);   // Tabard 100162
+        RemoveAurasDueToSpell(71986);   // Tabard 100163
+        RemoveAurasDueToSpell(74621);   // Tabard 100164
+        RemoveAurasDueToSpell(75041);   // Tabard 100165
+        RemoveAurasDueToSpell(57887);   // Tabard 100166
     }
 }
 
