@@ -13226,7 +13226,7 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
             case 100109:    // Agonia de sombras
             { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(72523); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
             case 100110:    // Escudo de fuego
-            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(58712); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); reApplyMorph = true;  break; }
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(71706); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); reApplyMorph = true;  break; }
             case 100111:    // Aura Élite
             { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(34664); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
             case 100112:    // Aura Premium
@@ -13339,6 +13339,8 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
             { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(75041); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
             case 100166:    // Esfera morada
             { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(57887); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); reApplyMorph = true;  break; }
+            case 100167:    // Escudo llameante
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(58712); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
             }
 
             if (reApplyMorph)
@@ -13372,8 +13374,8 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
             RemoveAurasDueToSpell(72521);   // Tabard 100108
             RemoveAurasDueToSpell(72523);   // Tabard 100109
             RemoveAurasDueToSpell(71706);   // Tabard 100110
-            RemoveAurasDueToSpell(64361);   // Tabard 100111
-            RemoveAurasDueToSpell(64393);   // Tabard 100112
+            RemoveAurasDueToSpell(34664);   // Tabard 100111
+            RemoveAurasDueToSpell(40858);   // Tabard 100112
             RemoveAurasDueToSpell(16003);   // Tabard 100113
             RemoveAurasDueToSpell(25148);   // Tabard 100114
             RemoveAurasDueToSpell(12898);   // Tabard 100115
@@ -13428,6 +13430,7 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
             RemoveAurasDueToSpell(74621);   // Tabard 100164
             RemoveAurasDueToSpell(75041);   // Tabard 100165
             RemoveAurasDueToSpell(57887);   // Tabard 100166
+            RemoveAurasDueToSpell(58712);   // Tabard 100167
         }
     }
 }
@@ -13477,8 +13480,8 @@ void Player::DeMorphIllusionShirt(uint8 slot, uint32 shirtEntry)
         RemoveAurasDueToSpell(72521);   // Tabard 100108
         RemoveAurasDueToSpell(72523);   // Tabard 100109
         RemoveAurasDueToSpell(71706);   // Tabard 100110
-        RemoveAurasDueToSpell(64361);   // Tabard 100111
-        RemoveAurasDueToSpell(64393);   // Tabard 100112
+        RemoveAurasDueToSpell(34664);   // Tabard 100111
+        RemoveAurasDueToSpell(40858);   // Tabard 100112
         RemoveAurasDueToSpell(16003);   // Tabard 100113
         RemoveAurasDueToSpell(25148);   // Tabard 100114
         RemoveAurasDueToSpell(12898);   // Tabard 100115
@@ -13533,6 +13536,7 @@ void Player::DeMorphIllusionShirt(uint8 slot, uint32 shirtEntry)
         RemoveAurasDueToSpell(74621);   // Tabard 100164
         RemoveAurasDueToSpell(75041);   // Tabard 100165
         RemoveAurasDueToSpell(57887);   // Tabard 100166
+        RemoveAurasDueToSpell(58712);   // Tabard 100167
     }
 }
 
