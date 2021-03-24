@@ -13059,7 +13059,7 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
             else if (shirtEntry == 100063) SetObjectScale(0.45f);
             else if (shirtEntry == 100064) SetObjectScale(0.55f);
             else if (shirtEntry == 100065) SetObjectScale(0.55f);
-            else if (shirtEntry == 100068) SetObjectScale(0.45f);
+            else if (shirtEntry == 100068) SetObjectScale(0.4f);
             else if (shirtEntry == 100069) SetObjectScale(0.5f);
             else if (shirtEntry == 100070) SetObjectScale(0.55f);
             else if (shirtEntry == 100072) SetObjectScale(0.9f);
@@ -13333,7 +13333,7 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
             { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(69859); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
             case 100163:    // Bola roja chispeante
             { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(71986); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
-            case 100164:    // Escudo burbuja  (IGUAL QUE LA 100110 aura escudo de fuego)
+            case 100164:    // Escudo burbuja
             { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(74621); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
             case 100165:    // Llameante
             { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(75041); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
@@ -13346,20 +13346,8 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
             if (reApplyMorph)
             {
                 SetDisplayId(21267); // Random morph to prevent movement issues with auras.
-
-                bool shouldDeMorph = true;
-                if (Item* tabard = GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_BODY))
-                {
-                    if (tabard->GetEntry() >= 100000 && tabard->GetEntry() <= 100100)
-                    {
-                        MorphIllusionShirt(EQUIPMENT_SLOT_BODY, tabard->GetEntry());
-                        shouldDeMorph = false;
-                    }
-                }
-                if (shouldDeMorph)
-                {
-                    DeMorph();
-                }
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                DeMorph();
             }
         }
         else
