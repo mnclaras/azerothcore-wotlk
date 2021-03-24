@@ -13343,12 +13343,12 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
             { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(58712); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
             }
 
-            if (reApplyMorph)
-            {
-                SetDisplayId(21267); // Random morph to prevent movement issues with auras.
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
-                DeMorph();
-            }
+            //if (reApplyMorph)
+            //{
+            //    SetDisplayId(21267); // Random morph to prevent movement issues with auras.
+            //    std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            //    DeMorph();
+            //}
         }
         else
         {
