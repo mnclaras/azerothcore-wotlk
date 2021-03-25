@@ -60,4 +60,3 @@ public:
 #define sModGuildPointsMgr sModGuildPoints::instance()
 #endif
 
-#endif 
