@@ -1215,6 +1215,7 @@ void AddSC_Arena_AntiDraw();
 void AddSC_gurubashi_chest_event();
 void AddSC_event_automation();
 void AddSC_deathmatch_area();
+void AddSC_mod_guild_points();
 
 void AddCustomScripts()
 {
@@ -1244,5 +1245,6 @@ void AddCustomScripts()
 	AddSC_Arena_AntiDraw();
     AddSC_gurubashi_chest_event();
     AddSC_event_automation();
+    AddSC_mod_guild_points();
 #endif
 }
