@@ -24,6 +24,7 @@ set(scripts_STAT_SRCS
   ${AC_SCRIPTS_DIR}/Custom/HolidayEvents/custom_hallows_end_event.cpp
   ${AC_SCRIPTS_DIR}/Custom/HolidayEvents/custom_christmas_event.cpp
   ${AC_SCRIPTS_DIR}/Custom/Events/events_automation.cpp
+  ${AC_SCRIPTS_DIR}/Custom/Guild/mod_guild_points.h
   ${AC_SCRIPTS_DIR}/Custom/Guild/mod_guild_points.cpp
   ${AC_SCRIPTS_DIR}/Custom/custom_player_tools.cpp
   ${AC_SCRIPTS_DIR}/Custom/custom_amnesia_coin_exchange.cpp

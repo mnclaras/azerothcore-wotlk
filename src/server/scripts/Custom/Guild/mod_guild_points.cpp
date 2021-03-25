@@ -16,13 +16,17 @@
 */
 
 #include "mod_guild_points.h"
+#include "Group.h"
+#include "GroupMgr.h"
+#include "Guild.h"
+
 
 void LoadGuildPoints()
 {
-    for (BossRewardInfoContainer::const_iterator itr = m_BossRewardInfoContainer.begin(); itr != m_BossRewardInfoContainer.end(); ++itr)
+    for (BossRewardInfoContainer::const_iterator itr = sModGuildPointsMgr->m_BossRewardInfoContainer.begin(); itr != sModGuildPointsMgr->m_BossRewardInfoContainer.end(); ++itr)
         delete* itr;
 
-    m_BossRewardInfoContainer.clear();
+    sModGuildPointsMgr->m_BossRewardInfoContainer.clear();
 
     uint32 oldMSTime = getMSTime();
     uint32 count = 0;
@@ -44,7 +48,7 @@ void LoadGuildPoints()
         pBossReward->entry = fields[0].GetUInt32();
         pBossReward->points = fields[1].GetUInt32();
 
-        m_BossRewardInfoContainer.push_back(pBossReward);
+        sModGuildPointsMgr->m_BossRewardInfoContainer.push_back(pBossReward);
         ++count;
     } while (result->NextRow());
     sLog->outString(">>MOD GUILD POINTS: Loaded %u boss rewards in %u ms.", count, GetMSTimeDiffToNow(oldMSTime));
@@ -102,7 +106,7 @@ void sModGuildPoints::UpdateGuildPoints(uint32 guildId, uint32 points)
     }
     else
     {
-        uint32 currentPoints = (*result)[0].GetUInt32() : 0;
+        uint32 currentPoints = (*result)[0].GetUInt32();
         CharacterDatabase.PExecute("UPDATE guild_points_ranking SET points = '%u' WHERE guildId = '%u';", currentPoints + points, guildId);
     }
 }
@@ -128,7 +132,7 @@ public:
 
         uint32 entryToFind = 123;
 
-        for (BossRewardInfoContainer::const_iterator itr = m_BossRewardInfoContainer.begin(); itr != m_BossRewardInfoContainer.end(); ++itr)
+        for (BossRewardInfoContainer::const_iterator itr = sModGuildPointsMgr->m_BossRewardInfoContainer.begin(); itr != sModGuildPointsMgr->m_BossRewardInfoContainer.end(); ++itr)
         {
             if (entryToFind == (*itr)->entry)
             {
@@ -141,7 +145,8 @@ public:
 
                     if (leader && guild)
                     {
-                        UpdateGuildPoints();
+                        sModGuildPointsMgr->UpdateGuildPoints(leader->GetGuildId(), points);
+                        std::ostringstream stream;
                         stream << "La hermandad |CFF00FF00" << leader->GetGuildName() << "|r ha sumado |CFF00FF00[" << std::to_string(points) << "] puntos!";
                         sWorld->SendServerMessage(SERVER_MSG_STRING, stream.str().c_str());
                         break;
@@ -160,9 +165,6 @@ public:
             leader = ObjectAccessor::FindPlayerInOrOutOfWorld(player->GetGroup()->GetLeaderGUID());
 
         if (!leader) leader = player;
-
-        if (leader && leader->GetGuild()) g_name = leader->GetGuildName();
-
         if (leader && AccountMgr::IsPlayerAccount(leader->GetSession()->GetSecurity()))
         {
             return leader;
@@ -192,7 +194,7 @@ public:
         return commandTable;
     }
 
-    static bool HandleSaveBossRewards(ChatHandler* handler, const char* _args)
+    static bool HandleSaveBossRewards(ChatHandler* handler, const char* args)
     {
         if (!*args)
             return false;
@@ -215,7 +217,7 @@ public:
         return true;
     }
 
-    static bool HandleRemoveBossRewards(ChatHandler* handler, const char* _args)
+    static bool HandleRemoveBossRewards(ChatHandler* handler, const char* args)
     {
         if (!*args)
             return false;
@@ -253,7 +255,7 @@ public:
         sLog->outString("== MOD GUILD POINTS ===========================================================================");
 
         sLog->outString("Loading boss rewards...");
-        sModGuildPointsMgr->LoadGuildBossRewardInfo();
+        sModGuildPointsMgr->LoadBossRewardInfo();
 
         sLog->outString("== MOD GUILD POINTS ===========================================================================");
     }

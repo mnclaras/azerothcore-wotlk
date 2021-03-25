@@ -1,4 +1,3 @@
-
 #ifndef MOD_GUILD_POINTS_H
 #define MOD_GUILD_POINTS_H
 
