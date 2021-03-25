@@ -38,6 +38,38 @@ public:
         return (locale == LOCALE_esES || locale == LOCALE_esMX);
     }
 
+    static bool HandleResetStatsOrLevelHelper(Player* player)
+    {
+        ChrClassesEntry const* classEntry = sChrClassesStore.LookupEntry(player->getClass());
+        if (!classEntry)
+        {
+            sLog->outError("Class %u not found in DBC (Wrong DBC files?)", player->getClass());
+            return false;
+        }
+
+        uint8 powerType = classEntry->powerType;
+
+        // reset m_form if no aura
+        if (!player->HasAuraType(SPELL_AURA_MOD_SHAPESHIFT))
+            player->SetShapeshiftForm(FORM_NONE);
+
+        player->setFactionForRace(player->getRace());
+
+        player->SetUInt32Value(UNIT_FIELD_BYTES_0, ((player->getRace()) | (player->getClass() << 8) | (player->getGender() << 16) | (powerType << 24)));
+
+        // reset only if player not in some form;
+        if (player->GetShapeshiftForm() == FORM_NONE)
+            player->InitDisplayIds();
+
+        player->SetByteValue(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_PVP);
+
+        player->SetUInt32Value(UNIT_FIELD_FLAGS, UNIT_FLAG_PVP_ATTACKABLE);
+
+        //-1 is default value
+        player->SetUInt32Value(PLAYER_FIELD_WATCHED_FACTION_INDEX, uint32(-1));
+        return true;
+    }
+
 
     bool OnGossipHello(Player* player, Creature* creature) override
     {
@@ -84,6 +116,15 @@ public:
                     }
                 }
 
+
+                if (HandleResetStatsOrLevelHelper(player))
+                {
+                    player->InitRunes();
+                    player->InitStatsForLevel(true);
+                    player->InitTaxiNodesForLevel();
+                    player->InitGlyphsForLevel();
+                    player->InitTalentForLevel();
+                }
 
                 player->GetSession()->SendNotification(isSpanish ? "|cffFFFF00SERVICIOS \n |cffFFFFFFCDs reiniciados satisfactoriamente!" : "|cffFFFF00SERVICES \n |cffFFFFFFCooldowns succesfully reseted!");
                 player->CastSpell(player, 31726);
