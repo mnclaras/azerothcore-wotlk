@@ -198,6 +198,8 @@ public:
 
             SendGossipMenuFor(player, DEFAULT_MESSAGE, creature->GetGUID());
         }
+
+        AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Adios" : "Goodbye", GOSSIP_SENDER_MAIN, RANK_ACTION_GOODBYE);
         return true;
     }
 
