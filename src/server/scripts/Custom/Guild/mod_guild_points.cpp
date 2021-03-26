@@ -181,7 +181,7 @@ public:
                     if (Guild* guild = sGuildMgr->GetGuildById(guildId))
                     {
                         stream.str("");
-                        stream << std::to_string(position) << ". " << "|CFF00FF00" << guild->GetName() << "|r: " << std::to_string(points);
+                        stream << std::to_string(position) << ". " << "|CFF00A15B" << guild->GetName() << "|r: " << std::to_string(points);
                         if (isSpanish) stream << " puntos.";
                         else stream << " points.";
 
