@@ -30,7 +30,7 @@ void sModGuildPoints::LoadBossRewardInfo()
     uint32 oldMSTime = getMSTime();
     uint32 count = 0;
 
-    QueryResult result = CharacterDatabase.Query("SELECT entry, points FROM guild_points_boss_reward;");
+    QueryResult result = CharacterDatabase.Query("SELECT entry, points, mode, difficulty FROM guild_points_boss_reward;");
 
     if (!result)
     {
@@ -46,6 +46,8 @@ void sModGuildPoints::LoadBossRewardInfo()
 
         pBossReward->entry = fields[0].GetUInt32();
         pBossReward->points = fields[1].GetUInt32();
+        pBossReward->mode = fields[2].GetUInt32();
+        pBossReward->difficulty = fields[3].GetString();
 
         m_BossRewardInfoContainer.push_back(pBossReward);
         ++count;
@@ -53,14 +55,14 @@ void sModGuildPoints::LoadBossRewardInfo()
     sLog->outString(">>MOD GUILD POINTS: Loaded %u boss rewards in %u ms.", count, GetMSTimeDiffToNow(oldMSTime));
 }
 
-void sModGuildPoints::PurgeBossReward(uint32 entry)
+void sModGuildPoints::PurgeBossReward(uint32 entry, uint32 mode, std::string difficulty)
 {
-    CharacterDatabase.PExecute("DELETE FROM guild_points_boss_reward WHERE entry = '%u'", entry);
+    CharacterDatabase.PExecute("DELETE FROM guild_points_boss_reward WHERE entry = '%u' AND mode = '%u' AND difficulty = '%s'", entry, mode, difficulty.c_str());
 }
 
-void sModGuildPoints::InsertBossReward(uint32 entry, uint32 points)
+void sModGuildPoints::InsertBossReward(uint32 entry, uint32 points, uint32 mode, std::string difficulty)
 {
-    CharacterDatabase.PExecute("INSERT INTO guild_points_boss_reward (entry, points) VALUES ('%u', '%u');", entry, points);
+    CharacterDatabase.PExecute("INSERT INTO guild_points_boss_reward (entry, points, mode, difficulty) VALUES ('%u', '%u', '%u', '%s');", entry, points, mode, difficulty.c_str());
 }
 
 void sModGuildPoints::UpdateGuildPoints(uint32 guildId, uint32 points)
@@ -77,12 +79,12 @@ void sModGuildPoints::UpdateGuildPoints(uint32 guildId, uint32 points)
     }
 }
 
-void sModGuildPoints::SaveBossRewardToDB(uint32 entry, uint32 points)
+void sModGuildPoints::SaveBossRewardToDB(uint32 entry, uint32 points, uint32 mode, std::string difficulty)
 {
     // Purge current points
-    PurgeBossReward(entry);
+    PurgeBossReward(entry, mode, difficulty);
     // Insert reward points
-    InsertBossReward(entry, points);
+    InsertBossReward(entry, points, mode, difficulty);
 }
 
 class mod_guild_points : public PlayerScript
@@ -98,10 +100,18 @@ public:
         if (!boss || !boss->GetMap()->IsDungeon())
             return;
 
+        uint32 mode = 10;
+        if (player->GetMap()->IsNonRaidDungeon())
+            mode = 5;
+        else if (player->GetMap()->Is25ManRaid())
+            mode = 25;
+
+        std::string difficulty = (player->GetMap()->IsHeroic()) ? "H" : "N";
+
         uint32 bossEntry = boss->GetEntry();
         for (BossRewardInfoContainer::const_iterator itr = sModGuildPointsMgr->m_BossRewardInfoContainer.begin(); itr != sModGuildPointsMgr->m_BossRewardInfoContainer.end(); ++itr)
         {
-            if (bossEntry == (*itr)->entry)
+            if (bossEntry == (*itr)->entry && mode == (*itr)->mode && difficulty == (*itr)->difficulty)
             {
                 uint32 points = (*itr)->points;
 
@@ -239,8 +249,8 @@ public:
     std::vector<ChatCommand> GetCommands() const override
     {
         static std::vector<ChatCommand> GuildPointsTable = {
-            {"save", SEC_ADMINISTRATOR, false, &HandleSaveBossRewards, "Add/Update a creature <entry> that will give <points> to the guild on kill. Example: `.gpoints add <entry> <points>`"},
-            {"remove", SEC_ADMINISTRATOR, false, &HandleRemoveBossRewards, "Remove a creature <entry> that will no loger give points to the guild on kill. Example: `.gpoints remove <entry>`"},
+            {"save", SEC_ADMINISTRATOR, false, &HandleSaveBossRewards, "Add/Update a creature <entry> that will give <points> to the guild on kill. Example: `.gpoints add <entry> <points> <mode> <difficulty>`"},
+            {"remove", SEC_ADMINISTRATOR, false, &HandleRemoveBossRewards, "Remove a creature <entry> that will no loger give points to the guild on kill. Example: `.gpoints remove <entry> <mode> <difficulty>`"},
             {"reload", SEC_ADMINISTRATOR, true, &HandleReloadBossRewardsCommand, "Reload all creature rewards. Example: `.gpoints reload`"},
         };
 
@@ -264,12 +274,34 @@ public:
         if (!pointsStr || !atoi(pointsStr))
             return false;
 
+        char* modeStr = strtok(nullptr, " ");
+        if (!modeStr || !atoi(modeStr))
+            return false;
+
+        char* difficultyStr = strtok(nullptr, " ");
+        std::string difficulty = difficultyStr ? difficultyStr : "";
+        if (!difficultyStr || difficulty.empty())
+            return false;
+
+        std::transform(difficulty.begin(), difficulty.end(), difficulty.begin(), ::toupper);
+
         uint32 entry = atoi(entryStr);
         uint32 points = atoi(pointsStr);
+        uint32 mode = atoi(modeStr);
 
-        sModGuildPointsMgr->SaveBossRewardToDB(entry, points);
-
-        handler->SendGlobalGMSysMessage("Boss reward saved to DB. You might want to type \".gpoints reload\".");
+        if (mode != 5 && mode != 10 && mode != 25)
+        {
+            handler->SendGlobalGMSysMessage("Mode should be 5, 10 or 25.");
+        }
+        else if (difficulty != "N" && difficulty != "Y")
+        {
+            handler->SendGlobalGMSysMessage("Difficulty should be N or H.");
+        }
+        else
+        {
+            sModGuildPointsMgr->SaveBossRewardToDB(entry, points, mode, difficulty);
+            handler->SendGlobalGMSysMessage("Boss reward saved to DB. You might want to type \".gpoints reload\".");
+        }
 
         return true;
     }
@@ -283,9 +315,19 @@ public:
         if (!entryStr || !atoi(entryStr))
             return false;
 
-        uint32 entry = atoi(entryStr);
+        char* modeStr = strtok(nullptr, " ");
+        if (!modeStr || !atoi(modeStr))
+            return false;
 
-        sModGuildPointsMgr->PurgeBossReward(entry);
+        char* difficultyStr = strtok(nullptr, " ");
+        std::string difficulty = difficultyStr ? difficultyStr : "";
+        if (!difficultyStr || difficulty.empty())
+            return false;
+
+        uint32 entry = atoi(entryStr);
+        uint32 mode = atoi(modeStr);
+
+        sModGuildPointsMgr->PurgeBossReward(entry, mode, difficulty);
 
         handler->SendGlobalGMSysMessage("Boss reward removed from DB. You might want to type \".gpoints reload\".");
 

@@ -32,10 +32,10 @@ enum ArenaRankActionIds {
 
 struct GuildBossRewardInfo
 {
-    uint32     entry;
-    uint32     points;
-//public:
-//    uint32 getEntry() const { return entry; }
+    uint32      entry;
+    uint32      points;
+    uint32      mode;
+    std::string difficulty;
 };
 
 typedef std::vector<GuildBossRewardInfo*> BossRewardInfoContainer;
@@ -50,9 +50,9 @@ public:
     }
 
     void LoadBossRewardInfo();
-    void SaveBossRewardToDB(uint32 entry, uint32 points);
-    void PurgeBossReward(uint32 entry);
-    void InsertBossReward(uint32 entry, uint32 points);
+    void SaveBossRewardToDB(uint32 entry, uint32 points, uint32 mode, std::string difficulty);
+    void PurgeBossReward(uint32 entry, uint32 mode, std::string difficulty);
+    void InsertBossReward(uint32 entry, uint32 points, uint32 mode, std::string difficulty);
     void UpdateGuildPoints(uint32 guildId, uint32 points);
    
     BossRewardInfoContainer m_BossRewardInfoContainer;
