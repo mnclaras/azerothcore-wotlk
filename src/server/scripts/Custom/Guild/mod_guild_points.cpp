@@ -55,7 +55,7 @@ void sModGuildPoints::LoadBossRewardInfo()
 
 void sModGuildPoints::PurgeBossReward(uint32 entry)
 {
-    CharacterDatabase.PQuery("DELETE FROM guild_points_boss_reward WHERE entry = '%u'", entry);
+    CharacterDatabase.PExecute("DELETE FROM guild_points_boss_reward WHERE entry = '%u'", entry);
 }
 
 void sModGuildPoints::InsertBossReward(uint32 entry, uint32 points)
@@ -65,7 +65,7 @@ void sModGuildPoints::InsertBossReward(uint32 entry, uint32 points)
 
 void sModGuildPoints::UpdateGuildPoints(uint32 guildId, uint32 points)
 {
-    QueryResult result = CharacterDatabase.Query("SELECT points FROM guild_points_ranking;");
+    QueryResult result = CharacterDatabase.PQuery("SELECT points FROM guild_points_ranking WHERE guildId = '%u';", guildId);
     if (!result)
     {
         CharacterDatabase.PExecute("INSERT INTO guild_points_ranking (guildId, points) VALUES ('%u', '%u');", guildId, points);
