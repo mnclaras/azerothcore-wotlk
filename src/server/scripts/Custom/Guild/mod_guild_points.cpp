@@ -18,41 +18,7 @@
 #include "mod_guild_points.h"
 #include "Group.h"
 #include "GroupMgr.h"
-#include "Guild.h"
 
-
-void LoadGuildPoints()
-{
-    for (BossRewardInfoContainer::const_iterator itr = sModGuildPointsMgr->m_BossRewardInfoContainer.begin(); itr != sModGuildPointsMgr->m_BossRewardInfoContainer.end(); ++itr)
-        delete* itr;
-
-    sModGuildPointsMgr->m_BossRewardInfoContainer.clear();
-
-    uint32 oldMSTime = getMSTime();
-    uint32 count = 0;
-
-    QueryResult result = CharacterDatabase.Query("SELECT entry, points FROM guild_points_boss_reward;");
-
-    if (!result)
-    {
-        sLog->outString(">>MOD GUILD POINTS: Loaded 0 boss rewards. DB table `guild_points_boss_reward` is empty!");
-        return;
-    }
-
-    do
-    {
-        Field* fields = result->Fetch();
-
-        GuildBossRewardInfo* pBossReward = new GuildBossRewardInfo;
-
-        pBossReward->entry = fields[0].GetUInt32();
-        pBossReward->points = fields[1].GetUInt32();
-
-        sModGuildPointsMgr->m_BossRewardInfoContainer.push_back(pBossReward);
-        ++count;
-    } while (result->NextRow());
-    sLog->outString(">>MOD GUILD POINTS: Loaded %u boss rewards in %u ms.", count, GetMSTimeDiffToNow(oldMSTime));
-}
 
 void sModGuildPoints::LoadBossRewardInfo()
 {
@@ -124,7 +90,6 @@ class mod_guild_points : public PlayerScript
 public:
     mod_guild_points() : PlayerScript("mod_guild_points") { }
 
-
     void OnCreatureKill(Player* player, Creature* boss) override
     {
         if (!player)
@@ -149,7 +114,7 @@ public:
                     {
                         sModGuildPointsMgr->UpdateGuildPoints(leader->GetGuildId(), points);
                         std::ostringstream stream;
-                        stream << "La hermandad |CFF00FF00" << leader->GetGuildName() << "|r ha sumado |CFF00FF00[" << std::to_string(points) << "] puntos!";
+                        stream << "La hermandad |CFF00FF00" << leader->GetGuildName() << "|r ha sumado |CFF00FF00[" << std::to_string(points) << "]|r puntos!";
                         sWorld->SendServerMessage(SERVER_MSG_STRING, stream.str().c_str());
                         break;
                     }
@@ -173,6 +138,97 @@ public:
         }
 
         return nullptr;
+    }
+};
+
+class ModGuildPoints_Ranking : public CreatureScript
+{
+private:
+    static bool IsSpanishPlayer(Player* player)
+    {
+        LocaleConstant locale = player->GetSession()->GetSessionDbLocaleIndex();
+        return (locale == LOCALE_esES || locale == LOCALE_esMX);
+    }
+
+public:
+
+    ModGuildPoints_Ranking() : CreatureScript("ModGuildPoints_Ranking") { }
+
+    bool OnGossipHello(Player* player, Creature* creature)  override
+    {
+        bool isSpanish = IsSpanishPlayer(player);
+
+        QueryResult result = CharacterDatabase.Query("SELECT guildId, points FROM guild_points_ranking ORDER BY points DESC LIMIT 30;");
+        if (!result)
+        {
+            ClearGossipMenuFor(player);
+            AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Adios" : "Goodbye", GOSSIP_SENDER_MAIN, RANK_ACTION_GOODBYE);
+            AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Adios" : "Goodbye", GOSSIP_SENDER_MAIN, RANK_ACTION_GOODBYE);
+            SendGossipMenuFor(player, DEFAULT_MESSAGE, creature->GetGUID());
+        }
+        else
+        {
+            std::string name;
+            uint32 guildId, points, position = 1;
+            std::ostringstream stream;
+
+            do {
+                Field* fields = result->Fetch();
+                guildId = fields[0].GetUInt32();
+                points = fields[1].GetUInt32();
+
+
+                if (guildId && points && guildId > 0 && points > 0)
+                {
+                    if (Guild* guild = sGuildMgr->GetGuildById(guildId))
+                    {
+                        stream.str("");
+                        stream << std::to_string(position) << ". " << "|CFF00FF00" << guild->GetName() << "|r: " << std::to_string(points);
+                        if (isSpanish) stream << " puntos.";
+                        else stream << " points.";
+
+                        position++;
+
+                        AddGossipItemFor(player, GOSSIP_ICON_DOT, stream.str(), GOSSIP_SENDER_MAIN, RANK_ACTION_NOOP);
+
+                        position++;
+                    }
+                }  
+            } while (result->NextRow());
+
+            SendGossipMenuFor(player, DEFAULT_MESSAGE, creature->GetGUID());
+        }
+        return true;
+    }
+
+    bool OnGossipSelect(Player* player, Creature* creature, uint32 /*sender*/, uint32 action) override
+    {
+        ClearGossipMenuFor(player);
+        bool isSpanish = IsSpanishPlayer(player);
+        switch (action) {
+        case 0:
+        case RANK_ACTION_NOOP:
+            OnGossipHello(player, creature);
+            break;
+        case RANK_ACTION_GOODBYE:
+            CloseGossipMenuFor(player);
+            break;
+        default:
+            OnGossipHello(player, creature);
+            break;
+        }
+
+        return true;
+    }
+
+    struct myAI : public ScriptedAI
+    {
+        myAI(Creature* creature) : ScriptedAI(creature) { }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new myAI(creature);
     }
 };
 
@@ -268,4 +324,5 @@ void AddSC_mod_guild_points()
     new mod_guild_points();
     new ModGuildPoints_World();
     new ModGuildPoints_Command();
+    new ModGuildPoints_Ranking();
 }

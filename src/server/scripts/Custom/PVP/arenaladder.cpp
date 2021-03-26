@@ -34,8 +34,7 @@ enum ArenaRankActionIds {
     //ARENA_3v3SOLO_LADDER = GOSSIP_ACTION_INFO_DEF + 4,
     ARENA_GOODBYE = GOSSIP_ACTION_INFO_DEF + 5,
     ARENA_NOOP = 1,
-    ARENA_START_TEAM_LOOKUP = GOSSIP_ACTION_INFO_DEF + 6,
-    
+    ARENA_START_TEAM_LOOKUP = GOSSIP_ACTION_INFO_DEF + 6,    
 };
 
 enum ArenaRankOptions {
@@ -46,8 +45,7 @@ enum ArenaGossipText {
     ARENA_GOSSIP_HELLO = 60009,
     ARENA_GOSSIP_NOTEAMS = 11202,
     ARENA_GOSSIP_TEAMS = 11203,
-    ARENA_GOSSIP_TEAM_LOOKUP = 11204,
-    
+    ARENA_GOSSIP_TEAM_LOOKUP = 11204,    
 };
 
 class ArenaTeamRanks : public CreatureScript

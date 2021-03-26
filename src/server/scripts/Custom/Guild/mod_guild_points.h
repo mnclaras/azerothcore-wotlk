@@ -20,13 +20,14 @@
 #include "GossipDef.h"
 #include "Creature.h"
 #include "ObjectMgr.h"
+#include "Guild.h"
+#include "GuildMgr.h"
 
-enum GuildPointMapId
-{
-    MAP_ICC = 631,
-    MAP_RS = 724,
-    MAP_ULDUAR = 603,
-    MAP_TOC = 649
+#define DEFAULT_MESSAGE 907
+
+enum ArenaRankActionIds {
+    RANK_ACTION_GOODBYE = GOSSIP_ACTION_INFO_DEF + 1,
+    RANK_ACTION_NOOP = 1,
 };
 
 struct GuildBossRewardInfo
