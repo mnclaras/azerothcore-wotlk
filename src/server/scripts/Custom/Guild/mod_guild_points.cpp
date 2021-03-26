@@ -130,15 +130,17 @@ public:
         if (!player)
             return;
 
-        uint32 entryToFind = 123;
+        if (!boss || !boss->GetMap()->IsDungeon())
+            return;
 
+        uint32 bossEntry = boss->GetEntry();
         for (BossRewardInfoContainer::const_iterator itr = sModGuildPointsMgr->m_BossRewardInfoContainer.begin(); itr != sModGuildPointsMgr->m_BossRewardInfoContainer.end(); ++itr)
         {
-            if (entryToFind == (*itr)->entry)
+            if (bossEntry == (*itr)->entry)
             {
                 uint32 points = (*itr)->points;
 
-                if (points && points > 0 && boss->GetMap()->IsDungeon())
+                if (points && points > 0)
                 {
                     Player* leader = GetLeaderOfGroup(player);
                     Guild* guild = leader ? leader->GetGuild() : nullptr;
