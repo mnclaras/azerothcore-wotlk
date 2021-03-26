@@ -163,8 +163,6 @@ public:
         {
             ClearGossipMenuFor(player);
             AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Adios" : "Goodbye", GOSSIP_SENDER_MAIN, RANK_ACTION_GOODBYE);
-            AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Adios" : "Goodbye", GOSSIP_SENDER_MAIN, RANK_ACTION_GOODBYE);
-            SendGossipMenuFor(player, DEFAULT_MESSAGE, creature->GetGUID());
         }
         else
         {
@@ -196,10 +194,10 @@ public:
                 }  
             } while (result->NextRow());
 
-            SendGossipMenuFor(player, DEFAULT_MESSAGE, creature->GetGUID());
         }
 
         AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Adios" : "Goodbye", GOSSIP_SENDER_MAIN, RANK_ACTION_GOODBYE);
+        SendGossipMenuFor(player, DEFAULT_MESSAGE, creature->GetGUID());
         return true;
     }
 
