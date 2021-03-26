@@ -293,7 +293,7 @@ public:
         {
             handler->SendGlobalGMSysMessage("Mode should be 5, 10 or 25.");
         }
-        else if (difficulty != "N" && difficulty != "Y")
+        else if (difficulty != "N" && difficulty != "H")
         {
             handler->SendGlobalGMSysMessage("Difficulty should be N or H.");
         }
