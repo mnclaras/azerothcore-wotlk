@@ -204,7 +204,6 @@ public:
     bool OnGossipSelect(Player* player, Creature* creature, uint32 /*sender*/, uint32 action) override
     {
         ClearGossipMenuFor(player);
-        bool isSpanish = IsSpanishPlayer(player);
         switch (action) {
         case 0:
         case RANK_ACTION_NOOP:
