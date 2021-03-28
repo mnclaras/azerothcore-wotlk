@@ -654,7 +654,7 @@ class npc_gunship : public CreatureScript
                         {
                             // 2 Extra frost to alliance
                             //if (p->GetTeamId() == TEAM_ALLIANCE) p->AddItem(49426, 4);
-                            if (!event_broadcasted)
+                            if (!event_broadcasted && AccountMgr::IsPlayerAccount(p->GetSession()->GetSecurity()))
                             {
                                 //lets get the info we want
                                 //Map* map = p->GetMap();

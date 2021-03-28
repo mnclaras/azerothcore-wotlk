@@ -676,7 +676,7 @@ class boss_the_lich_king : public CreatureScript
                         //    }
                         //}
 
-                        if (!event_broadcasted)
+                        if (!event_broadcasted && AccountMgr::IsPlayerAccount(p->GetSession()->GetSecurity()))
                         {
                             //lets get the info we want
                             //Map* map = p->GetMap();
