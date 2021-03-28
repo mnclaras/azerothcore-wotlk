@@ -16,6 +16,7 @@
 #include "GridNotifiersImpl.h"
 #include "CreatureTextMgr.h"
 #include "icecrown_citadel.h"
+#include "mod_guild_points.h"
 
 enum Texts
 {
@@ -694,18 +695,41 @@ class boss_the_lich_king : public CreatureScript
 
                             std::ostringstream stream;
 
-                            Player* leader = p;
-                            uint64 leaderGuid = p->GetGroup() ? p->GetGroup()->GetLeaderGUID() : p->GetGUID();
-                            if (leaderGuid != p->GetGUID())
-                                leader = ObjectAccessor::FindPlayerInOrOutOfWorld(p->GetGroup()->GetLeaderGUID());
-
-                            if (!leader) leader = p;
+                            Player* leader = GetLeaderOfGroup(p);
                             if (leader && leader->GetGuild()) g_name = leader->GetGuildName();
 
                             stream << "La hermandad |cff" << guild_colour << "" << g_name <<
                                 "|r ha derrotado a |CFF" << boss_colour << "[" << boss_name <<
                                 "]|r en modo |cff" << alive_text << IsNormal << "|r " << IsHeroicMode;
                             sWorld->SendServerMessage(SERVER_MSG_STRING, stream.str().c_str());
+
+                            // Guild points
+
+                            uint32 mode = (p->GetMap()->Is25ManRaid()) ? 25 : 10;
+                            std::string difficulty = (p->GetMap()->IsHeroic()) ? "H" : "N";
+
+                            uint32 bossEntry = 36597;
+                            for (BossRewardInfoContainer::const_iterator itr = sModGuildPointsMgr->m_BossRewardInfoContainer.begin(); itr != sModGuildPointsMgr->m_BossRewardInfoContainer.end(); ++itr)
+                            {
+                                if (bossEntry == (*itr)->entry && mode == (*itr)->mode && difficulty == (*itr)->difficulty)
+                                {
+                                    uint32 points = (*itr)->points;
+
+                                    if (points && points > 0)
+                                    {
+                                        Guild* guild = leader ? leader->GetGuild() : nullptr;
+
+                                        if (leader && guild)
+                                        {
+                                            sModGuildPointsMgr->UpdateGuildPoints(leader->GetGuildId(), points);
+                                            std::ostringstream stream;
+                                            stream << "La hermandad |CFF00FF00" << leader->GetGuildName() << "|r ha sumado |CFF00FF00[" << std::to_string(points) << "]|r puntos!";
+                                            sWorld->SendServerMessage(SERVER_MSG_STRING, stream.str().c_str());
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
 
                             event_broadcasted = true;
                         }
@@ -1311,6 +1335,23 @@ class boss_the_lich_king : public CreatureScript
 
                 if (Creature* tirion = ObjectAccessor::GetCreature(*me, instance->GetData64(DATA_HIGHLORD_TIRION_FORDRING)))
                     tirion->AI()->EnterEvadeMode();
+            }
+
+            Player* GetLeaderOfGroup(Player* player)
+            {
+                Player* leader = player;
+                uint64 leaderGuid = player->GetGroup() ? player->GetGroup()->GetLeaderGUID() : player->GetGUID();
+
+                if (leaderGuid != player->GetGUID() && player->GetGroup())
+                    leader = ObjectAccessor::FindPlayerInOrOutOfWorld(player->GetGroup()->GetLeaderGUID());
+
+                if (!leader) leader = player;
+                if (leader /*&& AccountMgr::IsPlayerAccount(leader->GetSession()->GetSecurity())*/)
+                {
+                    return leader;
+                }
+
+                return nullptr;
             }
         };
 
