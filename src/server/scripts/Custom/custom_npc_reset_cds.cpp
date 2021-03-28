@@ -184,10 +184,12 @@ public:
                     player->InitGlyphsForLevel();
                     player->InitTalentForLevel();
                 }
-
-                player->GetSession()->SendNotification(isSpanish ? "|cffFFFF00SERVICIOS \n |cffFFFFFFStats reiniciados satisfactoriamente!" : "|cffFFFF00SERVICES \n |cffFFFFFFStats succesfully reseted!");
-                player->CastSpell(player, 31726);
                 CloseGossipMenuFor(player);
+                // Disconnect player for correct logout
+                player->GetSession()->LogoutPlayer(true);
+
+                //player->GetSession()->SendNotification(isSpanish ? "|cffFFFF00SERVICIOS \n |cffFFFFFFStats reiniciados satisfactoriamente!" : "|cffFFFF00SERVICES \n |cffFFFFFFStats succesfully reseted!");
+                //player->CastSpell(player, 31726);
                 break;
             }
         }
