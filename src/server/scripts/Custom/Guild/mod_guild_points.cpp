@@ -198,8 +198,6 @@ public:
                         position++;
 
                         AddGossipItemFor(player, GOSSIP_ICON_DOT, stream.str(), GOSSIP_SENDER_MAIN, RANK_ACTION_NOOP);
-
-                        position++;
                     }
                 }  
             } while (result->NextRow());
