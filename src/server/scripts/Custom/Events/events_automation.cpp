@@ -48,6 +48,54 @@ static CustomEventWinners eventWinners;
 //static const Position teleportRewardSecond = { -14593.151367f, -259.881683f, 12.135949f, 5.246307f };
 //static const Position teleportRewardThird = { -14593.151367f, -259.881683f, 12.135949f, 5.246307f };
 
+//player->SummonCreature(NPC_TWILIGHT_CORRUPTER, -10328.16f, -489.57f, 49.95f, 0, TEMPSUMMON_TIMED_DESPAWN_OUT_OF_COMBAT, 240000)
+
+//void Map::RemoveAllPlayers()
+//{
+//    if (HavePlayers())
+//    {
+//        for (MapRefManager::iterator itr = m_mapRefManager.begin(); itr != m_mapRefManager.end(); ++itr)
+//        {
+//            Player* player = itr->GetSource();
+//            if (!player->IsBeingTeleportedFar())
+//            {
+//                player->TeleportTo(player->m_homebindMapId, player->m_homebindX, player->m_homebindY, player->m_homebindZ, player->GetOrientation());
+//            }
+//        }
+//    }
+//}
+
+//Map*
+
+//void BattlegroundMap::RemoveAllPlayers()
+//{
+//    if (HavePlayers())
+//        for (MapRefManager::iterator itr = m_mapRefManager.begin(); itr != m_mapRefManager.end(); ++itr)
+//            if (Player* player = itr->GetSource())
+//                if (!player->IsBeingTeleportedFar())
+//                    player->TeleportTo(player->GetEntryPoint());
+//}
+
+
+// Teleport player to first reward zone
+// TODO: Give quest instead of teleport to zone
+//player->TeleportTo(0,
+//    teleportRewardSecond.GetPositionX(),
+//    teleportRewardSecond.GetPositionY(),
+//    teleportRewardSecond.GetPositionZ(),
+//    teleportRewardSecond.GetOrientation());
+
+//// Summon second winner gameobject
+//obj->SummonGameObject(GAMEOBJECT_WINNER_TWO,
+//    teleportRewardT.GetPositionX(),
+//    teleportRewardT.GetPositionY(),
+//    teleportRewardT.GetPositionZ(),
+//    teleportRewardT.GetOrientation(),
+//    teleportRewardT.GetOrientation(),
+//    teleportRewardT.GetOrientation(),
+//    teleportRewardT.GetOrientation(),
+//    teleportRewardT.GetOrientation(),
+//    300000);
 
 class go_event_reward_first : public GameObjectScript
 {
@@ -76,26 +124,6 @@ public:
                     std::stringstream text;
                     text << "|cffff6060[Evento]:|r " << target->GetName() << " ha quedado en |cFFFF4500" << "primer lugar" << "|r!";
                     sWorld->SendServerMessage(SERVER_MSG_STRING, text.str().c_str());
-
-                    // Teleport player to first reward zone
-                    // TODO: Give quest instead of teleport to zone
-                    //player->TeleportTo(0,
-                    //    teleportRewardFirst.GetPositionX(),
-                    //    teleportRewardFirst.GetPositionY(),
-                    //    teleportRewardFirst.GetPositionZ(),
-                    //    teleportRewardFirst.GetOrientation());
-
-                    //// Summon second winner gameobject
-                    //obj->SummonGameObject(GAMEOBJECT_WINNER_TWO,
-                    //    teleportRewardSecond.GetPositionX(),
-                    //    teleportRewardSecond.GetPositionY(),
-                    //    teleportRewardSecond.GetPositionZ(),
-                    //    teleportRewardSecond.GetOrientation(),
-                    //    teleportRewardSecond.GetOrientation(),
-                    //    teleportRewardSecond.GetOrientation(),
-                    //    teleportRewardSecond.GetOrientation(),
-                    //    teleportRewardSecond.GetOrientation(),
-                    //    300000);
 
                     // Destroy gameobject
                     go->RemoveFromWorld();
@@ -138,26 +166,6 @@ public:
                     text << "|cffff6060[Evento]:|r " << target->GetName() << " ha quedado en |cFFFF4500" << "segundo lugar" << "|r!";
                     sWorld->SendServerMessage(SERVER_MSG_STRING, text.str().c_str());
 
-                    // Teleport player to first reward zone
-                    // TODO: Give quest instead of teleport to zone
-                    //player->TeleportTo(0,
-                    //    teleportRewardSecond.GetPositionX(),
-                    //    teleportRewardSecond.GetPositionY(),
-                    //    teleportRewardSecond.GetPositionZ(),
-                    //    teleportRewardSecond.GetOrientation());
-
-                    //// Summon second winner gameobject
-                    //obj->SummonGameObject(GAMEOBJECT_WINNER_TWO,
-                    //    teleportRewardT.GetPositionX(),
-                    //    teleportRewardT.GetPositionY(),
-                    //    teleportRewardT.GetPositionZ(),
-                    //    teleportRewardT.GetOrientation(),
-                    //    teleportRewardT.GetOrientation(),
-                    //    teleportRewardT.GetOrientation(),
-                    //    teleportRewardT.GetOrientation(),
-                    //    teleportRewardT.GetOrientation(),
-                    //    300000);
-
                     // Destroy gameobject
                     go->RemoveFromWorld();
                 }
@@ -199,27 +207,7 @@ public:
                     std::stringstream text;
                     text << "|cffff6060[Evento]:|r " << target->GetName() << " ha quedado en |cFFFF4500" << "tercer lugar" << "|r!";
                     sWorld->SendServerMessage(SERVER_MSG_STRING, text.str().c_str());
-
-                    // Teleport player to first reward zone
-                    // TODO: Give quest instead of teleport to zone
-                    //player->TeleportTo(0,
-                    //    teleportRewardSecond.GetPositionX(),
-                    //    teleportRewardSecond.GetPositionY(),
-                    //    teleportRewardSecond.GetPositionZ(),
-                    //    teleportRewardSecond.GetOrientation());
-
-                    //// Summon second winner gameobject
-                    //obj->SummonGameObject(GAMEOBJECT_WINNER_TWO,
-                    //    teleportRewardT.GetPositionX(),
-                    //    teleportRewardT.GetPositionY(),
-                    //    teleportRewardT.GetPositionZ(),
-                    //    teleportRewardT.GetOrientation(),
-                    //    teleportRewardT.GetOrientation(),
-                    //    teleportRewardT.GetOrientation(),
-                    //    teleportRewardT.GetOrientation(),
-                    //    teleportRewardT.GetOrientation(),
-                    //    300000);
-
+           
                     std::stringstream textFinish;
                     textFinish << "|cffff6060[Evento]:|r " << "El evento ha |cFFFF4500" << "finalizado" << "|r!. Gracias a todos por participar.";
                     sWorld->SendServerMessage(SERVER_MSG_STRING, textFinish.str().c_str());

@@ -1216,6 +1216,7 @@ void AddSC_gurubashi_chest_event();
 void AddSC_event_automation();
 void AddSC_deathmatch_area();
 void AddSC_mod_guild_points();
+void AddSC_mod_bg_auras();
 
 void AddCustomScripts()
 {
@@ -1246,5 +1247,6 @@ void AddCustomScripts()
     AddSC_gurubashi_chest_event();
     AddSC_event_automation();
     AddSC_mod_guild_points();
+    AddSC_mod_bg_auras();
 #endif
 }

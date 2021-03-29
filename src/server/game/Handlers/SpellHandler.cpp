@@ -125,7 +125,8 @@ void WorldSession::HandleUseItemOpcode(WorldPacket& recvPacket)
     }
 
     // Free Action Potion Not Useable in Battlegrounds
-    if (pItem->GetEntry() == 5634 && pUser->InBattleground() && !pUser->InArena())
+    // Fishing chair
+    if ((pItem->GetEntry() == 5634 || pItem->GetEntry() == 33223) && pUser->InBattleground() && !pUser->InArena())
     {
         pUser->SendEquipError(EQUIP_ERR_NOT_DURING_ARENA_MATCH, pItem, NULL);
         return;
