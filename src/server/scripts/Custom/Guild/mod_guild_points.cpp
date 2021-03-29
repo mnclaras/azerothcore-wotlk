@@ -97,16 +97,21 @@ public:
         if (!player)
             return;
 
-        if (!boss || !boss->GetMap()->IsDungeon())
+        if (!boss)
             return;
 
-        uint32 mode = 10;
-        if (player->GetMap()->IsNonRaidDungeon())
-            mode = 5;
-        else if (player->GetMap()->Is25ManRaid())
-            mode = 25;
-
-        std::string difficulty = (player->GetMap()->IsHeroic()) ? "H" : "N";
+        uint32 mode = 1; // World
+        std::string difficulty = "N";
+        if (boss->GetMap()->IsDungeon())
+        {
+            difficulty = (player->GetMap()->IsHeroic()) ? "H" : "N";
+            if (player->GetMap()->IsNonRaidDungeon())
+                mode = 5; // Instances
+            else if (player->GetMap()->Is25ManRaid())
+                mode = 25; // Raid 25
+            else
+                mode = 10; // Raid 10
+        }
 
         uint32 bossEntry = boss->GetEntry();
         for (BossRewardInfoContainer::const_iterator itr = sModGuildPointsMgr->m_BossRewardInfoContainer.begin(); itr != sModGuildPointsMgr->m_BossRewardInfoContainer.end(); ++itr)
@@ -287,13 +292,13 @@ public:
         uint32 points = atoi(pointsStr);
         uint32 mode = atoi(modeStr);
 
-        if (mode != 5 && mode != 10 && mode != 25)
+        if (mode != 1 && mode != 5 && mode != 10 && mode != 25)
         {
-            handler->SendGlobalGMSysMessage("Mode should be 5, 10 or 25.");
+            handler->SendGlobalGMSysMessage("Mode should be 1 (World) 5 (Dungeons), 10 or 25 (Raids).");
         }
         else if (difficulty != "N" && difficulty != "H")
         {
-            handler->SendGlobalGMSysMessage("Difficulty should be N or H.");
+            handler->SendGlobalGMSysMessage("Difficulty should be N or H. Use N for World.");
         }
         else
         {
