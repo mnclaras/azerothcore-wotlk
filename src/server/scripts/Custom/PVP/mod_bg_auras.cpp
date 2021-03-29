@@ -81,29 +81,19 @@ static const std::set<uint32> battlegroundZoneIds{
 static std::map<uint32, PvPIslandInfoKills> KillingStreak;
 static std::map<uint32, PvPIslandInfoHealing> HealingStreak;
 
-class mod_bg_auras : public PlayerScript
+class mod_bg_auras_kill : public PlayerScript
 {
 public:
-    mod_bg_auras() : PlayerScript("mod_bg_auras") { }
+    mod_bg_auras_kill() : PlayerScript("mod_bg_auras_kill") { }
 
-    uint64 healerGUID;
-    uint32 healerZoneId;
-    uint32 healingAmount;
-    uint32 currentHealingStreak;
-    uint64 killerGUID;
-    uint64 victimGUID;
-    uint32 killerZoneId;
-    uint32 victimZoneId;
+    uint64 killerGUID = 0;
+    uint64 victimGUID = 0;
+    uint32 killerZoneId = 0;
+    uint32 victimZoneId = 0;
 
     void OnLogout(Player* player)
     {
-        if (KillingStreak[player->GetGUID()].killCount)
-            KillingStreak[player->GetGUID()].killCount = 0;
-        if (HealingStreak[player->GetGUID()].healingAmount)
-        {
-            HealingStreak[player->GetGUID()].healingAmount = 0;
-            HealingStreak[player->GetGUID()].currentHealingStreak = 0;      
-        }
+        ResetStreaks(player);
     }
 
     // When player leaves PvP Island and his GUID was stored as the GUID of a killer, the killcount will be reset
@@ -111,38 +101,27 @@ public:
     {
         if (battlegroundZoneIds.find(newZone) == battlegroundZoneIds.end())
         {
-            if (KillingStreak[player->GetGUID()].killCount)
-                KillingStreak[player->GetGUID()].killCount = 0;
-            if (HealingStreak[player->GetGUID()].healingAmount)
-            {
-                HealingStreak[player->GetGUID()].healingAmount = 0;
-                HealingStreak[player->GetGUID()].currentHealingStreak = 0;
-            }
+            ResetStreaks(player);
         }
     }
 
     void OnPVPKill(Player* killer, Player* victim)
     {
-        killerZoneId = killer->GetZoneId();
-        victimZoneId = victim->GetZoneId();
+        killerGUID = killer->GetGUID();
+        victimGUID = victim->GetGUID();
 
         // If player killed himself, do not execute any code(think of when a warlock uses Hellfire, when player falls to dead, etc.)
         if (killerGUID == victimGUID)
             return;
 
+        killerZoneId = killer->GetZoneId();
+        victimZoneId = victim->GetZoneId();
+
         if (battlegroundZoneIds.find(killerZoneId) != battlegroundZoneIds.end() && battlegroundZoneIds.find(victimZoneId) != battlegroundZoneIds.end())
         {
-            killerGUID = killer->GetGUID();
-            victimGUID = victim->GetGUID();
-
             KillingStreak[killerGUID].killCount++;          // Increment kill count by one on every kill
 
-            KillingStreak[victimGUID].killCount = 0;        // Streak kills ends on death
-            HealingStreak[victimGUID].healingAmount = 0;    // Streak heal ends on death
-            HealingStreak[victimGUID].currentHealingStreak = 0;    // Streak heal on death
-
-            RemoveKillingStreakAuras(victim);
-            RemoveHealingStreakAuras(victim);
+            ResetStreaks(victim);
 
             // If killcount is 5, 10, 15, 20, 25, 30
             if ((KillingStreak[killerGUID].killCount % 5) == 0 && KillingStreak[killerGUID].killCount <= MAX_KILLS_AMOUNT)
@@ -156,30 +135,101 @@ public:
         }
     }
 
-    void OnPVPHeal(Player* healer, Unit* healed, uint32 healAmount)
+    static void RemoveKillingStreakAuras(Player* player)
     {
-        if (!healed || !healer)
+        player->RemoveAurasDueToSpell(AURA_KILLS_5);
+        player->RemoveAurasDueToSpell(AURA_KILLS_10);
+        player->RemoveAurasDueToSpell(AURA_KILLS_15);
+        player->RemoveAurasDueToSpell(AURA_KILLS_20);
+        player->RemoveAurasDueToSpell(AURA_KILLS_25);
+        player->RemoveAurasDueToSpell(AURA_KILLS_30);
+    }
+
+    static void AddKillingStreakAura(Player* player, uint32 streakCount)
+    {
+        uint32 auraToApply = 0;
+        switch (streakCount)
+        {
+        case 5:     auraToApply = AURA_KILLS_5;  break;
+        case 10:    auraToApply = AURA_KILLS_10; break;
+        case 15:    auraToApply = AURA_KILLS_15; break;
+        case 20:    auraToApply = AURA_KILLS_20; break;
+        case 25:    auraToApply = AURA_KILLS_25; break;
+        case 30:    auraToApply = AURA_KILLS_30; break;
+        }
+
+        if (auraToApply && auraToApply > 0)
+        {
+            SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(auraToApply);
+            if (spellInfo)
+            {
+                Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, player, player);
+            }
+        }
+    }
+
+    static void RemoveHealingStreakAuras(Player* player)
+    {
+        player->RemoveAurasDueToSpell(AURA_HEALING_100000);
+        player->RemoveAurasDueToSpell(AURA_HEALING_200000);
+        player->RemoveAurasDueToSpell(AURA_HEALING_300000);
+        player->RemoveAurasDueToSpell(AURA_HEALING_400000);
+        player->RemoveAurasDueToSpell(AURA_HEALING_500000);
+        player->RemoveAurasDueToSpell(AURA_HEALING_600000);
+    }
+
+    static void ResetStreaks(Player* player)
+    {
+        if (KillingStreak[player->GetGUID()].killCount)
+        {
+            KillingStreak[player->GetGUID()].killCount = 0;
+            RemoveKillingStreakAuras(player);
+        }
+        if (HealingStreak[player->GetGUID()].healingAmount)
+        {
+            HealingStreak[player->GetGUID()].healingAmount = 0;
+            HealingStreak[player->GetGUID()].currentHealingStreak = 0;
+            RemoveHealingStreakAuras(player);
+        }
+    }
+
+};
+
+class mod_bg_auras_heal : public UnitScript
+{
+public:
+    mod_bg_auras_heal() : UnitScript("mod_bg_auras_heal") { }
+
+    uint64 healerGUID = 0;
+    uint32 healerZoneId = 0;
+    uint32 healedZoneId = 0;
+    uint32 healingAmount = 0;
+    uint32 currentHealingStreak = 0;
+
+    void OnHeal(Unit* healer, Unit* reciever, uint32& gain)
+    {
+        if (!gain || !healer)
             return;
 
         // If it's for example a (bugged) area-heal that also heals enemies we should not count this for the quest
-        if (!healed->IsFriendlyTo(healer))
+        if (!reciever->IsFriendlyTo(healer))
             return;
 
         healerZoneId = healer->GetZoneId();
+        healedZoneId = reciever->GetZoneId();
 
-        if (battlegroundZoneIds.find(killerZoneId) != battlegroundZoneIds.end() && battlegroundZoneIds.find(victimZoneId) != battlegroundZoneIds.end())
+        if (battlegroundZoneIds.find(healerZoneId) != battlegroundZoneIds.end() && battlegroundZoneIds.find(healedZoneId) != battlegroundZoneIds.end())
         {
-            if (healed->IsPet() || healed->GetTypeId() == TYPEID_PLAYER)
+            if (reciever->IsPet() || reciever->GetTypeId() == TYPEID_PLAYER)
             {
                 healerGUID = healer->GetGUID();
-                HealingStreak[healerGUID].healingAmount += healAmount;
+                HealingStreak[healerGUID].healingAmount += gain;
 
                 healingAmount = HealingStreak[healerGUID].healingAmount;
                 currentHealingStreak = HealingStreak[healerGUID].currentHealingStreak;
 
                 if ((healingAmount < 100000) || (healingAmount > MAX_HEALING_AMOUNT && currentHealingStreak == MAX_HEALING_AMOUNT))
                     return;
-
 
                 // If healingAmount is 100k, 200k, 300k, 400k, 500k, 600k
                 if (healingAmount > 100000 && currentHealingStreak < 100000)
@@ -210,40 +260,7 @@ public:
         }
     }
 
-    static void RemoveKillingStreakAuras(Player* player)
-    {
-        player->RemoveAurasDueToSpell(AURA_KILLS_5);
-        player->RemoveAurasDueToSpell(AURA_KILLS_10);
-        player->RemoveAurasDueToSpell(AURA_KILLS_15);
-        player->RemoveAurasDueToSpell(AURA_KILLS_20);
-        player->RemoveAurasDueToSpell(AURA_KILLS_25);
-        player->RemoveAurasDueToSpell(AURA_KILLS_30);
-    }
-
-    static void AddKillingStreakAura(Player* player, uint32 streakCount)
-    {
-        uint32 auraToApply = 0;
-        switch (streakCount)
-        {
-        case 5:     auraToApply = AURA_KILLS_5;  break;
-        case 10:    auraToApply = AURA_KILLS_10; break;
-        case 15:    auraToApply = AURA_KILLS_15; break;
-        case 20:    auraToApply = AURA_KILLS_20; break;
-        case 25:    auraToApply = AURA_KILLS_25; break;
-        case 30:    auraToApply = AURA_KILLS_30; break;       
-        }
-
-        if (auraToApply && auraToApply > 0)
-        {
-            SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(auraToApply);
-            if (spellInfo)
-            {
-                Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, player, player);
-            }
-        }
-    }
-
-    static void RemoveHealingStreakAuras(Player* player)
+    static void RemoveHealingStreakAuras(Unit* player)
     {
         player->RemoveAurasDueToSpell(AURA_HEALING_100000);
         player->RemoveAurasDueToSpell(AURA_HEALING_200000);
@@ -253,7 +270,7 @@ public:
         player->RemoveAurasDueToSpell(AURA_HEALING_600000);
     }
 
-    static void AddHealingStreakAura(Player* player, uint32 healingStreak)
+    static void AddHealingStreakAura(Unit* player, uint32 healingStreak)
     {
         uint32 auraToApply = 0;
         switch (healingStreak)
@@ -276,7 +293,7 @@ public:
         }
     }
 
-    static void SetHealingStreakAura(Player* healer, uint32 streakAmount)
+    static void SetHealingStreakAura(Unit* healer, uint32 streakAmount)
     {
         RemoveHealingStreakAuras(healer);
         AddHealingStreakAura(healer, streakAmount);
@@ -284,10 +301,10 @@ public:
         text << "|cffff6060[BG Healing Streak]:|r " << healer->GetName() << " lleva una racha de sanación de |cFFFF4500" << std::to_string(streakAmount) << "|r!";
         sWorld->SendZoneText(healer->GetZoneId(), text.str().c_str());
     }
-}; 
+};
 
 
 void AddSC_mod_bg_auras()
 {
-    new mod_bg_auras();
+    new mod_bg_auras_kill();
 }
