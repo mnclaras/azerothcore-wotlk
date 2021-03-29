@@ -109,7 +109,7 @@ public:
     // When player leaves PvP Island and his GUID was stored as the GUID of a killer, the killcount will be reset
     void OnUpdateZone(Player* player, uint32 newZone, uint32 /*newArea*/)
     {
-        if (battlegroundZoneIds.find(killerZoneId) == battlegroundZoneIds.end())
+        if (battlegroundZoneIds.find(newZone) == battlegroundZoneIds.end())
         {
             if (KillingStreak[player->GetGUID()].killCount)
                 KillingStreak[player->GetGUID()].killCount = 0;
