@@ -112,7 +112,10 @@ public:
 
         // If player killed himself, do not execute any code(think of when a warlock uses Hellfire, when player falls to dead, etc.)
         if (killerGUID == victimGUID)
+        {
+            ResetStreaks(killer);
             return;
+        }
 
         killerZoneId = killer->GetZoneId();
         victimZoneId = victim->GetZoneId();
