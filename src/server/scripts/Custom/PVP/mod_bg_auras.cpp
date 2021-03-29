@@ -307,4 +307,5 @@ public:
 void AddSC_mod_bg_auras()
 {
     new mod_bg_auras_kill();
+    new mod_bg_auras_heal();
 }
