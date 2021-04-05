@@ -693,7 +693,7 @@ public:
         if (!entryStr) return false;
         if (atoi(entryStr) < 0) return false;
 
-        char* pointsStr = strtok((char*)args, " ");
+        char* pointsStr = strtok(nullptr, " ");
         if (!pointsStr) return false;
         if (atoi(pointsStr) < 0) return false;
 
