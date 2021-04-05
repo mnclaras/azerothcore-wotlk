@@ -50,6 +50,11 @@ public:
 
         ClearGossipMenuFor(player);
 
+        std::string pointsText = isSpanish ? " puntos." : " points.";
+        std::string wantToCreateText = isSpanish ? "Deseas crear [" : "Want to create [";
+        std::string forText = isSpanish ? "] por " : "] for ";
+        std::string guildPointsText = isSpanish ? " puntos de hermandad?" : " guild points?";
+
         // Display all first level options
         for (GuildHouseSpawnInfoContainer::const_iterator itr = sModGuildPointsMgr->m_GuildHouseSpawnInfoContainer.begin(); itr != sModGuildPointsMgr->m_GuildHouseSpawnInfoContainer.end(); ++itr)
         {
@@ -57,10 +62,9 @@ public:
             {              
                 if (!(*itr)->isMenu)
                 {
-                    AddGossipItemFor(player, GOSSIP_ICON_TALK, (*itr)->name + ": " + std::to_string((*itr)->points) + isSpanish ? " puntos." : " points."
+                    AddGossipItemFor(player, GOSSIP_ICON_TALK, (*itr)->name + ": " + std::to_string((*itr)->points) + pointsText
                         , GOSSIP_SENDER_MAIN/*(*itr)->points*/, (*itr)->id,
-                        isSpanish ? ("Deseas crear [" +   (*itr)->name + "] por " + std::to_string((*itr)->points) + " puntos de hermandad?")
-                                  : ("Want to create [" + (*itr)->name + "] for " + std::to_string((*itr)->points) + " guild points?"),
+                        wantToCreateText + (*itr)->name + forText + std::to_string((*itr)->points) + guildPointsText,
                         0, false);
                 }
                 else
@@ -95,16 +99,20 @@ public:
 
             if (sender == SENDER_WITH_CHILDRENS)
             {
+                std::string pointsText = isSpanish ? " puntos." : " points.";
+                std::string wantToCreateText = isSpanish ? "Deseas crear [" : "Want to create [";
+                std::string forText = isSpanish ? "] por " : "] for ";
+                std::string guildPointsText = isSpanish ? " puntos de hermandad?" : " guild points?";
+
                 for (GuildHouseSpawnInfoContainer::const_iterator itr = sModGuildPointsMgr->m_GuildHouseSpawnInfoContainer.begin(); itr != sModGuildPointsMgr->m_GuildHouseSpawnInfoContainer.end(); ++itr)
                 {
                     if ((*itr)->parent && (*itr)->parent == action && !(*itr)->name.empty() && (*itr)->isVisible && !(*itr)->isInitialSpawn)
                     {
                         if (!(*itr)->isMenu)
                         {
-                            AddGossipItemFor(player, GOSSIP_ICON_TALK, (*itr)->name + ": " + std::to_string((*itr)->points) + isSpanish ? " puntos." : " points.",
+                            AddGossipItemFor(player, GOSSIP_ICON_TALK, (*itr)->name + ": " + std::to_string((*itr)->points) + pointsText,
                                 GOSSIP_SENDER_MAIN/*(*itr)->points*/, (*itr)->id,
-                                isSpanish ? ("Deseas crear [" +   (*itr)->name + "] por " + std::to_string((*itr)->points) + " puntos de hermandad?")
-                                          : ("Want to create [" + (*itr)->name + "] for " + std::to_string((*itr)->points) + " guild points?"),
+                                wantToCreateText + (*itr)->name + forText + std::to_string((*itr)->points) + guildPointsText,
                                 0, false);
                         }
                         else

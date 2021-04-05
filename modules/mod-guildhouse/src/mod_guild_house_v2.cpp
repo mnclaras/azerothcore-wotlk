@@ -230,7 +230,7 @@ public:
                 "SELECT `id`, `name`, `map`,`posX`, `posY`, `posZ` FROM guild_house_position WHERE `id` = '%u';", guildPosition);
             if (resultAvailableGH)
             {
-                uint32 id = (*resultAvailableGH)[0].GetUInt32();
+                //uint32 id = (*resultAvailableGH)[0].GetUInt32();
                 //std::string name = fields[1].GetString();
                 uint32 map = (*resultAvailableGH)[2].GetUInt32();
                 float posX = (*resultAvailableGH)[3].GetFloat();

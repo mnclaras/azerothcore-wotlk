@@ -83,7 +83,7 @@ public:
     bool MemberHaveGuildHousePointsPermission(Player* player);
     void AddGuildHousePointsAllowedMember(Player* player);
     void RemoveGuildHousePointsAllowedMember(Player* player);
-    bool CheckEnoughGuildHousePoints(uint32 guildId, uint32 points);
+    bool CheckEnoughGuildHousePoints(uint32 guildId, int32 points);
     bool SpendGuildHousePoints(Player* player, uint32 points);
     bool AddGuildHousePoints(Player* player, uint32 points);
     int32 GetGuildHousePoints(uint32 guildId);

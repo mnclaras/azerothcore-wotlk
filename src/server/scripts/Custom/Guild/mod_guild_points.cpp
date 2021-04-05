@@ -232,7 +232,7 @@ int32 sModGuildPoints::GetGuildHousePoints(uint32 guildId)
     }
 }
 
-bool sModGuildPoints::CheckEnoughGuildHousePoints(uint32 guildId, uint32 points)
+bool sModGuildPoints::CheckEnoughGuildHousePoints(uint32 guildId, int32 points)
 {
     return GetGuildHousePoints(guildId) >= points;
 }
