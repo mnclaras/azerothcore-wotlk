@@ -648,7 +648,7 @@ public:
         sLog->outString("== MOD GUILD HOUSES ===========================================================================");
 
         sLog->outString("Loading Guild House Zones...");
-        QueryResult result = CharacterDatabase.Query("SELECT DISTINCT `zone` FROM guild_house_position;");
+        QueryResult result = CharacterDatabase.Query("SELECT DISTINCT `zone` FROM `guild_house_position`;");
         if (result)
         {
             do {
@@ -666,6 +666,7 @@ void AddGuildHouseV2Scripts() {
     new GuildHelper();
     new GuildHouseSeller();
     new GuildHouseV2PlayerScript();
+    new ModGuildPoints_World();
     new GuildHouseGlobal();
 }
 
