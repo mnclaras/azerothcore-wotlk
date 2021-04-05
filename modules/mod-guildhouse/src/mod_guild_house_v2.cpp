@@ -23,15 +23,8 @@ enum GuildHouseMaps
     MAP_TANARIS = 1
 };
 
-struct GuildZonesSpecificInfo
-{
-    uint32 zoneId;
-    uint32 phase;
-};
 
 static std::set<uint32> GuildZones;
-static std::map<uint32, GuildZonesSpecificInfo> GuildZonesInfo;
-
 
 class GuildData : public DataMap::Base
 {
@@ -248,9 +241,6 @@ public:
                     ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "La Casa de Hermandad ha sido comprada con exito!" : "You have successfully purchased a Guild House");
                     player->GetGuild()->BroadcastToGuild(player->GetSession(), false, isSpanish ? "Tenemos Casa de Hermandad!" : "We now have a Guild House!", LANG_UNIVERSAL);
                     sLog->outBasic("GUILDHOUSE: GuildId: '%u' has purchased a guildhouse", player->GetGuildId());
-
-                    GuildZonesInfo[player->GetGuildId()].phase = GetGuildPhase(player);
-                    GuildZonesInfo[player->GetGuildId()].zoneId = zone;
 
                     // Spawn a portal and the guild assistant automatically as part of purchase.
                     SpawnInitialNpcs(player, guildPosition);
@@ -583,31 +573,18 @@ public:
     {
         GuildData* guildData = player->CustomData.GetDefault<GuildData>("phase");
 
-        std::map<uint32, GuildZonesSpecificInfo>::iterator itr = GuildZonesInfo.find(player->GetGuildId());
-        if (itr != GuildZonesInfo.end())
+        QueryResult result = CharacterDatabase.PQuery("SELECT `phase`, `zoneId` FROM guild_house WHERE `guild` = %u", player->GetGuildId());
+        if (result)
         {
-            guildData->phase = itr->second.phase;
-            if (player->GetZoneId() == itr->second.zoneId || newZone == itr->second.zoneId)
+            guildData->phase = (*result)[0].GetUInt32();
+
+            if (player->GetZoneId() == (*result)[1].GetUInt32() || newZone == (*result)[1].GetUInt32())
             {
                 player->SetPhaseMask(guildData->phase, true);
                 return;
             }
         }
         player->SetPhaseMask(GetNormalPhase(player), true);
-
-        //QueryResult result = CharacterDatabase.PQuery("SELECT `phase`, `zoneId` FROM guild_house WHERE `guild` = %u", player->GetGuildId());
-
-        //if (result)
-        //{
-        //    guildData->phase = (*result)[0].GetUInt32();
-
-        //    if (player->GetZoneId() == (*result)[1].GetUInt32() || newZone == (*result)[1].GetUInt32())
-        //    {
-        //        player->SetPhaseMask(guildData->phase, true);
-        //        return;
-        //    }
-        //}
-        //player->SetPhaseMask(GetNormalPhase(player), true);
     }
 
     void TeleportToShop(Player* player)
@@ -659,22 +636,6 @@ public:
                 uint32 zoneId = fields[0].GetUInt32();
                 GuildZones.insert(zoneId);
             } while (result->NextRow());
-        }
-
-        sLog->outString("Loading Guild House Phase And Zone of Specific...");
-        QueryResult resultGH = CharacterDatabase.PQuery("SELECT `phase`, `zoneId`, `guild` FROM `guild_house`;");
-        if (resultGH)
-        {
-            do {
-                Field* fields = resultGH->Fetch();
-                uint32 phase = fields[0].GetUInt32();
-                uint32 zoneId = fields[1].GetUInt32();
-                uint32 guild = fields[2].GetUInt32();
-
-                GuildZonesInfo[guild].phase = phase;
-                GuildZonesInfo[guild].zoneId = zoneId;
-
-            } while (resultGH->NextRow());
         }
 
         sLog->outString("== MOD GUILD HOUSES ===========================================================================");
