@@ -395,7 +395,7 @@ public:
 
     void SpawnNPC(uint32 entry, uint32 mapId, float posX, float posY, float posZ, float orientation, Player* player, uint32 cost)
     {
-        bool isSpanish = IsSpanishPlayer(player);
+        //bool isSpanish = IsSpanishPlayer(player);
 
         //if (player->FindNearestCreature(entry, VISIBILITY_RANGE, true))
         //{
@@ -459,7 +459,7 @@ public:
 
     void SpawnObject(uint32 entry, uint32 mapId, float posX, float posY, float posZ, float orientation, Player* player, uint32 cost)
     {
-        bool isSpanish = IsSpanishPlayer(player);
+        //bool isSpanish = IsSpanishPlayer(player);
 
         //if (player->FindNearestGameObject(entry, VISIBLE_RANGE))
         //{
