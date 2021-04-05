@@ -364,6 +364,8 @@ public:
             } while (resultAvailableGH->NextRow());
         }
 
+        AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Cerrar menu" : "Close menu", GOSSIP_SENDER_MAIN, 5);
+
         SendGossipMenuFor(player, DEFAULT_GOSSIP_MESSAGE, creature->GetGUID());
         return true;
     }
