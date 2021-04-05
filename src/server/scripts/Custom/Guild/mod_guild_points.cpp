@@ -558,7 +558,7 @@ public:
             {"addmember", SEC_PLAYER, true, &HandleAddGuildHouseAllowedMemberCommand, "Grants a player privileges to spend guild points. Example: `.guildhouse addmember`"},
             {"removemember", SEC_PLAYER, true, &HandleRemoveGuildHouseAllowedMemberCommand, "Remove the privileges to spend guild points on a guild player. Example: `.guildhouse removemember`"},
             {"reloadspawns", SEC_ADMINISTRATOR, true, &HandleReloadGuildHouseAvailableSpawnsCommand, "Reload all available GObjects and creatures to spawn on the guild house. Example: `.guildhouse reloadspawns`"},
-            {"addspawn", SEC_ADMINISTRATOR, true, &HandleAddGuildHouseAvailableSpawnCommand, "Adds an spawn to DB in the player position. Example: `.guildhouse addspawn #ENTRY #POINTS #PARENT #ISMENU #ISCREATURE #ISINITIALSPAWN #GUILDPOSITION #NAME`"},
+            {"addspawn", SEC_ADMINISTRATOR, true, &HandleAddGuildHouseAvailableSpawnCommand, "Adds an spawn to DB in the player position. Example: `.guildhouse addspawn #ENTRY #POINTS #PARENT #ISMENU #ISCREATURE #ISINITIALSPAWN #GUILDPOSITION`"},
         };
 
         static std::vector<ChatCommand> commandTable = {
@@ -717,12 +717,6 @@ public:
         if (!guildPositionStr) return false;
         if (atoi(guildPositionStr) < 0) return false;
 
-        char* nameStr = strtok(nullptr, "");
-        if (!nameStr) return false;
-        char* textExtracted = handler->extractQuotedArg(nameStr);
-        if (!textExtracted) return false;
-        std::string name = textExtracted;
-        if (name.empty()) return false;
 
         Player* player = handler->GetSession()->GetPlayer();
 
@@ -734,8 +728,6 @@ public:
         uint32 isVisible = 1;
         uint32 isInitialSpawn = isInitialSpawnStr ? atoi(isInitialSpawnStr) : 0;
         uint32 guildPosition = guildPositionStr ? atoi(guildPositionStr) : 0;
-
-        WorldDatabase.EscapeString(name);
 
         uint32 mapId = player->GetMapId();
         float posX = player->GetPositionX();
@@ -827,58 +819,15 @@ public:
                 return false;
             }
         }
+      
+        WorldDatabase.PExecute(
+            "INSERT INTO guild_house_spawns (entry, parent, is_menu, is_creature, is_visible, is_initial_spawn, guild_position, points, name, map, posX, posY, posZ, orientation) VALUES ('%u','%u','%u','%u','%u','%u','%u','%u','INSERTED_BY_COMMAND','%u','%u','%u','%u','%u');"
+            , entry, parent, isMenu, isCreature, isVisible, isInitialSpawn, guildPosition, points, mapId, posX, posY, posZ, ori);
 
-        QueryResult rowResult = WorldDatabase.PQuery("SELECT id FROM guild_house_spawns WHERE "
-            "entry = '%u' AND "
-            "parent = '%u' AND "
-            "is_menu = '%u' AND "
-            "is_creature = '%u' AND "
-            "is_visible = '%u' AND "
-            "is_initial_spawn = '%u' AND "
-            "guild_position = '%u' AND "
-            "points = '%u' AND "
-            "name = '%s';",
-            entry, parent, isMenu, isCreature, isVisible, isInitialSpawn, guildPosition, points, name.c_str());
-
-        if (!rowResult)
-        {
-            WorldDatabase.PExecute(
-                "INSERT INTO guild_house_spawns (entry, parent, is_menu, is_creature, is_visible, is_initial_spawn, guild_position, points, name, map, posX, posY, posZ, orientation) VALUES ('%u','%u','%u','%u','%u','%u','%u','%u','%s','%u','%u','%u','%u','%u');"
-                , entry, parent, isMenu, isCreature, isVisible, isInitialSpawn, guildPosition, points, name.c_str(), mapId, posX, posY, posZ, ori);
-
-            QueryResult rowInsertResult = WorldDatabase.PQuery("SELECT id FROM guild_house_spawns WHERE "
-                "entry = '%u' AND "
-                "parent = '%u' AND "
-                "is_menu = '%u' AND "
-                "is_creature = '%u' AND "
-                "is_visible = '%u' AND "
-                "is_initial_spawn = '%u' AND "
-                "guild_position = '%u' AND "
-                "points = '%u' AND "
-                "name = '%s';",
-                entry, parent, isMenu, isCreature, isVisible, isInitialSpawn, guildPosition, points, name.c_str());
-
-            if (rowInsertResult)
-            {
-                uint32 idInsert = (*rowInsertResult)[0].GetUInt32();
-                std::stringstream tmp;
-                tmp << "Spawn saved to DB. ID: " << idInsert << ". You might want to type \".guildhouse reloadspawns\".";
-                handler->SendGlobalGMSysMessage(tmp.str().c_str());
-            }
-            else
-            {
-                std::stringstream tmp;
-                tmp << "Spawn saved to DB. You might want to type \".guildhouse reloadspawns\".";
-                handler->SendGlobalGMSysMessage(tmp.str().c_str());
-            }
-        }
-        else
-        {
-            ChatHandler(player->GetSession()).PSendSysMessage("Spawn couldn't be added. (ALREADY EXISTS)");
-            handler->SetSentErrorMessage(true);
-            return false;
-        }
-
+        std::stringstream tmp;
+        tmp << "Spawn saved to DB. You might want to type \".guildhouse reloadspawns\".";
+        handler->SendGlobalGMSysMessage(tmp.str().c_str());
+       
         return true;
     }
 
