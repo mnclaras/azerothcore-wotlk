@@ -818,7 +818,7 @@ public:
 
         if (parent)
         {
-            QueryResult result = WorldDatabase.PQuery("SELECT id FROM guild_house_spawns WHERE parent = '%u';", parent);
+            QueryResult result = WorldDatabase.PQuery("SELECT id FROM guild_house_spawns WHERE id = '%u';", parent);
 
             if (!result)
             {
