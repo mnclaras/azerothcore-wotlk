@@ -30,7 +30,7 @@ struct GuildZonesSpecificInfo
 };
 
 static std::set<uint32> GuildZones;
-static std::map<uint32, GuildZonesSpecificInfo*> GuildZonesInfo;
+static std::map<uint32, GuildZonesSpecificInfo> GuildZonesInfo;
 
 
 class GuildData : public DataMap::Base
@@ -583,11 +583,11 @@ public:
     {
         GuildData* guildData = player->CustomData.GetDefault<GuildData>("phase");
 
-        std::map<uint32, GuildZonesSpecificInfo*>::iterator itr = GuildZonesInfo.find(player->GetGuildId());
+        std::map<uint32, GuildZonesSpecificInfo>::iterator itr = GuildZonesInfo.find(player->GetGuildId());
         if (itr != GuildZonesInfo.end())
         {
-            guildData->phase = itr->second->phase;
-            if (player->GetZoneId() == itr->second->zoneId || newZone == itr->second->zoneId)
+            guildData->phase = itr->second.phase;
+            if (player->GetZoneId() == itr->second.zoneId || newZone == itr->second.zoneId)
             {
                 player->SetPhaseMask(guildData->phase, true);
                 return;
