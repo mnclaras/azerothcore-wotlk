@@ -397,22 +397,22 @@ public:
     {
         bool isSpanish = IsSpanishPlayer(player);
 
-        if (player->FindNearestCreature(entry, VISIBILITY_RANGE, true))
-        {
-            ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "Ya tienes a este NPC!" : "You already have this NPC!");
-            return;
-        }
+        //if (player->FindNearestCreature(entry, VISIBILITY_RANGE, true))
+        //{
+        //    ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "Ya tienes a este NPC!" : "You already have this NPC!");
+        //    return;
+        //}
 
         if (!sObjectMgr->GetCreatureTemplate(entry))
         {
-            ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "El NPC no pudo ser añadido. Contacta con un GM! (Criatura)" : "NPC couldn't be added. Contact a GM! (Creature)");
+            //ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "El NPC no pudo ser añadido. Contacta con un GM! (Criatura)" : "NPC couldn't be added. Contact a GM! (Creature)");
             return;
         }
 
         Map* map = sMapMgr->FindMap(mapId, 0);
         if (!map)
         {
-            ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "El NPC no pudo ser añadido. Contacta con un GM! (Mapa)" : "NPC couldn't be added. Contact a GM! (Map)");
+            //ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "El NPC no pudo ser añadido. Contacta con un GM! (Mapa)" : "NPC couldn't be added. Contact a GM! (Map)");
             return;
         }
 
@@ -444,7 +444,7 @@ public:
                 else
                 {
                     sObjectMgr->AddCreatureToGrid(db_guid, sObjectMgr->GetCreatureData(db_guid));
-                    ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "NPC añadido con exito!" : "NPC sucessfully added!");
+                    //ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "NPC añadido con exito!" : "NPC sucessfully added!");
                 }
             }
 
@@ -452,7 +452,7 @@ public:
             {
                 // If creature couldn't be added, we revert the points transaction.
                 sModGuildPointsMgr->AddGuildHousePoints(player, cost);
-                ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "El NPC no pudo ser añadido. Contacta con un GM!" : "NPC couldn't be added. Contact a GM!");
+                //ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "El NPC no pudo ser añadido. Contacta con un GM!" : "NPC couldn't be added. Contact a GM!");
             }
         }
     }
@@ -461,17 +461,17 @@ public:
     {
         bool isSpanish = IsSpanishPlayer(player);
 
-        if (player->FindNearestGameObject(entry, VISIBLE_RANGE))
-        {
-            ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "Ya tienes este objeto!" : "You already have this object!");
-            CloseGossipMenuFor(player);
-            return;
-        }
+        //if (player->FindNearestGameObject(entry, VISIBLE_RANGE))
+        //{
+        //    ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "Ya tienes este objeto!" : "You already have this object!");
+        //    CloseGossipMenuFor(player);
+        //    return;
+        //}
 
         uint32 objectId = entry;
         if (!objectId)
         {
-            ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "El Objeto no pudo ser añadido. Contacta con un GM! (Plantilla)" : "Object couldn't be added. Contact a GM! (Template)");
+            //ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "El Objeto no pudo ser añadido. Contacta con un GM! (Plantilla)" : "Object couldn't be added. Contact a GM! (Template)");
             return;
         }
 
@@ -479,20 +479,20 @@ public:
 
         if (!objectInfo)
         {
-            ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "El Objeto no pudo ser añadido. Contacta con un GM! (Plantilla)" : "Object couldn't be added. Contact a GM! (Template)");
+            //ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "El Objeto no pudo ser añadido. Contacta con un GM! (Plantilla)" : "Object couldn't be added. Contact a GM! (Template)");
             return;
         }
 
         if (objectInfo->displayId && !sGameObjectDisplayInfoStore.LookupEntry(objectInfo->displayId))
         {
-            ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "El Objeto no pudo ser añadido. Contacta con un GM! (Modelo)" : "Object couldn't be added. Contact a GM! (Model)");
+            //ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "El Objeto no pudo ser añadido. Contacta con un GM! (Modelo)" : "Object couldn't be added. Contact a GM! (Model)");
             return;
         }
 
         Map* map = sMapMgr->FindMap(mapId, 0);
         if (!map)
         {
-            ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "El Objeto no pudo ser añadido. Contacta con un GM! (Mapa)" : "Object couldn't be added. Contact a GM! (Map)");
+            //ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "El Objeto no pudo ser añadido. Contacta con un GM! (Mapa)" : "Object couldn't be added. Contact a GM! (Map)");
             return;
         }
 
@@ -527,7 +527,7 @@ public:
                 {
                     // TODO: is it really necessary to add both the real and DB table guid here ?
                     sObjectMgr->AddGameobjectToGrid(guidLow, sObjectMgr->GetGOData(guidLow));
-                    ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "Objeto añadido con exito!" : "Object sucessfully added!");
+                    //ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "Objeto añadido con exito!" : "Object sucessfully added!");
                 }
             }
 
@@ -535,7 +535,7 @@ public:
             {
                 // If creature couldn't be added, we revert the points transaction.
                 sModGuildPointsMgr->AddGuildHousePoints(player, cost);
-                ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "El Objeto no pudo ser añadido. Contacta con un GM!" : "Object couldn't be added. Contact a GM!");
+                //ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "El Objeto no pudo ser añadido. Contacta con un GM!" : "Object couldn't be added. Contact a GM!");
             }
         }
     }
