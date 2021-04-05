@@ -718,14 +718,16 @@ public:
         if (atoi(guildPositionStr) < 0) return false;
 
         char* nameStr = strtok(nullptr, "");
-        std::string nameArg = nameStr ? nameStr : "";
-        if (!nameStr || nameArg.empty()) return false;
+        if (!nameStr) return false;
+        char* textExtracted = handler->extractQuotedArg(nameStr);
+        if (!textExtracted) return false;
+        std::string name = textExtracted;
+        if (name.empty()) return false;
 
         Player* player = handler->GetSession()->GetPlayer();
 
         uint32 entry = atoi(entryStr);
         uint32 points = atoi(pointsStr);
-        std::string name = nameArg;
         uint32 parent = atoi(parentStr);
         uint32 isMenu = atoi(isMenuStr);
         uint32 isCreature = atoi(isCreatureStr);
@@ -836,13 +838,13 @@ public:
             "guild_position = '%u' AND "
             "points = '%u' AND "
             "name = '%s';",
-            entry, parent, isMenu, isCreature, isVisible, isInitialSpawn, guildPosition, points, std::string(name.c_str()));
+            entry, parent, isMenu, isCreature, isVisible, isInitialSpawn, guildPosition, points, name.c_str());
 
         if (!rowResult)
         {
             WorldDatabase.PExecute(
                 "INSERT INTO guild_house_spawns (entry, parent, is_menu, is_creature, is_visible, is_initial_spawn, guild_position, points, name, map, posX, posY, posZ, orientation) VALUES ('%u','%u','%u','%u','%u','%u','%u','%u','%s','%u','%u','%u','%u','%u');"
-                , entry, parent, isMenu, isCreature, isVisible, isInitialSpawn, guildPosition, points, std::string(name.c_str()), mapId, posX, posY, posZ, ori);
+                , entry, parent, isMenu, isCreature, isVisible, isInitialSpawn, guildPosition, points, name.c_str(), mapId, posX, posY, posZ, ori);
 
             QueryResult rowInsertResult = WorldDatabase.PQuery("SELECT id FROM guild_house_spawns WHERE "
                 "entry = '%u' AND "
@@ -854,7 +856,7 @@ public:
                 "guild_position = '%u' AND "
                 "points = '%u' AND "
                 "name = '%s';",
-                entry, parent, isMenu, isCreature, isVisible, isInitialSpawn, guildPosition, points, std::string(name.c_str()));
+                entry, parent, isMenu, isCreature, isVisible, isInitialSpawn, guildPosition, points, name.c_str());
 
             if (rowInsertResult)
             {
