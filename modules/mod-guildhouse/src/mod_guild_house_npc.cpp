@@ -62,10 +62,15 @@ public:
             {              
                 if (!(*itr)->isMenu)
                 {
-                    AddGossipItemFor(player, GOSSIP_ICON_TALK, (*itr)->name + ": " + std::to_string((*itr)->points) + pointsText
-                        , GOSSIP_SENDER_MAIN/*(*itr)->points*/, (*itr)->id,
-                        wantToCreateText + (*itr)->name + forText + std::to_string((*itr)->points) + guildPointsText,
-                        0, false);
+                    if (((*itr)->isCreature && !NPCExists(player, (*itr)->entry))
+                        ||
+                        (!(*itr)->isCreature && !ObjectExists(player, (*itr)->entry)))
+                    {
+                        AddGossipItemFor(player, GOSSIP_ICON_TALK, (*itr)->name + ": " + std::to_string((*itr)->points) + pointsText,
+                            GOSSIP_SENDER_MAIN/*(*itr)->points*/, (*itr)->id,
+                            wantToCreateText + (*itr)->name + forText + std::to_string((*itr)->points) + guildPointsText,
+                            0, false);
+                    }
                 }
                 else
                 {
@@ -110,10 +115,15 @@ public:
                     {
                         if (!(*itr)->isMenu)
                         {
-                            AddGossipItemFor(player, GOSSIP_ICON_TALK, (*itr)->name + ": " + std::to_string((*itr)->points) + pointsText,
-                                GOSSIP_SENDER_MAIN/*(*itr)->points*/, (*itr)->id,
-                                wantToCreateText + (*itr)->name + forText + std::to_string((*itr)->points) + guildPointsText,
-                                0, false);
+                            if (((*itr)->isCreature && !NPCExists(player, (*itr)->entry))
+                                ||
+                                (!(*itr)->isCreature && !ObjectExists(player, (*itr)->entry)))
+                            {
+                                AddGossipItemFor(player, GOSSIP_ICON_TALK, (*itr)->name + ": " + std::to_string((*itr)->points) + pointsText,
+                                    GOSSIP_SENDER_MAIN/*(*itr)->points*/, (*itr)->id,
+                                    wantToCreateText + (*itr)->name + forText + std::to_string((*itr)->points) + guildPointsText,
+                                    0, false);
+                            }        
                         }
                         else
                         {
@@ -158,11 +168,31 @@ public:
 		return player->GetGuildId() + 10;
 	}
 
+    bool NPCExists(Player* player, uint32 entry)
+    {
+        if (player->FindNearestCreature(entry, VISIBILITY_RANGE, true))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
+    bool ObjectExists(Player* player, uint32 entry)
+    {
+        if (player->FindNearestGameObject(entry, VISIBILITY_RANGE, true))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
     void SpawnNPC(uint32 entry, float posX, float posY, float posZ, float orientation, Player* player, uint32 cost)
     {
         bool isSpanish = IsSpanishPlayer(player);
 
-        if (player->FindNearestCreature(entry, VISIBILITY_RANGE, true))
+        if (NPCExists(player, entry))
         {
             ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "Ya tienes a este NPC!" : "You already have this NPC!");
             return;
@@ -219,7 +249,7 @@ public:
     {
         bool isSpanish = IsSpanishPlayer(player);
 
-        if (player->FindNearestGameObject(entry, VISIBLE_RANGE))
+        if (ObjectExists(player, entry))
         {
             ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "Ya tienes este objeto!" : "You already have this object!");
             CloseGossipMenuFor(player);
