@@ -558,7 +558,7 @@ public:
             {"addmember", SEC_PLAYER, true, &HandleAddGuildHouseAllowedMemberCommand, "Grants a player privileges to spend guild points. Example: `.guildhouse addmember`"},
             {"removemember", SEC_PLAYER, true, &HandleRemoveGuildHouseAllowedMemberCommand, "Remove the privileges to spend guild points on a guild player. Example: `.guildhouse removemember`"},
             {"reloadspawns", SEC_ADMINISTRATOR, true, &HandleReloadGuildHouseAvailableSpawnsCommand, "Reload all available GObjects and creatures to spawn on the guild house. Example: `.guildhouse reloadspawns`"},
-            {"addspawn", SEC_ADMINISTRATOR, true, &HandleAddGuildHouseAvailableSpawnCommand, "Adds an spawn to DB in the player position. Example: `.guildhouse addspawn #ENTRY #POINTS #NAME #PARENT #ISMENU #ISCREATURE [#ISINITIALSPAWN #GUILDPOSITION]`"},
+            {"addspawn", SEC_ADMINISTRATOR, true, &HandleAddGuildHouseAvailableSpawnCommand, "Adds an spawn to DB in the player position. Example: `.guildhouse addspawn #ENTRY #POINTS #PARENT #ISMENU #ISCREATURE #ISINITIALSPAWN #GUILDPOSITION #NAME`"},
         };
 
         static std::vector<ChatCommand> commandTable = {
@@ -697,10 +697,6 @@ public:
         if (!pointsStr) return false;
         if (atoi(pointsStr) < 0) return false;
 
-        char* nameStr = strtok(nullptr, " ");
-        std::string nameArg = nameStr ? nameStr : "";
-        if (!nameStr || nameArg.empty()) return false;
-
         char* parentStr = strtok(nullptr, " ");
         if (!parentStr) return false;
         if (atoi(parentStr) < 0) return false;
@@ -713,14 +709,17 @@ public:
         if (!isCreatureStr) return false;
         if (atoi(isCreatureStr) != 0 && atoi(isCreatureStr) != 1) return false;
 
-        // Optional params
-
         char* isInitialSpawnStr = strtok(nullptr, " ");
-        if (isInitialSpawnStr && atoi(isInitialSpawnStr) != 0 && atoi(isInitialSpawnStr) != 1) return false;
+        if (!isInitialSpawnStr) return false;
+        if (atoi(isInitialSpawnStr) != 0 && atoi(isInitialSpawnStr) != 1) return false;
 
         char* guildPositionStr = strtok(nullptr, " ");
-        if (guildPositionStr && atoi(guildPositionStr) < 0) return false;
+        if (!guildPositionStr) return false;
+        if (atoi(guildPositionStr) < 0) return false;
 
+        char* nameStr = strtok(nullptr, "");
+        std::string nameArg = nameStr ? nameStr : "";
+        if (!nameStr || nameArg.empty()) return false;
 
         Player* player = handler->GetSession()->GetPlayer();
 
@@ -762,7 +761,7 @@ public:
             {
                 if (!sObjectMgr->GetCreatureTemplate(entry))
                 {
-                    ChatHandler(player->GetSession()).PSendSysMessage("NPC couldn't be added. (INVALID ENTRY - CREATURE_TEMPLATE");
+                    ChatHandler(player->GetSession()).PSendSysMessage("NPC couldn't be added. (INVALID ENTRY - CREATURE_TEMPLATE)");
                     handler->SetSentErrorMessage(true);
                     return false;
                 }
@@ -774,14 +773,14 @@ public:
 
                 if (!objectInfo)
                 {
-                    ChatHandler(player->GetSession()).PSendSysMessage("Object couldn't be added. (INVALID ENTRY - GAMEOBJECT_TEMPLATE");
+                    ChatHandler(player->GetSession()).PSendSysMessage("Object couldn't be added. (INVALID ENTRY - GAMEOBJECT_TEMPLATE)");
                     handler->SetSentErrorMessage(true);
                     return false;
                 }
 
                 if (objectInfo->displayId && !sGameObjectDisplayInfoStore.LookupEntry(objectInfo->displayId))
                 {
-                    ChatHandler(player->GetSession()).PSendSysMessage("Object couldn't be added. (INVALID DISPLAYID - GAMEOBJECT_TEMPLATE");
+                    ChatHandler(player->GetSession()).PSendSysMessage("Object couldn't be added. (INVALID DISPLAYID - GAMEOBJECT_TEMPLATE)");
                     handler->SetSentErrorMessage(true);
                     return false;
                 }
@@ -834,8 +833,9 @@ public:
             "is_visible = '%u' AND "
             "is_initial_spawn = '%u' AND "
             "guild_position = '%u' AND "
-            "points = '%u';",
-            entry, parent, isMenu, isCreature, isVisible, isInitialSpawn, guildPosition, points);
+            "points = '%u' AND "
+            "name = '%s';",
+            entry, parent, isMenu, isCreature, isVisible, isInitialSpawn, guildPosition, points, name.c_str());
 
         if (!rowResult)
         {
@@ -851,8 +851,9 @@ public:
                 "is_visible = '%u' AND "
                 "is_initial_spawn = '%u' AND "
                 "guild_position = '%u' AND "
-                "points = '%u';",
-                entry, parent, isMenu, isCreature, isVisible, isInitialSpawn, guildPosition, points);
+                "points = '%u' AND "
+                "name = '%s';",
+                entry, parent, isMenu, isCreature, isVisible, isInitialSpawn, guildPosition, points, name.c_str());
 
             if (rowInsertResult)
             {
