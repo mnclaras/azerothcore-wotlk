@@ -180,7 +180,7 @@ public:
 
     bool ObjectExists(Player* player, uint32 entry)
     {
-        if (player->FindNearestGameObject(entry, VISIBILITY_RANGE, true))
+        if (player->FindNearestGameObject(entry, VISIBILITY_RANGE))
         {
             return true;
         }
