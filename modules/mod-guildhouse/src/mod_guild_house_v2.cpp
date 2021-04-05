@@ -640,10 +640,10 @@ public:
     }
 };
 
-class ModGuildPoints_World : public WorldScript
+class GuildHouses_World : public WorldScript
 {
 public:
-    ModGuildPoints_World() : WorldScript("ModGuildHouses_World") { }
+    GuildHouses_World() : WorldScript("GuildHouses_World") { }
 
     void OnStartup() override
     {
@@ -683,9 +683,9 @@ public:
 
 void AddGuildHouseV2Scripts() {
     new GuildHelper();
+    new GuildHouses_World();
     new GuildHouseSeller();
     new GuildHouseV2PlayerScript();
-    new ModGuildPoints_World();
     new GuildHouseGlobal();
 }
 
