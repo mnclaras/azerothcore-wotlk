@@ -19,6 +19,11 @@
 #include "Group.h"
 #include "GroupMgr.h"
 
+bool sModGuildPoints::IsSpanishPlayer(Player* player)
+{
+    LocaleConstant locale = player->GetSession()->GetSessionDbLocaleIndex();
+    return (locale == LOCALE_esES || locale == LOCALE_esMX);
+}
 
 void sModGuildPoints::LoadBossRewardInfo()
 {
@@ -57,7 +62,7 @@ void sModGuildPoints::LoadBossRewardInfo()
 
 void sModGuildPoints::PurgeBossReward(uint32 entry, uint32 mode, std::string difficulty)
 {
-    CharacterDatabase.PExecute("DELETE FROM guild_points_boss_reward WHERE entry = '%u' AND mode = '%u' AND difficulty = '%s'", entry, mode, difficulty.c_str());
+    CharacterDatabase.PExecute("DELETE FROM guild_points_boss_reward WHERE entry = '%u' AND mode = '%u' AND difficulty = '%s';", entry, mode, difficulty.c_str());
 }
 
 void sModGuildPoints::InsertBossReward(uint32 entry, uint32 points, uint32 mode, std::string difficulty)
@@ -67,15 +72,18 @@ void sModGuildPoints::InsertBossReward(uint32 entry, uint32 points, uint32 mode,
 
 void sModGuildPoints::UpdateGuildPoints(uint32 guildId, uint32 points)
 {
-    QueryResult result = CharacterDatabase.PQuery("SELECT points FROM guild_points_ranking WHERE guildId = '%u';", guildId);
+    QueryResult result = CharacterDatabase.PQuery("SELECT seasonPoints, guildHousePoints, totalPoints FROM guild_points_ranking WHERE guildId = '%u';", guildId);
     if (!result)
     {
-        CharacterDatabase.PExecute("INSERT INTO guild_points_ranking (guildId, points) VALUES ('%u', '%u');", guildId, points);
+        CharacterDatabase.PExecute("INSERT INTO guild_points_ranking (guildId, seasonPoints, guildHousePoints, totalPoints) VALUES ('%u','%u','%u','%u');", guildId, points, points, points);
     }
     else
     {
-        uint32 currentPoints = (*result)[0].GetUInt32();
-        CharacterDatabase.PExecute("UPDATE guild_points_ranking SET points = '%u' WHERE guildId = '%u';", currentPoints + points, guildId);
+        uint32 currentSeasonPoints = (*result)[0].GetUInt32();
+        uint32 currentGuildHousePoints = (*result)[1].GetUInt32();
+        uint32 totalPoints = (*result)[2].GetUInt32();
+        CharacterDatabase.PExecute("UPDATE guild_points_ranking SET seasonPoints = '%u', guildHousePoints = '%u', totalPoints = '%u' WHERE guildId = '%u';",
+            currentSeasonPoints + points, currentGuildHousePoints + points, totalPoints + points, guildId);
     }
 }
 
@@ -86,6 +94,196 @@ void sModGuildPoints::SaveBossRewardToDB(uint32 entry, uint32 points, uint32 mod
     // Insert reward points
     InsertBossReward(entry, points, mode, difficulty);
 }
+
+
+
+
+void sModGuildPoints::LoadCreaturesAndObjectsPurchasables()
+{
+    for (GuildHouseSpawnInfoContainer::const_iterator itr = m_GuildHouseSpawnInfoContainer.begin(); itr != m_GuildHouseSpawnInfoContainer.end(); ++itr)
+        delete* itr;
+
+    m_GuildHouseSpawnInfoContainer.clear();
+
+    uint32 oldMSTime = getMSTime();
+    uint32 count = 0;
+
+    QueryResult result = WorldDatabase.Query("SELECT id, entry, name, parent, points, map, guild_position, is_creature, is_menu, "
+        "is_visible, is_initial_spawn, posX, posY, posZ, orientation FROM guild_house_spawns;");
+    
+    if (!result)
+    {
+        sLog->outString(">>MOD GUILD POINTS: Loaded 0 guild house spawns. DB table `guild_house_spawns` is empty!");
+        return;
+    }
+
+    do
+    {
+        Field* fields = result->Fetch();
+
+        GuildHouseSpawnInfo* pGuildHouseSpawn = new GuildHouseSpawnInfo;
+
+        pGuildHouseSpawn->id = fields[0].GetUInt32();
+        pGuildHouseSpawn->entry = fields[1].GetUInt32();
+        pGuildHouseSpawn->name = fields[2].GetString();
+        pGuildHouseSpawn->parent = fields[3].GetUInt32();
+        pGuildHouseSpawn->points = fields[4].GetUInt32();
+        pGuildHouseSpawn->map = fields[5].GetUInt32();
+        pGuildHouseSpawn->guildPosition = fields[6].GetUInt32();
+        pGuildHouseSpawn->isCreature = fields[7].GetBool();
+        pGuildHouseSpawn->isMenu = fields[8].GetBool();
+        pGuildHouseSpawn->isVisible = fields[9].GetBool();
+        pGuildHouseSpawn->isInitialSpawn = fields[10].GetBool();
+        pGuildHouseSpawn->posX = fields[11].GetFloat();
+        pGuildHouseSpawn->posY = fields[12].GetFloat();
+        pGuildHouseSpawn->posZ = fields[13].GetFloat();
+        pGuildHouseSpawn->orientation = fields[14].GetFloat();
+
+        m_GuildHouseSpawnInfoContainer.push_back(pGuildHouseSpawn);
+        ++count;
+    } while (result->NextRow());
+    sLog->outString(">>MOD GUILD POINTS: Loaded %u guild house spawns in %u ms.", count, GetMSTimeDiffToNow(oldMSTime));
+}
+
+GuildHousePointsInfo* sModGuildPoints::GetGuildHousePointsInfo(uint32 guildId)
+{
+    GuildHousePointsInfo* guildHousePointsInfo = new GuildHousePointsInfo;
+
+    QueryResult result = CharacterDatabase.PQuery("SELECT guildHousePoints FROM guild_points_ranking WHERE guildId = '%u';", guildId);
+
+    if (!result)
+    {
+        return nullptr;
+    }
+
+    guildHousePointsInfo->guildHousePoints = (*result)[0].GetUInt32();
+    //guildHousePointsInfo->guildHouseAllowedMembers = GetGuildHousePointsAllowedMembers(guildId);
+
+    return guildHousePointsInfo;
+}
+
+std::vector<uint32> sModGuildPoints::GetGuildHousePointsAllowedMembers(uint32 guildId)
+{
+    QueryResult result = CharacterDatabase.PQuery("SELECT member FROM guild_points_allowed_members WHERE guildId = '%u' and member = '%u';", guildId);
+
+    std::vector<uint32> allowedMembers;
+
+    if (result)
+    {
+        do
+        {
+            Field* fields = result->Fetch();
+            uint32 member = fields[0].GetUInt32();
+            if (member && member > 0)
+            {
+                allowedMembers.push_back(member);
+            }
+        } while (result->NextRow());
+    }
+
+    return allowedMembers;
+}
+
+bool sModGuildPoints::MemberHaveGuildHousePointsPermission(Player* player)
+{
+    if (!player)
+        return false;
+
+    if (Guild* guild = player->GetGuild())
+    {
+        if (guild->GetLeaderGUID() == player->GetGUID())
+            return true;
+
+        QueryResult result = CharacterDatabase.PQuery("SELECT member FROM guild_points_allowed_members WHERE guildId = '%u' and member = '%u';",
+            player->GetGuildId(), player->GetGUID());
+        if (result)
+        {
+            return (*result)[0].GetUInt32() > 0;
+        }
+    }
+
+    return false;
+}
+
+void sModGuildPoints::AddGuildHousePointsAllowedMember(Player* player)
+{
+    RemoveGuildHousePointsAllowedMember(player);
+    CharacterDatabase.PExecute("INSERT INTO guild_points_allowed_members (guildId, member) VALUES ('%u', '%u');", player->GetGuildId(), player->GetGUID());
+}
+
+void sModGuildPoints::RemoveGuildHousePointsAllowedMember(Player* player)
+{
+    CharacterDatabase.PExecute("DELETE FROM guild_points_allowed_members WHERE guildId = '%u' AND member = '%u';", player->GetGuildId(), player->GetGUID());
+}
+
+int32 sModGuildPoints::GetGuildHousePoints(uint32 guildId)
+{
+    if (!guildId || guildId < 1)
+        return -1;
+
+    QueryResult result = CharacterDatabase.PQuery("SELECT guildHousePoints FROM guild_points_ranking WHERE guildId = '%u';", guildId);
+    if (!result)
+    {
+        return -1;
+    }
+    else
+    {
+        return (*result)[0].GetUInt32();
+    }
+}
+
+bool sModGuildPoints::CheckEnoughGuildHousePoints(uint32 guildId, uint32 points)
+{
+    return GetGuildHousePoints(guildId) >= points;
+}
+
+bool sModGuildPoints::SpendGuildHousePoints(Player* player, uint32 points)
+{
+    if (!player)
+        return false;
+
+    if (!points)
+        points = 0;
+
+    if (!MemberHaveGuildHousePointsPermission(player))
+    {
+        ChatHandler(player->GetSession()).PSendSysMessage(
+            IsSpanishPlayer(player) ? "No tienes permiso para utilizar los puntos de hermandad!" : "You don\'t have permission to use guild points.");
+        return false;
+    }
+
+    int32 guildHousePoints = GetGuildHousePoints(player->GetGuildId());
+    if (guildHousePoints < points)
+    {
+        ChatHandler(player->GetSession()).PSendSysMessage(
+            IsSpanishPlayer(player) ? "No tienes suficientes puntos de hermandad para comprar eso. Puntos actuales: %u. Requeridos: %u"
+            : "You don\'t have enough guild points to buy that. Current Points: %u. Required: %u.", guildHousePoints, points);
+        return false;
+    }
+
+    CharacterDatabase.PExecute("UPDATE guild_points_ranking SET guildHousePoints = '%u' WHERE guildId = '%u';",
+        guildHousePoints - points, player->GetGuildId());
+
+    return true;
+}
+
+bool sModGuildPoints::AddGuildHousePoints(Player* player, uint32 points)
+{
+    if (!player || points <= 0)
+        return false;
+
+    int32 guildHousePoints = GetGuildHousePoints(player->GetGuildId());
+    CharacterDatabase.PExecute("UPDATE guild_points_ranking SET guildHousePoints = '%u' WHERE guildId = '%u';",
+        guildHousePoints + points, player->GetGuildId());
+
+    return true;
+}
+
+void sModGuildPoints::DeleteGuild(Guild* guild)
+{
+    CharacterDatabase.PExecute("DELETE FROM guild_points_ranking WHERE guildId = %u;", guild->GetId());
+}
+
 
 class mod_guild_points : public PlayerScript
 {
@@ -173,7 +371,7 @@ public:
     {
         bool isSpanish = IsSpanishPlayer(player);
 
-        QueryResult result = CharacterDatabase.Query("SELECT guildId, points FROM guild_points_ranking ORDER BY points DESC LIMIT 30;");
+        QueryResult result = CharacterDatabase.Query("SELECT guildId, seasonPoints FROM guild_points_ranking ORDER BY seasonPoints DESC LIMIT 30;");
         if (!result)
         {
             ClearGossipMenuFor(player);
@@ -341,7 +539,153 @@ public:
     {
         sLog->outString("Reloading boss rewards...");
         sModGuildPointsMgr->LoadBossRewardInfo();
+        //sLog->outString("Loading guild points...");
+        //sModGuildPointsMgr->LoadGuildPointsInfo();
+
         handler->SendGlobalGMSysMessage("Boss rewards reloaded.");
+        return true;
+    }
+};
+
+class ModGuildHousePoints_Command : public CommandScript
+{
+public:
+    ModGuildHousePoints_Command() : CommandScript("ModGuildHousePoints_Command") { }
+
+    std::vector<ChatCommand> GetCommands() const override
+    {
+        static std::vector<ChatCommand> GuildPointsTable = {
+            {"addmember", SEC_PLAYER, true, &HandleAddGuildHouseAllowedMemberCommand, "Grants a player privileges to spend guild points. Example: `.guildhouse addmember`"},
+            {"removemember", SEC_PLAYER, true, &HandleRemoveGuildHouseAllowedMemberCommand, "Remove the privileges to spend guild points on a guild player. Example: `.guildhouse removemember`"},
+            {"reloadspawns", SEC_ADMINISTRATOR, true, &HandleReloadGuildHouseAvailableSpawnsCommand, "Reload all available GObjects and creatures to spawn on the guild house. Example: `.guildhouse reloadspawns`"},
+        };
+
+        static std::vector<ChatCommand> commandTable = {
+            {"guildhouse", SEC_PLAYER, true, nullptr, "", GuildPointsTable},
+        };
+
+        return commandTable;
+    }
+
+    static bool HandleAddGuildHouseAllowedMemberCommand(ChatHandler* handler, const char* args)
+    {
+        Player* target = nullptr;
+
+        if (args && strlen(args) > 0)
+        {
+            target = ObjectAccessor::FindPlayerByName(args);
+            if (!target)
+            {
+                handler->SendSysMessage(LANG_PLAYER_NOT_FOUND);
+                handler->SetSentErrorMessage(true);
+                return false;
+            }
+        }
+
+        Player* player = handler->GetSession()->GetPlayer();
+        if (!target)
+        {
+            if (!handler->extractPlayerTarget((char*)args, &target))
+            {
+                handler->SendSysMessage(sModGuildPointsMgr->IsSpanishPlayer(player) ?
+                    "Debes escribir un nombre de personaje existente, o seleccionar a un jugador para poder utilizar este comando!"
+                    : "You must type the name of a valid character, or select a player in order to use this command!");
+                handler->SetSentErrorMessage(true);
+                return false;
+            }
+        }
+
+        if (target && player)
+        {
+            if (player->GetGuild() && target->GetGuild() && player->GetGuildId() == target->GetGuildId() && player->GetGuild()->GetLeaderGUID() == player->GetGUID())
+            {
+                sModGuildPointsMgr->AddGuildHousePointsAllowedMember(target);
+                handler->PSendSysMessage(sModGuildPointsMgr->IsSpanishPlayer(player) ? "Privilegios ACTIVADOS. El jugador: %s PUEDE hacer uso de los puntos de hermandad."
+                    : "Privileges ENABLED. Player: %s CAN make use of the guild points.", target->GetName().c_str());
+            }
+            else
+            {
+                handler->SendSysMessage(sModGuildPointsMgr->IsSpanishPlayer(player) ?
+                    "Debes ser el lider de tu hermandad para utilizar este comando, y el jugador debe pertenecer a tu hermandad."
+                    : "You must be the Guild Master of a guild to use this command!");
+                handler->SetSentErrorMessage(true);
+                return false;
+            }
+        }
+        else
+        {
+            handler->SendSysMessage(sModGuildPointsMgr->IsSpanishPlayer(player) ?
+                "Debes escribir un nombre de personaje existente, o seleccionar a un jugador para poder utilizar este comando!"
+                : "You must type the name of a valid character, or select a player in order to use this command!");
+            handler->SetSentErrorMessage(true);
+            return false;
+        }
+
+        return true;
+    }
+
+    static bool HandleRemoveGuildHouseAllowedMemberCommand(ChatHandler* handler, const char* args)
+    {
+        Player* target = nullptr;
+
+        if (args && strlen(args) > 0)
+        {
+            target = ObjectAccessor::FindPlayerByName(args);
+            if (!target)
+            {
+                handler->SendSysMessage(LANG_PLAYER_NOT_FOUND);
+                handler->SetSentErrorMessage(true);
+                return false;
+            }
+        }
+
+        Player* player = handler->GetSession()->GetPlayer();
+        if (!target)
+        {
+            if (!handler->extractPlayerTarget((char*)args, &target))
+            {
+                handler->SendSysMessage(sModGuildPointsMgr->IsSpanishPlayer(player) ?
+                    "Debes escribir un nombre de personaje existente, o seleccionar a un jugador para poder utilizar este comando!"
+                    : "You must type the name of a valid character, or select a player in order to use this command!");
+                handler->SetSentErrorMessage(true);
+                return false;
+            }
+        }
+
+        if (target && player)
+        {
+            if (player->GetGuild() && target->GetGuild() && player->GetGuildId() == target->GetGuildId() && player->GetGuild()->GetLeaderGUID() == player->GetGUID())
+            {
+                sModGuildPointsMgr->RemoveGuildHousePointsAllowedMember(target);
+                handler->PSendSysMessage(sModGuildPointsMgr->IsSpanishPlayer(player) ? "Privilegios DESACTIVADOS. El jugador: %s NO PUEDE hacer uso de los puntos de hermandad."
+                    : "Privileges DISABLED. Player: %s CANNOT use guild points.", target->GetName().c_str());
+            }
+            else
+            {
+                handler->SendSysMessage(sModGuildPointsMgr->IsSpanishPlayer(player) ?
+                    "Debes ser el lider de tu hermandad para utilizar este comando, y el jugador debe pertenecer a tu hermandad."
+                    : "You must be the Guild Master of a guild to use this command!");
+                handler->SetSentErrorMessage(true);
+                return false;
+            }
+        }
+        else
+        {
+            handler->SendSysMessage(sModGuildPointsMgr->IsSpanishPlayer(player) ?
+                "Debes escribir un nombre de personaje existente, o seleccionar a un jugador para poder utilizar este comando!"
+                : "You must type the name of a valid character, or select a player in order to use this command!");
+            handler->SetSentErrorMessage(true);
+            return false;
+        }
+
+        return true;
+    }
+
+    static bool HandleReloadGuildHouseAvailableSpawnsCommand(ChatHandler* handler, const char* /*args*/)
+    {
+        sLog->outString("Reloading guild house spawns...");
+        sModGuildPointsMgr->LoadCreaturesAndObjectsPurchasables();
+        handler->SendGlobalGMSysMessage("Guild house spawns reloaded.");
         return true;
     }
 };
@@ -359,6 +703,9 @@ public:
         sLog->outString("Loading boss rewards...");
         sModGuildPointsMgr->LoadBossRewardInfo();
 
+        sLog->outString("Loading guild house spawns...");
+        sModGuildPointsMgr->LoadCreaturesAndObjectsPurchasables();
+
         sLog->outString("== MOD GUILD POINTS ===========================================================================");
     }
 };
@@ -368,5 +715,6 @@ void AddSC_mod_guild_points()
     new mod_guild_points();
     new ModGuildPoints_World();
     new ModGuildPoints_Command();
+    new ModGuildHousePoints_Command();
     new ModGuildPoints_Ranking();
 }

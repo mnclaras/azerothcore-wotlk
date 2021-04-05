@@ -25,6 +25,7 @@
 #include "Creature.h"
 #include "Group.h"
 #include "GroupMgr.h"
+#include "Guild.h"
 
 #define DEFAULT_MESSAGE 907
 
@@ -37,6 +38,20 @@ public:
     {
         LocaleConstant locale = player->GetSession()->GetSessionDbLocaleIndex();
         return (locale == LOCALE_esES || locale == LOCALE_esMX);
+    }
+
+    static void TeleportGuildHouse(Guild* guild, Player* player)
+    {
+        QueryResult result = CharacterDatabase.PQuery("SELECT `phase`, `map`, `posX`, `posY`, `posZ` FROM guild_house WHERE `guild` = '%u'", guild->GetId());
+
+        if (!result)
+        {
+            return;
+        }
+        else
+        {
+            player->TeleportTo((*result)[1].GetUInt32(), (*result)[2].GetFloat(), (*result)[3].GetFloat(), (*result)[4].GetFloat(), player->GetOrientation());
+        }
     }
 
 
@@ -61,11 +76,17 @@ public:
         if (result) {
             isVipPlayer = true;
         }
-
         if (isVipPlayer)
         {
             AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Shop VIP" : "Shop VIP", GOSSIP_SENDER_MAIN, 14);
         }
+
+        QueryResult has_gh = CharacterDatabase.PQuery("SELECT id, `guild` FROM `guild_house` WHERE guild = %u", player->GetGuildId());
+        if (has_gh)
+        {
+            AddGossipItemFor(player, GOSSIP_ICON_TABARD, isSpanish ? "Casa de Hermandad" : "Guild House", GOSSIP_SENDER_MAIN, 5003);
+        }
+
         AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Circuitos escalada" : "Climbing circuits", GOSSIP_SENDER_MAIN, 15);
         AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Ciudades principales" : "Main Cities", GOSSIP_SENDER_MAIN, 1);
         AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Localizaciones Azeroth" : "Azeroth Locations", GOSSIP_SENDER_MAIN, 2);
@@ -109,6 +130,7 @@ public:
             // float o = player->GetOrientation();
 
             QueryResult result;
+            QueryResult has_gh;
 
             bool isOkGroup = true;
             Group* group = player->GetGroup();
@@ -124,11 +146,17 @@ public:
                 if (result) {
                     isVipPlayer = true;
                 }
-
                 if (isVipPlayer)
                 {
                     AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Shop VIP" : "Shop VIP", GOSSIP_SENDER_MAIN, 14);
                 }
+
+                has_gh = CharacterDatabase.PQuery("SELECT id, `guild` FROM `guild_house` WHERE guild = %u", player->GetGuildId());
+                if (has_gh)
+                {
+                    AddGossipItemFor(player, GOSSIP_ICON_TABARD, isSpanish ? "Casa de Hermandad" : "Guild House", GOSSIP_SENDER_MAIN, 5003);
+                }
+
                 AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Circuitos escalada" : "Climbing circuits", GOSSIP_SENDER_MAIN, 15);
                 AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Ciudades principales" : "Main Cities", GOSSIP_SENDER_MAIN, 1);
                 AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Localizaciones Azeroth" : "Azeroth Locations", GOSSIP_SENDER_MAIN, 2);
@@ -1018,7 +1046,10 @@ public:
                 player->TeleportTo(1, -9604.881836f, -2782.960205f, 8.195462f, 0.010976f);
                 CloseGossipMenuFor(player);
                 break;
-
+            case 5003: // Guild House
+                TeleportGuildHouse(player->GetGuild(), player);
+                CloseGossipMenuFor(player);
+                break;
             case 0:
                 AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Shop Tanaris" : "Shop Tanaris", GOSSIP_SENDER_MAIN, 5000);
                 AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Shop Utgarde" : "Shop Utgarde", GOSSIP_SENDER_MAIN, 5001);
@@ -1028,11 +1059,17 @@ public:
                 if (result) {
                     isVipPlayer = true;
                 }
-
                 if (isVipPlayer)
                 {
                     AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Shop VIP" : "Shop VIP", GOSSIP_SENDER_MAIN, 14);
                 }
+
+                has_gh = CharacterDatabase.PQuery("SELECT id, `guild` FROM `guild_house` WHERE guild = %u", player->GetGuildId());
+                if (has_gh)
+                {
+                    AddGossipItemFor(player, GOSSIP_ICON_TABARD, isSpanish ? "Casa de Hermandad" : "Guild House", GOSSIP_SENDER_MAIN, 5003);
+                }
+
                 AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Circuitos escalada" : "Climbing circuits", GOSSIP_SENDER_MAIN, 15);
                 AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Ciudades principales" : "Main Cities", GOSSIP_SENDER_MAIN, 1);
                 AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Localizaciones Azeroth" : "Azeroth Locations", GOSSIP_SENDER_MAIN, 2);
