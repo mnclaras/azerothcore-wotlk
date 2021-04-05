@@ -733,6 +733,7 @@ public:
         uint32 isInitialSpawn = isInitialSpawnStr ? atoi(isInitialSpawnStr) : 0;
         uint32 guildPosition = guildPositionStr ? atoi(guildPositionStr) : 0;
 
+        WorldDatabase.EscapeString(name);
 
         uint32 mapId = player->GetMapId();
         float posX = player->GetPositionX();
@@ -835,13 +836,13 @@ public:
             "guild_position = '%u' AND "
             "points = '%u' AND "
             "name = '%s';",
-            entry, parent, isMenu, isCreature, isVisible, isInitialSpawn, guildPosition, points, name.c_str());
+            entry, parent, isMenu, isCreature, isVisible, isInitialSpawn, guildPosition, points, std::string(name.c_str()));
 
         if (!rowResult)
         {
             WorldDatabase.PExecute(
                 "INSERT INTO guild_house_spawns (entry, parent, is_menu, is_creature, is_visible, is_initial_spawn, guild_position, points, name, map, posX, posY, posZ, orientation) VALUES ('%u','%u','%u','%u','%u','%u','%u','%u','%s','%u','%u','%u','%u','%u');"
-                , entry, parent, isMenu, isCreature, isVisible, isInitialSpawn, guildPosition, points, name.c_str(), mapId, posX, posY, posZ, ori);
+                , entry, parent, isMenu, isCreature, isVisible, isInitialSpawn, guildPosition, points, std::string(name.c_str()), mapId, posX, posY, posZ, ori);
 
             QueryResult rowInsertResult = WorldDatabase.PQuery("SELECT id FROM guild_house_spawns WHERE "
                 "entry = '%u' AND "
@@ -853,7 +854,7 @@ public:
                 "guild_position = '%u' AND "
                 "points = '%u' AND "
                 "name = '%s';",
-                entry, parent, isMenu, isCreature, isVisible, isInitialSpawn, guildPosition, points, name.c_str());
+                entry, parent, isMenu, isCreature, isVisible, isInitialSpawn, guildPosition, points, std::string(name.c_str()));
 
             if (rowInsertResult)
             {
