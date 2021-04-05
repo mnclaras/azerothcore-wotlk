@@ -12,7 +12,7 @@ CREATE TABLE IF NOT EXISTS `guild_points_ranking` (
   `totalPoints` int(10) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_guild` (`guildId`)
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 CREATE TABLE IF NOT EXISTS `guild_points_boss_reward` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
@@ -22,8 +22,15 @@ CREATE TABLE IF NOT EXISTS `guild_points_boss_reward` (
   `difficulty` varchar(1) DEFAULT 'X',
   PRIMARY KEY (`id`),
   UNIQUE KEY `unique_reward` (`entry`,`mode`,`difficulty`)
-) ENGINE=InnoDB AUTO_INCREMENT=129 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
+CREATE TABLE IF NOT EXISTS `guild_points_allowed_members` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `guildId` int(10) unsigned NOT NULL DEFAULT '0',
+  `member` int(10) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `unique_guild_member` (`guildId`,`member`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 /* ALTER guild_points_ranking */
 ALTER TABLE guild_points_ranking CHANGE points seasonPoints INT(10);

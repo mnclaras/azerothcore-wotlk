@@ -39,12 +39,14 @@ public:
             {
                 ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ?
                     "No estas autorizado para hacer compras en la casa de hermandad": "You are not authorized to make guild house purchases.");
+                CloseGossipMenuFor(player);
                 return false;
             }
         }
         else
         {
             ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "No estas en una hermandad" : "You are not in a guild!");
+            CloseGossipMenuFor(player);
             return false;
         }
 
@@ -54,6 +56,10 @@ public:
         std::string wantToCreateText = isSpanish ? "Deseas crear [" : "Want to create [";
         std::string forText = isSpanish ? "] por " : "] for ";
         std::string guildPointsText = isSpanish ? " puntos de hermandad?" : " guild points?";
+        std::string currentPointsText = isSpanish ? "TUS PUNTOS: " : "YOUR POINTS: ";
+
+        AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, currentPointsText + std::to_string(sModGuildPointsMgr->GetGuildHousePoints(player->GetGuildId())),
+            GOSSIP_SENDER_MAIN, ACTION_GO_BACK);
 
         // Display all first level options
         for (GuildHouseSpawnInfoContainer::const_iterator itr = sModGuildPointsMgr->m_GuildHouseSpawnInfoContainer.begin(); itr != sModGuildPointsMgr->m_GuildHouseSpawnInfoContainer.end(); ++itr)
@@ -108,7 +114,12 @@ public:
                 std::string wantToCreateText = isSpanish ? "Deseas crear [" : "Want to create [";
                 std::string forText = isSpanish ? "] por " : "] for ";
                 std::string guildPointsText = isSpanish ? " puntos de hermandad?" : " guild points?";
+                std::string currentPointsText = isSpanish ? "TUS PUNTOS: " : "YOUR POINTS: ";
 
+                AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, currentPointsText + std::to_string(sModGuildPointsMgr->GetGuildHousePoints(player->GetGuildId())),
+                    GOSSIP_SENDER_MAIN, ACTION_GO_BACK);
+
+                bool menuHavePurchases = false;
                 for (GuildHouseSpawnInfoContainer::const_iterator itr = sModGuildPointsMgr->m_GuildHouseSpawnInfoContainer.begin(); itr != sModGuildPointsMgr->m_GuildHouseSpawnInfoContainer.end(); ++itr)
                 {
                     if ((*itr)->parent && (*itr)->parent == action && !(*itr)->name.empty() && (*itr)->isVisible && !(*itr)->isInitialSpawn)
@@ -123,20 +134,31 @@ public:
                                     GOSSIP_SENDER_MAIN/*(*itr)->points*/, (*itr)->id,
                                     wantToCreateText + (*itr)->name + forText + std::to_string((*itr)->points) + guildPointsText,
                                     0, false);
+                                menuHavePurchases = true;
                             }        
                         }
                         else
                         {
                             AddGossipItemFor(player, GOSSIP_ICON_TALK, (*itr)->name, SENDER_WITH_CHILDRENS, (*itr)->id);
+                            menuHavePurchases = true;
                         }
                     }
                 }
 
-                AddGossipItemFor(player, GOSSIP_ICON_TALK,
-                    isSpanish ? "|TInterface/ICONS/Thrown_1H_Harpoon_D_01Blue:20|t Hasta Luego!"
-                    : "|TInterface/ICONS/Thrown_1H_Harpoon_D_01Blue:20|t Nevermind!",
-                    GOSSIP_SENDER_MAIN, ACTION_GOODBYE);
-                SendGossipMenuFor(player, DEFAULT_GOSSIP_MESSAGE, creature->GetGUID());
+                if (menuHavePurchases)
+                {
+                    AddGossipItemFor(player, GOSSIP_ICON_TALK,
+                        isSpanish ? "|TInterface/ICONS/Thrown_1H_Harpoon_D_01Blue:20|t Hasta Luego!"
+                        : "|TInterface/ICONS/Thrown_1H_Harpoon_D_01Blue:20|t Nevermind!",
+                        GOSSIP_SENDER_MAIN, ACTION_GOODBYE);
+                    SendGossipMenuFor(player, DEFAULT_GOSSIP_MESSAGE, creature->GetGUID());
+                }
+                else
+                {
+                    ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "Ya has comprado todos los NPC y Objetos de esta seccion."
+                        : "You already bought all NPC and Objects of this section.");
+                    OnGossipHello(player, creature);
+                }
             }
             else
             {
