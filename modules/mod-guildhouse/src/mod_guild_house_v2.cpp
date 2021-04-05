@@ -609,7 +609,7 @@ public:
 
     void OnBeforeWorldObjectSetPhaseMask(WorldObject const* worldObject, uint32& /*oldPhaseMask*/, uint32& /*newPhaseMask*/, bool& useCombinedPhases, bool& /*update*/) override
     {
-        if (GuildZones && GuildZones.find(worldObject->GetZoneId()) != GuildZones.end())
+        if (GuildZones.find(worldObject->GetZoneId()) != GuildZones.end())
         {
             useCombinedPhases = false;
         }
