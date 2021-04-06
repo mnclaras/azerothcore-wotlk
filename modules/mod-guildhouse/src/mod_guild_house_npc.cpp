@@ -76,7 +76,7 @@ public:
                 else
                 {
                     bool menuHaveChildrenPurchases = false;
-                    for (GuildHouseSpawnInfoContainer::const_iterator itrMenu = sModGuildPointsMgr->m_GuildHouseSpawnInfoContainer.begin(); itr != sModGuildPointsMgr->m_GuildHouseSpawnInfoContainer.end(); ++itr)
+                    for (GuildHouseSpawnInfoContainer::const_iterator itrMenu = sModGuildPointsMgr->m_GuildHouseSpawnInfoContainer.begin(); itrMenu != sModGuildPointsMgr->m_GuildHouseSpawnInfoContainer.end(); ++itrMenu)
                     {
                         if ((*itrMenu)->parent && (*itrMenu)->parent == (*itr)->id)
                         {
@@ -149,7 +149,7 @@ public:
                         else
                         {
                             bool menuHaveChildrenPurchases = false;
-                            for (GuildHouseSpawnInfoContainer::const_iterator itrMenu = sModGuildPointsMgr->m_GuildHouseSpawnInfoContainer.begin(); itr != sModGuildPointsMgr->m_GuildHouseSpawnInfoContainer.end(); ++itr)
+                            for (GuildHouseSpawnInfoContainer::const_iterator itrMenu = sModGuildPointsMgr->m_GuildHouseSpawnInfoContainer.begin(); itrMenu != sModGuildPointsMgr->m_GuildHouseSpawnInfoContainer.end(); ++itrMenu)
                             {
                                 if ((*itrMenu)->parent && (*itrMenu)->parent == (*itr)->id)
                                 {
@@ -190,7 +190,7 @@ public:
                         {
                             bool isLinked = false;
                             bool success = true;
-                            for (GuildHouseSpawnLinkInfoContainer::const_iterator itrLink = sModGuildPointsMgr->m_GuildHouseSpawnLinkInfoContainer.begin(); itr != sModGuildPointsMgr->m_GuildHouseSpawnLinkInfoContainer.end(); ++itr)
+                            for (GuildHouseSpawnLinkInfoContainer::const_iterator itrLink = sModGuildPointsMgr->m_GuildHouseSpawnLinkInfoContainer.begin(); itrLink != sModGuildPointsMgr->m_GuildHouseSpawnLinkInfoContainer.end(); ++itrLink)
                             {
                                 if ((*itrLink)->spawn == (*itr)->id)
                                 {
