@@ -108,7 +108,7 @@ public:
     void InsertBossReward(uint32 entry, uint32 points, uint32 mode, std::string difficulty);
     void UpdateGuildPoints(uint32 guildId, uint32 points);
 
-    void DeleteGuild(uint32 guildId);
+    void DeleteGuild(uint32 guildId, bool removeRanking);
 
     bool IsSpanishPlayer(Player* player);
    

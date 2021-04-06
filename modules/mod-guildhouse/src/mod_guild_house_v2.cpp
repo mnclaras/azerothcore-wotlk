@@ -68,7 +68,7 @@ public:
             sLog->outBasic("GUILDHOUSE: Deleting guild house data due to disbanding of guild...");
         } else { sLog->outBasic("GUILDHOUSE: Error deleting guild house data during disbanding of guild!!"); }
 
-        sModGuildPointsMgr->DeleteGuild(guild->GetId());
+        sModGuildPointsMgr->DeleteGuild(guild->GetId(), true);
     }
 
     bool RemoveGuildHouse(Guild* guild)
@@ -214,7 +214,7 @@ public:
                 CloseGossipMenuFor(player);
             }
 
-            sModGuildPointsMgr->DeleteGuild((*has_gh)[1].GetUInt32());
+            sModGuildPointsMgr->DeleteGuild((*has_gh)[1].GetUInt32(), false);
 
             break;
         }
