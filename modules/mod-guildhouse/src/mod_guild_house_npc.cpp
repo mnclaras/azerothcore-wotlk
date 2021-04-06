@@ -80,7 +80,7 @@ public:
                     {
                         if ((*itrMenu)->parent && (*itrMenu)->parent == (*itr)->id)
                         {
-                            if (!CheckSpawnAlreadyPurchased(player, (*itrMenu)->id)
+                            if (!CheckSpawnAlreadyPurchased(player, (*itrMenu)->id))
                             {
                                 menuHaveChildrenPurchases = true;
                                 break;
@@ -153,7 +153,7 @@ public:
                             {
                                 if ((*itrMenu)->parent && (*itrMenu)->parent == (*itr)->id)
                                 {
-                                    if (!CheckSpawnAlreadyPurchased(player, (*itrMenu)->id)
+                                    if (!CheckSpawnAlreadyPurchased(player, (*itrMenu)->id))
                                     {
                                         menuHaveChildrenPurchases = true;
                                         break;
