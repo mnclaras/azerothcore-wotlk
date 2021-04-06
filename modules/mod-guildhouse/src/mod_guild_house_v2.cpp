@@ -68,7 +68,7 @@ public:
             sLog->outBasic("GUILDHOUSE: Deleting guild house data due to disbanding of guild...");
         } else { sLog->outBasic("GUILDHOUSE: Error deleting guild house data during disbanding of guild!!"); }
 
-        sModGuildPointsMgr->DeleteGuild(guild);
+        sModGuildPointsMgr->DeleteGuild(guild->GetId());
     }
 
     bool RemoveGuildHouse(Guild* guild)

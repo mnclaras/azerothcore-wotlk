@@ -329,12 +329,12 @@ bool sModGuildPoints::AddGuildHousePoints(Player* player, uint32 points)
     return true;
 }
 
-void sModGuildPoints::DeleteGuild(Guild* guild)
+void sModGuildPoints::DeleteGuild(uint32 guildId)
 {
-    CharacterDatabase.PExecute("DELETE FROM guild_points_ranking WHERE guildId = %u;", guild->GetId());
+    CharacterDatabase.PExecute("DELETE FROM guild_points_ranking WHERE guildId = %u;", guildId);
     // Delete actual guild_house data from characters database
-    CharacterDatabase.PExecute("DELETE FROM `guild_house` WHERE `guild` = '%u'", guild->GetId());
-    CharacterDatabase.PExecute("DELETE FROM `guild_house_purchased_spawns` WHERE `guild` = '%u'", guild->GetId());
+    CharacterDatabase.PExecute("DELETE FROM `guild_house` WHERE `guild` = '%u'", guildId);
+    CharacterDatabase.PExecute("DELETE FROM `guild_house_purchased_spawns` WHERE `guild` = '%u'", guildId);
 }
 
 
