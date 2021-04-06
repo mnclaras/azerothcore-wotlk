@@ -214,7 +214,7 @@ public:
                 CloseGossipMenuFor(player);
             }
 
-            sModGuildPointsMgr->DeleteGuild((*has_gh)[2].GetUInt32());
+            sModGuildPointsMgr->DeleteGuild((*has_gh)[1].GetUInt32());
 
             break;
         }
