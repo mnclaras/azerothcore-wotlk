@@ -129,9 +129,6 @@ public:
             } while (GameobjResult->NextRow());
         }
 
-        // Delete actual guild_house data from characters database
-        CharacterDatabase.PQuery("DELETE FROM `guild_house` WHERE `guild` = '%u'", guild->GetId());
-
         return true;
     }
 
@@ -216,6 +213,9 @@ public:
                 ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "Hubo un problema eliminando la casa de hermandad." : "There was an error removing your guild house.");
                 CloseGossipMenuFor(player);
             }
+
+            sModGuildPointsMgr->DeleteGuild((*has_gh)[2].GetUInt32());
+
             break;
         }
         case 2: // buy guild house
@@ -318,9 +318,6 @@ public:
 
             } while (GameobjResult->NextRow());
         }
-
-        // Delete actual guild_house data from characters database
-        CharacterDatabase.PQuery("DELETE FROM `guild_house` WHERE `guild` = '%u'", player->GetGuildId());
 
         return true;
     }
