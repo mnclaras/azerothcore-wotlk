@@ -273,7 +273,7 @@ public:
     {
         bool isSpanish = IsSpanishPlayer(player);
 
-        if (!spawn || CheckSpawnAlreadyPurchased(player, spawn))
+        if (spawn && CheckSpawnAlreadyPurchased(player, spawn))
         {
             ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "Ya tienes a este NPC!" : "You already have this NPC!");
             return false;
@@ -333,7 +333,7 @@ public:
     {
         bool isSpanish = IsSpanishPlayer(player);
 
-        if (!spawn || CheckSpawnAlreadyPurchased(player, spawn))
+        if (spawn && CheckSpawnAlreadyPurchased(player, spawn))
         {
             ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "Ya tienes este objeto!" : "You already have this object!");
             CloseGossipMenuFor(player);
