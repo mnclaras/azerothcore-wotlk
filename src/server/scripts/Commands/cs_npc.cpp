@@ -160,6 +160,7 @@ public:
         static std::vector<ChatCommand> npcCommandTable =
         {
             { "info",           SEC_MODERATOR,      false, &HandleNpcInfoCommand,              "" },
+            { "shortinfo",      SEC_MODERATOR,      false, &HandleNpcShortInfoCommand,         "" },
             { "near",           SEC_GAMEMASTER,     false, &HandleNpcNearCommand,              "" },
             { "move",           SEC_ADMINISTRATOR,  false, &HandleNpcMoveCommand,              "" },
             { "playemote",      SEC_ADMINISTRATOR,  false, &HandleNpcPlayEmoteCommand,         "" },
@@ -752,6 +753,57 @@ public:
 
         return true;
     }
+
+    static bool HandleNpcShortInfoCommand(ChatHandler* handler, const char* /*args*/)
+    {
+        Creature* target = handler->getSelectedCreature();
+
+        if (!target)
+        {
+            handler->SendSysMessage(LANG_SELECT_CREATURE);
+            handler->SetSentErrorMessage(true);
+            return false;
+        }
+
+        CreatureTemplate const* cInfo = target->GetCreatureTemplate();
+        uint32 faction = target->getFaction();
+        uint32 npcflags = target->GetUInt32Value(UNIT_NPC_FLAGS);
+        //uint32 mechanicImmuneMask = cInfo->MechanicImmuneMask;
+        uint32 displayid = target->GetDisplayId();
+        uint32 nativeid = target->GetNativeDisplayId();
+        uint32 Entry = target->GetEntry();
+
+        //int64 curRespawnDelay = target->GetRespawnTimeEx() - time(nullptr);
+        //if (curRespawnDelay < 0)
+        //    curRespawnDelay = 0;
+        //std::string curRespawnDelayStr = secsToTimeString(uint64(curRespawnDelay), true);
+        //std::string defRespawnDelayStr = secsToTimeString(target->GetRespawnDelay(), true);
+
+        handler->PSendSysMessage(LANG_NPCINFO_CHAR, target->GetDBTableGUIDLow(), target->GetGUIDLow(), faction, npcflags, Entry, displayid, nativeid);
+        //handler->PSendSysMessage(LANG_NPCINFO_LEVEL, target->getLevel());
+        //handler->PSendSysMessage(LANG_NPCINFO_EQUIPMENT, target->GetCurrentEquipmentId(), target->GetOriginalEquipmentId());
+        //handler->PSendSysMessage(LANG_NPCINFO_HEALTH, target->GetCreateHealth(), target->GetMaxHealth(), target->GetHealth());
+        //handler->PSendSysMessage(LANG_NPCINFO_FLAGS, target->GetUInt32Value(UNIT_FIELD_FLAGS), target->GetUInt32Value(UNIT_FIELD_FLAGS_2), target->GetUInt32Value(UNIT_DYNAMIC_FLAGS), target->getFaction());
+        //handler->PSendSysMessage(LANG_COMMAND_RAWPAWNTIMES, defRespawnDelayStr.c_str(), curRespawnDelayStr.c_str());
+        //handler->PSendSysMessage(LANG_NPCINFO_LOOT, cInfo->lootid, cInfo->pickpocketLootId, cInfo->SkinLootId);
+        //handler->PSendSysMessage(LANG_NPCINFO_DUNGEON_ID, target->GetInstanceId());
+        handler->PSendSysMessage(LANG_NPCINFO_PHASEMASK, target->GetPhaseMask());
+        //handler->PSendSysMessage(LANG_NPCINFO_ARMOR, target->GetArmor());
+        //handler->PSendSysMessage(LANG_NPCINFO_POSITION, float(target->GetPositionX()), float(target->GetPositionY()), float(target->GetPositionZ()));
+        handler->PSendSysMessage(LANG_NPCINFO_AIINFO, target->GetAIName().c_str(), target->GetScriptName().c_str());
+
+        //for (uint8 i = 0; i < NPCFLAG_COUNT; i++)
+        //    if (npcflags & npcFlagTexts[i].flag)
+        //        handler->PSendSysMessage(npcFlagTexts[i].text, npcFlagTexts[i].flag);
+
+        //handler->PSendSysMessage(LANG_NPCINFO_MECHANIC_IMMUNE, mechanicImmuneMask);
+        //for (uint8 i = 1; i < MAX_MECHANIC; ++i)
+        //    if (mechanicImmuneMask & (1 << (mechanicImmunes[i].flag - 1)))
+        //        handler->PSendSysMessage(mechanicImmunes[i].text, mechanicImmunes[i].flag);
+
+        return true;
+    }
+
 
     static bool HandleNpcNearCommand(ChatHandler* handler, char const* args)
     {
