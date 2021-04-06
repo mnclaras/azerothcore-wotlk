@@ -218,7 +218,7 @@ public:
                                 if (success)
                                 {
                                     AddPurchasedSpawn(player, (*itr)->id);
-                                    sModGuildPointsMgr->SpendGuildHousePoints(player, (*itr)->points)
+                                    sModGuildPointsMgr->SpendGuildHousePoints(player, (*itr)->points));
                                 }
                             }
                             else
