@@ -765,7 +765,7 @@ public:
             return false;
         }
 
-        CreatureTemplate const* cInfo = target->GetCreatureTemplate();
+        //CreatureTemplate const* cInfo = target->GetCreatureTemplate();
         uint32 faction = target->getFaction();
         uint32 npcflags = target->GetUInt32Value(UNIT_NPC_FLAGS);
         //uint32 mechanicImmuneMask = cInfo->MechanicImmuneMask;
