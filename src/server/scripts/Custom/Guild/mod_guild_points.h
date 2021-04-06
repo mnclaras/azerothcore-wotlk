@@ -63,8 +63,22 @@ struct GuildHouseSpawnInfo
     float orientation;
 };
 
+struct GuildHouseSpawnLinkInfo
+{
+    uint32 id;
+    uint32 spawn;
+    uint32 entry;
+    bool isCreature;
+    uint32 map;
+    float posX;
+    float posY;
+    float posZ;
+    float orientation;
+};
+
 typedef std::vector<GuildBossRewardInfo*> BossRewardInfoContainer;
 typedef std::vector<GuildHouseSpawnInfo*> GuildHouseSpawnInfoContainer;
+typedef std::vector<GuildHouseSpawnLinkInfo*> GuildHouseSpawnLinkInfoContainer;
 
 class sModGuildPoints
 {
@@ -84,7 +98,8 @@ public:
     void AddGuildHousePointsAllowedMember(Player* player);
     void RemoveGuildHousePointsAllowedMember(Player* player);
     bool CheckEnoughGuildHousePoints(uint32 guildId, int32 points);
-    bool SpendGuildHousePoints(Player* player, uint32 points);
+    void SpendGuildHousePoints(Player* player, uint32 points);
+    bool CheckCanSpendGuildHousePoints(Player* player, uint32 points);
     bool AddGuildHousePoints(Player* player, uint32 points);
     int32 GetGuildHousePoints(uint32 guildId);
 
@@ -99,6 +114,7 @@ public:
    
     BossRewardInfoContainer m_BossRewardInfoContainer;
     GuildHouseSpawnInfoContainer m_GuildHouseSpawnInfoContainer;
+    GuildHouseSpawnLinkInfoContainer m_GuildHouseSpawnLinkInfoContainer;
 };
 #define sModGuildPointsMgr sModGuildPoints::instance()
 #endif

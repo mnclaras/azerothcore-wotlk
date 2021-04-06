@@ -64,23 +64,38 @@ public:
         // Display all first level options
         for (GuildHouseSpawnInfoContainer::const_iterator itr = sModGuildPointsMgr->m_GuildHouseSpawnInfoContainer.begin(); itr != sModGuildPointsMgr->m_GuildHouseSpawnInfoContainer.end(); ++itr)
         {
-            if ((!(*itr)->parent || (*itr)->parent == 0) && !(*itr)->name.empty() && (*itr)->isVisible && !(*itr)->isInitialSpawn)
+            if ((!(*itr)->parent || (*itr)->parent == 0) && !(*itr)->name.empty() && (*itr)->isVisible && !(*itr)->isInitialSpawn && !CheckSpawnAlreadyPurchased(player, (*itr)->id))
             {              
                 if (!(*itr)->isMenu)
                 {
-                    if (((*itr)->isCreature && !NPCExists(player, (*itr)->entry))
-                        ||
-                        (!(*itr)->isCreature && !ObjectExists(player, (*itr)->entry)))
-                    {
-                        AddGossipItemFor(player, GOSSIP_ICON_TALK, (*itr)->name + ": " + std::to_string((*itr)->points) + pointsText,
-                            GOSSIP_SENDER_MAIN/*(*itr)->points*/, (*itr)->id,
-                            wantToCreateText + (*itr)->name + forText + std::to_string((*itr)->points) + guildPointsText,
-                            0, false);
-                    }
+                    AddGossipItemFor(player, GOSSIP_ICON_TALK, (*itr)->name + ": " + std::to_string((*itr)->points) + pointsText,
+                        GOSSIP_SENDER_MAIN/*(*itr)->points*/, (*itr)->id,
+                        wantToCreateText + (*itr)->name + forText + std::to_string((*itr)->points) + guildPointsText,
+                        0, false);
                 }
                 else
                 {
-                    AddGossipItemFor(player, GOSSIP_ICON_TALK, (*itr)->name, SENDER_WITH_CHILDRENS, (*itr)->id);
+                    bool menuHaveChildrenPurchases = false;
+                    for (GuildHouseSpawnInfoContainer::const_iterator itrMenu = sModGuildPointsMgr->m_GuildHouseSpawnInfoContainer.begin(); itr != sModGuildPointsMgr->m_GuildHouseSpawnInfoContainer.end(); ++itr)
+                    {
+                        if ((*itrMenu)->parent && (*itrMenu)->parent == (*itr)->id)
+                        {
+                            if (!CheckSpawnAlreadyPurchased(player, (*itrMenu)->id)
+                            {
+                                menuHaveChildrenPurchases = true;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (menuHaveChildrenPurchases)
+                    {
+                        AddGossipItemFor(player, GOSSIP_ICON_TALK, (*itr)->name, SENDER_WITH_CHILDRENS, (*itr)->id);
+                    }
+                    else
+                    {
+                        AddPurchasedSpawn(player, (*itr)->id);
+                    }
                 }             
             }
         }
@@ -91,6 +106,7 @@ public:
             GOSSIP_SENDER_MAIN, ACTION_GOODBYE);
 
         SendGossipMenuFor(player, DEFAULT_GOSSIP_MESSAGE, creature->GetGUID());
+
         return true;
     }
 
@@ -119,46 +135,49 @@ public:
                 AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, currentPointsText + std::to_string(sModGuildPointsMgr->GetGuildHousePoints(player->GetGuildId())),
                     GOSSIP_SENDER_MAIN, ACTION_GO_BACK);
 
-                bool menuHavePurchases = false;
                 for (GuildHouseSpawnInfoContainer::const_iterator itr = sModGuildPointsMgr->m_GuildHouseSpawnInfoContainer.begin(); itr != sModGuildPointsMgr->m_GuildHouseSpawnInfoContainer.end(); ++itr)
                 {
-                    if ((*itr)->parent && (*itr)->parent == action && !(*itr)->name.empty() && (*itr)->isVisible && !(*itr)->isInitialSpawn)
+                    if ((*itr)->parent && (*itr)->parent == action && !(*itr)->name.empty() && (*itr)->isVisible && !(*itr)->isInitialSpawn && !CheckSpawnAlreadyPurchased(player, (*itr)->id))
                     {
                         if (!(*itr)->isMenu)
                         {
-                            if (((*itr)->isCreature && !NPCExists(player, (*itr)->entry))
-                                ||
-                                (!(*itr)->isCreature && !ObjectExists(player, (*itr)->entry)))
-                            {
-                                AddGossipItemFor(player, GOSSIP_ICON_TALK, (*itr)->name + ": " + std::to_string((*itr)->points) + pointsText,
-                                    GOSSIP_SENDER_MAIN/*(*itr)->points*/, (*itr)->id,
-                                    wantToCreateText + (*itr)->name + forText + std::to_string((*itr)->points) + guildPointsText,
-                                    0, false);
-                                menuHavePurchases = true;
-                            }        
+                            AddGossipItemFor(player, GOSSIP_ICON_TALK, (*itr)->name + ": " + std::to_string((*itr)->points) + pointsText,
+                                GOSSIP_SENDER_MAIN/*(*itr)->points*/, (*itr)->id,
+                                wantToCreateText + (*itr)->name + forText + std::to_string((*itr)->points) + guildPointsText,
+                                0, false);
                         }
                         else
                         {
-                            AddGossipItemFor(player, GOSSIP_ICON_TALK, (*itr)->name, SENDER_WITH_CHILDRENS, (*itr)->id);
-                            menuHavePurchases = true;
+                            bool menuHaveChildrenPurchases = false;
+                            for (GuildHouseSpawnInfoContainer::const_iterator itrMenu = sModGuildPointsMgr->m_GuildHouseSpawnInfoContainer.begin(); itr != sModGuildPointsMgr->m_GuildHouseSpawnInfoContainer.end(); ++itr)
+                            {
+                                if ((*itrMenu)->parent && (*itrMenu)->parent == (*itr)->id)
+                                {
+                                    if (!CheckSpawnAlreadyPurchased(player, (*itrMenu)->id)
+                                    {
+                                        menuHaveChildrenPurchases = true;
+                                        break;
+                                    }
+                                }
+                            }
+
+                            if (menuHaveChildrenPurchases)
+                            {
+                                AddGossipItemFor(player, GOSSIP_ICON_TALK, (*itr)->name, SENDER_WITH_CHILDRENS, (*itr)->id);
+                            }
+                            else
+                            {
+                                AddPurchasedSpawn(player, (*itr)->id);
+                            }
                         }
                     }
                 }
 
-                if (menuHavePurchases)
-                {
-                    AddGossipItemFor(player, GOSSIP_ICON_TALK,
-                        isSpanish ? "|TInterface/ICONS/Thrown_1H_Harpoon_D_01Blue:20|t Hasta Luego!"
-                        : "|TInterface/ICONS/Thrown_1H_Harpoon_D_01Blue:20|t Nevermind!",
-                        GOSSIP_SENDER_MAIN, ACTION_GOODBYE);
-                    SendGossipMenuFor(player, DEFAULT_GOSSIP_MESSAGE, creature->GetGUID());
-                }
-                else
-                {
-                    ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "Ya has comprado todos los NPC y Objetos de esta seccion."
-                        : "You already bought all NPC and Objects of this section.");
-                    OnGossipHello(player, creature);
-                }
+                AddGossipItemFor(player, GOSSIP_ICON_TALK,
+                    isSpanish ? "|TInterface/ICONS/Thrown_1H_Harpoon_D_01Blue:20|t Hasta Luego!"
+                    : "|TInterface/ICONS/Thrown_1H_Harpoon_D_01Blue:20|t Nevermind!",
+                    GOSSIP_SENDER_MAIN, ACTION_GOODBYE);
+                SendGossipMenuFor(player, DEFAULT_GOSSIP_MESSAGE, creature->GetGUID());
             }
             else
             {
@@ -167,14 +186,54 @@ public:
                 {
                     if ((*itr)->id == action)
                     {
-                        if ((*itr)->isCreature)
+                        if (sModGuildPointsMgr->CheckCanSpendGuildHousePoints(player, (*itr)->points))
                         {
-                            SpawnNPC((*itr)->entry, (*itr)->posX, (*itr)->posY, (*itr)->posZ, (*itr)->orientation, player, (*itr)->points);
+                            bool isLinked = false;
+                            bool success = true;
+                            for (GuildHouseSpawnLinkInfoContainer::const_iterator itrLink = sModGuildPointsMgr->m_GuildHouseSpawnLinkInfoContainer.begin(); itr != sModGuildPointsMgr->m_GuildHouseSpawnLinkInfoContainer.end(); ++itr)
+                            {
+                                if ((*itrLink)->spawn == (*itr)->id)
+                                {
+                                    isLinked = true;
+
+                                    if ((*itrLink)->isCreature)
+                                    {
+                                        if (!SpawnNPC(0, (*itrLink)->entry, (*itrLink)->posX, (*itrLink)->posY, (*itrLink)->posZ, (*itrLink)->orientation, player, 0))
+                                        {
+                                            success = false;
+                                        }
+                                    }
+                                    else
+                                    {
+                                        if (!SpawnObject(0, (*itrLink)->entry, (*itrLink)->posX, (*itrLink)->posY, (*itrLink)->posZ, (*itrLink)->orientation, player, 0))
+                                        {
+                                            success = false;
+                                        }
+                                    }
+                                }
+                            }
+
+                            if (isLinked)
+                            {
+                                if (success)
+                                {
+                                    AddPurchasedSpawn(player, (*itr)->id);
+                                    sModGuildPointsMgr->SpendGuildHousePoints(player, (*itr)->points)
+                                }
+                            }
+                            else
+                            {
+                                if ((*itr)->isCreature)
+                                {
+                                    SpawnNPC((*itr)->id, (*itr)->entry, (*itr)->posX, (*itr)->posY, (*itr)->posZ, (*itr)->orientation, player, (*itr)->points);
+                                }
+                                else
+                                {
+                                    SpawnObject((*itr)->id, (*itr)->entry, (*itr)->posX, (*itr)->posY, (*itr)->posZ, (*itr)->orientation, player, (*itr)->points);
+                                }
+                            }
                         }
-                        else
-                        {
-                            SpawnObject((*itr)->entry, (*itr)->posX, (*itr)->posY, (*itr)->posZ, (*itr)->orientation, player, (*itr)->points);
-                        }
+
                         break;
                     }
                 }
@@ -210,23 +269,23 @@ public:
         return false;
     }
 
-    void SpawnNPC(uint32 entry, float posX, float posY, float posZ, float orientation, Player* player, uint32 cost)
+    bool SpawnNPC(uint32 spawn, uint32 entry, float posX, float posY, float posZ, float orientation, Player* player, uint32 cost)
     {
         bool isSpanish = IsSpanishPlayer(player);
 
-        if (NPCExists(player, entry))
+        if (!spawn || CheckSpawnAlreadyPurchased(player, spawn))
         {
             ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "Ya tienes a este NPC!" : "You already have this NPC!");
-            return;
+            return false;
         }
 
         if (!sObjectMgr->GetCreatureTemplate(entry))
         {
             ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "El NPC no pudo ser añadido. Contacta con un GM! (Criatura)" : "NPC couldn't be added. Contact a GM! (Creature)");
-            return;
+            return false;
         }
 
-        if (sModGuildPointsMgr->SpendGuildHousePoints(player, cost))
+        if (!cost || sModGuildPointsMgr->CheckCanSpendGuildHousePoints(player, cost))
         {
             bool processOk = true;
 
@@ -255,34 +314,37 @@ public:
                 {
                     sObjectMgr->AddCreatureToGrid(db_guid, sObjectMgr->GetCreatureData(db_guid));
                     ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "NPC añadido con exito!" : "NPC sucessfully added!");
+                    if (spawn) AddPurchasedSpawn(player, spawn);
+                    if (cost) sModGuildPointsMgr->SpendGuildHousePoints(player, cost);
+                    return true;
                 }
             }
 
             if (!processOk)
             {
-                // If creature couldn't be added, we revert the points transaction.
-                sModGuildPointsMgr->AddGuildHousePoints(player, cost);
                 ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "El NPC no pudo ser añadido. Contacta con un GM!" : "NPC couldn't be added. Contact a GM!");
             }
         }
+
+        return false;
     }
 
-    void SpawnObject(uint32 entry, float posX, float posY, float posZ, float orientation, Player* player, uint32 cost)
+    bool SpawnObject(uint32 spawn, uint32 entry, float posX, float posY, float posZ, float orientation, Player* player, uint32 cost)
     {
         bool isSpanish = IsSpanishPlayer(player);
 
-        if (ObjectExists(player, entry))
+        if (!spawn || CheckSpawnAlreadyPurchased(player, spawn))
         {
             ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "Ya tienes este objeto!" : "You already have this object!");
             CloseGossipMenuFor(player);
-            return;
+            return false;
         }
 
         uint32 objectId = entry;
         if (!objectId)
         {
             ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "El Objeto no pudo ser añadido. Contacta con un GM! (Plantilla)" : "Object couldn't be added. Contact a GM! (Template)");
-            return;
+            return false;
         }
 
         const GameObjectTemplate* objectInfo = sObjectMgr->GetGameObjectTemplate(objectId);
@@ -290,16 +352,16 @@ public:
         if (!objectInfo)
         {
             ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "El Objeto no pudo ser añadido. Contacta con un GM! (Plantilla)" : "Object couldn't be added. Contact a GM! (Template)");
-            return;
+            return false;
         }
 
         if (objectInfo->displayId && !sGameObjectDisplayInfoStore.LookupEntry(objectInfo->displayId))
         {
             ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "El Objeto no pudo ser añadido. Contacta con un GM! (Modelo)" : "Object couldn't be added. Contact a GM! (Model)");
-            return;
+            return false;
         }
 
-        if (sModGuildPointsMgr->SpendGuildHousePoints(player, cost))
+        if (!cost || sModGuildPointsMgr->CheckCanSpendGuildHousePoints(player, cost))
         {
             bool processOk = true;
 
@@ -331,16 +393,41 @@ public:
                     // TODO: is it really necessary to add both the real and DB table guid here ?
                     sObjectMgr->AddGameobjectToGrid(guidLow, sObjectMgr->GetGOData(guidLow));
                     ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "Objeto añadido con exito!" : "Object sucessfully added!");
+
+                    if (spawn) AddPurchasedSpawn(player, spawn);
+                    if (cost) sModGuildPointsMgr->SpendGuildHousePoints(player, cost);
+
+                    return true;
                 }
             }
 
             if (!processOk)
             {
-                // If creature couldn't be added, we revert the points transaction.
-                sModGuildPointsMgr->AddGuildHousePoints(player, cost);
                 ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "El Objeto no pudo ser añadido. Contacta con un GM!" : "Object couldn't be added. Contact a GM!");
             }
         }
+
+        return false;
+    }
+
+    void AddPurchasedSpawn(Player* player, uint32 spawn)
+    {
+        if (spawn && !CheckSpawnAlreadyPurchased(player, spawn))
+        {
+            CharacterDatabase.PExecute("INSERT INTO guild_house_purchased_spawns (guild, spawn) VALUES ('%u', '%u');", player->GetGuildId(), spawn);
+        }
+    }
+
+    bool CheckSpawnAlreadyPurchased(Player* player, uint32 spawn)
+    {
+        if (!spawn) return false;
+
+        QueryResult result = CharacterDatabase.PQuery("SELECT id FROM guild_house_purchased_spawns WHERE guild = '%u' and spawn = '%u';", player->GetGuildId(), spawn);
+        if (result)
+        {
+            return true;
+        }
+        return false;
     }
 
     bool IsSpanishPlayer(Player* player)
@@ -348,6 +435,8 @@ public:
         LocaleConstant locale = player->GetSession()->GetSessionDbLocaleIndex();
         return (locale == LOCALE_esES || locale == LOCALE_esMX);
     }
+
+
 };
 
 class GuildHouseNPCConf : public WorldScript

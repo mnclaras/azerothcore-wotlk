@@ -23,6 +23,19 @@ CREATE TABLE IF NOT EXISTS `guild_house_spawns` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
+CREATE TABLE IF NOT EXISTS `guild_house_spawn_linked` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `entry` int(10) NOT NULL DEFAULT '0',
+  `spawn` int(10) NOT NULL DEFAULT '0',
+  `is_creature` TINYINT(1) NOT NULL DEFAULT '0',
+  `map` smallint(5) unsigned NOT NULL DEFAULT '0' COMMENT 'Map Identifier',
+  `posX` float NOT NULL DEFAULT '0',
+  `posY` float NOT NULL DEFAULT '0',
+  `posZ` float NOT NULL DEFAULT '0',
+  `orientation` float NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+
 /*!40000 ALTER TABLE `guild_house_spawns` ENABLE KEYS */;
 
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;

@@ -103,14 +103,20 @@ void sModGuildPoints::LoadCreaturesAndObjectsPurchasables()
     for (GuildHouseSpawnInfoContainer::const_iterator itr = m_GuildHouseSpawnInfoContainer.begin(); itr != m_GuildHouseSpawnInfoContainer.end(); ++itr)
         delete* itr;
 
+    for (GuildHouseSpawnLinkInfoContainer::const_iterator itr = m_GuildHouseSpawnLinkInfoContainer.begin(); itr != m_GuildHouseSpawnLinkInfoContainer.end(); ++itr)
+        delete* itr;
+
     m_GuildHouseSpawnInfoContainer.clear();
+    m_GuildHouseSpawnLinkInfoContainer.clear();
 
     uint32 oldMSTime = getMSTime();
     uint32 count = 0;
 
+    // Spawns
+
     QueryResult result = WorldDatabase.Query("SELECT id, entry, name, parent, points, map, guild_position, is_creature, is_menu, "
         "is_visible, is_initial_spawn, posX, posY, posZ, orientation FROM guild_house_spawns;");
-    
+
     if (!result)
     {
         sLog->outString(">>MOD GUILD POINTS: Loaded 0 guild house spawns. DB table `guild_house_spawns` is empty!");
@@ -143,6 +149,40 @@ void sModGuildPoints::LoadCreaturesAndObjectsPurchasables()
         ++count;
     } while (result->NextRow());
     sLog->outString(">>MOD GUILD POINTS: Loaded %u guild house spawns in %u ms.", count, GetMSTimeDiffToNow(oldMSTime));
+
+    // Spawn links
+
+    oldMSTime = getMSTime();
+    count = 0;
+
+    result = WorldDatabase.Query("SELECT id, entry, spawn, is_creature, map, posX, posY, posZ, orientation FROM guild_house_spawn_linked;");
+
+    if (!result)
+    {
+        sLog->outString(">>MOD GUILD POINTS: Loaded 0 guild house linked spawns. DB table `guild_house_spawn_linked` is empty!");
+        return;
+    }
+
+    do
+    {
+        Field* fields = result->Fetch();
+
+        GuildHouseSpawnLinkInfo* pGuildHouseSpawnLink = new GuildHouseSpawnLinkInfo;
+
+        pGuildHouseSpawnLink->id = fields[0].GetUInt32();
+        pGuildHouseSpawnLink->entry = fields[1].GetUInt32();
+        pGuildHouseSpawnLink->spawn = fields[2].GetUInt32();
+        pGuildHouseSpawnLink->isCreature = fields[3].GetUInt32();
+        pGuildHouseSpawnLink->map = fields[4].GetUInt32();
+        pGuildHouseSpawnLink->posX = fields[5].GetFloat();
+        pGuildHouseSpawnLink->posY = fields[6].GetFloat();
+        pGuildHouseSpawnLink->posZ = fields[7].GetFloat();
+        pGuildHouseSpawnLink->orientation = fields[8].GetFloat();
+
+        m_GuildHouseSpawnLinkInfoContainer.push_back(pGuildHouseSpawnLink);
+        ++count;
+    } while (result->NextRow());
+    sLog->outString(">>MOD GUILD POINTS: Loaded %u guild house linked spawns in %u ms.", count, GetMSTimeDiffToNow(oldMSTime));
 }
 
 GuildHousePointsInfo* sModGuildPoints::GetGuildHousePointsInfo(uint32 guildId)
@@ -228,7 +268,7 @@ int32 sModGuildPoints::GetGuildHousePoints(uint32 guildId)
     }
     else
     {
-        return (*result)[0].GetUInt32();
+        return (*result)[0].GetInt32();
     }
 }
 
@@ -237,7 +277,20 @@ bool sModGuildPoints::CheckEnoughGuildHousePoints(uint32 guildId, int32 points)
     return GetGuildHousePoints(guildId) >= points;
 }
 
-bool sModGuildPoints::SpendGuildHousePoints(Player* player, uint32 points)
+void sModGuildPoints::SpendGuildHousePoints(Player* player, uint32 points)
+{
+    if (!player)
+        return;
+
+    if (!points)
+        points = 0;
+
+    int32 guildHousePoints = GetGuildHousePoints(player->GetGuildId());
+    CharacterDatabase.PExecute("UPDATE guild_points_ranking SET guildHousePoints = '%u' WHERE guildId = '%u';",
+        guildHousePoints - points, player->GetGuildId());
+}
+
+bool sModGuildPoints::CheckCanSpendGuildHousePoints(Player* player, uint32 points)
 {
     if (!player)
         return false;
@@ -260,9 +313,6 @@ bool sModGuildPoints::SpendGuildHousePoints(Player* player, uint32 points)
             : "You don\'t have enough guild points to buy that. Current Points: %u. Required: %u.", guildHousePoints, points);
         return false;
     }
-
-    CharacterDatabase.PExecute("UPDATE guild_points_ranking SET guildHousePoints = '%u' WHERE guildId = '%u';",
-        guildHousePoints - points, player->GetGuildId());
 
     return true;
 }
@@ -558,7 +608,8 @@ public:
             {"addmember", SEC_PLAYER, true, &HandleAddGuildHouseAllowedMemberCommand, "Grants a player privileges to spend guild points. Example: `.guildhouse addmember`"},
             {"removemember", SEC_PLAYER, true, &HandleRemoveGuildHouseAllowedMemberCommand, "Remove the privileges to spend guild points on a guild player. Example: `.guildhouse removemember`"},
             {"reloadspawns", SEC_ADMINISTRATOR, true, &HandleReloadGuildHouseAvailableSpawnsCommand, "Reload all available GObjects and creatures to spawn on the guild house. Example: `.guildhouse reloadspawns`"},
-            {"addspawn", SEC_ADMINISTRATOR, true, &HandleAddGuildHouseAvailableSpawnCommand, "Adds an spawn to DB in the player position. Example: `.guildhouse addspawn #ENTRY #POINTS #PARENT #ISMENU #ISCREATURE #ISINITIALSPAWN #GUILDPOSITION #NAME`"},
+            {"addspawn", SEC_ADMINISTRATOR, true, &HandleAddGuildHouseAvailableSpawnCommand, "Adds a spawn to DB in the player position. Example: `.guildhouse addspawn #ENTRY #POINTS #PARENT #ISMENU #ISCREATURE #ISINITIALSPAWN #GUILDPOSITION #ISLINKED #NAME`"},
+            {"addlinkedspawn", SEC_ADMINISTRATOR, true, &HandleAddGuildHouseLinkedSpawnCommand, "Adds a linked spawn to DB in the player position. Example: `.guildhouse addlinkedspawn #ENTRY #SPAWN #ISCREATURE`"},
         };
 
         static std::vector<ChatCommand> commandTable = {
@@ -717,6 +768,10 @@ public:
         if (!guildPositionStr) return false;
         if (atoi(guildPositionStr) < 0) return false;
 
+        char* isLinkedStr = strtok(nullptr, " ");
+        if (!isLinkedStr) return false;
+        if (atoi(isLinkedStr) != 0 && atoi(isLinkedStr) != 1) return false;
+
         char* nameStr = strtok(nullptr, "");
         if (!nameStr) return false;
         char* textExtracted = handler->extractQuotedArg(nameStr);
@@ -734,6 +789,7 @@ public:
         uint32 isVisible = 1;
         uint32 isInitialSpawn = isInitialSpawnStr ? atoi(isInitialSpawnStr) : 0;
         uint32 guildPosition = guildPositionStr ? atoi(guildPositionStr) : 0;
+        uint32 isLinked = isLinkedStr ? atoi(isLinkedStr) : 0;
 
         WorldDatabase.EscapeString(name);
 
@@ -744,6 +800,21 @@ public:
         float ori = player->GetOrientation();
 
         bool checkTemplate = true;
+        if (isLinked)
+        {
+            mapId = 0;
+            posX = 0.0f;
+            posY = 0.0f;
+            posZ = 0.0f;
+            ori = 0.0f;
+            entry = 0;
+            isMenu = 0;
+            guildPosition = 0;
+            isInitialSpawn = false;
+            isCreature = false;
+            checkTemplate = false;
+        }
+
         if (isMenu)
         {
             mapId = 0;
@@ -878,6 +949,84 @@ public:
             handler->SetSentErrorMessage(true);
             return false;
         }
+
+        return true;
+    }
+
+    static bool HandleAddGuildHouseLinkedSpawnCommand(ChatHandler* handler, const char* args)
+    {
+        if (!*args)
+            return false;
+
+        // Mandatory params
+
+        char* entryStr = strtok((char*)args, " ");
+        if (!entryStr) return false;
+        if (atoi(entryStr) < 2) return false;
+
+        char* spawnStr = strtok(nullptr, " ");
+        if (!spawnStr) return false;
+        if (atoi(spawnStr) < 2) return false;
+
+        char* isCreatureStr = strtok(nullptr, " ");
+        if (!isCreatureStr) return false;
+        if (atoi(isCreatureStr) != 0 && atoi(isCreatureStr) != 1) return false;
+
+        Player* player = handler->GetSession()->GetPlayer();
+
+        uint32 entry = atoi(entryStr);
+        uint32 spawn = atoi(spawnStr);
+        uint32 isCreature = atoi(isCreatureStr);
+
+        uint32 mapId = player->GetMapId();
+        float posX = player->GetPositionX();
+        float posY = player->GetPositionY();
+        float posZ = player->GetPositionZ();
+        float ori = player->GetOrientation();
+
+        if (isCreature)
+        {
+            if (!sObjectMgr->GetCreatureTemplate(entry))
+            {
+                ChatHandler(player->GetSession()).PSendSysMessage("NPC couldn't be added. (INVALID ENTRY - CREATURE_TEMPLATE)");
+                handler->SetSentErrorMessage(true);
+                return false;
+            }
+        }
+        else
+        {
+            uint32 objectId = entry;
+            const GameObjectTemplate* objectInfo = sObjectMgr->GetGameObjectTemplate(objectId);
+
+            if (!objectInfo)
+            {
+                ChatHandler(player->GetSession()).PSendSysMessage("Object couldn't be added. (INVALID ENTRY - GAMEOBJECT_TEMPLATE)");
+                handler->SetSentErrorMessage(true);
+                return false;
+            }
+
+            if (objectInfo->displayId && !sGameObjectDisplayInfoStore.LookupEntry(objectInfo->displayId))
+            {
+                ChatHandler(player->GetSession()).PSendSysMessage("Object couldn't be added. (INVALID DISPLAYID - GAMEOBJECT_TEMPLATE)");
+                handler->SetSentErrorMessage(true);
+                return false;
+            }
+        }
+
+        QueryResult result = WorldDatabase.PQuery("SELECT id FROM guild_house_spawns WHERE id = '%u';", spawn);
+
+        if (!result)
+        {
+            ChatHandler(player->GetSession()).PSendSysMessage("Linked spawn couldn't be added. (INVALID SPAWN)");
+            handler->SetSentErrorMessage(true);
+            return false;
+        }
+
+        WorldDatabase.PExecute(
+            "INSERT INTO guild_house_spawn_linked (entry, spawn, is_creature, map, posX, posY, posZ, orientation) VALUES ('%u','%u','%u','%u','%f','%f','%f','%f');"
+            , entry, spawn, isCreature, mapId, posX, posY, posZ, ori);
+
+        handler->SendGlobalGMSysMessage("Linked spawn saved to DB. You might want to type \".guildhouse reloadspawns\".");
 
         return true;
     }

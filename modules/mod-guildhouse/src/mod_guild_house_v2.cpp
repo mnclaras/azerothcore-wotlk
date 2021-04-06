@@ -156,7 +156,7 @@ public:
             CloseGossipMenuFor(player);
             return false;
         }
-        
+
         QueryResult has_gh = CharacterDatabase.PQuery("SELECT id, `guild` FROM `guild_house` WHERE guild = %u", player->GetGuildId());
 
         // Only show Teleport option if guild owns a guildhouse
@@ -239,8 +239,10 @@ public:
                 float posY = (*resultAvailableGH)[3].GetFloat();
                 float posZ = (*resultAvailableGH)[4].GetFloat();
 
-                if (sModGuildPointsMgr->SpendGuildHousePoints(player, 5000))
+                if (sModGuildPointsMgr->CheckCanSpendGuildHousePoints(player, 5000))
                 {
+                    sModGuildPointsMgr->SpendGuildHousePoints(player, 5000);
+
                     CharacterDatabase.PQuery("INSERT INTO `guild_house` (guild, phase, map, zoneId, posX, posY, posZ) VALUES (%u, %u, %u, %u, %f, %f, %f)",
                         player->GetGuildId(), GetGuildPhase(player), map, zone, posX, posY, posZ);
 
@@ -256,7 +258,7 @@ public:
                     SpawnInitialNpcs(player, guildPosition);
                 }
                 CloseGossipMenuFor(player);
-            }   
+            }
         }
 
         return true;
@@ -270,7 +272,7 @@ public:
     {
         uint32 guildPhase = GetGuildPhase(player);
         QueryResult CreatureResult;
-        QueryResult GameobjResult; 
+        QueryResult GameobjResult;
 
         // Lets find all of the gameobjects to be removed       
         GameobjResult = WorldDatabase.PQuery("SELECT `guid` FROM `gameobject` WHERE `map` = '%u' AND `phaseMask` = '%u'", mapId, guildPhase);
@@ -290,7 +292,7 @@ public:
                         creature->CombatStop();
                         creature->DeleteFromDB();
                         creature->AddObjectToRemoveList();
-                    } 
+                    }
                 }
             } while (CreatureResult->NextRow());
         }
@@ -311,12 +313,12 @@ public:
                         gobject->DeleteFromDB();
                         gobject->CleanupsBeforeDelete();
                         //delete gobject;
-                    } 
-                } 
+                    }
+                }
 
             } while (GameobjResult->NextRow());
         }
-        
+
         // Delete actual guild_house data from characters database
         CharacterDatabase.PQuery("DELETE FROM `guild_house` WHERE `guild` = '%u'", player->GetGuildId());
 
@@ -332,11 +334,11 @@ public:
             {
                 if ((*itr)->isCreature)
                 {
-                    SpawnNPC((*itr)->entry, (*itr)->map, (*itr)->posX, (*itr)->posY, (*itr)->posZ, (*itr)->orientation, player, 0);
+                    SpawnNPC((*itr)->entry, (*itr)->map, (*itr)->posX, (*itr)->posY, (*itr)->posZ, (*itr)->orientation, player);
                 }
                 else
                 {
-                    SpawnObject((*itr)->entry, (*itr)->map, (*itr)->posX, (*itr)->posY, (*itr)->posZ, (*itr)->orientation, player, 0);
+                    SpawnObject((*itr)->entry, (*itr)->map, (*itr)->posX, (*itr)->posY, (*itr)->posZ, (*itr)->orientation, player);
                 }
             }
         }
@@ -394,89 +396,58 @@ public:
             guildData->posY = (*result)[3].GetFloat();
             guildData->posZ = (*result)[4].GetFloat();
 
-            player->TeleportTo(map, guildData->posX, guildData->posY, guildData->posZ, player->GetOrientation());            
+            player->TeleportTo(map, guildData->posX, guildData->posY, guildData->posZ, player->GetOrientation());
         }
     }
 
-    void SpawnNPC(uint32 entry, uint32 mapId, float posX, float posY, float posZ, float orientation, Player* player, uint32 cost)
+    void SpawnNPC(uint32 entry, uint32 mapId, float posX, float posY, float posZ, float orientation, Player* player)
     {
-        //bool isSpanish = IsSpanishPlayer(player);
-
-        //if (player->FindNearestCreature(entry, VISIBILITY_RANGE, true))
-        //{
-        //    ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "Ya tienes a este NPC!" : "You already have this NPC!");
-        //    return;
-        //}
-
         if (!sObjectMgr->GetCreatureTemplate(entry))
         {
-            //ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "El NPC no pudo ser añadido. Contacta con un GM! (Criatura)" : "NPC couldn't be added. Contact a GM! (Creature)");
             return;
         }
 
         Map* map = sMapMgr->FindMap(mapId, 0);
         if (!map)
         {
-            //ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "El NPC no pudo ser añadido. Contacta con un GM! (Mapa)" : "NPC couldn't be added. Contact a GM! (Map)");
             return;
         }
 
-        if (sModGuildPointsMgr->SpendGuildHousePoints(player, cost))
-        {
-            bool processOk = true;
+        bool processOk = true;
 
-            Creature* creature = new Creature();
-            if (!creature->Create(sObjectMgr->GenerateLowGuid(HIGHGUID_UNIT), map, GetGuildPhase(player), entry, 0, posX, posY, posZ, orientation))
+        Creature* creature = new Creature();
+        if (!creature->Create(sObjectMgr->GenerateLowGuid(HIGHGUID_UNIT), map, GetGuildPhase(player), entry, 0, posX, posY, posZ, orientation))
+        {
+            delete creature;
+            processOk = false;
+        }
+        else
+        {
+            creature->SaveToDB(mapId, (1 << map->GetSpawnMode()), GetGuildPhase(player));
+
+            uint32 db_guid = creature->GetDBTableGUIDLow();
+
+            creature->CleanupsBeforeDelete();
+            delete creature;
+            creature = new Creature();
+
+            if (!creature->LoadCreatureFromDB(db_guid, map))
             {
                 delete creature;
                 processOk = false;
             }
             else
             {
-                creature->SaveToDB(mapId, (1 << map->GetSpawnMode()), GetGuildPhase(player));
-
-                uint32 db_guid = creature->GetDBTableGUIDLow();
-
-                creature->CleanupsBeforeDelete();
-                delete creature;
-                creature = new Creature();
-
-                if (!creature->LoadCreatureFromDB(db_guid, map))
-                {
-                    delete creature;
-                    processOk = false;
-                }
-                else
-                {
-                    sObjectMgr->AddCreatureToGrid(db_guid, sObjectMgr->GetCreatureData(db_guid));
-                    //ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "NPC añadido con exito!" : "NPC sucessfully added!");
-                }
-            }
-
-            if (!processOk)
-            {
-                // If creature couldn't be added, we revert the points transaction.
-                sModGuildPointsMgr->AddGuildHousePoints(player, cost);
-                //ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "El NPC no pudo ser añadido. Contacta con un GM!" : "NPC couldn't be added. Contact a GM!");
+                sObjectMgr->AddCreatureToGrid(db_guid, sObjectMgr->GetCreatureData(db_guid));
             }
         }
     }
 
-    void SpawnObject(uint32 entry, uint32 mapId, float posX, float posY, float posZ, float orientation, Player* player, uint32 cost)
+    void SpawnObject(uint32 entry, uint32 mapId, float posX, float posY, float posZ, float orientation, Player* player)
     {
-        //bool isSpanish = IsSpanishPlayer(player);
-
-        //if (player->FindNearestGameObject(entry, VISIBLE_RANGE))
-        //{
-        //    ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "Ya tienes este objeto!" : "You already have this object!");
-        //    CloseGossipMenuFor(player);
-        //    return;
-        //}
-
         uint32 objectId = entry;
         if (!objectId)
         {
-            //ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "El Objeto no pudo ser añadido. Contacta con un GM! (Plantilla)" : "Object couldn't be added. Contact a GM! (Template)");
             return;
         }
 
@@ -484,63 +455,49 @@ public:
 
         if (!objectInfo)
         {
-            //ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "El Objeto no pudo ser añadido. Contacta con un GM! (Plantilla)" : "Object couldn't be added. Contact a GM! (Template)");
             return;
         }
 
         if (objectInfo->displayId && !sGameObjectDisplayInfoStore.LookupEntry(objectInfo->displayId))
         {
-            //ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "El Objeto no pudo ser añadido. Contacta con un GM! (Modelo)" : "Object couldn't be added. Contact a GM! (Model)");
             return;
         }
 
         Map* map = sMapMgr->FindMap(mapId, 0);
         if (!map)
         {
-            //ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "El Objeto no pudo ser añadido. Contacta con un GM! (Mapa)" : "Object couldn't be added. Contact a GM! (Map)");
             return;
         }
 
-        if (sModGuildPointsMgr->SpendGuildHousePoints(player, cost))
+        bool processOk = true;
+
+        GameObject* object = sObjectMgr->IsGameObjectStaticTransport(objectInfo->entry) ? new StaticTransport() : new GameObject();
+        uint32 guidLow = sObjectMgr->GenerateLowGuid(HIGHGUID_GAMEOBJECT);
+
+        if (!object->Create(guidLow, objectInfo->entry, map, GetGuildPhase(player), posX, posY, posZ, orientation, G3D::Quat(), 0, GO_STATE_READY))
         {
-            bool processOk = true;
+            delete object;
+            processOk = false;
+        }
+        else
+        {
+            // fill the gameobject data and save to the db
+            object->SaveToDB(mapId, (1 << map->GetSpawnMode()), GetGuildPhase(player));
+            // delete the old object and do a clean load from DB with a fresh new GameObject instance.
+            // this is required to avoid weird behavior and memory leaks
+            delete object;
 
-            GameObject* object = sObjectMgr->IsGameObjectStaticTransport(objectInfo->entry) ? new StaticTransport() : new GameObject();
-            uint32 guidLow = sObjectMgr->GenerateLowGuid(HIGHGUID_GAMEOBJECT);
-
-            if (!object->Create(guidLow, objectInfo->entry, map, GetGuildPhase(player), posX, posY, posZ, orientation, G3D::Quat(), 0, GO_STATE_READY))
+            object = sObjectMgr->IsGameObjectStaticTransport(objectInfo->entry) ? new StaticTransport() : new GameObject();
+            // this will generate a new guid if the object is in an instance
+            if (!object->LoadGameObjectFromDB(guidLow, map))
             {
                 delete object;
                 processOk = false;
             }
             else
             {
-                // fill the gameobject data and save to the db
-                object->SaveToDB(mapId, (1 << map->GetSpawnMode()), GetGuildPhase(player));
-                // delete the old object and do a clean load from DB with a fresh new GameObject instance.
-                // this is required to avoid weird behavior and memory leaks
-                delete object;
-
-                object = sObjectMgr->IsGameObjectStaticTransport(objectInfo->entry) ? new StaticTransport() : new GameObject();
-                // this will generate a new guid if the object is in an instance
-                if (!object->LoadGameObjectFromDB(guidLow, map))
-                {
-                    delete object;
-                    processOk = false;
-                }
-                else
-                {
-                    // TODO: is it really necessary to add both the real and DB table guid here ?
-                    sObjectMgr->AddGameobjectToGrid(guidLow, sObjectMgr->GetGOData(guidLow));
-                    //ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "Objeto añadido con exito!" : "Object sucessfully added!");
-                }
-            }
-
-            if (!processOk)
-            {
-                // If creature couldn't be added, we revert the points transaction.
-                sModGuildPointsMgr->AddGuildHousePoints(player, cost);
-                //ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "El Objeto no pudo ser añadido. Contacta con un GM!" : "Object couldn't be added. Contact a GM!");
+                // TODO: is it really necessary to add both the real and DB table guid here ?
+                sObjectMgr->AddGameobjectToGrid(guidLow, sObjectMgr->GetGOData(guidLow));
             }
         }
     }
