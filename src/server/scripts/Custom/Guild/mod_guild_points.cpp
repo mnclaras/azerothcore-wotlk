@@ -972,7 +972,7 @@ public:
 
         char* spawnStr = strtok(nullptr, " ");
         if (!spawnStr) return false;
-        if (atoi(spawnStr) < 2) return false;
+        if (atoi(spawnStr) < 1) return false;
 
         char* isCreatureStr = strtok(nullptr, " ");
         if (!isCreatureStr) return false;

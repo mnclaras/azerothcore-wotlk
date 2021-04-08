@@ -516,6 +516,8 @@ public:
         CheckPlayer(player, player->GetZoneId());
     }
 
+    //virtual void OnUpdateArea(Player* /*player*/, uint32 /*oldArea*/, uint32 /*newArea*/) { }
+
     void OnUpdateZone(Player* player, uint32 newZone, uint32 /*newArea*/)
     {
         CheckPlayer(player, newZone);
