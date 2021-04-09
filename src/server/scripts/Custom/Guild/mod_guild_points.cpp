@@ -338,8 +338,36 @@ void sModGuildPoints::DeleteGuild(uint32 guildId, bool removeRanking)
     // Delete actual guild_house data from characters database
     CharacterDatabase.PExecute("DELETE FROM `guild_house` WHERE `guild` = '%u'", guildId);
     CharacterDatabase.PExecute("DELETE FROM `guild_house_purchased_spawns` WHERE `guild` = '%u'", guildId);
-}
 
+    if (!removeRanking)
+    {
+        uint32 pointsToReturn = 2500;
+        QueryResult result = CharacterDatabase.PQuery("SELECT DISTINCT GROUP_CONCAT(spawn) FROM guild_house_purchased_spawns WHERE guild = '%u';", guildId);
+        if (result)
+        {
+            std::string purchasedSpawns = (*result)[0].GetString();
+
+            if (!purchasedSpawns.empty())
+            {
+                QueryResult purchasedPointsResult = WorldDatabase.PQuery("SELECT SUM(points) FROM guild_house_spawns WHERE id IN (%s);", purchasedSpawns);
+
+                if (result)
+                {
+                    uint32 purchasedPoints = (*result)[0].GetUInt32();
+                    if (purchasedPoints && purchasedPoints > 0)
+                    {
+                        pointsToReturn += purchasedPoints;
+                    }
+                }
+            }
+        }
+
+        // Return 5000/2 (Guild House Cost) + purchased boughts/2
+        int32 guildHousePoints = GetGuildHousePoints(guildId);
+        CharacterDatabase.PExecute("UPDATE guild_points_ranking SET guildHousePoints = '%u' WHERE guildId = '%u';",
+            guildHousePoints + pointsToReturn, guildId);
+    }
+}
 
 class mod_guild_points : public PlayerScript
 {
