@@ -518,9 +518,9 @@ public:
         CheckPlayer(player, 0, newArea);
     }
 
-    void OnUpdateZone(Player* player, uint32 newZone, uint32 /*newArea*/)
+    void OnUpdateZone(Player* player, uint32 newZone, uint32 newArea)
     {
-        CheckPlayer(player, newZone, 0);
+        CheckPlayer(player, newZone, newArea);
     }
 
     uint32 GetNormalPhase(Player* player) const
