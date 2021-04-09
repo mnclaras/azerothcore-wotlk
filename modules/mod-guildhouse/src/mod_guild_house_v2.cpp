@@ -239,7 +239,7 @@ public:
                 {
                     sModGuildPointsMgr->SpendGuildHousePoints(player, 5000);
 
-                    CharacterDatabase.PQuery("INSERT INTO `guild_house` (guild, phase, map, zone, area, posX, posY, posZ) VALUES (%u, %u, %u, %u, %f, %f, %f)",
+                    CharacterDatabase.PQuery("INSERT INTO `guild_house` (guild, phase, map, zone, area, posX, posY, posZ) VALUES (%u, %u, %u, %u, %u, %f, %f, %f)",
                         player->GetGuildId(), GetGuildPhase(player), map, zone, area, posX, posY, posZ);
 
                     // Msg to purchaser and Msg Guild as purchaser 
