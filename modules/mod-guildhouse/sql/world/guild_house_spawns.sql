@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS `guild_house_spawns` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `entry` int(10) NOT NULL DEFAULT '0',
   `parent` int(10) DEFAULT NULL,
+  `item_order` int(10) DEFAULT NULL,
   `is_menu` TINYINT(1) NOT NULL DEFAULT '0',
   `is_creature` TINYINT(1) NOT NULL DEFAULT '0',
   `is_visible` TINYINT(1) NOT NULL DEFAULT '0',

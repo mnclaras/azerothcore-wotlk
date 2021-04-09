@@ -15,21 +15,16 @@
 #include "Maps/MapManager.h"
 #include "mod_guild_points.h"
 
-static const Position guildHousePosition = { -14593.151367f, -259.881683f, 12.135949f, 5.246307f };
-static const Position shop = { -11823.9f, -4779.58f, 5.9206f, 1.1357f };
-
-enum GuildHouseMaps
-{
-    MAP_TANARIS = 1
-};
 
 struct GuildZonesSpecificInfo
 {
-    uint32 zoneId;
+    uint32 zone;
+    uint32 area;
     uint32 phase;
 };
 
 static std::set<uint32> GuildZones;
+static std::set<uint32> GuildAreas;
 static std::map<uint32, GuildZonesSpecificInfo> GuildZonesInfo;
 
 
@@ -230,21 +225,22 @@ public:
         {
             uint32 guildPosition = action - 100;
             QueryResult resultAvailableGH = CharacterDatabase.PQuery(
-                "SELECT `map`, `zone`, `posX`, `posY`, `posZ` FROM guild_house_position WHERE `id` = '%u';", guildPosition);
+                "SELECT `map`, `zone`, `area`, `posX`, `posY`, `posZ` FROM guild_house_position WHERE `id` = '%u';", guildPosition);
             if (resultAvailableGH)
             {
                 uint32 map = (*resultAvailableGH)[0].GetUInt32();
                 uint32 zone = (*resultAvailableGH)[1].GetUInt32();
-                float posX = (*resultAvailableGH)[2].GetFloat();
-                float posY = (*resultAvailableGH)[3].GetFloat();
-                float posZ = (*resultAvailableGH)[4].GetFloat();
+                uint32 area = (*resultAvailableGH)[2].GetUInt32();
+                float posX = (*resultAvailableGH)[3].GetFloat();
+                float posY = (*resultAvailableGH)[4].GetFloat();
+                float posZ = (*resultAvailableGH)[5].GetFloat();
 
                 if (sModGuildPointsMgr->CheckCanSpendGuildHousePoints(player, 5000))
                 {
                     sModGuildPointsMgr->SpendGuildHousePoints(player, 5000);
 
-                    CharacterDatabase.PQuery("INSERT INTO `guild_house` (guild, phase, map, zoneId, posX, posY, posZ) VALUES (%u, %u, %u, %u, %f, %f, %f)",
-                        player->GetGuildId(), GetGuildPhase(player), map, zone, posX, posY, posZ);
+                    CharacterDatabase.PQuery("INSERT INTO `guild_house` (guild, phase, map, zone, area, posX, posY, posZ) VALUES (%u, %u, %u, %u, %f, %f, %f)",
+                        player->GetGuildId(), GetGuildPhase(player), map, zone, area, posX, posY, posZ);
 
                     // Msg to purchaser and Msg Guild as purchaser 
                     ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "La Casa de Hermandad ha sido comprada con exito!" : "You have successfully purchased a Guild House");
@@ -252,7 +248,8 @@ public:
                     sLog->outBasic("GUILDHOUSE: GuildId: '%u' has purchased a guildhouse", player->GetGuildId());
 
                     GuildZonesInfo[player->GetGuildId()].phase = GetGuildPhase(player);
-                    GuildZonesInfo[player->GetGuildId()].zoneId = zone;
+                    GuildZonesInfo[player->GetGuildId()].zone = zone;
+                    GuildZonesInfo[player->GetGuildId()].area = area;
 
                     // Spawn a portal and the guild assistant automatically as part of purchase.
                     SpawnInitialNpcs(player, guildPosition);
@@ -513,14 +510,17 @@ public:
 
     void OnLogin(Player* player)
     {
-        CheckPlayer(player, player->GetZoneId());
+        CheckPlayer(player, player->GetZoneId(), player->GetAreaId());
     }
 
-    //virtual void OnUpdateArea(Player* /*player*/, uint32 /*oldArea*/, uint32 /*newArea*/) { }
-
-    void OnUpdateZone(Player* player, uint32 newZone, uint32 /*newArea*/)
+    void OnUpdateArea(Player* player, uint32 /*oldArea*/, uint32 newArea)
     {
-        CheckPlayer(player, newZone);
+        CheckPlayer(player, 0, newArea);
+    }
+
+    void OnUpdateZone(Player* player, uint32 newZone, uint32 newArea)
+    {
+        CheckPlayer(player, newZone, 0);
     }
 
     uint32 GetNormalPhase(Player* player) const
@@ -535,7 +535,7 @@ public:
             return phase;
     }
 
-    void CheckPlayer(Player* player, uint32 newZone)
+    void CheckPlayer(Player* player, uint32 newZone, uint32 newArea)
     {
         GuildData* guildData = player->CustomData.GetDefault<GuildData>("phase");
 
@@ -543,32 +543,19 @@ public:
         if (itr != GuildZonesInfo.end())
         {
             guildData->phase = itr->second.phase;
-            if (player->GetZoneId() == itr->second.zoneId || newZone == itr->second.zoneId)
+
+            if (newZone && itr->second.zone && (player->GetZoneId() == itr->second.zone || newZone == itr->second.zone))
+            {
+                player->SetPhaseMask(guildData->phase, true);
+                return;
+            }
+            else if (newArea && itr->second.area && (player->GetAreaId() == itr->second.area || newArea == itr->second.area))
             {
                 player->SetPhaseMask(guildData->phase, true);
                 return;
             }
         }
         player->SetPhaseMask(GetNormalPhase(player), true);
-
-        //QueryResult result = CharacterDatabase.PQuery("SELECT `phase`, `zoneId` FROM guild_house WHERE `guild` = %u", player->GetGuildId());
-
-        //if (result)
-        //{
-        //    guildData->phase = (*result)[0].GetUInt32();
-
-        //    if (player->GetZoneId() == (*result)[1].GetUInt32() || newZone == (*result)[1].GetUInt32())
-        //    {
-        //        player->SetPhaseMask(guildData->phase, true);
-        //        return;
-        //    }
-        //}
-        //player->SetPhaseMask(GetNormalPhase(player), true);
-    }
-
-    void TeleportToShop(Player* player)
-    {
-        player->TeleportTo(MAP_TANARIS, shop.GetPositionX(), shop.GetPositionY(), shop.GetPositionZ(), shop.GetOrientation());
     }
 
     bool IsSpanishPlayer(Player* player)
@@ -585,7 +572,9 @@ public:
 
     void OnBeforeWorldObjectSetPhaseMask(WorldObject const* worldObject, uint32& /*oldPhaseMask*/, uint32& /*newPhaseMask*/, bool& useCombinedPhases, bool& /*update*/) override
     {
-        if (GuildZones.find(worldObject->GetZoneId()) != GuildZones.end())
+        if ((GuildZones.find(worldObject->GetZoneId()) != GuildZones.end())
+            ||
+            (GuildAreas.find(worldObject->GetAreaId()) != GuildAreas.end()))
         {
             useCombinedPhases = false;
         }
@@ -607,28 +596,41 @@ public:
         sLog->outString("== MOD GUILD HOUSES ===========================================================================");
 
         sLog->outString("Loading Guild House Zones...");
-        QueryResult result = CharacterDatabase.Query("SELECT DISTINCT `zone` FROM `guild_house_position`;");
-        if (result)
+        QueryResult resultZones = CharacterDatabase.Query("SELECT DISTINCT `zone` FROM `guild_house_position`;");
+        if (resultZones)
         {
             do {
-                Field* fields = result->Fetch();
-                uint32 zoneId = fields[0].GetUInt32();
-                GuildZones.insert(zoneId);
-            } while (result->NextRow());
+                Field* fields = resultZones->Fetch();
+                uint32 zone = fields[0].GetUInt32();
+                if (zone) GuildZones.insert(zone);
+            } while (resultZones->NextRow());
         }
 
-        sLog->outString("Loading Guild House Phase And Zone of Specific...");
-        QueryResult resultGH = CharacterDatabase.PQuery("SELECT `phase`, `zoneId`, `guild` FROM `guild_house`;");
+        sLog->outString("Loading Guild House Areas...");
+        QueryResult resultAreas = CharacterDatabase.Query("SELECT DISTINCT `area` FROM `guild_house_position`;");
+        if (resultAreas)
+        {
+            do {
+                Field* fields = resultAreas->Fetch();
+                uint32 area = fields[0].GetUInt32();
+                if (area) GuildAreas.insert(area);
+            } while (resultAreas->NextRow());
+        }
+
+        sLog->outString("Loading Guild House Phases, Zones and Areas of Specific...");
+        QueryResult resultGH = CharacterDatabase.PQuery("SELECT `phase`, `zone`, `area`, `guild` FROM `guild_house`;");
         if (resultGH)
         {
             do {
                 Field* fields = resultGH->Fetch();
                 uint32 phase = fields[0].GetUInt32();
-                uint32 zoneId = fields[1].GetUInt32();
-                uint32 guild = fields[2].GetUInt32();
+                uint32 zone = fields[1].GetUInt32();
+                uint32 area = fields[2].GetUInt32();
+                uint32 guild = fields[3].GetUInt32();
 
                 GuildZonesInfo[guild].phase = phase;
-                GuildZonesInfo[guild].zoneId = zoneId;
+                GuildZonesInfo[guild].zone = zone;
+                GuildZonesInfo[guild].area = area;
 
             } while (resultGH->NextRow());
         }

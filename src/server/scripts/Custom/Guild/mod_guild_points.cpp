@@ -115,7 +115,7 @@ void sModGuildPoints::LoadCreaturesAndObjectsPurchasables()
     // Spawns
 
     QueryResult result = WorldDatabase.Query("SELECT id, entry, name, parent, points, map, guild_position, is_creature, is_menu, "
-        "is_visible, is_initial_spawn, posX, posY, posZ, orientation FROM guild_house_spawns;");
+        "is_visible, is_initial_spawn, posX, posY, posZ, orientation FROM guild_house_spawns ORDER BY item_order ASC, id ASC;");
 
     if (!result)
     {
@@ -888,10 +888,6 @@ public:
                 return false;
             }
         }
-
-
-        /*QueryResult result = WorldDatabase.Query("SELECT id, entry, name, parent, points, map, guild_position, is_creature, is_menu, "
-            "is_visible, is_initial_spawn, posX, posY, posZ, orientation FROM guild_house_spawns WHERE parent = '%u';");*/
 
         if (parent)
         {
