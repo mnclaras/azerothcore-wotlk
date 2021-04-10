@@ -349,11 +349,11 @@ void sModGuildPoints::DeleteGuild(uint32 guildId, bool removeRanking)
 
             if (!purchasedSpawns.empty())
             {
-                QueryResult purchasedPointsResult = WorldDatabase.PQuery("SELECT SUM(points) FROM guild_house_spawns WHERE id IN (%s);", purchasedSpawns);
+                QueryResult purchasedPointsResult = WorldDatabase.PQuery("SELECT SUM(points) FROM guild_house_spawns WHERE id IN (%s);", purchasedSpawns.c_str());
 
-                if (result)
+                if (purchasedPointsResult)
                 {
-                    uint32 purchasedPoints = (*result)[0].GetUInt32();
+                    uint32 purchasedPoints = (*purchasedPointsResult)[0].GetUInt32();
                     if (purchasedPoints && purchasedPoints > 0)
                     {
                         pointsToReturn += purchasedPoints;
@@ -366,6 +366,20 @@ void sModGuildPoints::DeleteGuild(uint32 guildId, bool removeRanking)
         int32 guildHousePoints = GetGuildHousePoints(guildId);
         CharacterDatabase.PExecute("UPDATE guild_points_ranking SET guildHousePoints = '%u' WHERE guildId = '%u';",
             guildHousePoints + pointsToReturn, guildId);
+    }
+}
+
+uint32 sModGuildPoints::GetGuildPosition(Player* player)
+{
+    QueryResult result = CharacterDatabase.PQuery("SELECT `guild_position` FROM guild_house WHERE `guild` = %u", player->GetGuildId());
+    bool isSpanish = IsSpanishPlayer(player);
+    if (!result)
+    {
+        return 0;
+    }
+    else
+    {
+        return (*result)[0].GetUInt32();
     }
 }
 
@@ -900,10 +914,6 @@ public:
             ChatHandler(player->GetSession()).PSendSysMessage("Spawn couldn't be added. (INVALID GUILDPOSITION, SHOULD BE > 0 WITH INITIALSPAWN = 1)");
             handler->SetSentErrorMessage(true);
             return false;
-        }
-        else if (!isInitialSpawn)
-        {
-            guildPosition = 0;
         }
 
         if (guildPosition)

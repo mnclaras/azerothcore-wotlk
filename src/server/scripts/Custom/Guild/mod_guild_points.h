@@ -102,6 +102,7 @@ public:
     bool CheckCanSpendGuildHousePoints(Player* player, uint32 points);
     bool AddGuildHousePoints(Player* player, uint32 points);
     int32 GetGuildHousePoints(uint32 guildId);
+    uint32 GetGuildPosition(Player* player);
 
     void SaveBossRewardToDB(uint32 entry, uint32 points, uint32 mode, std::string difficulty);
     void PurgeBossReward(uint32 entry, uint32 mode, std::string difficulty);

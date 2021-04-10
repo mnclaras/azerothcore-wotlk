@@ -61,10 +61,17 @@ public:
         AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, currentPointsText + std::to_string(sModGuildPointsMgr->GetGuildHousePoints(player->GetGuildId())),
             GOSSIP_SENDER_MAIN, ACTION_GO_BACK);
 
+        uint32 guildPosition = sModGuildPointsMgr->GetGuildPosition(player);
+
         // Display all first level options
         for (GuildHouseSpawnInfoContainer::const_iterator itr = sModGuildPointsMgr->m_GuildHouseSpawnInfoContainer.begin(); itr != sModGuildPointsMgr->m_GuildHouseSpawnInfoContainer.end(); ++itr)
         {
-            if ((!(*itr)->parent || (*itr)->parent == 0) && !(*itr)->name.empty() && (*itr)->isVisible && !(*itr)->isInitialSpawn && !CheckSpawnAlreadyPurchased(player, (*itr)->id))
+            if ((!(*itr)->parent || (*itr)->parent == 0)
+                && !(*itr)->name.empty()
+                && (*itr)->isVisible
+                && !(*itr)->isInitialSpawn
+                && (!(*itr)->guildPosition || (*itr)->guildPosition == 0 || !guildPosition || guildPosition == 0 || (*itr)->guildPosition == guildPosition)
+                && !CheckSpawnAlreadyPurchased(player, (*itr)->id))
             {              
                 if (!(*itr)->isMenu)
                 {
@@ -135,9 +142,16 @@ public:
                 AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, currentPointsText + std::to_string(sModGuildPointsMgr->GetGuildHousePoints(player->GetGuildId())),
                     GOSSIP_SENDER_MAIN, ACTION_GO_BACK);
 
+                uint32 guildPosition = sModGuildPointsMgr->GetGuildPosition(player);
+
                 for (GuildHouseSpawnInfoContainer::const_iterator itr = sModGuildPointsMgr->m_GuildHouseSpawnInfoContainer.begin(); itr != sModGuildPointsMgr->m_GuildHouseSpawnInfoContainer.end(); ++itr)
                 {
-                    if ((*itr)->parent && (*itr)->parent == action && !(*itr)->name.empty() && (*itr)->isVisible && !(*itr)->isInitialSpawn && !CheckSpawnAlreadyPurchased(player, (*itr)->id))
+                    if ((*itr)->parent && (*itr)->parent == action
+                        && !(*itr)->name.empty()
+                        && (*itr)->isVisible
+                        && !(*itr)->isInitialSpawn
+                        && (!(*itr)->guildPosition || (*itr)->guildPosition == 0 || !guildPosition || guildPosition == 0 || (*itr)->guildPosition == guildPosition)
+                        && !CheckSpawnAlreadyPurchased(player, (*itr)->id))
                     {
                         if (!(*itr)->isMenu)
                         {
