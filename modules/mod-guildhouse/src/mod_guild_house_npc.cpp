@@ -71,7 +71,7 @@ public:
                 && (*itr)->isVisible
                 && !(*itr)->isInitialSpawn
                 && (!(*itr)->guildPosition || (*itr)->guildPosition == 0 || !guildPosition || guildPosition == 0 || (*itr)->guildPosition == guildPosition)
-                && !CheckSpawnAlreadyPurchased(player, (*itr)->id))
+                && !sModGuildPointsMgr->CheckSpawnAlreadyPurchased(player, (*itr)->id))
             {              
                 if (!(*itr)->isMenu)
                 {
@@ -87,7 +87,7 @@ public:
                     {
                         if ((*itrMenu)->parent && (*itrMenu)->parent == (*itr)->id)
                         {
-                            if (!CheckSpawnAlreadyPurchased(player, (*itrMenu)->id))
+                            if (!sModGuildPointsMgr->CheckSpawnAlreadyPurchased(player, (*itrMenu)->id))
                             {
                                 menuHaveChildrenPurchases = true;
                                 break;
@@ -101,7 +101,7 @@ public:
                     }
                     else
                     {
-                        AddPurchasedSpawn(player, (*itr)->id);
+                        sModGuildPointsMgr->AddPurchasedSpawn(player, (*itr)->id);
                     }
                 }             
             }
@@ -151,7 +151,7 @@ public:
                         && (*itr)->isVisible
                         && !(*itr)->isInitialSpawn
                         && (!(*itr)->guildPosition || (*itr)->guildPosition == 0 || !guildPosition || guildPosition == 0 || (*itr)->guildPosition == guildPosition)
-                        && !CheckSpawnAlreadyPurchased(player, (*itr)->id))
+                        && !sModGuildPointsMgr->CheckSpawnAlreadyPurchased(player, (*itr)->id))
                     {
                         if (!(*itr)->isMenu)
                         {
@@ -167,7 +167,7 @@ public:
                             {
                                 if ((*itrMenu)->parent && (*itrMenu)->parent == (*itr)->id)
                                 {
-                                    if (!CheckSpawnAlreadyPurchased(player, (*itrMenu)->id))
+                                    if (!sModGuildPointsMgr->CheckSpawnAlreadyPurchased(player, (*itrMenu)->id))
                                     {
                                         menuHaveChildrenPurchases = true;
                                         break;
@@ -181,7 +181,7 @@ public:
                             }
                             else
                             {
-                                AddPurchasedSpawn(player, (*itr)->id);
+                                sModGuildPointsMgr->AddPurchasedSpawn(player, (*itr)->id);
                             }
                         }
                     }
@@ -231,7 +231,7 @@ public:
                             {
                                 if (success)
                                 {
-                                    AddPurchasedSpawn(player, (*itr)->id);
+                                    sModGuildPointsMgr->AddPurchasedSpawn(player, (*itr)->id);
                                     sModGuildPointsMgr->SpendGuildHousePoints(player, (*itr)->points);
                                 }
                             }
@@ -287,7 +287,7 @@ public:
     {
         bool isSpanish = IsSpanishPlayer(player);
 
-        if (spawn && CheckSpawnAlreadyPurchased(player, spawn))
+        if (spawn && sModGuildPointsMgr->CheckSpawnAlreadyPurchased(player, spawn))
         {
             ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "Ya tienes a este NPC!" : "You already have this NPC!");
             return false;
@@ -328,7 +328,7 @@ public:
                 {
                     sObjectMgr->AddCreatureToGrid(db_guid, sObjectMgr->GetCreatureData(db_guid));
                     ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "NPC añadido con exito!" : "NPC sucessfully added!");
-                    if (spawn) AddPurchasedSpawn(player, spawn);
+                    if (spawn) sModGuildPointsMgr->AddPurchasedSpawn(player, spawn);
                     if (cost) sModGuildPointsMgr->SpendGuildHousePoints(player, cost);
                     return true;
                 }
@@ -347,7 +347,7 @@ public:
     {
         bool isSpanish = IsSpanishPlayer(player);
 
-        if (spawn && CheckSpawnAlreadyPurchased(player, spawn))
+        if (spawn && sModGuildPointsMgr->CheckSpawnAlreadyPurchased(player, spawn))
         {
             ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "Ya tienes este objeto!" : "You already have this object!");
             CloseGossipMenuFor(player);
@@ -408,7 +408,7 @@ public:
                     sObjectMgr->AddGameobjectToGrid(guidLow, sObjectMgr->GetGOData(guidLow));
                     ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "Objeto añadido con exito!" : "Object sucessfully added!");
 
-                    if (spawn) AddPurchasedSpawn(player, spawn);
+                    if (spawn) sModGuildPointsMgr->AddPurchasedSpawn(player, spawn);
                     if (cost) sModGuildPointsMgr->SpendGuildHousePoints(player, cost);
 
                     return true;
@@ -424,33 +424,11 @@ public:
         return false;
     }
 
-    void AddPurchasedSpawn(Player* player, uint32 spawn)
-    {
-        if (spawn && !CheckSpawnAlreadyPurchased(player, spawn))
-        {
-            CharacterDatabase.PExecute("INSERT INTO guild_house_purchased_spawns (guild, spawn) VALUES ('%u', '%u');", player->GetGuildId(), spawn);
-        }
-    }
-
-    bool CheckSpawnAlreadyPurchased(Player* player, uint32 spawn)
-    {
-        if (!spawn) return false;
-
-        QueryResult result = CharacterDatabase.PQuery("SELECT id FROM guild_house_purchased_spawns WHERE guild = '%u' and spawn = '%u';", player->GetGuildId(), spawn);
-        if (result)
-        {
-            return true;
-        }
-        return false;
-    }
-
     bool IsSpanishPlayer(Player* player)
     {
         LocaleConstant locale = player->GetSession()->GetSessionDbLocaleIndex();
         return (locale == LOCALE_esES || locale == LOCALE_esMX);
     }
-
-
 };
 
 class GuildHouseNPCConf : public WorldScript

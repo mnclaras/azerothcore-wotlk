@@ -383,6 +383,47 @@ uint32 sModGuildPoints::GetGuildPosition(Player* player)
     }
 }
 
+bool sModGuildPoints::CheckSpawnAlreadyPurchased(Player* player, uint32 spawn)
+{
+    if (!spawn) return false;
+
+    QueryResult result = CharacterDatabase.PQuery("SELECT id FROM guild_house_purchased_spawns WHERE guild = '%u' AND spawn = '%u';", player->GetGuildId(), spawn);
+    if (result)
+    {
+        return true;
+    }
+    return false;
+}
+
+void sModGuildPoints::AddPurchasedSpawn(Player* player, uint32 spawn)
+{
+    if (spawn && !CheckSpawnAlreadyPurchased(player, spawn))
+    {
+        CharacterDatabase.PExecute("INSERT INTO guild_house_purchased_spawns (guild, spawn) VALUES ('%u', '%u');", player->GetGuildId(), spawn);
+    }
+}
+
+void sModGuildPoints::DeleteAllPurchasedSpawns(uint32 spawn)
+{
+    if (spawn)
+    {
+        CharacterDatabase.PExecute("DELETE FROM guild_house_purchased_spawns WHERE spawn = '%u';", spawn);
+    }
+}
+
+uint32 sModGuildPoints::GetSpawnParent(uint32 spawn)
+{
+    QueryResult result = WorldDatabase.PQuery("SELECT parent FROM guild_house_spawns WHERE id = '%u';", spawn);
+    if (result)
+    {
+        return (*result)[0].GetUInt32();
+    }
+    else
+    {
+        return 0;
+    }
+}
+
 class mod_guild_points : public PlayerScript
 {
 public:
@@ -981,6 +1022,22 @@ public:
                 std::stringstream tmp;
                 tmp << "Spawn saved to DB. You might want to type \".guildhouse reloadspawns\".";
                 handler->SendGlobalGMSysMessage(tmp.str().c_str());
+            }
+
+            // Delete parent purchased spawns of the guild if a new one is added
+            uint32 searchParent = parent;
+            if (searchParent && searchParent > 0)
+            {
+                std::stringstream tmp;
+                tmp << "Deleting all associated parent purchases for Spawn: " << searchParent;
+                handler->SendGlobalGMSysMessage(tmp.str().c_str());
+            }
+
+            while (searchParent && searchParent > 0)
+            {
+                sModGuildPointsMgr->DeleteAllPurchasedSpawns(searchParent);
+                uint32 parentSpawn = sModGuildPointsMgr->GetSpawnParent(searchParent);
+                searchParent = parentSpawn;          
             }
         }
         else

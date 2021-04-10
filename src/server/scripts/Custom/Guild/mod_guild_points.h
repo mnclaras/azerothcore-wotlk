@@ -104,6 +104,11 @@ public:
     int32 GetGuildHousePoints(uint32 guildId);
     uint32 GetGuildPosition(Player* player);
 
+    bool CheckSpawnAlreadyPurchased(Player* player, uint32 spawn);
+    void AddPurchasedSpawn(Player* player, uint32 spawn);
+    void DeleteAllPurchasedSpawns(uint32 spawn);
+    uint32 GetSpawnParent(uint32 spawn);
+
     void SaveBossRewardToDB(uint32 entry, uint32 points, uint32 mode, std::string difficulty);
     void PurgeBossReward(uint32 entry, uint32 mode, std::string difficulty);
     void InsertBossReward(uint32 entry, uint32 points, uint32 mode, std::string difficulty);
