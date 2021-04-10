@@ -308,6 +308,7 @@ bool sModGuildPoints::CheckCanSpendGuildHousePoints(Player* player, uint32 point
     int32 guildHousePoints = GetGuildHousePoints(player->GetGuildId());
     if (guildHousePoints < (int32)points)
     {
+        if (guildHousePoints < 0) guildHousePoints = 0;
         ChatHandler(player->GetSession()).PSendSysMessage(
             IsSpanishPlayer(player) ? "No tienes suficientes puntos de hermandad para comprar eso. Puntos actuales: %u. Requeridos: %u"
             : "You don\'t have enough guild points to buy that. Current Points: %u. Required: %u.", guildHousePoints, points);
