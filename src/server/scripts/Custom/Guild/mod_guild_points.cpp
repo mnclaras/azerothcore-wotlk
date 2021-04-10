@@ -356,7 +356,7 @@ void sModGuildPoints::DeleteGuild(uint32 guildId, bool removeRanking)
                     uint32 purchasedPoints = (*purchasedPointsResult)[0].GetUInt32();
                     if (purchasedPoints && purchasedPoints > 0)
                     {
-                        pointsToReturn += purchasedPoints;
+                        pointsToReturn += (uint32)(purchasedPoints/2);
                     }
                 }
             }
