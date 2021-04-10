@@ -372,7 +372,6 @@ void sModGuildPoints::DeleteGuild(uint32 guildId, bool removeRanking)
 uint32 sModGuildPoints::GetGuildPosition(Player* player)
 {
     QueryResult result = CharacterDatabase.PQuery("SELECT `guild_position` FROM guild_house WHERE `guild` = %u", player->GetGuildId());
-    bool isSpanish = IsSpanishPlayer(player);
     if (!result)
     {
         return 0;
