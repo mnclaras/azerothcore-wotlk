@@ -6246,6 +6246,12 @@ void SpellMgr::LoadDbcDataCorrections()
         // Drain Life - Bryntroll Normal / Heroic
         case 71838:
         case 71839:
+        // Warlock - Death Coil (Rank 1 to 5)
+        case 6789:  
+        case 17925:
+        case 17926:
+        case 27223:
+        case 47859:
             spellInfo->AttributesEx2 |= SPELL_ATTR2_CANT_CRIT;
             spellInfo->AttributesEx4 |= SPELL_ATTR4_IGNORE_RESISTANCES;
             break;
