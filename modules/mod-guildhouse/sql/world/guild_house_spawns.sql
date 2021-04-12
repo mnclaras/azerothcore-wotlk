@@ -6,17 +6,17 @@
 
 CREATE TABLE IF NOT EXISTS `guild_house_spawns` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
-  `entry` int(10) NOT NULL DEFAULT '0',
-  `parent` int(10) DEFAULT NULL,
-  `item_order` int(10) DEFAULT NULL,
-  `is_menu` TINYINT(1) NOT NULL DEFAULT '0',
-  `is_creature` TINYINT(1) NOT NULL DEFAULT '0',
-  `is_visible` TINYINT(1) NOT NULL DEFAULT '0',
-  `is_initial_spawn` TINYINT(1) NOT NULL DEFAULT '0',
-  `guild_position` int(10) NOT NULL DEFAULT '0',
-  `points` int(10) NOT NULL DEFAULT '0',
+  `entry` int(10) unsigned NOT NULL DEFAULT '0',
+  `parent` int(10) unsigned DEFAULT NULL,
+  `item_order` int(10) unsigned DEFAULT NULL,
+  `is_menu` tinyint(1) NOT NULL DEFAULT '0',
+  `is_creature` tinyint(1) NOT NULL DEFAULT '0',
+  `is_visible` tinyint(1) NOT NULL DEFAULT '0',
+  `is_initial_spawn` tinyint(1) NOT NULL DEFAULT '0',
+  `guild_position` int(10) unsigned NOT NULL DEFAULT '0',
+  `points` int(10) unsigned NOT NULL DEFAULT '0',
   `name` varchar(100) NOT NULL DEFAULT '',
-  `map` smallint(5) unsigned NOT NULL DEFAULT '0' COMMENT 'Map Identifier',
+  `map` int(10) unsigned NOT NULL DEFAULT '0',
   `posX` float NOT NULL DEFAULT '0',
   `posY` float NOT NULL DEFAULT '0',
   `posZ` float NOT NULL DEFAULT '0',
@@ -26,10 +26,10 @@ CREATE TABLE IF NOT EXISTS `guild_house_spawns` (
 
 CREATE TABLE IF NOT EXISTS `guild_house_spawn_linked` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
-  `entry` int(10) NOT NULL DEFAULT '0',
-  `spawn` int(10) NOT NULL DEFAULT '0',
-  `is_creature` TINYINT(1) NOT NULL DEFAULT '0',
-  `map` smallint(5) unsigned NOT NULL DEFAULT '0' COMMENT 'Map Identifier',
+  `entry` int(10) unsigned NOT NULL DEFAULT '0',
+  `spawn` int(10) unsigned NOT NULL DEFAULT '0',
+  `is_creature` tinyint(1) NOT NULL DEFAULT '0',
+  `map` int(10) unsigned NOT NULL DEFAULT '0',
   `posX` float NOT NULL DEFAULT '0',
   `posY` float NOT NULL DEFAULT '0',
   `posZ` float NOT NULL DEFAULT '0',
@@ -37,9 +37,7 @@ CREATE TABLE IF NOT EXISTS `guild_house_spawn_linked` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
-/*!40000 ALTER TABLE `guild_house_spawns` ENABLE KEYS */;
 
 /*!40101 SET SQL_MODE=IFNULL(@OLD_SQL_MODE, '') */;
 /*!40014 SET FOREIGN_KEY_CHECKS=IF(@OLD_FOREIGN_KEY_CHECKS IS NULL, 1, @OLD_FOREIGN_KEY_CHECKS) */;
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-

@@ -15,6 +15,19 @@ http://emudevs.com/showthread.php/2282-phase-out-dueling-error?p=15483&viewfull=
 #include "Pet.h"
 #include "ScriptMgr.h"
 #include "Player.h"
+#include "Chat.h"
+#include "ScriptMgr.h"
+#include "ScriptedCreature.h"
+#include "ScriptedGossip.h"
+#include "SpellAuras.h"
+#include "SpellAuraEffects.h"
+#include "GridNotifiers.h"
+#include "SpellScript.h"
+#include "GameEventMgr.h"
+#include "Group.h"
+#include "LFGMgr.h"
+#include "PassiveAI.h"
+#include "CellImpl.h"
 
 class PhasedDueling : public PlayerScript
 {
@@ -54,6 +67,17 @@ public:
                 for (std::list<Player*>::const_iterator it = playerList.begin(); it != playerList.end(); ++it)
                     if (!(*it)->IsGameMaster())
                         usedPhases |= (*it)->GetPhaseMask();
+
+            // Guild Houses phases
+            QueryResult resultGH = CharacterDatabase.PQuery("SELECT DISTINCT `phase` FROM `guild_house`;");
+            if (resultGH)
+            {
+                do {
+                    Field* fields = resultGH->Fetch();
+                    usedPhases |= fields[0].GetUInt32();
+                } while (resultGH->NextRow());
+            }
+
             // loop all unique phases
             for (uint32 phase = 2; phase <= UINT_MAX / 2; phase *= 2)
             {
@@ -83,12 +107,8 @@ public:
     {
         if (sConfigMgr->GetBoolDefault("PhasedDuels.Enable", true))
         {
-            // Phase players, dont update visibility yet
-            firstplayer->SetPhaseMask(GetNormalPhase(firstplayer), false);
-            secondplayer->SetPhaseMask(GetNormalPhase(secondplayer), false);
-            // Update visibility here so pets will be phased and wont despawn
-            firstplayer->UpdateObjectVisibility();
-            secondplayer->UpdateObjectVisibility();
+            ReturnNormalPhase(firstplayer);
+            ReturnNormalPhase(secondplayer);
 
             if (sConfigMgr->GetBoolDefault("SetMaxHP.Enable", true))
             {
@@ -144,21 +164,32 @@ public:
         }
     }
 
-    // Attempt in storing the player phase with spell phases included.
     uint32 GetNormalPhase(Player* player) const
     {
         if (player->IsGameMaster())
-            return uint32(PHASEMASK_ANYWHERE);
+            return PHASEMASK_ANYWHERE;
 
-        // GetPhaseMaskForSpawn copypaste
-        uint32 phase = PHASEMASK_NORMAL;
-        Player::AuraEffectList const& phases = player->GetAuraEffectsByType(SPELL_AURA_PHASE);
-        if (!phases.empty())
-            phase = phases.front()->GetMiscValue();
-        if (uint32 n_phase = phase & ~PHASEMASK_NORMAL)
-            return n_phase;
+        uint32 phase = player->GetPhaseByAuras();
+        return phase ? phase : PHASEMASK_NORMAL;
+    }
 
-        return PHASEMASK_NORMAL;
+    void ReturnNormalPhase(Player* player)
+    {
+        QueryResult result = CharacterDatabase.PQuery("SELECT `phase`, `zone`, `area` FROM guild_house WHERE `guild` = '%u'", player->GetGuildId());
+        uint32 guildHousePhase = 0;
+        if (result)
+        {
+            uint32 phase = (*result)[0].GetUInt32();
+            uint32 zone = (*result)[1].GetUInt32();
+            uint32 area = (*result)[2].GetUInt32();
+            if (phase && ((zone && player->GetZoneId() == zone) || (area && player->GetAreaId() == area)))
+            {
+                guildHousePhase = phase;
+            }
+        }
+
+        player->SetPhaseMask(guildHousePhase ? guildHousePhase : GetNormalPhase(player), false); // Phase players, dont update visibility yet
+        player->UpdateObjectVisibility();   // Update visibility here so pets will be phased and wont despawn
     }
 };
 
