@@ -3708,7 +3708,7 @@ void SpellMgr::LoadDbcDataCorrections()
         ///// HUNTER
         /////////////////////////////////
         //// Dash
-        //case 61684:
+        case 61684:
         //    //spellInfo->EffectImplicitTargetA[1] = TARGET_UNIT_PET;
         //    //spellInfo->EffectImplicitTargetA[0] = TARGET_UNIT_CASTER;
         //    //spellInfo->EffectImplicitTargetB[0] = TARGET_UNIT_CASTER;
