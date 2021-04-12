@@ -1579,11 +1579,6 @@ void Player::Update(uint32 p_time)
 
     UpdateAfkReport(now);
 
-    // Remove pet dash aura
-    if (HasAura(61684))
-        RemoveAurasDueToSpell(61684);
-
-
     // Xinef: update charm AI only if we are controlled by creature or non-posses player charm
     if (IsCharmed() && !HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PLAYER_CONTROLLED))
     {
