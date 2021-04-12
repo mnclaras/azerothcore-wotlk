@@ -3707,16 +3707,16 @@ void SpellMgr::LoadDbcDataCorrections()
         /////////////////////////////////
         ///// HUNTER
         /////////////////////////////////
-        // Dash
-        case 61684:
-            //spellInfo->EffectImplicitTargetA[1] = TARGET_UNIT_PET;
-            //spellInfo->EffectImplicitTargetA[0] = TARGET_UNIT_CASTER;
-            //spellInfo->EffectImplicitTargetB[0] = TARGET_UNIT_CASTER;
-            spellInfo->EffectImplicitTargetB[2] = spellInfo->EffectImplicitTargetB[1] = spellInfo->EffectImplicitTargetB[0] = TARGET_UNIT_CASTER;
-            spellInfo->EffectImplicitTargetA[2] = spellInfo->EffectImplicitTargetA[1] = spellInfo->EffectImplicitTargetA[0] = TARGET_UNIT_CASTER;
+        //// Dash
+        //case 61684:
+        //    //spellInfo->EffectImplicitTargetA[1] = TARGET_UNIT_PET;
+        //    //spellInfo->EffectImplicitTargetA[0] = TARGET_UNIT_CASTER;
+        //    //spellInfo->EffectImplicitTargetB[0] = TARGET_UNIT_CASTER;
+        //    //spellInfo->EffectImplicitTargetB[2] = spellInfo->EffectImplicitTargetB[1] = spellInfo->EffectImplicitTargetB[0] = TARGET_UNIT_CASTER;
+        //    //spellInfo->EffectImplicitTargetA[2] = spellInfo->EffectImplicitTargetA[1] = spellInfo->EffectImplicitTargetA[0] = TARGET_UNIT_CASTER;
 
-            break;
-            //spellInfo->EffectImplicitTargetA[1] = TARGET_UNIT_PET;
+        //    break;
+        //    //spellInfo->EffectImplicitTargetA[1] = TARGET_UNIT_PET;
         // Furious Howl
         case 64491:
         case 64492:
