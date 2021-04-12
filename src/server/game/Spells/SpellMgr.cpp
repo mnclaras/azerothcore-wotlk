@@ -3709,7 +3709,10 @@ void SpellMgr::LoadDbcDataCorrections()
         /////////////////////////////////
         // Dash
         case 61684:
-            spellInfo->EffectImplicitTargetA[1] = TARGET_UNIT_TARGET_ALLY;
+            spellInfo->EffectImplicitTargetA[1] = TARGET_UNIT_PET;
+            //spellInfo->EffectImplicitTargetB[2] = spellInfo->EffectImplicitTargetB[1] = spellInfo->EffectImplicitTargetB[0] = 0;
+            //spellInfo->EffectImplicitTargetA[2] = spellInfo->EffectImplicitTargetA[1] = spellInfo->EffectImplicitTargetA[0] = TARGET_UNIT_CASTER;
+
             break;
             //spellInfo->EffectImplicitTargetA[1] = TARGET_UNIT_PET;
         // Furious Howl
