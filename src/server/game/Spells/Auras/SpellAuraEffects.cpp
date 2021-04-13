@@ -4988,19 +4988,6 @@ void AuraEffect::HandleAuraDummy(AuraApplication const* aurApp, uint8 mode, bool
                     }
                     break;
                 }
-                case 61684: // Pet Dash (Hunter)
-                {
-
-                    Unit* pet = target->GetGuardianPet();
-                    if (!pet)
-                        break;
-
-                    pet->UpdateSpeed(MOVE_RUN, true);
-                    pet->UpdateSpeed(MOVE_SWIM, true);
-                    pet->UpdateSpeed(MOVE_FLIGHT, true);
-                  
-                    break;
-                }
                 case 37096:                                     // Blood Elf Illusion
                 {
                     if (caster)
