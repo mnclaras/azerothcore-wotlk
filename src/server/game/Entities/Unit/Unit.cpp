@@ -6966,6 +6966,16 @@ bool Unit::HandleDummyAuraProc(Unit* victim, uint32 damage, AuraEffect* triggere
                     target = this;
                     break;
                 }
+                case 959:
+                {
+                    if (IsPet())
+                    {
+                        UpdateSpeed(MOVE_RUN, true);
+                        UpdateSpeed(MOVE_SWIM, true);
+                        UpdateSpeed(MOVE_FLIGHT, true);
+                    }
+                    break;
+                }
             }
 
             switch (dummySpell->Id)
@@ -8358,6 +8368,15 @@ bool Unit::HandleProcTriggerSpell(Unit* victim, uint32 damage, AuraEffect* trigg
 
                     target = ToPlayer()->GetPet();
                     trigger_spell_id = 68130;
+                    break;
+                }
+                else if (auraSpellInfo->SpellIconID == 959) {
+                    if (IsPet())
+                    {
+                        UpdateSpeed(MOVE_RUN, true);
+                        UpdateSpeed(MOVE_SWIM, true);
+                        UpdateSpeed(MOVE_FLIGHT, true);
+                    }
                     break;
                 }
                 break;
