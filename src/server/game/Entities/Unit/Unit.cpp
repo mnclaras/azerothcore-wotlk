@@ -13273,21 +13273,21 @@ void Unit::SetSpeed(UnitMoveType mtype, float rate, bool forced)
             ++ToPlayer()->m_forced_speed_changes[mtype];
 
             // Xinef: update speed of pet also
-            if (!IsInCombat())
-            {
-                Unit* pet = ToPlayer()->GetPet();
-                if (!pet)
-                    pet = GetCharm();
+            //if (!IsInCombat())
+            //{
+            //    Unit* pet = ToPlayer()->GetPet();
+            //    if (!pet)
+            //        pet = GetCharm();
 
-                // xinef: do not affect vehicles and possesed pets
-                if (pet && (pet->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PLAYER_CONTROLLED) || pet->IsVehicle()))
-                    pet = nullptr;
+            //    // xinef: do not affect vehicles and possesed pets
+            //    if (pet && (pet->HasFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_PLAYER_CONTROLLED) || pet->IsVehicle()))
+            //        pet = nullptr;
 
-                if (pet && pet->GetTypeId() == TYPEID_UNIT && !pet->IsInCombat() && pet->GetMotionMaster()->GetCurrentMovementGeneratorType() == FOLLOW_MOTION_TYPE)
-                    pet->UpdateSpeed(mtype, forced);
-                if (Unit* critter = ObjectAccessor::GetUnit(*this, GetCritterGUID()))
-                    critter->UpdateSpeed(mtype, forced);
-            }
+            //    if (pet && pet->GetTypeId() == TYPEID_UNIT && !pet->IsInCombat() && pet->GetMotionMaster()->GetCurrentMovementGeneratorType() == FOLLOW_MOTION_TYPE)
+            //        pet->UpdateSpeed(mtype, forced);
+            //    if (Unit* critter = ObjectAccessor::GetUnit(*this, GetCritterGUID()))
+            //        critter->UpdateSpeed(mtype, forced);
+            //}
         }
 
         switch (mtype)
