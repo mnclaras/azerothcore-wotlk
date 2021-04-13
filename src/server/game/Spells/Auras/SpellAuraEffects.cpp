@@ -4991,22 +4991,13 @@ void AuraEffect::HandleAuraDummy(AuraApplication const* aurApp, uint8 mode, bool
                 case 61684: // Pet Dash (Hunter)
                 {
 
-                    Unit* pet;
-                    if (target->IsPet())
-                    {
-                        pet = target;
-                    }
-                    else
-                    {
-                        pet = target->ToPlayer()->GetPet();
-                    }
+                    Unit* pet = target->GetGuardianPet();
+                    if (!pet)
+                        break;
 
-                    if (pet)
-                    {
-                        pet->UpdateSpeed(MOVE_RUN, true);
-                        pet->UpdateSpeed(MOVE_SWIM, true);
-                        pet->UpdateSpeed(MOVE_FLIGHT, true);
-                    }
+                    pet->UpdateSpeed(MOVE_RUN, true);
+                    pet->UpdateSpeed(MOVE_SWIM, true);
+                    pet->UpdateSpeed(MOVE_FLIGHT, true);
                   
                     break;
                 }
