@@ -4990,10 +4990,11 @@ void AuraEffect::HandleAuraDummy(AuraApplication const* aurApp, uint8 mode, bool
                 }
                 case 61684: // Pet Dash (Hunter)
                 {
-                    Pet* pet;
+
+                    Unit* pet;
                     if (target->IsPet())
                     {
-                        pet = target->ToPet();
+                        pet = target;
                     }
                     else
                     {
