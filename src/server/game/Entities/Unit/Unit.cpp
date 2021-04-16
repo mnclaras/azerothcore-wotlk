@@ -19590,8 +19590,6 @@ bool Unit::IsInDisallowedMountForm()
 
 bool Unit::IsDisallowedMountForm(uint32 spellId, ShapeshiftForm form, uint32 displayId)
 {
-    uint32 spellId = getTransForm();
-
     if (form)
     {
         switch (form) {
