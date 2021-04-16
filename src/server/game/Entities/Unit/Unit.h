@@ -2079,12 +2079,14 @@ class Unit : public WorldObject
             return form == FORM_CAT || form == FORM_BEAR || form == FORM_DIREBEAR || form == FORM_GHOSTWOLF; // Xinef: added shamans Ghost Wolf, should behave exactly like druid forms
         }
 
-        inline bool IsInDisallowedMountForm() const
-        {
-            ShapeshiftForm form = GetShapeshiftForm();
-            return form != FORM_NONE && form != FORM_BATTLESTANCE && form != FORM_BERSERKERSTANCE && form != FORM_DEFENSIVESTANCE &&
-                form != FORM_SHADOW && form != FORM_STEALTH && form != FORM_UNDEAD;
-        }
+        bool IsInDisallowedMountForm();
+        bool IsDisallowedMountForm(uint32 spellId, ShapeshiftForm form, uint32 displayId);
+
+        //inline bool IsInDisallowedMountForm() const
+        //{
+        //    
+
+        //}
 
         float m_modMeleeHitChance;
         float m_modRangedHitChance;

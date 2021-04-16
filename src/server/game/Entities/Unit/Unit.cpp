@@ -19582,3 +19582,70 @@ bool Unit::IsInCombatWith(Unit const* who) const
     // Nothing found, false.
     return false;
 }
+
+bool Unit::IsInDisallowedMountForm()
+{
+    return IsDisallowedMountForm(getTransForm(), GetShapeshiftForm(), GetDisplayId());
+}
+
+bool Unit::IsDisallowedMountForm(uint32 spellId, ShapeshiftForm form, uint32 displayId)
+{
+    uint32 spellId = getTransForm();
+
+    if (form)
+    {
+        switch (form) {
+        case FORM_NONE:
+        case FORM_BATTLESTANCE:
+        case FORM_BERSERKERSTANCE:
+        case FORM_DEFENSIVESTANCE:
+        case FORM_SHADOW:
+        case FORM_STEALTH:
+        case FORM_UNDEAD:
+            return false;
+            break;
+        default:
+            break;
+        }
+    }
+
+    SpellInfo const* transformSpellInfo = sSpellMgr->GetSpellInfo(spellId);
+    if (transformSpellInfo)
+    {
+        transformSpellInfo = sSpellMgr->GetSpellForDifficultyFromSpell(transformSpellInfo, this);
+        if (transformSpellInfo && transformSpellInfo->HasAttribute(SPELL_ATTR0_CASTABLE_WHILE_MOUNTED))
+            return false;
+    }
+
+    if (form)
+    {
+        SpellShapeshiftEntry const* shapeshift = sSpellShapeshiftStore.LookupEntry(form);
+        if (!shapeshift)
+            return true;
+
+        if (!(shapeshift->flags1 & 0x1))
+            return true;
+    }
+
+    if (displayId == GetNativeDisplayId())
+        return false;
+
+    CreatureDisplayInfoEntry const* display = sCreatureDisplayInfoStore.LookupEntry(displayId);
+    if (!display)
+        return true;
+
+    CreatureDisplayInfoExtraEntry const* displayExtra = sCreatureDisplayInfoExtraStore.LookupEntry(display->ExtraId);
+    if (!displayExtra)
+        return true;
+
+    CreatureModelDataEntry const* model = sCreatureModelDataStore.LookupEntry(display->ModelId);
+    ChrRacesEntry const* race = sChrRacesStore.LookupEntry(displayExtra->Race);
+
+    if (model && !(model->Flags & 0x80))
+        if (race && !(race->Flags & 0x4))
+            return true;
+
+    return false;
+}
+
+
