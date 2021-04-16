@@ -6274,6 +6274,12 @@ void SpellMgr::LoadDbcDataCorrections()
         case 8220:
         case 8221:
         case 8222:
+        case 71484: // Strength of the Taunka
+        case 71485: // Agility of the Vrykul
+        case 71486: // Power of the Taunka
+        case 71487: // Precision of the Iron Dwarves
+        case 71491: // Aim of the Iron Dwarves
+        case 71492: // Speed of the Vrykul
             spellInfo->Attributes &= ~SPELL_ATTR0_UNAFFECTED_BY_INVULNERABILITY;
             break;
         // Clamlette Magnifique
