@@ -96,6 +96,8 @@ public:
             AddGossipItemFor(player, GOSSIP_ICON_TABARD, isSpanish ? "Casa de Hermandad" : "Guild House", GOSSIP_SENDER_MAIN, 5003);
         }
 
+        AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Mazmorra custom (5HC)" : "Custom dungeon (5HC)", GOSSIP_SENDER_MAIN, 5004);
+
         AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Circuitos escalada" : "Climbing circuits", GOSSIP_SENDER_MAIN, 15);
         AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Ciudades principales" : "Main Cities", GOSSIP_SENDER_MAIN, 1);
         AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Localizaciones Azeroth" : "Azeroth Locations", GOSSIP_SENDER_MAIN, 2);
@@ -171,6 +173,8 @@ public:
             {
                 AddGossipItemFor(player, GOSSIP_ICON_TABARD, isSpanish ? "Casa de Hermandad" : "Guild House", GOSSIP_SENDER_MAIN, 5003);
             }
+
+            AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Mazmorra custom (5HC)" : "Custom dungeon (5HC)", GOSSIP_SENDER_MAIN, 5004);
 
             AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Circuitos escalada" : "Climbing circuits", GOSSIP_SENDER_MAIN, 15);
             AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Ciudades principales" : "Main Cities", GOSSIP_SENDER_MAIN, 1);
@@ -1065,6 +1069,10 @@ public:
             TeleportGuildHouse(player->GetGuild(), player);
             CloseGossipMenuFor(player);
             break;
+        case 5004: // Mazmorra custom (5HC)
+            player->TeleportTo(1, -295.456421f, 3151.562744f, 32.035973f, 2.178201f);
+            CloseGossipMenuFor(player);
+            break;
 
         case 0:
             AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Shop Tanaris" : "Shop Tanaris", GOSSIP_SENDER_MAIN, 5000);
@@ -1085,6 +1093,8 @@ public:
             {
                 AddGossipItemFor(player, GOSSIP_ICON_TABARD, isSpanish ? "Casa de Hermandad" : "Guild House", GOSSIP_SENDER_MAIN, 5003);
             }
+
+            AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Mazmorra custom (5HC)" : "Custom dungeon (5HC)", GOSSIP_SENDER_MAIN, 5004);
 
             AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Circuitos escalada" : "Climbing circuits", GOSSIP_SENDER_MAIN, 15);
             AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Ciudades principales" : "Main Cities", GOSSIP_SENDER_MAIN, 1);

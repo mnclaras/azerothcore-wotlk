@@ -13157,6 +13157,7 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
             case 100074: SetDisplayId(15465); break;    // Guardaenjambre qiraji // Scale 0.5
             case 100075: SetDisplayId(28227); break;    // Alexstrasza // Scale 0.75
             case 100076: SetDisplayId(240); break;      // Orco guerrero
+            case 100077: SetDisplayId(20757); break;    // Demon Hunter
 
             case 100100: SetDisplayId(21267); break;    // Fel Orc
             }
@@ -13341,6 +13342,8 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
             { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(57887); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); reApplyMorph = true;  break; }
             case 100167:    // Escudo llameante
             { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(58712); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
+            case 100168:    // Aura 420
+            { SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(58226); if (spellInfo) Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, this, this); break; }
             }
 
             //if (reApplyMorph)
@@ -13419,6 +13422,7 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
             RemoveAurasDueToSpell(75041);   // Tabard 100165
             RemoveAurasDueToSpell(57887);   // Tabard 100166
             RemoveAurasDueToSpell(58712);   // Tabard 100167
+            RemoveAurasDueToSpell(58226);   // Tabard 100167
         }
     }
 }
@@ -13441,6 +13445,11 @@ void Player::DeMorphIllusionShirt(uint8 slot, uint32 shirtEntry)
         RemoveAurasDueToSpell(53806);
         // Especias de bebe
         RemoveAurasDueToSpell(60122);
+        // More debuffs to delete
+        RemoveAurasDueToSpell(36899);
+        RemoveAurasDueToSpell(36900);
+        RemoveAurasDueToSpell(36901);
+        RemoveAurasDueToSpell(36895);
 
         SetObjectScale(1.0f);
         
@@ -13525,6 +13534,7 @@ void Player::DeMorphIllusionShirt(uint8 slot, uint32 shirtEntry)
         RemoveAurasDueToSpell(75041);   // Tabard 100165
         RemoveAurasDueToSpell(57887);   // Tabard 100166
         RemoveAurasDueToSpell(58712);   // Tabard 100167
+        RemoveAurasDueToSpell(58226);   // Tabard 100167
     }
 }
 

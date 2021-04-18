@@ -93,15 +93,48 @@ public:
 
     void OnLogout(Player* player)
     {
-        ResetStreaks(player);
+        ResetStreakAndAuras(player, true);
     }
 
-    // When player leaves PvP Island and his GUID was stored as the GUID of a killer, the killcount will be reset
+    // When player Battleground and his GUID was stored as the GUID of a killer, the killcount will be reset
     void OnUpdateZone(Player* player, uint32 newZone, uint32 /*newArea*/)
     {
         if (battlegroundZoneIds.find(newZone) == battlegroundZoneIds.end())
         {
-            ResetStreaks(player);
+            ResetStreakAndAuras(player, true);
+        }
+        else
+        {
+            std::map<uint32, PvPIslandInfoKills>::iterator killingStreak_itr = KillingStreak.find(player->GetGUID());
+            std::map<uint32, PvPIslandInfoHealing>::iterator healingStreak_itr = HealingStreak.find(player->GetGUID());
+
+            if (killingStreak_itr != KillingStreak.end())
+            {
+                // Check if any aura should be applied
+                uint32 killCount = killingStreak_itr->second.killCount;
+                if (killCount >= 5)
+                {
+                    RemoveKillingStreakAuras(player);
+
+                    if      (killCount >= 30)   AddKillingStreakAura(player, 30);
+                    else if (killCount >= 25)   AddKillingStreakAura(player, 25);
+                    else if (killCount >= 20)   AddKillingStreakAura(player, 20);
+                    else if (killCount >= 15)   AddKillingStreakAura(player, 15);
+                    else if (killCount >= 10)   AddKillingStreakAura(player, 10);
+                    else if (killCount >= 5)    AddKillingStreakAura(player, 5);
+                }
+            }
+
+            if (healingStreak_itr != HealingStreak.end())
+            {
+                // Check if any aura should be applied
+                uint32 currentStreak = healingStreak_itr->second.currentHealingStreak;
+                if (currentStreak >= 100000)
+                {
+                    RemoveHealingStreakAuras(player);
+                    AddHealingStreakAura(player, currentStreak);
+                }
+            }
         }
     }
 
@@ -113,7 +146,7 @@ public:
         // If player killed himself, do not execute any code(think of when a warlock uses Hellfire, when player falls to dead, etc.)
         if (killerGUID == victimGUID)
         {
-            ResetStreaks(killer);
+            ResetStreakAndAuras(killer, false);
             return;
         }
 
@@ -124,7 +157,7 @@ public:
         {
             KillingStreak[killerGUID].killCount++;          // Increment kill count by one on every kill
 
-            ResetStreaks(victim);
+            ResetStreakAndAuras(victim, false);
 
             // If killcount is 5, 10, 15, 20, 25, 30
             if ((KillingStreak[killerGUID].killCount % 5) == 0 && KillingStreak[killerGUID].killCount <= MAX_KILLS_AMOUNT)
@@ -181,21 +214,49 @@ public:
         player->RemoveAurasDueToSpell(AURA_HEALING_600000);
     }
 
-    static void ResetStreaks(Player* player)
+    static void ResetStreakAndAuras(Player* player, bool onlyAuras)
     {
         if (KillingStreak[player->GetGUID()].killCount)
         {
-            KillingStreak[player->GetGUID()].killCount = 0;
+            if (!onlyAuras)
+            {
+                KillingStreak[player->GetGUID()].killCount = 0;
+            }
             RemoveKillingStreakAuras(player);
         }
         if (HealingStreak[player->GetGUID()].healingAmount)
         {
-            HealingStreak[player->GetGUID()].healingAmount = 0;
-            HealingStreak[player->GetGUID()].currentHealingStreak = 0;
+            if (!onlyAuras)
+            {
+                HealingStreak[player->GetGUID()].healingAmount = 0;
+                HealingStreak[player->GetGUID()].currentHealingStreak = 0;
+            }
             RemoveHealingStreakAuras(player);
         }
     }
 
+    static void AddHealingStreakAura(Unit* player, uint32 healingStreak)
+    {
+        uint32 auraToApply = 0;
+        switch (healingStreak)
+        {
+        case 100000:    auraToApply = AURA_HEALING_100000; break;
+        case 200000:    auraToApply = AURA_HEALING_200000; break;
+        case 300000:    auraToApply = AURA_HEALING_300000; break;
+        case 400000:    auraToApply = AURA_HEALING_400000; break;
+        case 500000:    auraToApply = AURA_HEALING_500000; break;
+        case 600000:    auraToApply = AURA_HEALING_600000; break;
+        }
+
+        if (auraToApply && auraToApply > 0)
+        {
+            SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(auraToApply);
+            if (spellInfo)
+            {
+                Aura::TryRefreshStackOrCreate(spellInfo, MAX_EFFECT_MASK, player, player);
+            }
+        }
+    }
 };
 
 class mod_bg_auras_heal : public UnitScript
@@ -235,27 +296,27 @@ public:
                     return;
 
                 // If healingAmount is 100k, 200k, 300k, 400k, 500k, 600k
-                if (healingAmount > 100000 && currentHealingStreak < 100000)
+                if (healingAmount >= 100000 && currentHealingStreak < 100000)
                 {
                     SetHealingStreakAura(healer, 100000); HealingStreak[healerGUID].currentHealingStreak = 100000;
                 }
-                else if (healingAmount > 200000 && currentHealingStreak < 200000)
+                else if (healingAmount >= 200000 && currentHealingStreak < 200000)
                 {
                     SetHealingStreakAura(healer, 200000); HealingStreak[healerGUID].currentHealingStreak = 200000;
                 }
-                else if (healingAmount > 300000 && currentHealingStreak < 300000)
+                else if (healingAmount >= 300000 && currentHealingStreak < 300000)
                 {
                     SetHealingStreakAura(healer, 300000); HealingStreak[healerGUID].currentHealingStreak = 300000;
                 }
-                else if (healingAmount > 400000 && currentHealingStreak < 400000)
+                else if (healingAmount >= 400000 && currentHealingStreak < 400000)
                 {
                     SetHealingStreakAura(healer, 400000); HealingStreak[healerGUID].currentHealingStreak = 400000;
                 }
-                else if (healingAmount > 500000 && currentHealingStreak < 500000)
+                else if (healingAmount >= 500000 && currentHealingStreak < 500000)
                 {
                     SetHealingStreakAura(healer, 500000); HealingStreak[healerGUID].currentHealingStreak = 500000;
                 }
-                else if (healingAmount > 600000 && currentHealingStreak < 600000)
+                else if (healingAmount >= 600000 && currentHealingStreak < 600000)
                 {
                     SetHealingStreakAura(healer, 600000); HealingStreak[healerGUID].currentHealingStreak = 600000;
                 }
