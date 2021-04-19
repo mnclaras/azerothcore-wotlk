@@ -1187,9 +1187,9 @@ void AddOutdoorPvPScripts()
 #endif
 }
 
-
 //~ **********************  Put your custom scripts below, like the commented examples, uncomment and edit *************************************
 
+//~ void AddSC_MySuperScript();
 void AddSC_custom_npc_global_trainer();
 void AddSC_custom_amnesia_coin_exchange();
 void AddSC_custom_npc_tools_reset_combat();
@@ -1221,6 +1221,7 @@ void AddSC_mod_bg_auras();
 void AddCustomScripts()
 {
 #ifdef SCRIPTS
+    //~ AddSC_MySuperScript();
     AddSC_custom_npc_global_trainer();
     AddSC_custom_amnesia_coin_exchange();
     AddSC_custom_npc_tools_reset_combat();

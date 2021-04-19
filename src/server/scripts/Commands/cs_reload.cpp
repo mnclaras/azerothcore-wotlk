@@ -122,7 +122,7 @@ public:
             { "reference_loot_template",      SEC_ADMINISTRATOR, true,  &HandleReloadLootTemplatesReferenceCommand,     "" },
             { "reserved_name",                SEC_ADMINISTRATOR, true,  &HandleReloadReservedNameCommand,               "" },
             { "reputation_reward_rate",       SEC_ADMINISTRATOR, true,  &HandleReloadReputationRewardRateCommand,       "" },
-            { "reputation_spillover_template", SEC_ADMINISTRATOR, true, &HandleReloadReputationRewardRateCommand,      "" },
+            { "reputation_spillover_template", SEC_ADMINISTRATOR, true,  &HandleReloadReputationRewardRateCommand,      "" },
             { "skill_discovery_template",     SEC_ADMINISTRATOR, true,  &HandleReloadSkillDiscoveryTemplateCommand,     "" },
             { "skill_extra_item_template",    SEC_ADMINISTRATOR, true,  &HandleReloadSkillExtraItemTemplateCommand,     "" },
             { "skill_fishing_base_level",     SEC_ADMINISTRATOR, true,  &HandleReloadSkillFishingBaseLevelCommand,      "" },
@@ -142,7 +142,7 @@ public:
             { "spell_threats",                SEC_ADMINISTRATOR, true,  &HandleReloadSpellThreatsCommand,               "" },
             { "spell_group_stack_rules",      SEC_ADMINISTRATOR, true,  &HandleReloadSpellGroupStackRulesCommand,       "" },
             { "spell_regulator",			  SEC_ADMINISTRATOR, true,  &HandleReloadSpellRegulator,                    "" },
-            { "acore_string",                 SEC_ADMINISTRATOR, true,  &HandleReloadAcoreStringCommand,                "" },
+            { "acore_string",                 SEC_ADMINISTRATOR, true,  &HandleReloadAcoreStringCommand,              "" },
             { "warden_action",                SEC_ADMINISTRATOR, true,  &HandleReloadWardenactionCommand,               "" },
             { "waypoint_scripts",             SEC_ADMINISTRATOR, true,  &HandleReloadWpScriptsCommand,                  "" },
             { "waypoint_data",                SEC_ADMINISTRATOR, true,  &HandleReloadWpCommand,                         "" },
@@ -230,7 +230,7 @@ public:
     static bool HandleReloadAllNpcCommand(ChatHandler* handler, const char* args)
     {
         if (*args != 'a')                                          // will be reloaded from all_gossips
-        HandleReloadNpcTrainerCommand(handler, "a");
+            HandleReloadNpcTrainerCommand(handler, "a");
         HandleReloadNpcVendorCommand(handler, "a");
         HandleReloadPointsOfInterestCommand(handler, "a");
         HandleReloadSpellClickSpellsCommand(handler, "a");
@@ -290,7 +290,7 @@ public:
         HandleReloadGossipMenuCommand(handler, "a");
         HandleReloadGossipMenuOptionCommand(handler, "a");
         if (*args != 'a')                                          // already reload from all_scripts
-        HandleReloadPointsOfInterestCommand(handler, "a");
+            HandleReloadPointsOfInterestCommand(handler, "a");
         return true;
     }
 
@@ -487,7 +487,7 @@ public:
             cInfo->SkinLootId         = fields[45].GetUInt32();
 
             for (uint8 i = SPELL_SCHOOL_HOLY; i < MAX_SPELL_SCHOOL; ++i)
-                cInfo->resistance[i] = fields[46 + i -1].GetUInt16();
+                cInfo->resistance[i] = fields[46 + i - 1].GetUInt16();
 
             cInfo->spells[0]          = fields[52].GetUInt32();
             cInfo->spells[1]          = fields[53].GetUInt32();
@@ -942,6 +942,7 @@ public:
         sLog->outString("Re-Loading Page Texts...");
         sObjectMgr->LoadPageTexts();
         handler->SendGlobalGMSysMessage("DB table `page_texts` reloaded.");
+        handler->GetSession()->SendNotification("You need to delete your client cache or change the cache number in config in order for your players see the changes.");
         return true;
     }
 
@@ -1143,6 +1144,7 @@ public:
         sLog->outString("Re-Loading Page Text Locale ... ");
         sObjectMgr->LoadPageTextLocales();
         handler->SendGlobalGMSysMessage("DB table `page_text_locale` reloaded.");
+        handler->GetSession()->SendNotification("You need to delete your client cache or change the cache number in config in order for your players see the changes.");
         return true;
     }
 

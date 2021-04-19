@@ -10,6 +10,9 @@
 #include <chrono>
 #include <system_error>
 
+#ifdef WIN32
+#include <windows.h>
+#endif // WIN32
 using namespace acore;
 
 Thread::Thread() : m_task(nullptr), m_iThreadId(), m_ThreadImp()
@@ -113,7 +116,6 @@ void Thread::setPriority(Priority priority)
         default:
             break;
     }
-
 
     // remove this ASSERT in case you don't want to know is thread priority change was successful or not
     ASSERT(_ok);
