@@ -3283,6 +3283,61 @@ void SpellMgr::LoadDbcDataCorrections()
 {
     uint32 oldMSTime = getMSTime();
 
+    // Amnesia: Those spells cannot be resisted -> bosses resist this spells
+    ApplySpellFix({
+        47855,  // Drail Soul
+        47610   // Descarga de pirofio
+        }, [](SpellEntry* spellInfo)
+    {
+        spellInfo->AttributesEx4 |= SPELL_ATTR4_IGNORE_RESISTANCES;
+    });
+
+
+    // case 41406: // Positive Dementia
+    // case 41409: // Negative Dementia (UNUSED)
+    ApplySpellFix({ 36814 }, [](SpellEntry* spellInfo)
+    {
+        spellInfo->DurationIndex = 21; // Infinite
+        //spellInfo->ProcCharges = 5; // Stack up to 5 times
+        //spellInfo->StackAmount = 5; // Stack up to 5 times
+        spellInfo->procCharges = 8;// 10; // Stack up to 10 times
+        spellInfo->StackAmount = 8;// 10; // Stack up to 10 times
+    });
+
+    // Corpse explosion
+    ApplySpellFix({ 47496 }, [](SpellEntry* spellInfo)
+    {
+        spellInfo->EffectRadiusIndex[0] = EFFECT_RADIUS_10_YARDS;   // 10yd
+        spellInfo->EffectRadiusIndex[1] = EFFECT_RADIUS_10_YARDS;   // 10yd
+        spellInfo->EffectRadiusIndex[2] = EFFECT_RADIUS_10_YARDS;   // 10yd
+    });
+
+    // Warlock - Death Coil (Rank 1 to 5)
+    ApplySpellFix({ 6789, 17925, 17926, 27223, 47859 }, [](SpellEntry* spellInfo)
+    {
+        spellInfo->AttributesEx2 |= SPELL_ATTR2_CANT_CRIT;
+        spellInfo->AttributesEx4 |= SPELL_ATTR4_IGNORE_RESISTANCES;
+    });
+
+	// Deathbringer's Will - Player can mount with aura active
+    ApplySpellFix({
+        71485, // Agility of the Vrykul
+		71556,
+		71487, // Precision of the Iron Dwarves
+		71557,
+		71486, // Power of the Taunka
+		71558,
+		71491, // Aim of the Iron Dwarves
+		71559,
+		71492, // Speed of the Vrykul
+		71560,
+		71484, // Strength of the Taunka
+		71561
+        }, [](SpellEntry* spellInfo)
+    {
+        spellInfo->Attributes |= SPELL_ATTR0_CASTABLE_WHILE_MOUNTED;
+    });
+    
     ApplySpellFix({
         467,    // Thorns (Rank 1)
         782,    // Thorns (Rank 2)
@@ -3478,6 +3533,7 @@ void SpellMgr::LoadDbcDataCorrections()
         51124,  // Killing Machine
         54741,  // Firestarter
         57761,  // Fireball!
+        39805,  // Lightning Overload
         64823,  // Item - Druid T8 Balance 4P Bonus
         34477,  // Misdirection
         44401,  // Missile Barrage

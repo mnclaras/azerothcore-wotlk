@@ -16,6 +16,7 @@
 #include "GridNotifiersImpl.h"
 #include "CreatureTextMgr.h"
 #include "icecrown_citadel.h"
+#include "mod_guild_points.h"
 
 enum Texts
 {
@@ -653,6 +654,81 @@ public:
             _JustDied();
             DoAction(ACTION_RESTORE_LIGHT);
             me->PlayDirectSound(17374);
+
+            Map::PlayerList const& pl = me->GetMap()->GetPlayers();
+            bool event_broadcasted = false;
+            for (Map::PlayerList::const_iterator itr = pl.begin(); itr != pl.end(); ++itr)
+                if (Player* p = itr->GetSource())
+                {
+                    // 2 Extra frost to alliance
+                    //if (p->GetTeamId() == TEAM_ALLIANCE) {
+                    //    p->AddItem(49426, 4);
+
+                    //    // Ethereal credit
+                    //    if (Is25ManRaid())
+                    //    {
+                    //        p->AddItem(38186, 5);
+                    //    }
+                    //}
+
+                    if (!event_broadcasted && AccountMgr::IsPlayerAccount(p->GetSession()->GetSecurity()))
+                    {
+                        //lets get the info we want
+                        //Map* map = p->GetMap();
+                        std::string g_name = "< Sin Hermandad >";
+                        std::string boss_name = "The Lich King";
+                        std::string IsHeroicMode;
+                        std::string IsNormal;
+                        std::string tag_colour = "7bbef7";
+                        std::string plr_colour = "7bbef7";
+                        std::string guild_colour = "00ff00";
+                        std::string boss_colour = "ff0000";
+                        std::string alive_text = "00ff00";
+
+                        IsNormal = (p->GetMap()->Is25ManRaid()) ? "25" : "10";
+                        IsHeroicMode = (p->GetMap()->IsHeroic()) ? "|cffff0000Heroico|r" : "|cff00ff00Normal|r";
+
+                        std::ostringstream stream;
+
+                        Player* leader = GetLeaderOfGroup(p);
+                        if (leader && leader->GetGuild()) g_name = leader->GetGuildName();
+
+                        stream << "La hermandad |cff" << guild_colour << "" << g_name <<
+                            "|r ha derrotado a |CFF" << boss_colour << "[" << boss_name <<
+                            "]|r en modo |cff" << alive_text << IsNormal << "|r " << IsHeroicMode;
+                        sWorld->SendServerMessage(SERVER_MSG_STRING, stream.str().c_str());
+
+                        // Guild points
+
+                        uint32 mode = (p->GetMap()->Is25ManRaid()) ? 25 : 10;
+                        std::string difficulty = (p->GetMap()->IsHeroic()) ? "H" : "N";
+
+                        uint32 bossEntry = 36597;
+                        for (BossRewardInfoContainer::const_iterator itr = sModGuildPointsMgr->m_BossRewardInfoContainer.begin(); itr != sModGuildPointsMgr->m_BossRewardInfoContainer.end(); ++itr)
+                        {
+                            if (bossEntry == (*itr)->entry && mode == (*itr)->mode && difficulty == (*itr)->difficulty)
+                            {
+                                uint32 points = (*itr)->points;
+
+                                if (points && points > 0)
+                                {
+                                    Guild* guild = leader ? leader->GetGuild() : nullptr;
+
+                                    if (leader && guild)
+                                    {
+                                        sModGuildPointsMgr->UpdateGuildPoints(leader->GetGuildId(), points);
+                                        std::ostringstream stream;
+                                        stream << "La hermandad |CFF00FF00" << leader->GetGuildName() << "|r ha sumado |CFF00FF00[" << std::to_string(points) << "]|r puntos!";
+                                        sWorld->SendServerMessage(SERVER_MSG_STRING, stream.str().c_str());
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+
+                        event_broadcasted = true;
+                    }
+                }
         }
 
         void EnterCombat(Unit* target) override
@@ -859,7 +935,8 @@ public:
                     return;
                 case NPC_DEFILE:
                 case NPC_SHADOW_TRAP_TRIGGER:
-                    summon->m_positionZ = 840.86f;
+                    if (!summon->m_positionZ || summon->m_positionZ < 840.86f)
+                            summon->m_positionZ = 840.86f;
                     summon->UpdatePosition(summon->GetPositionX(), summon->GetPositionY(), summon->GetPositionZ(), summon->GetOrientation(), true);
                     summon->StopMovingOnCurrentPos();
                     break;
@@ -1252,6 +1329,23 @@ public:
 
             if (Creature* tirion = ObjectAccessor::GetCreature(*me, instance->GetData64(DATA_HIGHLORD_TIRION_FORDRING)))
                 tirion->AI()->EnterEvadeMode();
+        }
+
+        Player* GetLeaderOfGroup(Player* player)
+        {
+            Player* leader = player;
+            uint64 leaderGuid = player->GetGroup() ? player->GetGroup()->GetLeaderGUID() : player->GetGUID();
+
+            if (leaderGuid != player->GetGUID() && player->GetGroup())
+                leader = ObjectAccessor::FindPlayerInOrOutOfWorld(player->GetGroup()->GetLeaderGUID());
+
+            if (!leader) leader = player;
+            if (leader /*&& AccountMgr::IsPlayerAccount(leader->GetSession()->GetSecurity())*/)
+            {
+                return leader;
+            }
+
+            return nullptr;
         }
     };
 

@@ -21,6 +21,7 @@
 #include "SpellAuras.h"
 #include "Vehicle.h"
 #include "Language.h"
+#include "GameEventMgr.h"
 
 class Aura;
 
@@ -219,6 +220,13 @@ void WorldSession::HandleGroupAcceptOpcode(WorldPacket& recvData)
     group->RemoveInvite(GetPlayer());
 
     if (GetPlayer()->IsSpectator())
+    {
+        SendPartyResult(PARTY_OP_INVITE, "", ERR_INVITE_RESTRICTED);
+        return;
+    }
+
+    // Cannot form groups on Deathmatch Event zone when event is active
+    if (GetPlayer()->GetAreaId() == 3817 && sGameEventMgr->IsActiveEvent(77))
     {
         SendPartyResult(PARTY_OP_INVITE, "", ERR_INVITE_RESTRICTED);
         return;

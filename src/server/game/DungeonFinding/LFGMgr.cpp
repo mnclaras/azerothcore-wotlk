@@ -1578,7 +1578,8 @@ namespace lfg
                 if ((randomDungeon || selectedRandomLfgDungeon(player->GetGUID())) && !player->HasAura(LFG_SPELL_DUNGEON_COOLDOWN))
                 {
                     randomDungeon = true;
-                    player->AddAura(LFG_SPELL_DUNGEON_COOLDOWN, player);
+                    // Do not apply 15 minutes of cooldown
+                    //player->AddAura(LFG_SPELL_DUNGEON_COOLDOWN, player);
                 }
                 TeleportPlayer(player, false);
             }

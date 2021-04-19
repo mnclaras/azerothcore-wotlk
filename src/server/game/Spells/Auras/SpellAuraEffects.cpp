@@ -1947,7 +1947,41 @@ void AuraEffect::HandleAuraModShapeshift(AuraApplication const* aurApp, uint8 mo
                         allow = false;
 
             if (allow)
-                target->SetDisplayId(modelid);
+            {
+                /* Avoid to transform with illusion shirt equipped for druids that are not in bg or arena */
+                bool shouldTransform = true;
+                if (target->GetTypeId() == TYPEID_PLAYER && target->getClass() == CLASS_DRUID)
+                { 
+                    switch (form)
+                    {
+                    case FORM_CAT:
+                    case FORM_TREE:
+                    case FORM_BEAR:
+                    case FORM_DIREBEAR:
+                    case FORM_MOONKIN:
+                        if (target->GetMap() && !target->GetMap()->IsBattlegroundOrArena())
+                        {
+                            // Not ing BG or Arena
+                            if (Item* pItem = target->ToPlayer()->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_BODY))
+                            {
+                                if (pItem->GetEntry() >= 100000 && pItem->GetEntry() <= 100100)
+                                {
+                                    shouldTransform = false;
+                                }
+                            }
+                        }
+                        break;
+
+                    default:
+                        break;
+                    }
+                }
+
+                if (shouldTransform)
+                {
+                    target->SetDisplayId(modelid);
+                }
+            }
         }
     }
     else

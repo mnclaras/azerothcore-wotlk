@@ -33,8 +33,8 @@ BINPATH="$AC_PATH_ROOT/env/dist"
 #  CCOMPILERC="/usr/bin/gcc"
 #  CCOMPILERCXX="/usr/bin/g++"
 #
-CCOMPILERC="/usr/bin/clang"
-CCOMPILERCXX="/usr/bin/clang++"
+CCOMPILERC="/usr/bin/clang-6.0"
+CCOMPILERCXX="/usr/bin/clang++-6.0"
 
 
 # how many thread must be used for compilation ( leave zero to use all available )

@@ -108,6 +108,7 @@ public:
     static bool IsBGWeekend(BattlegroundTypeId bgTypeId);
 
     uint32 GetRatingDiscardTimer()  const;
+    uint32 GetMaxRatingDifference()  const;
     void InitAutomaticArenaPointDistribution();
     void LoadBattleMastersEntry();
     void CheckBattleMasters();

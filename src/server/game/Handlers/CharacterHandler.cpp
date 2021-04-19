@@ -1192,11 +1192,43 @@ void WorldSession::HandlePlayerLoginFromDB(LoginQueryHolder* holder)
         }
     }
 
+    if (Item* item = pCurrChar->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_BODY))
+    {
+        if (item->GetEntry() >= 100000 && item->GetEntry() <= 100100)
+        {
+            pCurrChar->MorphIllusionShirt(EQUIPMENT_SLOT_BODY, item->GetEntry());
+        }
+    }
+
+    if (Item* item = pCurrChar->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_TABARD))
+    {
+        if (item->GetEntry() >= 100101 && item->GetEntry() <= 100199)
+        {
+            pCurrChar->MorphIllusionShirt(EQUIPMENT_SLOT_TABARD, item->GetEntry());
+        }
+    }
+
     sScriptMgr->OnPlayerLogin(pCurrChar);
 
     if (pCurrChar->HasAtLoginFlag(AT_LOGIN_FIRST))
     {
         pCurrChar->RemoveAtLoginFlag(AT_LOGIN_FIRST);
+
+        if (pCurrChar->HasAtLoginFlag(AT_LOGIN_RENAME))
+        {
+            std::string nameUpdate_AT_LOGIN_UPDATE_NAME;
+            uint32 accID_Update_AT_LOGIN_UPDATE_NAME;
+            QueryResult result = CharacterDatabase.PQuery("SELECT name,account FROM characters WHERE `guid` = '%u'", pCurrChar->GetGUIDLow());
+            if (result)
+            {
+                nameUpdate_AT_LOGIN_UPDATE_NAME = (*result)[0].GetString();
+                accID_Update_AT_LOGIN_UPDATE_NAME = (*result)[1].GetUInt32();
+                sWorld->UpdateGlobalPlayerData(pCurrChar->GetGUIDLow(), PLAYER_UPDATE_DATA_NAME, nameUpdate_AT_LOGIN_UPDATE_NAME, pCurrChar->getLevel(), pCurrChar->getGender(), pCurrChar->getRace(), pCurrChar->getClass());
+                sWorld->AddGlobalPlayerData(pCurrChar->GetGUIDLow(), accID_Update_AT_LOGIN_UPDATE_NAME, nameUpdate_AT_LOGIN_UPDATE_NAME, pCurrChar->getGender(), pCurrChar->getRace(), pCurrChar->getClass(), pCurrChar->getLevel(), 0, 0);
+            }
+            pCurrChar->RemoveAtLoginFlag(AT_LOGIN_RENAME);
+        }
+
         sScriptMgr->OnFirstLogin(pCurrChar);
     }
 
@@ -2089,22 +2121,22 @@ void WorldSession::HandleCharFactionOrRaceChange(WorldPacket& recvData)
         }
 
         // is arena team captain
-        if (sArenaTeamMgr->GetArenaTeamByCaptain(guid))
-        {
-            WorldPacket data(SMSG_CHAR_FACTION_CHANGE, 1);
-            data << (uint8)CHAR_CREATE_CHARACTER_ARENA_LEADER;
-            SendPacket(&data);
-            return;
-        }
+        //if (sArenaTeamMgr->GetArenaTeamByCaptain(guid))
+        //{
+        //    WorldPacket data(SMSG_CHAR_FACTION_CHANGE, 1);
+        //    data << (uint8)CHAR_CREATE_CHARACTER_ARENA_LEADER;
+        //    SendPacket(&data);
+        //    return;
+        //}
 
         // check mailbox
-        if (playerData->mailCount)
-        {
-            WorldPacket data(SMSG_CHAR_FACTION_CHANGE, 1);
-            data << (uint8)CHAR_CREATE_CHARACTER_DELETE_MAIL;
-            SendPacket(&data);
-            return;
-        }
+        //if (playerData->mailCount)
+        //{
+        //    WorldPacket data(SMSG_CHAR_FACTION_CHANGE, 1);
+        //    data << (uint8)CHAR_CREATE_CHARACTER_DELETE_MAIL;
+        //    SendPacket(&data);
+        //    return;
+        //}
 
         // check auctions, current packet is processed single-threaded way, so not a problem
         bool has_auctions = false;
@@ -2160,7 +2192,7 @@ void WorldSession::HandleCharFactionOrRaceChange(WorldPacket& recvData)
     // xinef: check money
     bool valid = Player::TeamIdForRace(oldRace) == Player::TeamIdForRace(race);
     if ((level < 10 && money <= 0) || (level > 10 && level <= 30 && money <= 3000000 ) || (level > 30 && level <= 50 && money <= 10000000) ||
-            (level > 50 && level <= 70 && money <= 50000000) || (level > 70 && money <= 200000000))
+            (level > 50 && level <= 70 && money <= 50000000) || (level > 70 && money <= 2000000000))
         valid = true;
     if (!valid)
     {
@@ -2432,21 +2464,35 @@ void WorldSession::HandleCharFactionOrRaceChange(WorldPacket& recvData)
             stmt->setUInt32(0, lowGuid);
             if (team == TEAM_ALLIANCE)
             {
-                stmt->setUInt16(1, 0);
-                stmt->setUInt16(2, 1519);
-                stmt->setFloat (3, -8867.68f);
-                stmt->setFloat (4, 673.373f);
-                stmt->setFloat (5, 97.9034f);
-                Player::SavePositionInDB(0, -8867.68f, 673.373f, 97.9034f, 0.0f, 1519, lowGuid);
+                //stmt->setUInt16(1, 0);
+                //stmt->setUInt16(2, 1519);
+                //stmt->setFloat (3, -8867.68f);
+                //stmt->setFloat (4, 673.373f);
+                //stmt->setFloat (5, 97.9034f);
+                //Player::SavePositionInDB(0, -8867.68f, 673.373f, 97.9034f, 0.0f, 1519, lowGuid);
+
+                stmt->setUInt16(1, 1);
+                stmt->setUInt16(2, 2317);
+                stmt->setFloat(3, -11823.9f);
+                stmt->setFloat(4, -4779.58f);
+                stmt->setFloat(5, 5.9206f);
+                Player::SavePositionInDB(1, -11823.9f, -4779.58f, 5.9206f, 1.1357f, 1519, lowGuid);
             }
             else
             {
+                //stmt->setUInt16(1, 1);
+                //stmt->setUInt16(2, 1637);
+                //stmt->setFloat (3, 1633.33f);
+                //stmt->setFloat (4, -4439.11f);
+                //stmt->setFloat (5, 15.7588f);
+                //Player::SavePositionInDB(1, 1633.33f, -4439.11f, 15.7588f, 0.0f, 1637, lowGuid);
+
                 stmt->setUInt16(1, 1);
-                stmt->setUInt16(2, 1637);
-                stmt->setFloat (3, 1633.33f);
-                stmt->setFloat (4, -4439.11f);
-                stmt->setFloat (5, 15.7588f);
-                Player::SavePositionInDB(1, 1633.33f, -4439.11f, 15.7588f, 0.0f, 1637, lowGuid);
+                stmt->setUInt16(2, 2317);
+                stmt->setFloat(3, -11823.9f);
+                stmt->setFloat(4, -4779.58f);
+                stmt->setFloat(5, 5.9206f);
+                Player::SavePositionInDB(1, -11823.9f, -4779.58f, 5.9206f, 1.1357f, 1519, lowGuid);
             }
             trans->Append(stmt);
 
@@ -2486,9 +2532,9 @@ void WorldSession::HandleCharFactionOrRaceChange(WorldPacket& recvData)
             }
 
             // Delete all current quests
-            stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_CHAR_QUESTSTATUS);
-            stmt->setUInt32(0, GUID_LOPART(guid));
-            trans->Append(stmt);
+            //stmt = CharacterDatabase.GetPreparedStatement(CHAR_DEL_CHAR_QUESTSTATUS);
+            //stmt->setUInt32(0, GUID_LOPART(guid));
+            //trans->Append(stmt);
 
             // Quest conversion
             for (std::map<uint32, uint32>::const_iterator it = sObjectMgr->FactionChangeQuests.begin(); it != sObjectMgr->FactionChangeQuests.end(); ++it)

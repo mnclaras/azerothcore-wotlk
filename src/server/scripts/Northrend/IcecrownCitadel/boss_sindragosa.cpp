@@ -2069,7 +2069,7 @@ void AddSC_boss_sindragosa()
 {
     new boss_sindragosa();
     new npc_ice_tomb();
-    new spell_sindragosa_s_fury();
+    //new spell_sindragosa_s_fury();
     new spell_sindragosa_unchained_magic();
     new spell_sindragosa_permeating_chill();
     new spell_sindragosa_instability();

@@ -52,6 +52,7 @@
 #include "ArenaSpectator.h"
 #include "DynamicVisibility.h"
 #include "AccountMgr.h"
+#include "../../../modules/mod-spell-regulator/src/SpellRegulator.h"
 
 #ifdef ELUNA
 #include "LuaEngine.h"
@@ -690,6 +691,9 @@ uint32 Unit::DealDamage(Unit* attacker, Unit* victim, uint32 damage, CleanDamage
 
     // Hook for OnDamage Event
     sScriptMgr->OnDamage(attacker, victim, damage);
+
+    if ((damagetype == SPELL_DIRECT_DAMAGE || damagetype == DOT) && spellProto)
+        sSpellRegulator->Regulate(damage, spellProto->Id);
 
     if (victim->GetTypeId() == TYPEID_PLAYER && attacker != victim)
     {
@@ -4633,7 +4637,9 @@ void Unit::RemoveAurasByShapeShift()
     {
         Aura const* aura = iter->second->GetBase();
         if ((aura->GetSpellInfo()->GetAllEffectsMechanicMask() & mechanic_mask) &&
-                (!aura->GetSpellInfo()->HasAttribute(SPELL_ATTR0_CU_DONT_BREAK_STEALTH) || (aura->GetSpellInfo()->SpellFamilyName == SPELLFAMILY_WARRIOR && (aura->GetSpellInfo()->SpellFamilyFlags[1] & 0x20))))
+            (!aura->GetSpellInfo()->HasAttribute(SPELL_ATTR0_CU_DONT_BREAK_STEALTH)
+                || !aura->GetSpellInfo()->HasAttribute(SPELL_ATTR0_CU_AURA_CC)
+                || (aura->GetSpellInfo()->SpellFamilyName == SPELLFAMILY_WARRIOR && (aura->GetSpellInfo()->SpellFamilyFlags[1] & 0x20))))
         {
             RemoveAura(iter);
             continue;
@@ -5623,6 +5629,7 @@ void Unit::SendSpellNonMeleeReflectLog(SpellNonMeleeDamage* log, Unit* attacker)
 
 void Unit::SendSpellNonMeleeDamageLog(SpellNonMeleeDamage* log)
 {
+	sSpellRegulator->Regulate(log->damage, log->SpellID);
     WorldPacket data(SMSG_SPELLNONMELEEDAMAGELOG, (16 + 4 + 4 + 4 + 1 + 4 + 4 + 1 + 1 + 4 + 4 + 1)); // we guess size
     data.append(log->target->GetPackGUID());
     data.append(log->attacker->GetPackGUID());
@@ -5669,6 +5676,8 @@ void Unit::ProcDamageAndSpell(Unit* victim, uint32 procAttacker, uint32 procVict
 void Unit::SendPeriodicAuraLog(SpellPeriodicAuraLogInfo* pInfo)
 {
     AuraEffect const* aura = pInfo->auraEff;
+
+    sSpellRegulator->Regulate(pInfo->damage, aura->GetId());
 
     WorldPacket data(SMSG_PERIODICAURALOG, 30);
     data.append(GetPackGUID());
@@ -7074,12 +7083,13 @@ bool Unit::HandleDummyAuraProc(Unit* victim, uint32 damage, AuraEffect* triggere
                     // Judgement of Light
                     case 20185:
                         {
-                            if (!victim || !victim->IsAlive() || victim->HasSpellCooldown(20267))
-                                return false;
+                            //if (!victim || !victim->IsAlive() || victim->HasSpellCooldown(20267))
+                    		if (!victim || !victim->IsAlive())
+                    			return false;
                             // 2% of base mana
                             basepoints0 = int32(victim->CountPctFromMaxHealth(2));
                             victim->CastCustomSpell(victim, 20267, &basepoints0, 0, 0, true, 0, triggeredByAura);
-                            victim->AddSpellCooldown(20267, 0, 4 * IN_MILLISECONDS);
+                            //victim->AddSpellCooldown(20267, 0, 4 * IN_MILLISECONDS);
                             return true;
                         }
                     // Judgement of Wisdom
@@ -13976,6 +13986,8 @@ void Unit::ModSpellCastTime(SpellInfo const* spellInfo, int32& castTime, Spell* 
                 castTime = int32(float(castTime) * GetFloatValue(UNIT_MOD_CAST_SPEED));
             else if (spellInfo->SpellVisual[0] == 3881 && HasAura(67556)) // cooking with Chef Hat.
                 castTime = 500;
+            if (spellInfo->Effects[0].Effect == SPELL_EFFECT_ENCHANT_ITEM || spellInfo->Effects[0].Effect == SPELL_EFFECT_APPLY_GLYPH || spellInfo->Effects[0].Effect == SPELL_EFFECT_ENCHANT_ITEM_PRISMATIC)
+            	castTime = 1;
             break;
         case SPELL_DAMAGE_CLASS_MELEE:
             break; // no known cases
@@ -19835,3 +19847,68 @@ bool Unit::IsInCombatWith(Unit const* who) const
     // Nothing found, false.
     return false;
 }
+
+bool Unit::IsInDisallowedMountForm()
+{
+    return IsDisallowedMountForm(getTransForm(), GetShapeshiftForm(), GetDisplayId());
+}
+
+bool Unit::IsDisallowedMountForm(uint32 spellId, ShapeshiftForm form, uint32 displayId)
+{
+    if (form)
+    {
+        switch (form) {
+        case FORM_NONE:
+        case FORM_BATTLESTANCE:
+        case FORM_BERSERKERSTANCE:
+        case FORM_DEFENSIVESTANCE:
+        case FORM_SHADOW:
+        case FORM_STEALTH:
+        case FORM_UNDEAD:
+            return false;
+            break;
+        default:
+            break;
+        }
+    }
+
+    SpellInfo const* transformSpellInfo = sSpellMgr->GetSpellInfo(spellId);
+    if (transformSpellInfo)
+    {
+        transformSpellInfo = sSpellMgr->GetSpellForDifficultyFromSpell(transformSpellInfo, this);
+        if (transformSpellInfo && transformSpellInfo->HasAttribute(SPELL_ATTR0_CASTABLE_WHILE_MOUNTED))
+            return false;
+    }
+
+    if (form)
+    {
+        SpellShapeshiftEntry const* shapeshift = sSpellShapeshiftStore.LookupEntry(form);
+        if (!shapeshift)
+            return true;
+
+        if (!(shapeshift->flags1 & 0x1))
+            return true;
+    }
+
+    if (displayId == GetNativeDisplayId())
+        return false;
+
+    CreatureDisplayInfoEntry const* display = sCreatureDisplayInfoStore.LookupEntry(displayId);
+    if (!display)
+        return true;
+
+    CreatureDisplayInfoExtraEntry const* displayExtra = sCreatureDisplayInfoExtraStore.LookupEntry(display->ExtraId);
+    if (!displayExtra)
+        return true;
+
+    CreatureModelDataEntry const* model = sCreatureModelDataStore.LookupEntry(display->ModelId);
+    ChrRacesEntry const* race = sChrRacesStore.LookupEntry(displayExtra->Race);
+
+    if (model && !(model->Flags & 0x80))
+        if (race && !(race->Flags & 0x4))
+            return true;
+
+    return false;
+}
+
+

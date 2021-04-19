@@ -3923,8 +3923,8 @@ void Spell::handle_immediate()
     TakeCastItem();
 
     // handle ammo consumption for Hunter's volley spell
-    if (m_spellInfo->IsRangedWeaponSpell() && m_spellInfo->IsChanneled())
-        TakeAmmo();
+    //if (m_spellInfo->IsRangedWeaponSpell() && m_spellInfo->IsChanneled())
+    //    TakeAmmo();
 
     if (m_spellState != SPELL_STATE_CASTING)
         finish(true);                                       // successfully finish spell cast (not last in case autorepeat or channel spell)
@@ -7739,7 +7739,7 @@ void Spell::HandleLaunchPhase()
                     case SPELL_EFFECT_NORMALIZED_WEAPON_DMG:
                     case SPELL_EFFECT_WEAPON_PERCENT_DAMAGE:
                         ammoTaken = true;
-                        TakeAmmo();
+                        //TakeAmmo();
                 }
                 if (ammoTaken)
                     break;

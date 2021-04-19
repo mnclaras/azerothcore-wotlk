@@ -2083,12 +2083,16 @@ public:
         return form == FORM_CAT || form == FORM_BEAR || form == FORM_DIREBEAR || form == FORM_GHOSTWOLF; // Xinef: added shamans Ghost Wolf, should behave exactly like druid forms
     }
 
-    [[nodiscard]] inline bool IsInDisallowedMountForm() const
-    {
-        ShapeshiftForm form = GetShapeshiftForm();
-        return form != FORM_NONE && form != FORM_BATTLESTANCE && form != FORM_BERSERKERSTANCE && form != FORM_DEFENSIVESTANCE &&
-               form != FORM_SHADOW && form != FORM_STEALTH && form != FORM_UNDEAD;
-    }
+    //[[nodiscard]] inline bool IsInDisallowedMountForm() const
+    //{
+    //    ShapeshiftForm form = GetShapeshiftForm();
+    //    return form != FORM_NONE && form != FORM_BATTLESTANCE && form != FORM_BERSERKERSTANCE && form != FORM_DEFENSIVESTANCE &&
+    //           form != FORM_SHADOW && form != FORM_STEALTH && form != FORM_UNDEAD;
+    //}
+
+    bool IsInDisallowedMountForm();
+    bool IsDisallowedMountForm(uint32 spellId, ShapeshiftForm form, uint32 displayId);
+
 
     float m_modMeleeHitChance;
     float m_modRangedHitChance;
@@ -2178,6 +2182,13 @@ public:
     void SetNativeDisplayId(uint32 modelId) { SetUInt32Value(UNIT_FIELD_NATIVEDISPLAYID, modelId); }
     void setTransForm(uint32 spellid) { m_transform = spellid;}
     [[nodiscard]] uint32 getTransForm() const { return m_transform;}
+
+    void SetOriginalDisplayId(uint32 modelId) { m_originalDisplayId = modelId; }
+    uint32 GetOriginalDisplayId() { return m_originalDisplayId; }
+
+    void SetOriginalNativeDisplayId(uint32 modelId) { m_originalNativeDisplayId = modelId; }
+    uint32 GetOriginalNativeDisplayId() { return m_originalNativeDisplayId; }
+
 
     // DynamicObject management
     void _RegisterDynObject(DynamicObject* dynObj);
@@ -2484,6 +2495,9 @@ protected:
     typedef std::list<uint64> GameObjectList;
     GameObjectList m_gameObj;
     uint32 m_transform;
+
+    uint32 m_originalDisplayId;
+    uint32 m_originalNativeDisplayId;
 
     Spell* m_currentSpells[CURRENT_MAX_SPELL];
 

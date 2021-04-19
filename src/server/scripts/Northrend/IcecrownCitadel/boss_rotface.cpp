@@ -875,7 +875,7 @@ public:
         {
             me->setActive(true);
             events.ScheduleEvent(EVENT_DECIMATE, urand(20000, 25000));
-            events.ScheduleEvent(EVENT_MORTAL_WOUND, urand(1500, 2500));
+            events.ScheduleEvent(EVENT_MORTAL_WOUND, urand(3000, 7000));
             events.ScheduleEvent(EVENT_SUMMON_ZOMBIES, urand(25000, 30000));
         }
 
@@ -920,7 +920,7 @@ public:
                         break;
                     case EVENT_MORTAL_WOUND:
                         me->CastSpell(me->GetVictim(), SPELL_MORTAL_WOUND, false);
-                        events.ScheduleEvent(EVENT_MORTAL_WOUND, urand(1500, 2500));
+                        events.ScheduleEvent(EVENT_MORTAL_WOUND, urand(3000, 7000));
                         break;
                     case EVENT_SUMMON_ZOMBIES:
                         Talk(EMOTE_PRECIOUS_ZOMBIES);

@@ -285,6 +285,134 @@ void Battleground::Update(uint32 diff)
 
     PostUpdateImpl(diff);
 
+    // Dementia
+
+    // 1v1 Starts after 2 minutes, rest after 15 minutes.
+    // 1v1: First 4 stacks every 20 seconds. Last 4 stacks every 30 seconds.
+    // 2v2, 3v3: 1 stack every minute.
+    bool is1v1 = (GetArenaType() == ARENA_TYPE_5v5);
+    float startT = is1v1 ? 2 : 15;
+
+    // DEBUG TIMERS:
+    for (BattlegroundPlayerMap::const_iterator itr = GetPlayers().begin(); itr != GetPlayers().end(); ++itr)
+    {
+        if (Player* player = ObjectAccessor::FindPlayer(itr->first))
+        {
+            if (player->InArena() && !player->IsSpectator())
+            {
+                Aura* demAura = player->GetAura(36814); // 41406
+
+                // 1 Stack
+                if ((GetStartTime() >= (startT + 0.0f) * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= (startT + 0.1f) * MINUTE * IN_MILLISECONDS))
+                {
+                    if (!player->HasAura(36814))
+                    {
+                        player->AddAura(36814, player);
+                        player->GetSession()->SendAreaTriggerMessage("La sanacion se van a reducir progresivamente desde ahora! ~ 10");
+                    }                 
+                }
+                // 2 Stacks
+                if (((is1v1) && (GetStartTime() >= (startT + 0.3333f) * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= (startT + 0.4333f) * MINUTE * IN_MILLISECONDS))
+                    ||
+                    ((!is1v1) && (GetStartTime() >= (startT + 1.0f) * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= (startT + 1.1f) * MINUTE * IN_MILLISECONDS)))
+                {
+                    if (demAura && demAura->GetStackAmount() == 1)
+                    {
+                        player->AddAura(36814, player);
+                        player->GetSession()->SendAreaTriggerMessage("Sanacion disminuida! ~ 20");
+                    }
+                    else player->SetAuraStack(36814, player, 2);
+                }
+                // 3 Stacks
+                if (((is1v1) && (GetStartTime() >= (startT + 0.6666f) * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= (startT + 0.7666f) * MINUTE * IN_MILLISECONDS))
+                    ||
+                    ((!is1v1) && (GetStartTime() >= (startT + 2.0f) * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= (startT + 2.1f) * MINUTE * IN_MILLISECONDS)))
+                {
+                    if (demAura && demAura->GetStackAmount() == 2)
+                    {
+                        player->AddAura(36814, player);
+                        player->GetSession()->SendAreaTriggerMessage("Sanacion disminuida! ~ 30");
+                    }
+                    else player->SetAuraStack(36814, player, 3);
+                }
+                // 4 Stacks
+                if (((is1v1) && (GetStartTime() >= (startT + 1.0f) * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= (startT + 1.1f) * MINUTE * IN_MILLISECONDS))
+                    ||
+                    ((!is1v1) && (GetStartTime() >= (startT + 3.0f) * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= (startT + 3.1f) * MINUTE * IN_MILLISECONDS)))
+                {
+                    if (demAura && demAura->GetStackAmount() == 3)
+                    {
+                        player->AddAura(36814, player);
+                        player->GetSession()->SendAreaTriggerMessage("Sanacion disminuida! ~ 40");
+                    }
+                    else player->SetAuraStack(36814, player, 4);
+                }
+                // 5 Stacks
+                if (((is1v1) && (GetStartTime() >= (startT + 1.5f) * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= (startT + 1.6f) * MINUTE * IN_MILLISECONDS))
+                    ||
+                    ((!is1v1) && (GetStartTime() >= (startT + 4.0f) * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= (startT + 4.1f) * MINUTE * IN_MILLISECONDS)))
+                {
+                    if (demAura && demAura->GetStackAmount() == 4)
+                    {
+                        player->AddAura(36814, player);
+                        player->GetSession()->SendAreaTriggerMessage("Sanacion disminuida! ~ 50");
+                    }
+                    else player->SetAuraStack(36814, player, 5);
+                }
+                // 6 Stacks
+                if (((is1v1) && (GetStartTime() >= (startT + 2.0f) * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= (startT + 2.1f) * MINUTE * IN_MILLISECONDS))
+                    ||
+                    ((!is1v1) && (GetStartTime() >= (startT + 5.0f) * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= (startT + 5.1f) * MINUTE * IN_MILLISECONDS)))
+                {
+                    if (demAura && demAura->GetStackAmount() == 5)
+                    {
+                        player->AddAura(36814, player);
+                        player->GetSession()->SendAreaTriggerMessage("Sanacion disminuida! ~ 60");
+                    }
+                    else player->SetAuraStack(36814, player, 6);
+                }
+                // 7 Stacks
+                if (((is1v1) && (GetStartTime() >= (startT + 2.5f) * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= (startT + 2.6f) * MINUTE * IN_MILLISECONDS))
+                    ||
+                    ((!is1v1) && (GetStartTime() >= (startT + 6.0f) * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= (startT + 6.1f) * MINUTE * IN_MILLISECONDS)))
+                {
+                    if (demAura && demAura->GetStackAmount() == 6)
+                    {
+                        player->AddAura(36814, player);
+                        player->GetSession()->SendAreaTriggerMessage("Sanacion disminuida! ~ 70");
+                    }
+                    else player->SetAuraStack(36814, player, 7);
+                }
+                // 8 Stacks
+                if (((is1v1) && (GetStartTime() >= (startT + 3.0f) * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= (startT + 3.1f) * MINUTE * IN_MILLISECONDS))
+                    ||
+                    ((!is1v1) && (GetStartTime() >= (startT + 7.0f) * MINUTE * IN_MILLISECONDS) && (GetStartTime() <= (startT + 7.1f) * MINUTE * IN_MILLISECONDS)))
+                {
+                    if (demAura && demAura->GetStackAmount() == 7)
+                    {
+                        player->AddAura(36814, player);
+                        player->GetSession()->SendAreaTriggerMessage("Sanacion disminuida! Ya no se va a disminuir mas veces. ~ 80");
+                    }
+                    else player->SetAuraStack(36814, player, 8);
+                }
+
+                //if (Pet* pet = ObjectAccessor::FindPet(itr->first))
+                //{
+                //    Aura* pemAura = pet->GetAura(36814);
+                //    if (!pet->HasAura(36814)) pet->AddAura(36814, pet);
+                //    else if (pet->IsSummon()) pet->AddAura(36814, pet);
+                //}
+
+                //if (Pet* pet = ObjectAccessor::FindPet(itr->first))
+                //{
+                //    Aura* pemAura = pet->GetAura(36814);
+                //    if (pet && pemAura->GetStackAmount() == 7) pet->AddAura(36814, pet);
+                //    else if (pet->IsSummon()) pet->AddAura(36814, pet);
+                //}
+            }
+        }
+    }
+
     sScriptMgr->OnBattlegroundUpdate(this, diff);
 }
 
@@ -504,6 +632,8 @@ inline void Battleground::_ProcessJoin(uint32 diff)
 
         StartingEventOpenDoors();
 
+        DespawnCrystals();
+
 #ifdef ELUNA
         sEluna->OnBGStart(this, GetBgTypeID(), GetInstanceID());
 #endif
@@ -588,6 +718,63 @@ inline void Battleground::_ProcessJoin(uint32 diff)
                 sWorld->SendWorldText(LANG_BG_STARTED_ANNOUNCE_WORLD, GetName(), std::min(GetMinLevel(), (uint32)80), std::min(GetMaxLevel(), (uint32)80));
 
             sScriptMgr->OnBattlegroundStart(this);
+        }
+
+        for (BattlegroundPlayerMap::const_iterator itr = GetPlayers().begin(); itr != GetPlayers().end(); ++itr)
+        {
+            if (Player* player = itr->second)
+            {
+                // Remove illusion shirt if entering in arena or bg
+                Item* pItem = player->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_BODY);
+                if (pItem && pItem->GetEntry() >= 100000 && pItem->GetEntry() <= 100100)
+                {
+                    ItemPosCountVec off_dest;
+                    uint8 off_msg = player->CanStoreItem(NULL_BAG, NULL_SLOT, off_dest, pItem, false);
+                    if (off_msg == EQUIP_ERR_OK)
+                    {
+                        player->RemoveItem(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_BODY, true);
+                        player->StoreItem(off_dest, pItem, true);
+                    }
+                    else
+                    {
+                        player->MoveItemFromInventory(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_BODY, true);
+                        SQLTransaction trans = CharacterDatabase.BeginTransaction();
+                        pItem->DeleteFromInventoryDB(trans);                   // deletes item from character's inventory
+                        pItem->SaveToDB(trans);                                // recursive and not have transaction guard into self, item not in inventory and can be save standalone
+
+                        std::string subject = player->GetSession()->GetAcoreString(LANG_NOT_EQUIPPED_ITEM);
+                        MailDraft(subject, "There were problems with equipping one or several items").AddItem(pItem).SendMailTo(trans, player, MailSender(player, MAIL_STATIONERY_GM), MAIL_CHECK_MASK_COPIED);
+
+                        CharacterDatabase.CommitTransaction(trans);
+                    }
+                    player->DeMorphIllusionShirt(EQUIPMENT_SLOT_BODY, pItem->GetEntry());
+                }
+
+                Item* pItemTabard = player->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_TABARD);
+                if (pItemTabard && pItemTabard->GetEntry() >= 100101 && pItemTabard->GetEntry() <= 100199)
+                {
+                    ItemPosCountVec off_dest;
+                    uint8 off_msg = player->CanStoreItem(NULL_BAG, NULL_SLOT, off_dest, pItemTabard, false);
+                    if (off_msg == EQUIP_ERR_OK)
+                    {
+                        player->RemoveItem(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_TABARD, true);
+                        player->StoreItem(off_dest, pItemTabard, true);
+                    }
+                    else
+                    {
+                        player->MoveItemFromInventory(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_TABARD, true);
+                        SQLTransaction trans = CharacterDatabase.BeginTransaction();
+                        pItemTabard->DeleteFromInventoryDB(trans);                   // deletes item from character's inventory
+                        pItemTabard->SaveToDB(trans);                                // recursive and not have transaction guard into self, item not in inventory and can be save standalone
+
+                        std::string subject = player->GetSession()->GetAcoreString(LANG_NOT_EQUIPPED_ITEM);
+                        MailDraft(subject, "There were problems with equipping one or several items").AddItem(pItemTabard).SendMailTo(trans, player, MailSender(player, MAIL_STATIONERY_GM), MAIL_CHECK_MASK_COPIED);
+
+                        CharacterDatabase.CommitTransaction(trans);
+                    }
+                    player->DeMorphIllusionShirt(EQUIPMENT_SLOT_TABARD, pItemTabard->GetEntry());
+                }
+            }
         }
     }
 }
@@ -1200,6 +1387,57 @@ void Battleground::AddPlayer(Player* player)
     if (player->HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_AFK))
         player->ToggleAFK();
 
+    // Remove illusion shirt if entering in arena or bg
+    Item* pItem = player->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_BODY);
+    if (pItem && pItem->GetEntry() >= 100000 && pItem->GetEntry() <= 100100)
+    {
+        ItemPosCountVec off_dest;
+        uint8 off_msg = player->CanStoreItem(NULL_BAG, NULL_SLOT, off_dest, pItem, false);
+        if (off_msg == EQUIP_ERR_OK)
+        {
+            player->RemoveItem(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_BODY, true);
+            player->StoreItem(off_dest, pItem, true);
+        }
+        else
+        {
+            player->MoveItemFromInventory(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_BODY, true);
+            SQLTransaction trans = CharacterDatabase.BeginTransaction();
+            pItem->DeleteFromInventoryDB(trans);                   // deletes item from character's inventory
+            pItem->SaveToDB(trans);                                // recursive and not have transaction guard into self, item not in inventory and can be save standalone
+
+            std::string subject = player->GetSession()->GetAcoreString(LANG_NOT_EQUIPPED_ITEM);
+            MailDraft(subject, "There were problems with equipping one or several items").AddItem(pItem).SendMailTo(trans, player, MailSender(player, MAIL_STATIONERY_GM), MAIL_CHECK_MASK_COPIED);
+
+            CharacterDatabase.CommitTransaction(trans);
+        }
+        player->DeMorphIllusionShirt(EQUIPMENT_SLOT_BODY, pItem->GetEntry());
+    }
+
+    Item* pItemTabard = player->GetItemByPos(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_TABARD);
+    if (pItemTabard && pItemTabard->GetEntry() >= 100101 && pItemTabard->GetEntry() <= 100199)
+    {
+        ItemPosCountVec off_dest;
+        uint8 off_msg = player->CanStoreItem(NULL_BAG, NULL_SLOT, off_dest, pItemTabard, false);
+        if (off_msg == EQUIP_ERR_OK)
+        {
+            player->RemoveItem(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_TABARD, true);
+            player->StoreItem(off_dest, pItemTabard, true);
+        }
+        else
+        {
+            player->MoveItemFromInventory(INVENTORY_SLOT_BAG_0, EQUIPMENT_SLOT_TABARD, true);
+            SQLTransaction trans = CharacterDatabase.BeginTransaction();
+            pItemTabard->DeleteFromInventoryDB(trans);                   // deletes item from character's inventory
+            pItemTabard->SaveToDB(trans);                                // recursive and not have transaction guard into self, item not in inventory and can be save standalone
+
+            std::string subject = player->GetSession()->GetAcoreString(LANG_NOT_EQUIPPED_ITEM);
+            MailDraft(subject, "There were problems with equipping one or several items").AddItem(pItemTabard).SendMailTo(trans, player, MailSender(player, MAIL_STATIONERY_GM), MAIL_CHECK_MASK_COPIED);
+
+            CharacterDatabase.CommitTransaction(trans);
+        }
+        player->DeMorphIllusionShirt(EQUIPMENT_SLOT_TABARD, pItemTabard->GetEntry());
+    }
+
     sScriptMgr->OnBattlegroundBeforeAddPlayer(this, player);
 
     // score struct must be created in inherited class
@@ -1381,7 +1619,23 @@ void Battleground::ReadyMarkerClicked(Player* p)
         return;
     readyMarkerClickedSet.insert(p->GetGUIDLow());
     uint32 count = readyMarkerClickedSet.size();
-    uint32 req = GetArenaType() * 2;
+
+    uint8 req = 0;
+
+    //uint32 req = GetArenaType()*2;
+    switch (GetArenaType())
+    {
+    case ARENA_TYPE_2v2:
+        req = 4;
+        break;
+    case ARENA_TYPE_3v3:
+        req = 6;
+        break;
+    case ARENA_TYPE_5v5:
+        req = 2;
+        break;
+    }
+
     p->GetSession()->SendNotification("You are marked as ready %u/%u", count, req);
     if (count == req)
     {
@@ -1989,4 +2243,59 @@ void Battleground::RewardXPAtKill(Player* killer, Player* victim)
 uint8 Battleground::GetUniqueBracketId() const
 {
     return GetMinLevel() / 10;
+}
+
+uint8 Battleground::ClickFastStart(Player* player, GameObject* go)
+{
+    if (!isArena())
+    {
+        player->GetSession()->SendAreaTriggerMessage("You can't do this while not in arena.");
+        return 0;
+    }
+
+    std::set<uint64>::iterator pIt = m_playersWantsFastStart.find(player->GetGUID());
+    if (pIt != m_playersWantsFastStart.end() || GetStartDelayTime() < BG_START_DELAY_15S)
+        return m_playersWantsFastStart.size();
+
+    m_playersWantsFastStart.insert(player->GetGUID());
+
+    std::set<GameObject*>::iterator goIt = m_crystals.find(go);
+    if (goIt == m_crystals.end())
+        m_crystals.insert(go);
+
+    uint8 playersNeeded = 0;
+
+    switch (GetArenaType())
+    {
+    case ARENA_TYPE_2v2:
+        playersNeeded = 4;
+        break;
+    case ARENA_TYPE_3v3:
+        playersNeeded = 6;
+        break;
+    case ARENA_TYPE_5v5:
+        playersNeeded = 2;
+        break;
+    }
+
+    if (m_playersWantsFastStart.size() == playersNeeded)
+    {
+        DespawnCrystals();
+        SetStartDelayTime(BG_START_DELAY_15S);
+    }
+
+    return m_playersWantsFastStart.size();
+}
+
+void Battleground::DespawnCrystals()
+{
+    if (m_crystals.empty())
+        return;
+
+    for (std::set<GameObject*>::iterator itr = m_crystals.begin(); itr != m_crystals.end(); ++itr)
+    {
+        GameObject* go = *itr;
+        go->Delete();
+        m_crystals.erase(itr);
+    }
 }

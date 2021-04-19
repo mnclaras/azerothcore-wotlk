@@ -1211,6 +1211,11 @@ struct BfWGGameObjectBuilding
 
     void Init(GameObject* gobj, uint32 type, uint32 worldstate, uint8 damageText, uint8 destroyText)
     {
+        if (!gobj)
+        {
+            return;
+        }
+
         // GameObject associated to object
         m_Build = gobj->GetGUID();
 
@@ -1241,6 +1246,8 @@ struct BfWGGameObjectBuilding
         }
 
         m_State = sWorld->getWorldState(m_WorldState);
+        int32 towerid = -1;
+
         if (gobj)
         {
             switch (m_State)
@@ -1258,11 +1265,9 @@ struct BfWGGameObjectBuilding
                     gobj->SetDestructibleState(GO_DESTRUCTIBLE_DAMAGED);
                     break;
             }
-        }
 
-        int32 towerid = -1;
-        switch (gobj->GetEntry())
-        {
+            switch (gobj->GetEntry())
+            {
             case GO_WINTERGRASP_FORTRESS_TOWER_1:
                 towerid = 0;
                 break;
@@ -1284,7 +1289,8 @@ struct BfWGGameObjectBuilding
             case GO_WINTERGRASP_FLAMEWATCH_TOWER:
                 towerid = 6;
                 break;
-        }
+            }
+        } 
 
         if (towerid > 3) // Attacker towers
         {

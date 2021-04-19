@@ -1392,6 +1392,9 @@ public:
 
     bool AddItem(uint32 itemId, uint32 count);
 
+    void DeMorphIllusionShirt(uint8 slot, uint32 shirtEntry);
+    void MorphIllusionShirt(uint8 slot, uint32 shirtEntry);
+
     uint32 m_stableSlots;
 
     /*********************************************************/
@@ -1707,7 +1710,7 @@ public:
     void BuildPlayerTalentsInfoData(WorldPacket* data);
     void BuildPetTalentsInfoData(WorldPacket* data);
     void SendTalentsInfoData(bool pet);
-    void LearnTalent(uint32 talentId, uint32 talentRank);
+    void LearnTalent(uint32 talentId, uint32 talentRank, bool skipDependsOn = false);
     void LearnPetTalent(uint64 petGuid, uint32 talentId, uint32 talentRank);
 
     bool addTalent(uint32 spellId, uint8 addSpecMask, uint8 oldTalentRank);
