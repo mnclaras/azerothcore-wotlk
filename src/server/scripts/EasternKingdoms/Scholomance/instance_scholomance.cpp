@@ -2,18 +2,18 @@
  * Originally written by Xinef - Copyright (C) 2016+ AzerothCore <www.azerothcore.org>, released under GNU AGPL v3 license: https://github.com/azerothcore/azerothcore-wotlk/blob/master/LICENSE-AGPL3
 */
 
-#include "ScriptMgr.h"
+#include "GameObjectAI.h"
 #include "InstanceScript.h"
 #include "Player.h"
 #include "scholomance.h"
-#include "GameObjectAI.h"
-#include "SpellScript.h"
+#include "ScriptMgr.h"
 #include "SpellAuras.h"
+#include "SpellScript.h"
 
 class instance_scholomance : public InstanceMapScript
 {
 public:
-    instance_scholomance() : InstanceMapScript("instance_scholomance", 289) { }
+    instance_scholomance() : InstanceMapScript(ScholomanceScriptName, 289) { }
 
     InstanceScript* GetInstanceScript(InstanceMap* map) const override
     {
@@ -420,7 +420,7 @@ public:
                     gateId = GO_GATE_ILLUCIA;
                     break;
                 case SPELL_SHADOW_PORTAL_BAROVFAMILYVAULT:
-                    summonPos = ROOM_BAROV_FAMILY_VAULT * 4;
+                    summonPos = ROOM_BAROV_FAMILY_VAULT * 3;
                     gateId = GO_GATE_BAROV;
                     break;
                 case SPELL_SHADOW_PORTAL_VAULTOFTHERAVENIAN:

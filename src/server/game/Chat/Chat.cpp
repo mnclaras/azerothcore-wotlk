@@ -1,28 +1,27 @@
 /*
- * Copyright (C) 2016+     AzerothCore <www.azerothcore.org>, released under GNU GPL v2 license: https://github.com/azerothcore/azerothcore-wotlk/blob/master/LICENSE-GPL2
+ * Copyright (C) 2016+     AzerothCore <www.azerothcore.org>, released under GNU GPL v2 license, you may redistribute it and/or modify it under version 2 of the License, or (at your option), any later version.
  * Copyright (C) 2008-2016 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2005-2009 MaNGOS <http://getmangos.com/>
  */
 
-#include "Common.h"
-#include "ObjectMgr.h"
-#include "World.h"
-#include "WorldPacket.h"
-#include "WorldSession.h"
-#include "DatabaseEnv.h"
-
 #include "AccountMgr.h"
 #include "CellImpl.h"
 #include "Chat.h"
+#include "ChatLink.h"
+#include "Common.h"
+#include "DatabaseEnv.h"
 #include "GridNotifiersImpl.h"
 #include "Language.h"
 #include "Log.h"
+#include "ObjectMgr.h"
 #include "Opcodes.h"
 #include "Player.h"
-#include "UpdateMask.h"
-#include "SpellMgr.h"
 #include "ScriptMgr.h"
-#include "ChatLink.h"
+#include "SpellMgr.h"
+#include "UpdateMask.h"
+#include "World.h"
+#include "WorldPacket.h"
+#include "WorldSession.h"
 
 #ifdef ELUNA
 #include "LuaEngine.h"
@@ -117,7 +116,7 @@ bool ChatHandler::HasLowerSecurityAccount(WorldSession* target, uint32 target_ac
     else if (target_account)
         target_sec = AccountMgr::GetSecurity(target_account, realmID);
     else
-        return true;                                        // caller must report error for (target == NULL && target_account == 0)
+        return true;                                        // caller must report error for (target == nullptr && target_account == 0)
 
     AccountTypes target_ac_sec = AccountTypes(target_sec);
     if (m_session->GetSecurity() < target_ac_sec || (strong && m_session->GetSecurity() <= target_ac_sec))
@@ -277,7 +276,7 @@ bool ChatHandler::ExecuteCommandInTable(std::vector<ChatCommand> const& table, c
             if (!ExecuteCommandInTable(table[i].ChildCommands, text, fullcmd.c_str()))
             {
 #ifdef ELUNA
-                if (!sEluna->OnCommand(GetSession() ? GetSession()->GetPlayer() : NULL, oldtext))
+                if (!sEluna->OnCommand(GetSession() ? GetSession()->GetPlayer() : nullptr, oldtext))
                     return true;
 #endif
                 if (text[0] != '\0')
@@ -317,14 +316,20 @@ bool ChatHandler::ExecuteCommandInTable(std::vector<ChatCommand> const& table, c
                         zoneName = zone->area_name[locale];
                 }
 
-                sLog->outCommand(m_session->GetAccountId(), "Command: %s [Player: %s (%ul) (Account: %u) X: %f Y: %f Z: %f Map: %u (%s) Area: %u (%s) Zone: %s Selected: %s (%ul)]",
-                                 fullcmd.c_str(), player->GetName().c_str(), GUID_LOPART(player->GetGUID()),
-                                 m_session->GetAccountId(), player->GetPositionX(), player->GetPositionY(),
-                                 player->GetPositionZ(), player->GetMapId(),
-                                 player->GetMap()->GetMapName(),
-                                 areaId, areaName.c_str(), zoneName.c_str(),
-                                 (player->GetSelectedUnit()) ? player->GetSelectedUnit()->GetName().c_str() : "",
-                                 GUID_LOPART(guid));
+                LOG_GM(m_session->GetAccountId(), "Command: %s [Player: %s (%u) (Account: %u) X: %f Y: %f Z: %f Map: %u (%s) Area: %u (%s) Zone: %s Selected: %s (%ul)]",
+                    fullcmd.c_str(),
+                    player->GetName().c_str(),
+                    GUID_LOPART(player->GetGUID()),
+                    m_session->GetAccountId(),
+                    player->GetPositionX(),
+                    player->GetPositionY(),
+                    player->GetPositionZ(),
+                    player->GetMapId(),
+                    player->GetMap()->GetMapName(),
+                    areaId, areaName.c_str(),
+                    zoneName.c_str(),
+                    (player->GetSelectedUnit()) ? player->GetSelectedUnit()->GetName().c_str() : "",
+                    GUID_LOPART(guid));
             }
         }
         // some commands have custom error messages. Don't send the default one in these cases.
@@ -373,12 +378,12 @@ bool ChatHandler::SetDataForCommandInTable(std::vector<ChatCommand>& table, char
         // expected subcommand by full name DB content
         else if (*text)
         {
-            sLog->outError("Table `command` have unexpected subcommand '%s' in command '%s', skip.", text, fullcommand.c_str());
+            LOG_ERROR("server", "Table `command` have unexpected subcommand '%s' in command '%s', skip.", text, fullcommand.c_str());
             return false;
         }
 
         //if (table[i].SecurityLevel != security)
-        //    sLog->outDetail("Table `command` overwrite for command '%s' default security (%u) by %u", fullcommand.c_str(), table[i].SecurityLevel, security);
+        //    LOG_DEBUG("server", "Table `command` overwrite for command '%s' default security (%u) by %u", fullcommand.c_str(), table[i].SecurityLevel, security);
 
         table[i].SecurityLevel = security;
         table[i].Help          = help;
@@ -389,9 +394,9 @@ bool ChatHandler::SetDataForCommandInTable(std::vector<ChatCommand>& table, char
     if (!cmd.empty())
     {
         if (&table == &getCommandTable())
-            sLog->outError("Table `command` have non-existing command '%s', skip.", cmd.c_str());
+            LOG_ERROR("server", "Table `command` have non-existing command '%s', skip.", cmd.c_str());
         else
-            sLog->outError("Table `command` have non-existing subcommand '%s' in command '%s', skip.", cmd.c_str(), fullcommand.c_str());
+            LOG_ERROR("server", "Table `command` have non-existing subcommand '%s' in command '%s', skip.", cmd.c_str(), fullcommand.c_str());
     }
 
     return false;
@@ -430,7 +435,7 @@ bool ChatHandler::ParseCommands(char const* text)
     if (!ExecuteCommandInTable(getCommandTable(), text, fullcmd))
     {
 #ifdef ELUNA
-        if (!sEluna->OnCommand(GetSession() ? GetSession()->GetPlayer() : NULL, text))
+        if (!sEluna->OnCommand(GetSession() ? GetSession()->GetPlayer() : nullptr, text))
             return true;
 #endif
         if (m_session && AccountMgr::IsPlayerAccount(m_session->GetSecurity()))
@@ -1085,7 +1090,7 @@ std::string ChatHandler::extractPlayerNameFromLink(char* text)
     return name;
 }
 
-bool ChatHandler::extractPlayerTarget(char* args, Player** player, uint64* player_guid /*=NULL*/, std::string* player_name /*= NULL*/)
+bool ChatHandler::extractPlayerTarget(char* args, Player** player, uint64* player_guid /*=nullptr*/, std::string* player_name /*= nullptr*/)
 {
     if (args && *args)
     {
@@ -1172,7 +1177,7 @@ char* ChatHandler::extractQuotedArg(char* args)
             continue;
         }
 
-        // return NULL if we reached the end of the string
+        // return nullptr if we reached the end of the string
         if (!*args)
             return nullptr;
 

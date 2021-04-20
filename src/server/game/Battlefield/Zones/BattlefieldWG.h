@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016+     AzerothCore <www.azerothcore.org>, released under GNU GPL v2 license: https://github.com/azerothcore/azerothcore-wotlk/blob/master/LICENSE-GPL2
+ * Copyright (C) 2016+     AzerothCore <www.azerothcore.org>, released under GNU GPL v2 license, you may redistribute it and/or modify it under version 2 of the License, or (at your option), any later version.
  * Copyright (C) 2008-2016 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2005-2009 MaNGOS <http://getmangos.com/>
  */
@@ -7,10 +7,10 @@
 #ifndef BATTLEFIELD_WG_
 #define BATTLEFIELD_WG_
 
-#include "ObjectAccessor.h"
-#include "WorldPacket.h"
 #include "Battlefield.h"
+#include "ObjectAccessor.h"
 #include "World.h"
+#include "WorldPacket.h"
 
 class Group;
 class BattlefieldWG;
@@ -373,7 +373,7 @@ public:
     bool SetupBattlefield() override;
 
     /// Return pointer to relic object
-    GameObject* GetRelic() { return ObjectAccessor::GetObjectInWorld(m_titansRelic, (GameObject*)NULL); }
+    GameObject* GetRelic() { return ObjectAccessor::GetObjectInWorld(m_titansRelic, (GameObject*)nullptr); }
 
     /// Define relic object
     //void SetRelic(GameObject* relic) { m_titansRelic = relic; }
@@ -1136,11 +1136,11 @@ struct BfWGGameObjectBuilding
                 break;
         }
 
-        GameObject* go = ObjectAccessor::GetObjectInWorld(m_Build, (GameObject*)NULL);
+        GameObject* go = ObjectAccessor::GetObjectInWorld(m_Build, (GameObject*)nullptr);
         if (go)
         {
             // Rebuild gameobject
-            go->SetDestructibleState(GO_DESTRUCTIBLE_REBUILDING, NULL, true);
+            go->SetDestructibleState(GO_DESTRUCTIBLE_REBUILDING, nullptr, true);
             go->SetUInt32Value(GAMEOBJECT_FACTION, WintergraspFaction[m_Team]);
         }
 
@@ -1190,19 +1190,19 @@ struct BfWGGameObjectBuilding
         {
             // Inform the global wintergrasp script of the destruction of this object
             case BATTLEFIELD_WG_OBJECTTYPE_TOWER:
-                m_WG->UpdatedDestroyedTowerCount(TeamId(m_Team), ObjectAccessor::GetObjectInWorld(m_Build, (GameObject*)NULL));
+                m_WG->UpdatedDestroyedTowerCount(TeamId(m_Team), ObjectAccessor::GetObjectInWorld(m_Build, (GameObject*)nullptr));
                 break;
             case BATTLEFIELD_WG_OBJECTTYPE_DOOR_LAST:
                 m_WG->SetRelicInteractible(true);
                 if (GameObject* go = m_WG->GetRelic())
                     go->RemoveFlag(GAMEOBJECT_FLAGS, GO_FLAG_NOT_SELECTABLE);
                 else
-                    sLog->outError("BattlefieldWG: Relic not found.");
+                    LOG_ERROR("server", "BattlefieldWG: Relic not found.");
                 break;
             case BATTLEFIELD_WG_OBJECTTYPE_DOOR:
             case BATTLEFIELD_WG_OBJECTTYPE_WALL:
             case BATTLEFIELD_WG_OBJECTTYPE_KEEP_TOWER:
-                m_WG->UpdatedDestroyedTowerCount(TeamId(m_Team), ObjectAccessor::GetObjectInWorld(m_Build, (GameObject*)NULL));
+                m_WG->UpdatedDestroyedTowerCount(TeamId(m_Team), ObjectAccessor::GetObjectInWorld(m_Build, (GameObject*)nullptr));
                 break;
         }
 
@@ -1246,15 +1246,13 @@ struct BfWGGameObjectBuilding
         }
 
         m_State = sWorld->getWorldState(m_WorldState);
-        int32 towerid = -1;
-
         if (gobj)
         {
             switch (m_State)
             {
                 case BATTLEFIELD_WG_OBJECTSTATE_ALLIANCE_INTACT:
                 case BATTLEFIELD_WG_OBJECTSTATE_HORDE_INTACT:
-                    gobj->SetDestructibleState(GO_DESTRUCTIBLE_REBUILDING, NULL, true);
+                    gobj->SetDestructibleState(GO_DESTRUCTIBLE_REBUILDING, nullptr, true);
                     break;
                 case BATTLEFIELD_WG_OBJECTSTATE_ALLIANCE_DESTROY:
                 case BATTLEFIELD_WG_OBJECTSTATE_HORDE_DESTROY:
@@ -1265,9 +1263,11 @@ struct BfWGGameObjectBuilding
                     gobj->SetDestructibleState(GO_DESTRUCTIBLE_DAMAGED);
                     break;
             }
+        }
 
-            switch (gobj->GetEntry())
-            {
+        int32 towerid = -1;
+        switch (gobj->GetEntry())
+        {
             case GO_WINTERGRASP_FORTRESS_TOWER_1:
                 towerid = 0;
                 break;
@@ -1289,8 +1289,7 @@ struct BfWGGameObjectBuilding
             case GO_WINTERGRASP_FLAMEWATCH_TOWER:
                 towerid = 6;
                 break;
-            }
-        } 
+        }
 
         if (towerid > 3) // Attacker towers
         {
@@ -1385,7 +1384,7 @@ struct BfWGGameObjectBuilding
 
     void UpdateTurretAttack(bool disable)
     {
-        GameObject* build = ObjectAccessor::GetObjectInWorld(m_Build, (GameObject*)NULL);
+        GameObject* build = ObjectAccessor::GetObjectInWorld(m_Build, (GameObject*)nullptr);
         if (!build)
             return;
 
