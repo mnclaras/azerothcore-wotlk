@@ -6838,37 +6838,37 @@ void ObjectMgr::LoadCorpses()
 {
     uint32 oldMSTime = getMSTime();
 
-    PreparedQueryResult result = CharacterDatabase.Query(CharacterDatabase.GetPreparedStatement(CHAR_SEL_CORPSES));
-    if (!result)
-    {
-        sLog->outString(">> Loaded 0 corpses. DB table `corpse` is empty.");
-        sLog->outString();
-        return;
-    }
+    //PreparedQueryResult result = CharacterDatabase.Query(CharacterDatabase.GetPreparedStatement(CHAR_SEL_CORPSES));
+    //if (!result)
+    //{
+    //    sLog->outString(">> Loaded 0 corpses. DB table `corpse` is empty.");
+    //    sLog->outString();
+    //    return;
+    //}
 
     uint32 count = 0;
-    do
-    {
-        Field* fields = result->Fetch();
-        uint32 guid = fields[16].GetUInt32();
-        CorpseType type = CorpseType(fields[13].GetUInt8());
-        if (type >= MAX_CORPSE_TYPE)
-        {
-            sLog->outError("Corpse (guid: %u) have wrong corpse type (%u), not loading.", guid, type);
-            continue;
-        }
+    //do
+    //{
+    //    Field* fields = result->Fetch();
+    //    uint32 guid = fields[16].GetUInt32();
+    //    CorpseType type = CorpseType(fields[13].GetUInt8());
+    //    if (type >= MAX_CORPSE_TYPE)
+    //    {
+    //        sLog->outError("Corpse (guid: %u) have wrong corpse type (%u), not loading.", guid, type);
+    //        continue;
+    //    }
 
-        Corpse* corpse = new Corpse(type);
-        if (!corpse->LoadCorpseFromDB(guid, fields))
-        {
-            delete corpse;
-            continue;
-        }
+    //    Corpse* corpse = new Corpse(type);
+    //    if (!corpse->LoadCorpseFromDB(guid, fields))
+    //    {
+    //        delete corpse;
+    //        continue;
+    //    }
 
-        sObjectAccessor->AddCorpse(corpse);
-        ++count;
-    }
-    while (result->NextRow());
+    //    sObjectAccessor->AddCorpse(corpse);
+    //    ++count;
+    //}
+    //while (result->NextRow());
 
     sLog->outString(">> Loaded %u corpses in %u ms", count, GetMSTimeDiffToNow(oldMSTime));
     sLog->outString();
