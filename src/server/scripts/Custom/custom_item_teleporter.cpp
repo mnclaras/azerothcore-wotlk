@@ -1070,7 +1070,7 @@ public:
             CloseGossipMenuFor(player);
             break;
         case 5004: // Mazmorra custom (5HC)
-            player->TeleportTo(1, -295.456421f, 3151.562744f, 32.035973f, 2.178201f);
+            player->TeleportTo(530, -295.456421f, 3151.562744f, 32.035973f, 2.178201f);
             CloseGossipMenuFor(player);
             break;
 
