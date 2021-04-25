@@ -182,7 +182,7 @@ public:
                 {
                     if (group->GetMembersCount() > 3)
                     {
-                        ChatHandler(killer->GetSession()).PSendSysMessage(IsSpanishPlayer(killer) ?
+                        ChatHandler(killer->GetSession()).PSendSysMessage(killer->hasSpanishClient() ?
                             "|cffff6060[Informacion]:|r La Isla PvP no acepta grupos de mas de 3 personas!"
                             : "|cffff6060[Information]:|r Groups of 3 or more people are not allowed in PvP Island!");
 
@@ -190,7 +190,7 @@ public:
                             if (Player* member = itr->GetSource())
                                 if (member->IsInMap(killer) && killer->GetGUID() != member->GetGUID())
                                 {
-                                    ChatHandler(member->GetSession()).PSendSysMessage(IsSpanishPlayer(member) ?
+                                    ChatHandler(member->GetSession()).PSendSysMessage(member->hasSpanishClient() ?
                                         "|cffff6060[Informacion]:|r La Isla PvP no acepta grupos de mas de 3 personas!"
                                         : "|cffff6060[Information]:|r Groups of 3 or more people are not allowed in PvP Island!");
                                     member->TeleportTo(1, -11823.9, -4779.58, 5.9206, 1.1357);
@@ -266,12 +266,6 @@ public:
 
             }
         }
-    }
-
-    static bool IsSpanishPlayer(Player* player)
-    {
-        LocaleConstant locale = player->GetSession()->GetSessionDbLocaleIndex();
-        return (locale == LOCALE_esES || locale == LOCALE_esMX);
     }
 }; 
 

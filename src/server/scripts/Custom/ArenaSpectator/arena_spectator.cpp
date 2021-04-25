@@ -111,7 +111,7 @@ public:
         Player* player = handler->GetSession()->GetPlayer();
         if (!player->IsSpectator() || !player->FindMap() || !player->FindMap()->IsBattleArena())
         {
-            bool isSpanish = IsSpanishPlayer(player);
+            bool isSpanish = player->hasSpanishClient();
             handler->SendSysMessage(isSpanish ? "No eres un espectador." : "You are not a spectator.");
             return true;
         }
@@ -124,7 +124,7 @@ public:
     static bool HandleSpectatorSpectateCommand(ChatHandler* handler, char const* args)
     {
         Player* player = handler->GetSession()->GetPlayer();
-        bool isSpanish = IsSpanishPlayer(player);
+        bool isSpanish = player->hasSpanishClient();
         std::list<std::string> errors;
         if (!*args)
         {
@@ -351,12 +351,6 @@ public:
         return true;
     }
 
-    static bool IsSpanishPlayer(Player* player)
-    {
-        LocaleConstant locale = player->GetSession()->GetSessionDbLocaleIndex();
-        return (locale == LOCALE_esES || locale == LOCALE_esMX);
-    }
-
     std::vector<ChatCommand> GetCommands() const override
     {
         static std::vector<ChatCommand> spectatorCommandTable =
@@ -541,7 +535,7 @@ public:
         /*arenasQueueTotal[2] = GetSpecificArenasCount(ARENA_TYPE_3v3_SOLO, arenasQueuePlaying[2]);*/
         arenasQueueTotal[2] = GetSpecificArenasCount(ARENA_TYPE_5v5, arenasQueuePlaying[2]);
 
-        bool isSpanish = IsSpanishPlayer(player);
+        bool isSpanish = player->hasSpanishClient();
 
         std::stringstream Gossip2s;
         std::stringstream Gossip3s;
@@ -578,7 +572,7 @@ public:
     {
         player->PlayerTalkClass->ClearMenus();
 
-        bool isSpanish = IsSpanishPlayer(player);
+        bool isSpanish = player->hasSpanishClient();
 
         if (action == NPC_SPECTATOR_ACTION_MAIN_MENU)
         {
@@ -659,7 +653,7 @@ public:
                     char const* pTarget = target->GetName().c_str();
                     arena_spectator_commands::HandleSpectatorSpectateCommand(&handler, pTarget);
                 }
-                bool isSpanish = IsSpanishPlayer(player);
+                bool isSpanish = player->hasSpanishClient();
                 ChatHandler(player->GetSession()).PSendSysMessage(isSpanish ? "El jugador no esta online o no existe." : "Player is not online or does not exist.");
                 return true;
             }
@@ -959,7 +953,7 @@ public:
             }
         }
 
-        bool isSpanish = IsSpanishPlayer(player);
+        bool isSpanish = player->hasSpanishClient();
         if (page > 0)
         {
             if (type == NPC_SPECTATOR_ACTION_2V2_GAMES)
@@ -989,12 +983,6 @@ public:
             return false;
         }
         return true;
-    }
-
-    static bool IsSpanishPlayer(Player* player)
-    {
-        LocaleConstant locale = player->GetSession()->GetSessionDbLocaleIndex();
-        return (locale == LOCALE_esES || locale == LOCALE_esMX);
     }
 
     struct MyAI : public ScriptedAI

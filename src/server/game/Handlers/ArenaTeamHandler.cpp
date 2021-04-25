@@ -1,33 +1,32 @@
 /*
- * Copyright (C) 2016+     AzerothCore <www.azerothcore.org>, released under GNU GPL v2 license: https://github.com/azerothcore/azerothcore-wotlk/blob/master/LICENSE-GPL2
+ * Copyright (C) 2016+     AzerothCore <www.azerothcore.org>, released under GNU GPL v2 license, you may redistribute it and/or modify it under version 2 of the License, or (at your option), any later version.
  * Copyright (C) 2008-2016 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2005-2009 MaNGOS <http://getmangos.com/>
  */
 
+#include "ArenaTeam.h"
+#include "ArenaTeamMgr.h"
+#include "BattlegroundMgr.h"
+#include "DatabaseEnv.h"
+#include "Log.h"
+#include "ObjectMgr.h"
+#include "Opcodes.h"
 #include "Player.h"
+#include "SocialMgr.h"
 #include "World.h"
 #include "WorldPacket.h"
 #include "WorldSession.h"
-#include "DatabaseEnv.h"
-
-#include "ArenaTeam.h"
-#include "Log.h"
-#include "ObjectMgr.h"
-#include "SocialMgr.h"
-#include "ArenaTeamMgr.h"
-#include "BattlegroundMgr.h"
-#include "Opcodes.h"
 
 void WorldSession::HandleInspectArenaTeamsOpcode(WorldPacket& recvData)
 {
 #if defined(ENABLE_EXTRAS) && defined(ENABLE_EXTRA_LOGS)
-    sLog->outDebug(LOG_FILTER_NETWORKIO, "MSG_INSPECT_ARENA_TEAMS");
+    LOG_DEBUG("network", "MSG_INSPECT_ARENA_TEAMS");
 #endif
 
     uint64 guid;
     recvData >> guid;
 #if defined(ENABLE_EXTRAS) && defined(ENABLE_EXTRA_LOGS)
-    sLog->outDebug(LOG_FILTER_NETWORKIO, "Inspect Arena stats (GUID: %u TypeId: %u)", GUID_LOPART(guid), GuidHigh2TypeId(GUID_HIPART(guid)));
+    LOG_DEBUG("network", "Inspect Arena stats (GUID: %u TypeId: %u)", GUID_LOPART(guid), GuidHigh2TypeId(GUID_HIPART(guid)));
 #endif
 
     if (Player* player = ObjectAccessor::FindPlayer(guid))
@@ -46,7 +45,7 @@ void WorldSession::HandleInspectArenaTeamsOpcode(WorldPacket& recvData)
 void WorldSession::HandleArenaTeamQueryOpcode(WorldPacket& recvData)
 {
 #if defined(ENABLE_EXTRAS) && defined(ENABLE_EXTRA_LOGS)
-    sLog->outDebug(LOG_FILTER_NETWORKIO, "WORLD: Received CMSG_ARENA_TEAM_QUERY");
+    LOG_DEBUG("network", "WORLD: Received CMSG_ARENA_TEAM_QUERY");
 #endif
 
     uint32 arenaTeamId;
@@ -62,7 +61,7 @@ void WorldSession::HandleArenaTeamQueryOpcode(WorldPacket& recvData)
 void WorldSession::HandleArenaTeamRosterOpcode(WorldPacket& recvData)
 {
 #if defined(ENABLE_EXTRAS) && defined(ENABLE_EXTRA_LOGS)
-    sLog->outDebug(LOG_FILTER_NETWORKIO, "WORLD: Received CMSG_ARENA_TEAM_ROSTER");
+    LOG_DEBUG("network", "WORLD: Received CMSG_ARENA_TEAM_ROSTER");
 #endif
 
     uint32 arenaTeamId;                                     // arena team id
@@ -75,7 +74,7 @@ void WorldSession::HandleArenaTeamRosterOpcode(WorldPacket& recvData)
 void WorldSession::HandleArenaTeamInviteOpcode(WorldPacket& recvData)
 {
 #if defined(ENABLE_EXTRAS) && defined(ENABLE_EXTRA_LOGS)
-    sLog->outDebug(LOG_FILTER_NETWORKIO, "CMSG_ARENA_TEAM_INVITE");
+    LOG_DEBUG("network", "CMSG_ARENA_TEAM_INVITE");
 #endif
 
     uint32 arenaTeamId;                                     // arena team id
@@ -160,7 +159,7 @@ void WorldSession::HandleArenaTeamInviteOpcode(WorldPacket& recvData)
     }
 
 #if defined(ENABLE_EXTRAS) && defined(ENABLE_EXTRA_LOGS)
-    sLog->outDebug(LOG_FILTER_BATTLEGROUND, "Player %s Invited %s to Join his ArenaTeam", GetPlayer()->GetName().c_str(), invitedName.c_str());
+    LOG_DEBUG("bg.battleground", "Player %s Invited %s to Join his ArenaTeam", GetPlayer()->GetName().c_str(), invitedName.c_str());
 #endif
 
     player->SetArenaTeamIdInvited(arenaTeam->GetId());
@@ -171,14 +170,14 @@ void WorldSession::HandleArenaTeamInviteOpcode(WorldPacket& recvData)
     player->GetSession()->SendPacket(&data);
 
 #if defined(ENABLE_EXTRAS) && defined(ENABLE_EXTRA_LOGS)
-    sLog->outDebug(LOG_FILTER_NETWORKIO, "WORLD: Sent SMSG_ARENA_TEAM_INVITE");
+    LOG_DEBUG("network", "WORLD: Sent SMSG_ARENA_TEAM_INVITE");
 #endif
 }
 
 void WorldSession::HandleArenaTeamAcceptOpcode(WorldPacket& /*recvData*/)
 {
 #if defined(ENABLE_EXTRAS) && defined(ENABLE_EXTRA_LOGS)
-    sLog->outDebug(LOG_FILTER_NETWORKIO, "CMSG_ARENA_TEAM_ACCEPT");                // empty opcode
+    LOG_DEBUG("network", "CMSG_ARENA_TEAM_ACCEPT");                // empty opcode
 #endif
 
     ArenaTeam* arenaTeam = sArenaTeamMgr->GetArenaTeamById(_player->GetArenaTeamIdInvited());
@@ -213,7 +212,7 @@ void WorldSession::HandleArenaTeamAcceptOpcode(WorldPacket& /*recvData*/)
 void WorldSession::HandleArenaTeamDeclineOpcode(WorldPacket& /*recvData*/)
 {
 #if defined(ENABLE_EXTRAS) && defined(ENABLE_EXTRA_LOGS)
-    sLog->outDebug(LOG_FILTER_NETWORKIO, "CMSG_ARENA_TEAM_DECLINE");               // empty opcode
+    LOG_DEBUG("network", "CMSG_ARENA_TEAM_DECLINE");               // empty opcode
 #endif
 
     // Remove invite from player
@@ -223,7 +222,7 @@ void WorldSession::HandleArenaTeamDeclineOpcode(WorldPacket& /*recvData*/)
 void WorldSession::HandleArenaTeamLeaveOpcode(WorldPacket& recvData)
 {
 #if defined(ENABLE_EXTRAS) && defined(ENABLE_EXTRA_LOGS)
-    sLog->outDebug(LOG_FILTER_NETWORKIO, "CMSG_ARENA_TEAM_LEAVE");
+    LOG_DEBUG("network", "CMSG_ARENA_TEAM_LEAVE");
 #endif
 
     uint32 arenaTeamId;
@@ -282,7 +281,7 @@ void WorldSession::HandleArenaTeamLeaveOpcode(WorldPacket& recvData)
 void WorldSession::HandleArenaTeamDisbandOpcode(WorldPacket& recvData)
 {
 #if defined(ENABLE_EXTRAS) && defined(ENABLE_EXTRA_LOGS)
-    sLog->outDebug(LOG_FILTER_NETWORKIO, "CMSG_ARENA_TEAM_DISBAND");
+    LOG_DEBUG("network", "CMSG_ARENA_TEAM_DISBAND");
 #endif
 
     uint32 arenaTeamId;
@@ -316,7 +315,7 @@ void WorldSession::HandleArenaTeamDisbandOpcode(WorldPacket& recvData)
 void WorldSession::HandleArenaTeamRemoveOpcode(WorldPacket& recvData)
 {
 #if defined(ENABLE_EXTRAS) && defined(ENABLE_EXTRA_LOGS)
-    sLog->outDebug(LOG_FILTER_NETWORKIO, "CMSG_ARENA_TEAM_REMOVE");
+    LOG_DEBUG("network", "CMSG_ARENA_TEAM_REMOVE");
 #endif
 
     uint32 arenaTeamId;
@@ -383,7 +382,7 @@ void WorldSession::HandleArenaTeamRemoveOpcode(WorldPacket& recvData)
 void WorldSession::HandleArenaTeamLeaderOpcode(WorldPacket& recvData)
 {
 #if defined(ENABLE_EXTRAS) && defined(ENABLE_EXTRA_LOGS)
-    sLog->outDebug(LOG_FILTER_NETWORKIO, "CMSG_ARENA_TEAM_LEADER");
+    LOG_DEBUG("network", "CMSG_ARENA_TEAM_LEADER");
 #endif
 
     uint32 arenaTeamId;

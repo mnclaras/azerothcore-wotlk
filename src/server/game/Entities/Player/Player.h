@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2016+     AzerothCore <www.azerothcore.org>, released under GNU GPL v2 license: https://github.com/azerothcore/azerothcore-wotlk/blob/master/LICENSE-GPL2
+ * Copyright (C) 2016+     AzerothCore <www.azerothcore.org>, released under GNU GPL v2 license, you may redistribute it and/or modify it under version 2 of the License, or (at your option), any later version.
  * Copyright (C) 2008-2016 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2005-2009 MaNGOS <http://getmangos.com/>
  */
@@ -7,20 +7,19 @@
 #ifndef _PLAYER_H
 #define _PLAYER_H
 
+#include "Battleground.h"
 #include "DBCStores.h"
 #include "GroupReference.h"
-#include "MapReference.h"
 #include "InstanceSaveMgr.h"
-
+#include "ArenaTeam.h"
 #include "Item.h"
+#include "MapReference.h"
+#include "ObjectMgr.h"
 #include "PetDefines.h"
 #include "QuestDef.h"
 #include "SpellMgr.h"
 #include "Unit.h"
-#include "Battleground.h"
 #include "WorldSession.h"
-#include "ObjectMgr.h"
-
 #include <string>
 #include <vector>
 
@@ -311,7 +310,8 @@ struct PvPInfo
     bool IsInHostileArea{false};               ///> Marks if player is in an area which forces PvP flag
     bool IsInNoPvPArea{false};                 ///> Marks if player is in a sanctuary or friendly capital city
     bool IsInFFAPvPArea{false};                ///> Marks if player is in an FFAPvP area (such as Gurubashi Arena)
-    time_t EndTimer{0};                    ///> Time when player unflags himself for PvP (flag removed after 5 minutes)
+    time_t EndTimer{0};                        ///> Time when player unflags himself for PvP (flag removed after 5 minutes)
+    time_t FFAPvPEndTimer{0};                  ///> Time when player unflags himself for FFA PvP (flag removed after 30 sec)
 };
 
 struct DuelInfo
@@ -706,19 +706,6 @@ enum InstanceResetWarningType
     RAID_INSTANCE_EXPIRED           = 5
 };
 
-// PLAYER_FIELD_ARENA_TEAM_INFO_1_1 offsets
-enum ArenaTeamInfoType
-{
-    ARENA_TEAM_ID                = 0,
-    ARENA_TEAM_TYPE              = 1,                       // new in 3.2 - team type?
-    ARENA_TEAM_MEMBER            = 2,                       // 0 - captain, 1 - member
-    ARENA_TEAM_GAMES_WEEK        = 3,
-    ARENA_TEAM_GAMES_SEASON      = 4,
-    ARENA_TEAM_WINS_SEASON       = 5,
-    ARENA_TEAM_PERSONAL_RATING   = 6,
-    ARENA_TEAM_END               = 7
-};
-
 class InstanceSave;
 
 enum RestFlag
@@ -838,17 +825,23 @@ enum PlayerCharmedAISpells
 #define MAX_PLAYER_SUMMON_DELAY                   (2*MINUTE)
 #define MAX_MONEY_AMOUNT                       (0x7FFFFFFF-1)
 
-struct AccessRequirement
+struct ProgressionRequirement
+{
+    uint32 id;
+    TeamId faction;
+    std::string note;
+    uint32 priority;
+    bool checkLeaderOnly;
+};
+
+struct DungeonProgressionRequirements
 {
     uint8  levelMin;
     uint8  levelMax;
-    uint32 item;
-    uint32 item2;
-    uint32 quest_A;
-    uint32 quest_H;
-    uint32 achievement;
-    std::string questFailedText;
     uint16 reqItemLevel;
+    std::vector<ProgressionRequirement*> quests;
+    std::vector<ProgressionRequirement*> items;
+    std::vector<ProgressionRequirement*> achievements;
 };
 
 enum CharDeleteMethod
@@ -1112,6 +1105,11 @@ public:
         SetFloatValue(UNIT_FIELD_COMBATREACH, scale * DEFAULT_COMBAT_REACH);
     }
 
+    [[nodiscard]] bool hasSpanishClient()
+    {
+        return GetSession()->GetSessionDbLocaleIndex() == LOCALE_esES || GetSession()->GetSessionDbLocaleIndex() == LOCALE_esMX;
+    }
+
     bool TeleportTo(uint32 mapid, float x, float y, float z, float orientation, uint32 options = 0, Unit* target = nullptr);
     bool TeleportTo(WorldLocation const& loc, uint32 options = 0, Unit* target = nullptr)
     {
@@ -1173,6 +1171,9 @@ public:
     void CleanupAfterTaxiFlight();
     void ContinueTaxiFlight();
     // mount_id can be used in scripting calls
+
+    [[nodiscard]] bool IsDeveloper() const { return HasFlag(PLAYER_FLAGS, PLAYER_FLAGS_DEVELOPER); }
+    void SetDeveloper(bool on) { ApplyModFlag(PLAYER_FLAGS, PLAYER_FLAGS_DEVELOPER, on); }
     [[nodiscard]] bool isAcceptWhispers() const { return m_ExtraFlags & PLAYER_EXTRA_ACCEPT_WHISPERS; }
     void SetAcceptWhispers(bool on) { if (on) m_ExtraFlags |= PLAYER_EXTRA_ACCEPT_WHISPERS; else m_ExtraFlags &= ~PLAYER_EXTRA_ACCEPT_WHISPERS; }
     [[nodiscard]] bool IsGameMaster() const { return m_ExtraFlags & PLAYER_EXTRA_GM_ON; }
@@ -1461,7 +1462,7 @@ public:
     void RemoveRewardedQuest(uint32 questId, bool update = true);
     void SendQuestUpdate(uint32 questId);
     QuestGiverStatus GetQuestDialogStatus(Object* questGiver);
-
+    float GetQuestRate();
     void SetDailyQuestStatus(uint32 quest_id);
     bool IsDailyQuestDone(uint32 quest_id);
     void SetWeeklyQuestStatus(uint32 quest_id);
@@ -1530,7 +1531,7 @@ public:
     void SendQuestTimerFailed(uint32 quest_id);
     void SendCanTakeQuestResponse(uint32 msg) const;
     void SendQuestConfirmAccept(Quest const* quest, Player* pReceiver);
-    void SendPushToPartyResponse(Player* player, uint8 msg);
+    void SendPushToPartyResponse(Player const* player, uint8 msg) const;
     void SendQuestUpdateAddItem(Quest const* quest, uint32 item_idx, uint16 count);
     void SendQuestUpdateAddCreatureOrGo(Quest const* quest, uint64 guid, uint32 creatureOrGO_idx, uint16 old_count, uint16 add_count);
     void SendQuestUpdateAddPlayer(Quest const* quest, uint16 old_count, uint16 add_count);
@@ -1611,6 +1612,7 @@ public:
 
     [[nodiscard]] RewardedQuestSet const& getRewardedQuests() const { return m_RewardedQuests; }
     QuestStatusMap& getQuestStatusMap() { return m_QuestStatus; }
+    QuestStatusSaveMap& GetQuestStatusSaveMap() { return m_QuestStatusSave; }
 
     [[nodiscard]] size_t GetRewardedQuestCount() const { return m_RewardedQuests.size(); }
     [[nodiscard]] bool IsQuestRewarded(uint32 quest_id) const
@@ -1690,8 +1692,8 @@ public:
     void SendProficiency(ItemClass itemClass, uint32 itemSubclassMask);
     void SendInitialSpells();
     void SendLearnPacket(uint32 spellId, bool learn);
-    bool addSpell(uint32 spellId, uint8 addSpecMask, bool updateActive, bool temporary = false);
-    bool _addSpell(uint32 spellId, uint8 addSpecMask, bool temporary);
+    bool addSpell(uint32 spellId, uint8 addSpecMask, bool updateActive, bool temporary = false, bool learnFromSkill = false);
+    bool _addSpell(uint32 spellId, uint8 addSpecMask, bool temporary, bool learnFromSkill = false);
     void learnSpell(uint32 spellId);
     void removeSpell(uint32 spellId, uint8 removeSpecMask, bool onlyTemporary);
     void resetSpells();
@@ -1839,7 +1841,8 @@ public:
     bool IsActionButtonDataValid(uint8 button, uint32 action, uint8 type);
 
     PvPInfo pvpInfo;
-    void UpdatePvPState(bool onlyFFA = false);
+    void UpdatePvPState();
+    void UpdateFFAPvPState(bool reset = true);
     void SetPvP(bool state)
     {
         Unit::SetPvP(state);
@@ -1860,6 +1863,7 @@ public:
 
     void UpdateAfkReport(time_t currTime);
     void UpdatePvPFlag(time_t currTime);
+    void UpdateFFAPvPFlag(time_t currTime);
     void UpdateContestedPvP(uint32 currTime);
     void SetContestedPvPTimer(uint32 newTime) {m_contestedPvPTimer = newTime;}
     void ResetContestedPvP()
@@ -1908,10 +1912,10 @@ public:
         SetArenaTeamInfoField(slot, ARENA_TEAM_TYPE, type);
     }
     void SetArenaTeamInfoField(uint8 slot, ArenaTeamInfoType type, uint32 value);
+    uint32 GetArenaPersonalRating(uint8 slot) const;
     static uint32 GetArenaTeamIdFromDB(uint64 guid, uint8 slot);
     static void LeaveAllArenaTeams(uint64 guid);
     [[nodiscard]] uint32 GetArenaTeamId(uint8 slot) const;
-    [[nodiscard]] uint32 GetArenaPersonalRating(uint8 slot) const;
     void SetArenaTeamIdInvited(uint32 ArenaTeamId) { m_ArenaTeamIdInvited = ArenaTeamId; }
     uint32 GetArenaTeamIdInvited() { return m_ArenaTeamIdInvited; }
 
@@ -2355,7 +2359,7 @@ public:
     }
     void HandleFall(MovementInfo const& movementInfo);
 
-    [[nodiscard]] bool canFlyInZone(uint32 mapid, uint32 zone) const;
+    [[nodiscard]] bool canFlyInZone(uint32 mapid, uint32 zone, SpellInfo const* bySpell) const;
 
     void SetClientControl(Unit* target, bool allowMove, bool packetOnly = false);
 
@@ -2436,6 +2440,10 @@ public:
     void SendCinematicStart(uint32 CinematicSequenceId);
     void SendMovieStart(uint32 MovieId);
 
+    uint16 GetMaxSkillValueForLevel() const;
+    bool IsFFAPvP();
+    bool IsPvP();
+
     /*********************************************************/
     /***                 INSTANCE SYSTEM                   ***/
     /*********************************************************/
@@ -2450,7 +2458,10 @@ public:
     [[nodiscard]] uint32 GetPendingBind() const { return _pendingBindId; }
     void SendRaidInfo();
     void SendSavedInstances();
-    bool Satisfy(AccessRequirement const* ar, uint32 target_map, bool report = false);
+    void PrettyPrintRequirementsQuestList(const std::vector<const ProgressionRequirement*>& missingQuests) const;
+    void PrettyPrintRequirementsAchievementsList(const std::vector<const ProgressionRequirement*>& missingAchievements) const;
+    void PrettyPrintRequirementsItemsList(const std::vector<const ProgressionRequirement*>& missingItems) const;
+    bool Satisfy(DungeonProgressionRequirements const* ar, uint32 target_map, bool report = false);
     bool CheckInstanceLoginValid();
     [[nodiscard]] bool CheckInstanceCount(uint32 instanceId) const;
 
@@ -2562,40 +2573,7 @@ public:
     bool SetHover(bool enable, bool packetOnly = false) override;
 
     [[nodiscard]] bool CanFly() const override { return m_movementInfo.HasMovementFlag(MOVEMENTFLAG_CAN_FLY); }
-
-    //! Return collision height sent to client
-    float GetCollisionHeight(bool mounted)
-    {
-        if (mounted)
-        {
-            CreatureDisplayInfoEntry const* mountDisplayInfo = sCreatureDisplayInfoStore.LookupEntry(GetUInt32Value(UNIT_FIELD_MOUNTDISPLAYID));
-            if (!mountDisplayInfo)
-                return GetCollisionHeight(false);
-
-            CreatureModelDataEntry const* mountModelData = sCreatureModelDataStore.LookupEntry(mountDisplayInfo->ModelId);
-            if (!mountModelData)
-                return GetCollisionHeight(false);
-
-            CreatureDisplayInfoEntry const* displayInfo = sCreatureDisplayInfoStore.LookupEntry(GetNativeDisplayId());
-            ASSERT(displayInfo);
-            CreatureModelDataEntry const* modelData = sCreatureModelDataStore.LookupEntry(displayInfo->ModelId);
-            ASSERT(modelData);
-
-            float scaleMod = GetFloatValue(OBJECT_FIELD_SCALE_X); // 99% sure about this
-
-            return scaleMod * mountModelData->MountHeight + modelData->CollisionHeight * 0.5f;
-        }
-        else
-        {
-            //! Dismounting case - use basic default model data
-            CreatureDisplayInfoEntry const* displayInfo = sCreatureDisplayInfoStore.LookupEntry(GetNativeDisplayId());
-            ASSERT(displayInfo);
-            CreatureModelDataEntry const* modelData = sCreatureModelDataStore.LookupEntry(displayInfo->ModelId);
-            ASSERT(modelData);
-
-            return modelData->CollisionHeight;
-        }
-    }
+    [[nodiscard]] bool CanEnterWater() const override { return true; }
 
     // OURS
     // saving
@@ -2641,6 +2619,9 @@ public:
     [[nodiscard]] const PlayerTalentMap& GetTalentMap() const { return m_talents; }
     [[nodiscard]] uint32 GetNextSave() const { return m_nextSave; }
     [[nodiscard]] SpellModList const& GetSpellModList(uint32 type) const { return m_spellMods[type]; }
+
+    void SetServerSideVisibility(ServerSideVisibilityType type, AccountTypes sec);
+    void SetServerSideVisibilityDetect(ServerSideVisibilityType type, AccountTypes sec);
 
     static std::unordered_map<int, bgZoneRef> bgZoneIdToFillWorldStates; // zoneId -> FillInitialWorldStates
 
@@ -2843,7 +2824,7 @@ protected:
     EnchantDurationList m_enchantDuration;
     ItemDurationList m_itemDuration;
     ItemDurationList m_itemSoulboundTradeable;
-    ACE_Thread_Mutex m_soulboundTradableLock;
+    std::mutex m_soulboundTradableLock;
 
     void ResetTimeSync();
     void SendTimeSync();
@@ -3004,6 +2985,8 @@ private:
     uint32 manaBeforeDuel;
 
     bool m_isInstantFlightOn;
+
+    uint32 m_flightSpellActivated;
 
     // Remote location information
     uint32 m_cinematicDiff;

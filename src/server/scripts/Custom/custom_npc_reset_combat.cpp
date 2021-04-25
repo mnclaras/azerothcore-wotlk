@@ -31,16 +31,9 @@ class custom_npc_tools_reset_combat : public CreatureScript
 public:
     custom_npc_tools_reset_combat() : CreatureScript("npc_tools_reset_combat") { }
 
-    static bool IsSpanishPlayer(Player* player)
-    {
-        LocaleConstant locale = player->GetSession()->GetSessionDbLocaleIndex();
-        return (locale == LOCALE_esES || locale == LOCALE_esMX);
-    }
-
-
     bool OnGossipHello(Player* player, Creature* creature) override
     {
-        bool isSpanish = IsSpanishPlayer(player);
+        bool isSpanish = player->hasSpanishClient();
         AddGossipItemFor(player, GOSSIP_ICON_TRAINER, isSpanish ? "Quitar combate." : "Reset Combat.", GOSSIP_SENDER_MAIN, 4,
             isSpanish ? "Quitar combate?" : "Reset combat?", 0, false);
         SendGossipMenuFor(player, DEFAULT_MESSAGE, creature->GetGUID());
@@ -53,7 +46,7 @@ public:
 
         if (sender == GOSSIP_SENDER_MAIN)
         {
-            bool isSpanish = IsSpanishPlayer(player);
+            bool isSpanish = player->hasSpanishClient();
 
             switch (action)
             {

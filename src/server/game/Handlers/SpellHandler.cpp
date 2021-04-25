@@ -1,27 +1,29 @@
 /*
- * Copyright (C) 2016+     AzerothCore <www.azerothcore.org>, released under GNU GPL v2 license: https://github.com/azerothcore/azerothcore-wotlk/blob/master/LICENSE-GPL2
+ * Copyright (C) 2016+     AzerothCore <www.azerothcore.org>, released under GNU GPL v2 license, you may redistribute it and/or modify it under version 2 of the License, or (at your option), any later version.
  * Copyright (C) 2008-2016 TrinityCore <http://www.trinitycore.org/>
  * Copyright (C) 2005-2009 MaNGOS <http://getmangos.com/>
  */
 
 #include "Common.h"
+#include "CreatureAI.h"
 #include "DBCStores.h"
+#include "GameObjectAI.h"
+#include "Log.h"
+#include "ObjectMgr.h"
+#include "Opcodes.h"
+#include "Player.h"
+#include "ScriptMgr.h"
+#include "Spell.h"
+#include "SpellAuraEffects.h"
+#include "ScriptMgr.h"
+#include "SpellAuras.h"
+#include "SpellMgr.h"
+#include "TemporarySummon.h"
+#include "Totem.h"
+#include "Vehicle.h"
 #include "WorldPacket.h"
 #include "WorldSession.h"
-#include "ObjectMgr.h"
-#include "SpellMgr.h"
-#include "Log.h"
-#include "Opcodes.h"
-#include "Spell.h"
-#include "Vehicle.h"
-#include "Totem.h"
-#include "TemporarySummon.h"
-#include "SpellAuras.h"
-#include "CreatureAI.h"
-#include "ScriptMgr.h"
-#include "GameObjectAI.h"
-#include "SpellAuraEffects.h"
-#include "Player.h"
+
 #ifdef ELUNA
 #include "LuaEngine.h"
 #endif
@@ -68,25 +70,25 @@ void WorldSession::HandleUseItemOpcode(WorldPacket& recvPacket)
 
     if (glyphIndex >= MAX_GLYPH_SLOT_INDEX)
     {
-        pUser->SendEquipError(EQUIP_ERR_ITEM_NOT_FOUND, NULL, nullptr);
+        pUser->SendEquipError(EQUIP_ERR_ITEM_NOT_FOUND, nullptr, nullptr);
         return;
     }
 
     Item* pItem = pUser->GetUseableItemByPos(bagIndex, slot);
     if (!pItem)
     {
-        pUser->SendEquipError(EQUIP_ERR_ITEM_NOT_FOUND, NULL, nullptr);
+        pUser->SendEquipError(EQUIP_ERR_ITEM_NOT_FOUND, nullptr, nullptr);
         return;
     }
 
     if (pItem->GetGUID() != itemGUID)
     {
-        pUser->SendEquipError(EQUIP_ERR_ITEM_NOT_FOUND, NULL, nullptr);
+        pUser->SendEquipError(EQUIP_ERR_ITEM_NOT_FOUND, nullptr, nullptr);
         return;
     }
 
 #if defined(ENABLE_EXTRAS) && defined(ENABLE_EXTRA_LOGS)
-    sLog->outDebug(LOG_FILTER_NETWORKIO, "WORLD: CMSG_USE_ITEM packet, bagIndex: %u, slot: %u, castCount: %u, spellId: %u, Item: %u, glyphIndex: %u, data length = %i", bagIndex, slot, castCount, spellId, pItem->GetEntry(), glyphIndex, (uint32)recvPacket.size());
+    LOG_DEBUG("network", "WORLD: CMSG_USE_ITEM packet, bagIndex: %u, slot: %u, castCount: %u, spellId: %u, Item: %u, glyphIndex: %u, data length = %i", bagIndex, slot, castCount, spellId, pItem->GetEntry(), glyphIndex, (uint32)recvPacket.size());
 #endif
 
     ItemTemplate const* proto = pItem->GetTemplate();
@@ -172,7 +174,7 @@ void WorldSession::HandleUseItemOpcode(WorldPacket& recvPacket)
 void WorldSession::HandleOpenItemOpcode(WorldPacket& recvPacket)
 {
 #if defined(ENABLE_EXTRAS) && defined(ENABLE_EXTRA_LOGS)
-    sLog->outDebug(LOG_FILTER_NETWORKIO, "WORLD: CMSG_OPEN_ITEM packet, data length = %i", (uint32)recvPacket.size());
+    LOG_DEBUG("network", "WORLD: CMSG_OPEN_ITEM packet, data length = %i", (uint32)recvPacket.size());
 #endif
 
     Player* pUser = _player;
@@ -184,7 +186,7 @@ void WorldSession::HandleOpenItemOpcode(WorldPacket& recvPacket)
     // xinef: additional check, client outputs message on its own
     if (!pUser->IsAlive())
     {
-        pUser->SendEquipError(EQUIP_ERR_YOU_ARE_DEAD, NULL, nullptr);
+        pUser->SendEquipError(EQUIP_ERR_YOU_ARE_DEAD, nullptr, nullptr);
         return;
     }
 
@@ -193,13 +195,13 @@ void WorldSession::HandleOpenItemOpcode(WorldPacket& recvPacket)
     recvPacket >> bagIndex >> slot;
 
 #if defined(ENABLE_EXTRAS) && defined(ENABLE_EXTRA_LOGS)
-    sLog->outDetail("bagIndex: %u, slot: %u", bagIndex, slot);
+    LOG_DEBUG("server", "bagIndex: %u, slot: %u", bagIndex, slot);
 #endif
 
     Item* item = pUser->GetItemByPos(bagIndex, slot);
     if (!item)
     {
-        pUser->SendEquipError(EQUIP_ERR_ITEM_NOT_FOUND, NULL, nullptr);
+        pUser->SendEquipError(EQUIP_ERR_ITEM_NOT_FOUND, nullptr, nullptr);
         return;
     }
 
@@ -214,7 +216,7 @@ void WorldSession::HandleOpenItemOpcode(WorldPacket& recvPacket)
     if (!(proto->Flags & ITEM_FLAG_HAS_LOOT) && !item->HasFlag(ITEM_FIELD_FLAGS, ITEM_FIELD_FLAG_WRAPPED))
     {
         pUser->SendEquipError(EQUIP_ERR_CANT_DO_RIGHT_NOW, item, nullptr);
-        sLog->outError("Possible hacking attempt: Player %s [guid: %u] tried to open item [guid: %u, entry: %u] which is not openable!",
+        LOG_ERROR("server", "Possible hacking attempt: Player %s [guid: %u] tried to open item [guid: %u, entry: %u] which is not openable!",
                        pUser->GetName().c_str(), pUser->GetGUIDLow(), item->GetGUIDLow(), proto->ItemId);
         return;
     }
@@ -228,7 +230,7 @@ void WorldSession::HandleOpenItemOpcode(WorldPacket& recvPacket)
         if (!lockInfo)
         {
             pUser->SendEquipError(EQUIP_ERR_ITEM_LOCKED, item, nullptr);
-            sLog->outError("WORLD::OpenItem: item [guid = %u] has an unknown lockId: %u!", item->GetGUIDLow(), lockId);
+            LOG_ERROR("server", "WORLD::OpenItem: item [guid = %u] has an unknown lockId: %u!", item->GetGUIDLow(), lockId);
             return;
         }
 
@@ -269,7 +271,7 @@ void WorldSession::HandleOpenWrappedItemCallback(PreparedQueryResult result, uin
 
     if (!result)
     {
-        sLog->outError("Wrapped item %u don't have record in character_gifts table and will deleted", item->GetGUIDLow());
+        LOG_ERROR("server", "Wrapped item %u don't have record in character_gifts table and will deleted", item->GetGUIDLow());
         GetPlayer()->DestroyItem(item->GetBagSlot(), item->GetSlot(), true);
         return;
     }
@@ -301,7 +303,7 @@ void WorldSession::HandleGameObjectUseOpcode(WorldPacket& recvData)
     recvData >> guid;
 
 #if defined(ENABLE_EXTRAS) && defined(ENABLE_EXTRA_LOGS)
-    sLog->outDebug(LOG_FILTER_NETWORKIO, "WORLD: Recvd CMSG_GAMEOBJ_USE Message [guid=%u]", GUID_LOPART(guid));
+    LOG_DEBUG("network", "WORLD: Recvd CMSG_GAMEOBJ_USE Message [guid=%u]", GUID_LOPART(guid));
 #endif
 
     if (GameObject* obj = GetPlayer()->GetMap()->GetGameObject(guid))
@@ -324,7 +326,7 @@ void WorldSession::HandleGameobjectReportUse(WorldPacket& recvPacket)
     recvPacket >> guid;
 
 #if defined(ENABLE_EXTRAS) && defined(ENABLE_EXTRA_LOGS)
-    sLog->outDebug(LOG_FILTER_NETWORKIO, "WORLD: Recvd CMSG_GAMEOBJ_REPORT_USE Message [in game guid: %u]", GUID_LOPART(guid));
+    LOG_DEBUG("network", "WORLD: Recvd CMSG_GAMEOBJ_REPORT_USE Message [in game guid: %u]", GUID_LOPART(guid));
 #endif
 
     // ignore for remote control state
@@ -350,8 +352,10 @@ void WorldSession::HandleCastSpellOpcode(WorldPacket& recvPacket)
     uint8  castCount, castFlags;
     recvPacket >> castCount >> spellId >> castFlags;
 
+    uint32 oldSpellId = spellId;
+
 #if defined(ENABLE_EXTRAS) && defined(ENABLE_EXTRA_LOGS)
-    sLog->outDebug(LOG_FILTER_NETWORKIO, "WORLD: got cast spell packet, castCount: %u, spellId: %u, castFlags: %u, data length = %u", castCount, spellId, castFlags, (uint32)recvPacket.size());
+    LOG_DEBUG("network", "WORLD: got cast spell packet, castCount: %u, spellId: %u, castFlags: %u, data length = %u", castCount, spellId, castFlags, (uint32)recvPacket.size());
 #endif
 
     // ignore for remote control state (for player case)
@@ -366,7 +370,7 @@ void WorldSession::HandleCastSpellOpcode(WorldPacket& recvPacket)
 
     if (!spellInfo)
     {
-        sLog->outError("WORLD: unknown spell id %u", spellId);
+        LOG_ERROR("server", "WORLD: unknown spell id %u", spellId);
         recvPacket.rfinish(); // prevent spam at ignore packet
         return;
     }
@@ -411,6 +415,11 @@ void WorldSession::HandleCastSpellOpcode(WorldPacket& recvPacket)
         }
     }
 
+    sScriptMgr->ValidateSpellAtCastSpell(_player, oldSpellId, spellId, castCount, castFlags);
+
+    if (oldSpellId != spellId)
+        spellInfo = sSpellMgr->GetSpellInfo(spellId);
+
     // Client is resending autoshot cast opcode when other spell is casted during shoot rotation
     // Skip it to prevent "interrupt" message
     if (spellInfo->IsAutoRepeatRangedSpell() && _player->GetCurrentSpell(CURRENT_AUTOREPEAT_SPELL)
@@ -444,12 +453,15 @@ void WorldSession::HandleCastSpellOpcode(WorldPacket& recvPacket)
     {
         SpellInfo const* actualSpellInfo = spellInfo->GetAuraRankForLevel(targets.GetUnitTarget()->getLevel());
 
-        // if rank not found then function return NULL but in explicit cast case original spell can be casted and later failed with appropriate error message
+        // if rank not found then function return nullptr but in explicit cast case original spell can be casted and later failed with appropriate error message
         if (actualSpellInfo)
             spellInfo = actualSpellInfo;
     }
 
     Spell* spell = new Spell(mover, spellInfo, TRIGGERED_NONE, 0, false);
+
+    sScriptMgr->ValidateSpellAtCastSpellResult(_player, mover, spell, oldSpellId, spellId);
+
     spell->m_cast_count = castCount;                       // set count of casts
     spell->prepare(&targets);
 }
@@ -503,7 +515,7 @@ void WorldSession::HandlePetCancelAuraOpcode(WorldPacket& recvPacket)
     SpellInfo const* spellInfo = sSpellMgr->GetSpellInfo(spellId);
     if (!spellInfo)
     {
-        sLog->outError("WORLD: unknown PET spell id %u", spellId);
+        LOG_ERROR("server", "WORLD: unknown PET spell id %u", spellId);
         return;
     }
 
@@ -511,13 +523,13 @@ void WorldSession::HandlePetCancelAuraOpcode(WorldPacket& recvPacket)
 
     if (!pet)
     {
-        sLog->outError("HandlePetCancelAura: Attempt to cancel an aura for non-existant pet %u by player '%s'", uint32(GUID_LOPART(guid)), GetPlayer()->GetName().c_str());
+        LOG_ERROR("server", "HandlePetCancelAura: Attempt to cancel an aura for non-existant pet %u by player '%s'", uint32(GUID_LOPART(guid)), GetPlayer()->GetName().c_str());
         return;
     }
 
     if (pet != GetPlayer()->GetGuardianPet() && pet != GetPlayer()->GetCharm())
     {
-        sLog->outError("HandlePetCancelAura: Pet %u is not a pet of player '%s'", uint32(GUID_LOPART(guid)), GetPlayer()->GetName().c_str());
+        LOG_ERROR("server", "HandlePetCancelAura: Pet %u is not a pet of player '%s'", uint32(GUID_LOPART(guid)), GetPlayer()->GetName().c_str());
         return;
     }
 
@@ -581,7 +593,7 @@ void WorldSession::HandleTotemDestroyed(WorldPacket& recvPacket)
 void WorldSession::HandleSelfResOpcode(WorldPacket& /*recvData*/)
 {
 #if defined(ENABLE_EXTRAS) && defined(ENABLE_EXTRA_LOGS)
-    sLog->outDebug(LOG_FILTER_NETWORKIO, "WORLD: CMSG_SELF_RES");                  // empty opcode
+    LOG_DEBUG("network", "WORLD: CMSG_SELF_RES");                  // empty opcode
 #endif
 
     if (_player->HasAuraType(SPELL_AURA_PREVENT_RESURRECTION))
@@ -621,13 +633,13 @@ void WorldSession::HandleSpellClick(WorldPacket& recvData)
 void WorldSession::HandleMirrorImageDataRequest(WorldPacket& recvData)
 {
 #if defined(ENABLE_EXTRAS) && defined(ENABLE_EXTRA_LOGS)
-    sLog->outDebug(LOG_FILTER_NETWORKIO, "WORLD: CMSG_GET_MIRRORIMAGE_DATA");
+    LOG_DEBUG("network", "WORLD: CMSG_GET_MIRRORIMAGE_DATA");
 #endif
     uint64 guid;
     recvData >> guid;
 
     // Get unit for which data is needed by client
-    Unit* unit = ObjectAccessor::GetObjectInWorld(guid, (Unit*)NULL);
+    Unit* unit = ObjectAccessor::GetObjectInWorld(guid, (Unit*)nullptr);
     if (!unit)
         return;
 
@@ -716,7 +728,7 @@ void WorldSession::HandleMirrorImageDataRequest(WorldPacket& recvData)
 void WorldSession::HandleUpdateProjectilePosition(WorldPacket& recvPacket)
 {
 #if defined(ENABLE_EXTRAS) && defined(ENABLE_EXTRA_LOGS)
-    sLog->outDebug(LOG_FILTER_NETWORKIO, "WORLD: CMSG_UPDATE_PROJECTILE_POSITION");
+    LOG_DEBUG("network", "WORLD: CMSG_UPDATE_PROJECTILE_POSITION");
 #endif
 
     uint64 casterGuid;

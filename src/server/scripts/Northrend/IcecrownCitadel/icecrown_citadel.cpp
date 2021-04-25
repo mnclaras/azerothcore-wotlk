@@ -3,19 +3,19 @@
 */
 
 #include "AccountMgr.h"
-#include "ObjectMgr.h"
-#include "ScriptMgr.h"
-#include "ScriptedCreature.h"
-#include "ScriptedEscortAI.h"
-#include "PassiveAI.h"
 #include "Cell.h"
 #include "CellImpl.h"
 #include "GridNotifiers.h"
 #include "GridNotifiersImpl.h"
-#include "SpellAuraEffects.h"
-#include "SmartAI.h"
 #include "Group.h"
 #include "icecrown_citadel.h"
+#include "ObjectMgr.h"
+#include "PassiveAI.h"
+#include "ScriptedCreature.h"
+#include "ScriptedEscortAI.h"
+#include "ScriptMgr.h"
+#include "SmartAI.h"
+#include "SpellAuraEffects.h"
 
 enum Texts
 {
@@ -990,7 +990,6 @@ public:
             me->SetReactState(REACT_PASSIVE);
             me->SetCanFly(true);
             me->SetDisableGravity(true);
-            me->SetHover(true);
             me->SendMovementFlagUpdate();
         }
 
@@ -1114,7 +1113,6 @@ public:
             me->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_IMMUNE_TO_PC | UNIT_FLAG_IMMUNE_TO_NPC);
             me->SetCanFly(false);
             me->SetDisableGravity(false);
-            me->SetHover(false);
             me->SetReactState(REACT_AGGRESSIVE);
             DoZoneInCombat(nullptr, 150.0f);
         }
@@ -1131,7 +1129,7 @@ public:
                     {
                         Talk(EMOTE_SVALNA_IMPALE, target);
                         summon->CastCustomSpell(VEHICLE_SPELL_RIDE_HARDCODED, SPELLVALUE_BASE_POINT0, 1, target, false);
-                        summon->SetFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_UNK1 | UNIT_FLAG2_ALLOW_ENEMY_INTERACT);
+                        summon->SetFlag(UNIT_FIELD_FLAGS_2, UNIT_FLAG2_HIDE_BODY | UNIT_FLAG2_ALLOW_ENEMY_INTERACT);
                     }
                     break;
                 default:
@@ -1693,7 +1691,7 @@ public:
                 case 0:
                     break;
                 case 1: // Ice Trap
-                    me->CastSpell((Unit*)NULL, 71249, false);
+                    me->CastSpell((Unit*)nullptr, 71249, false);
                     events.RepeatEvent(urand(35000, 40000));
                     break;
                 case 2: // Rapid Shot
@@ -1736,7 +1734,7 @@ public:
                     events.RepeatEvent(urand(40000, 50000));
                     break;
                 case 33: // Twisted Winds
-                    me->CastSpell((Unit*)NULL, 71306, false);
+                    me->CastSpell((Unit*)nullptr, 71306, false);
                     events.RepeatEvent(urand(35000, 50000));
                     break;
                 case 41: // Empowered Shadow Bolt
@@ -1786,7 +1784,7 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new npc_frostwing_vrykulAI(creature);
+        return GetIcecrownCitadelAI<npc_frostwing_vrykulAI>(creature);
     }
 };
 
@@ -1824,7 +1822,7 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new npc_impaling_spearAI(creature);
+        return GetIcecrownCitadelAI<npc_impaling_spearAI>(creature);
     }
 };
 
@@ -2538,7 +2536,7 @@ public:
         void HandleDummy()
         {
             for (uint8 i = 0; i < 10; ++i)
-                GetCaster()->CastSpell((Unit*)NULL, 70963, true);
+                GetCaster()->CastSpell((Unit*)nullptr, 70963, true);
         }
 
         void Register() override
@@ -2616,7 +2614,7 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new npc_icc_skybreaker_hierophantAI(creature);
+        return GetIcecrownCitadelAI<npc_icc_skybreaker_hierophantAI>(creature);
     }
 };
 
@@ -2670,7 +2668,7 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new npc_icc_skybreaker_marksmanAI(creature);
+        return GetIcecrownCitadelAI<npc_icc_skybreaker_marksmanAI>(creature);
     }
 };
 
@@ -2731,7 +2729,7 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new npc_icc_skybreaker_vicarAI(creature);
+        return GetIcecrownCitadelAI<npc_icc_skybreaker_vicarAI>(creature);
     }
 };
 
@@ -2798,7 +2796,7 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new npc_icc_skybreaker_luminaryAI(creature);
+        return GetIcecrownCitadelAI<npc_icc_skybreaker_luminaryAI>(creature);
     }
 };
 
@@ -2911,7 +2909,7 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new npc_icc_valkyr_heraldAI(creature);
+        return GetIcecrownCitadelAI<npc_icc_valkyr_heraldAI>(creature);
     }
 };
 
@@ -3037,7 +3035,7 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new npc_icc_severed_essenceAI(creature);
+        return GetIcecrownCitadelAI<npc_icc_severed_essenceAI>(creature);
     }
 };
 
@@ -3050,9 +3048,8 @@ public:
     {
         npc_icc_spire_frostwyrmAI(Creature* creature) : ScriptedAI(creature)
         {
-            me->SetDisableGravity(true);
-            me->SetHover(true);
             me->SetCanFly(true);
+            me->SetDisableGravity(true);
         }
 
         EventMap events;
@@ -3080,9 +3077,8 @@ public:
         {
             if (type == EFFECT_MOTION_TYPE && id == 1)
             {
-                me->SetDisableGravity(false);
-                me->SetHover(false);
                 me->SetCanFly(false);
+                me->SetDisableGravity(false);
 
                 if (Player* p = SelectTargetFromPlayerList(100.0f))
                 {
@@ -3130,7 +3126,7 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new npc_icc_spire_frostwyrmAI(creature);
+        return GetIcecrownCitadelAI<npc_icc_spire_frostwyrmAI>(creature);
     }
 };
 
@@ -3276,7 +3272,7 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new npc_icc_vengeful_fleshreaperAI(creature);
+        return GetIcecrownCitadelAI<npc_icc_vengeful_fleshreaperAI>(creature);
     }
 };
 
@@ -3318,8 +3314,6 @@ public:
         npc_icc_nerubar_broodkeeperAI(Creature* creature) : ScriptedAI(creature)
         {
             me->SetDisableGravity(true);
-            me->SetCanFly(true);
-            me->SetHover(true);
             _didWebBeam = false;
             me->m_SightDistance = 100.0f; // for MoveInLineOfSight distance
         }
@@ -3333,6 +3327,7 @@ public:
             events.ScheduleEvent(1, urand(3000, 10000)); // Crypt Scarabs
             events.ScheduleEvent(2, urand(15000, 25000)); // Dark Mending
             events.ScheduleEvent(3, urand(8000, 15000)); // Web Wrap
+            me->AddUnitState(UNIT_STATE_NO_ENVIRONMENT_UPD);
         }
 
         void MoveInLineOfSight(Unit* who) override
@@ -3340,16 +3335,18 @@ public:
             if (!_didWebBeam && who->GetTypeId() == TYPEID_PLAYER && me->GetExactDist2d(who) < 70.0f)
             {
                 _didWebBeam = true;
-                float nx = me->GetPositionX() + cos(me->GetOrientation()) * 2.0f;
-                float ny = me->GetPositionY() + sin(me->GetOrientation()) * 2.0f;
-                float nz = me->GetMap()->GetHeight(nx, ny, 50.0f);
+                float nx = me->GetPositionX();
+                float ny = me->GetPositionY();
+                float nz = me->GetFloorZ();
                 me->SetHomePosition(nx, ny, nz, me->GetOrientation());
                 me->CastSpell(me, SPELL_WEB_BEAM, false);
                 me->GetMotionMaster()->MovePoint(1, nx, ny, nz, false);
                 return;
             }
-            if (me->HasUnitMovementFlag(MOVEMENTFLAG_CAN_FLY))
+
+            if (me->IsLevitating())
                 return;
+
             ScriptedAI::MoveInLineOfSight(who);
         }
 
@@ -3360,11 +3357,9 @@ public:
 
         void JustReachedHome() override
         {
-            if (me->IsHovering())
+            if (me->IsLevitating())
             {
                 me->SetDisableGravity(false);
-                me->SetCanFly(false);
-                me->SetHover(false);
                 me->NearTeleportTo(me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), me->GetOrientation());
             }
         }
@@ -3373,19 +3368,14 @@ public:
         {
             if (type == POINT_MOTION_TYPE && id == 1)
             {
-                if (me->IsHovering())
+                if (me->IsLevitating())
                 {
                     me->SetDisableGravity(false);
-                    me->SetCanFly(false);
-                    me->SetHover(false);
+                    me->SetOrientation(0.0f);
                     me->NearTeleportTo(me->GetPositionX(), me->GetPositionY(), me->GetPositionZ(), me->GetOrientation());
+                    me->ClearUnitState(UNIT_STATE_NO_ENVIRONMENT_UPD);
                 }
             }
-        }
-
-        bool CanAIAttack(const Unit*  /*target*/) const override
-        {
-            return !me->HasUnitMovementFlag(MOVEMENTFLAG_CAN_FLY);
         }
 
         void UpdateAI(uint32 diff) override
@@ -3423,7 +3413,7 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return new npc_icc_nerubar_broodkeeperAI(creature);
+        return GetIcecrownCitadelAI<npc_icc_nerubar_broodkeeperAI>(creature);
     }
 };
 
@@ -3545,7 +3535,6 @@ public:
             if (summon->GetPositionZ() > 220.0f)
             {
                 summon->SetDisableGravity(true);
-                summon->SetHover(true);
                 summon->SetWalk(true);
             }
         }
@@ -3612,7 +3601,7 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return GetInstanceAI<npc_icc_gauntlet_controllerAI>(creature);
+        return GetIcecrownCitadelAI<npc_icc_gauntlet_controllerAI>(creature);
     }
 };
 
@@ -3712,7 +3701,7 @@ public:
 
     CreatureAI* GetAI(Creature* creature) const override
     {
-        return GetInstanceAI<npc_icc_putricades_trapAI>(creature);
+        return GetIcecrownCitadelAI<npc_icc_putricades_trapAI>(creature);
     }
 };
 

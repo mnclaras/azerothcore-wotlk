@@ -74,12 +74,6 @@ public:
         return true;
     }
 
-    bool IsSpanishPlayer(Player* player)
-    {
-        LocaleConstant locale = player->GetSession()->GetSessionDbLocaleIndex();
-        return (locale == LOCALE_esES || locale == LOCALE_esMX);
-    }
-
     bool HasItem(Player* plr, uint32 itemId, uint32 quantity)
     {
         return plr->HasItemCount(itemId, quantity);
@@ -96,7 +90,7 @@ public:
     }
 
     void DoExchange(Player* player, uint32 sourceItemId, uint32 sourceAmount, uint32 destinationItemId, uint32 destinationAmount) {
-        bool isSpanish = IsSpanishPlayer(player);
+        bool isSpanish = player->hasSpanishClient();
 
         if (HasItem(player, sourceItemId, sourceAmount))
         {
@@ -121,7 +115,7 @@ public:
 
     void SendMenu(Player* player, Creature* creature)
     {
-        bool isSpanish = IsSpanishPlayer(player);
+        bool isSpanish = player->hasSpanishClient();
         std::string confirmTexProduces = isSpanish ? "Cada unidad te otorga " : "Every unit gives you ";
         std::string confirmTextConsume = isSpanish ? " y consume " : " and consumes ";
 
@@ -256,7 +250,7 @@ public:
 
         if (sender == GOSSIP_SENDER_MAIN)
         {
-            bool isSpanish = IsSpanishPlayer(player);
+            bool isSpanish = player->hasSpanishClient();
             const char* quantity = code;
             uint32_t amount = atoi(quantity);
             if (amount > 0) {

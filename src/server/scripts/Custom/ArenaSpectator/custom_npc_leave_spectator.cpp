@@ -32,17 +32,11 @@ class custom_npc_leave_spectator : public CreatureScript
 public:
     custom_npc_leave_spectator() : CreatureScript("npc_leave_spectator") { }
 
-    static bool IsSpanishPlayer(Player* player)
-    {
-        LocaleConstant locale = player->GetSession()->GetSessionDbLocaleIndex();
-        return (locale == LOCALE_esES || locale == LOCALE_esMX);
-    }
-
     static bool HandleSpectatorLeaveCommand(Player* player)
     {
         if (!player->IsSpectator() || !player->FindMap() || !player->FindMap()->IsBattleArena())
         {
-            bool isSpanish = IsSpanishPlayer(player);
+            bool isSpanish = player->hasSpanishClient();
             player->GetSession()->SendNotification(isSpanish ? "No eres un espectador." : "You are not a spectator.");
             return true;
         }
@@ -55,7 +49,7 @@ public:
 
     bool OnGossipHello(Player* player, Creature* creature) override
     {
-        bool isSpanish = IsSpanishPlayer(player);
+        bool isSpanish = player->hasSpanishClient();
         AddGossipItemFor(player, GOSSIP_ICON_TRAINER, isSpanish ? "Abandonar arena." : "Leave Arena.", GOSSIP_SENDER_MAIN, 3,
             isSpanish ? "Estas seguro de que quieres abandonar la arena?" : "Are you sure you want to leave the arena?", 0, false);
         SendGossipMenuFor(player, DEFAULT_MESSAGE, creature->GetGUID());

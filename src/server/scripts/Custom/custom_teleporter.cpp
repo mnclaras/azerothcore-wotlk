@@ -34,12 +34,6 @@ class custom_npc_teleporter : public CreatureScript
 public:
     custom_npc_teleporter() : CreatureScript("npc_teleport") { }
 
-    static bool IsSpanishPlayer(Player* player)
-    {
-        LocaleConstant locale = player->GetSession()->GetSessionDbLocaleIndex();
-        return (locale == LOCALE_esES || locale == LOCALE_esMX);
-    }
-
     static void TeleportGuildHouse(Guild* guild, Player* player)
     {
         QueryResult result = CharacterDatabase.PQuery("SELECT `phase`, `map`, `posX`, `posY`, `posZ` FROM guild_house WHERE `guild` = '%u'", guild->GetId());
@@ -57,7 +51,7 @@ public:
 
     bool OnGossipHello(Player* player, Creature* creature) override
     {
-        bool isSpanish = IsSpanishPlayer(player);
+        bool isSpanish = player->hasSpanishClient();
 
         if (player->IsInCombat())
         {
@@ -111,7 +105,7 @@ public:
     {
         player->PlayerTalkClass->ClearMenus();
 
-        bool isSpanish = IsSpanishPlayer(player);
+        bool isSpanish = player->hasSpanishClient();
         if (player->IsInCombat())
         {
             player->GetSession()->SendNotification(isSpanish ? "Error! Estas en combate." : "Failure! You are in combat.");
@@ -451,7 +445,7 @@ public:
                 }
                 else
                 {
-                    ChatHandler(player->GetSession()).PSendSysMessage(IsSpanishPlayer(player) ?
+                    ChatHandler(player->GetSession()).PSendSysMessage(player->hasSpanishClient() ?
                         "|cffff6060[Informacion]:|r La Isla PvP no acepta grupos de mas de 3 personas!"
                         : "|cffff6060[Information]:|r Groups of 3 or more people are not allowed in PvP Island!");
                 }

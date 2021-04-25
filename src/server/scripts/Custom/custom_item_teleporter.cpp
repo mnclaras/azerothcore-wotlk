@@ -34,12 +34,6 @@ class custom_item_teleporter : public ItemScript
 public:
     custom_item_teleporter() : ItemScript("item_teleport") { }
 
-    static bool IsSpanishPlayer(Player* player)
-    {
-        LocaleConstant locale = player->GetSession()->GetSessionDbLocaleIndex();
-        return (locale == LOCALE_esES || locale == LOCALE_esMX);
-    }
-
     static void TeleportGuildHouse(Guild* guild, Player* player)
     {
         QueryResult result = CharacterDatabase.PQuery("SELECT `phase`, `map`, `posX`, `posY`, `posZ` FROM guild_house WHERE `guild` = '%u'", guild->GetId());
@@ -56,7 +50,7 @@ public:
 
     bool OnUse(Player* player, Item* item, SpellCastTargets const& /*targets*/) override
     {
-        bool isSpanish = IsSpanishPlayer(player);
+        bool isSpanish = player->hasSpanishClient();
 
         if (player->IsInCombat())
         {
@@ -122,7 +116,7 @@ public:
 
         //if (sender == GOSSIP_SENDER_MAIN)
         //{
-        bool isSpanish = IsSpanishPlayer(player);
+        bool isSpanish = player->hasSpanishClient();
 		
 		if (player->IsInCombat())
         {
@@ -466,7 +460,7 @@ public:
             }
             else
             {
-                ChatHandler(player->GetSession()).PSendSysMessage(IsSpanishPlayer(player) ?
+                ChatHandler(player->GetSession()).PSendSysMessage(player->hasSpanishClient() ?
                     "|cffff6060[Informacion]:|r La Isla PvP no acepta grupos de mas de 3 personas!"
                     : "|cffff6060[Information]:|r Groups of 3 or more people are not allowed in PvP Island!");
             }

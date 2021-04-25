@@ -506,15 +506,9 @@ class custom_christmas_event_teleporter_grinch : public CreatureScript
 public:
     custom_christmas_event_teleporter_grinch() : CreatureScript("custom_christmas_event_teleporter_grinch") { }
 
-    bool IsSpanishPlayer(Player* player)
-    {
-        LocaleConstant locale = player->GetSession()->GetSessionDbLocaleIndex();
-        return (locale == LOCALE_esES || locale == LOCALE_esMX);
-    }
-
     bool OnGossipHello(Player* player, Creature* creature) override
     {
-        bool isSpanish = IsSpanishPlayer(player);
+        bool isSpanish = player->hasSpanishClient();
         AddGossipItemFor(player, GOSSIP_ICON_TRAINER,
             isSpanish ? "Llevame con la bestia." : "Take me to the beast.",
             GOSSIP_SENDER_MAIN, 2,
@@ -558,15 +552,9 @@ class custom_christmas_event_teleporter_rebels : public CreatureScript
 public:
     custom_christmas_event_teleporter_rebels() : CreatureScript("custom_christmas_event_teleporter_rebels") { }
 
-    bool IsSpanishPlayer(Player* player)
-    {
-        LocaleConstant locale = player->GetSession()->GetSessionDbLocaleIndex();
-        return (locale == LOCALE_esES || locale == LOCALE_esMX);
-    }
-
     bool OnGossipHello(Player* player, Creature* creature) override
     {
-        bool isSpanish = IsSpanishPlayer(player);
+        bool isSpanish = player->hasSpanishClient();
         AddGossipItemFor(player, GOSSIP_ICON_TRAINER,
             isSpanish ? "Llevame con los rebeldes." : "Take me to the rebels.",
             GOSSIP_SENDER_MAIN, 2,
@@ -620,15 +608,9 @@ class custom_christmas_event_teleporter_busy_evergreen : public CreatureScript
 public:
     custom_christmas_event_teleporter_busy_evergreen() : CreatureScript("custom_christmas_event_teleporter_busy_evergreen") { }
 
-    bool IsSpanishPlayer(Player* player)
-    {
-        LocaleConstant locale = player->GetSession()->GetSessionDbLocaleIndex();
-        return (locale == LOCALE_esES || locale == LOCALE_esMX);
-    }
-
     bool OnGossipHello(Player* player, Creature* creature) override
     {
-        bool isSpanish = IsSpanishPlayer(player);
+        bool isSpanish = player->hasSpanishClient();
         AddGossipItemFor(player, GOSSIP_ICON_TRAINER,
             isSpanish ? "Llevame a Bushy Evergreen." : "Take me to Bushy Evergreen.",
             GOSSIP_SENDER_MAIN, 2,
@@ -672,15 +654,9 @@ class custom_christmas_event_teleporter_climbing : public CreatureScript
 public:
     custom_christmas_event_teleporter_climbing() : CreatureScript("custom_christmas_event_teleporter_climbing") { }
 
-    bool IsSpanishPlayer(Player* player)
-    {
-        LocaleConstant locale = player->GetSession()->GetSessionDbLocaleIndex();
-        return (locale == LOCALE_esES || locale == LOCALE_esMX);
-    }
-
     bool OnGossipHello(Player* player, Creature* creature) override
     {
-        bool isSpanish = IsSpanishPlayer(player);
+        bool isSpanish = player->hasSpanishClient();
         AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Circuito escalada" : "Climbing circuit", GOSSIP_SENDER_MAIN, 2);
         AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Laberinto" : "Maze", GOSSIP_SENDER_MAIN, 3);
         SendGossipMenuFor(player, DEFAULT_MESSAGE, creature->GetGUID());

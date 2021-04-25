@@ -19,12 +19,6 @@
 #include "Group.h"
 #include "GroupMgr.h"
 
-bool sModGuildPoints::IsSpanishPlayer(Player* player)
-{
-    LocaleConstant locale = player->GetSession()->GetSessionDbLocaleIndex();
-    return (locale == LOCALE_esES || locale == LOCALE_esMX);
-}
-
 void sModGuildPoints::LoadBossRewardInfo()
 {
     for (BossRewardInfoContainer::const_iterator itr = m_BossRewardInfoContainer.begin(); itr != m_BossRewardInfoContainer.end(); ++itr)
@@ -301,7 +295,7 @@ bool sModGuildPoints::CheckCanSpendGuildHousePoints(Player* player, uint32 point
     if (!MemberHaveGuildHousePointsPermission(player))
     {
         ChatHandler(player->GetSession()).PSendSysMessage(
-            IsSpanishPlayer(player) ? "No tienes permiso para utilizar los puntos de hermandad!" : "You don\'t have permission to use guild points.");
+            player->hasSpanishClient() ? "No tienes permiso para utilizar los puntos de hermandad!" : "You don\'t have permission to use guild points.");
         return false;
     }
 
@@ -310,7 +304,7 @@ bool sModGuildPoints::CheckCanSpendGuildHousePoints(Player* player, uint32 point
     {
         if (guildHousePoints < 0) guildHousePoints = 0;
         ChatHandler(player->GetSession()).PSendSysMessage(
-            IsSpanishPlayer(player) ? "No tienes suficientes puntos de hermandad para comprar eso. Puntos actuales: %u. Requeridos: %u"
+            player->hasSpanishClient() ? "No tienes suficientes puntos de hermandad para comprar eso. Puntos actuales: %u. Requeridos: %u"
             : "You don\'t have enough guild points to buy that. Current Points: %u. Required: %u.", guildHousePoints, points);
         return false;
     }
@@ -495,20 +489,13 @@ public:
 
 class ModGuildPoints_Ranking : public CreatureScript
 {
-private:
-    static bool IsSpanishPlayer(Player* player)
-    {
-        LocaleConstant locale = player->GetSession()->GetSessionDbLocaleIndex();
-        return (locale == LOCALE_esES || locale == LOCALE_esMX);
-    }
-
 public:
 
     ModGuildPoints_Ranking() : CreatureScript("ModGuildPoints_Ranking") { }
 
     bool OnGossipHello(Player* player, Creature* creature)  override
     {
-        bool isSpanish = IsSpanishPlayer(player);
+        bool isSpanish = player->hasSpanishClient();
 
         QueryResult result = CharacterDatabase.Query("SELECT guildId, seasonPoints FROM guild_points_ranking ORDER BY seasonPoints DESC LIMIT 30;");
         if (!result)
@@ -728,7 +715,7 @@ public:
         {
             if (!handler->extractPlayerTarget((char*)args, &target))
             {
-                handler->SendSysMessage(sModGuildPointsMgr->IsSpanishPlayer(player) ?
+                handler->SendSysMessage(player->hasSpanishClient() ?
                     "Debes escribir un nombre de personaje existente, o seleccionar a un jugador para poder utilizar este comando!"
                     : "You must type the name of a valid character, or select a player in order to use this command!");
                 handler->SetSentErrorMessage(true);
@@ -741,12 +728,12 @@ public:
             if (player->GetGuild() && target->GetGuild() && player->GetGuildId() == target->GetGuildId() && player->GetGuild()->GetLeaderGUID() == player->GetGUID())
             {
                 sModGuildPointsMgr->AddGuildHousePointsAllowedMember(target);
-                handler->PSendSysMessage(sModGuildPointsMgr->IsSpanishPlayer(player) ? "Privilegios ACTIVADOS. El jugador: %s PUEDE hacer uso de los puntos de hermandad."
+                handler->PSendSysMessage(player->hasSpanishClient() ? "Privilegios ACTIVADOS. El jugador: %s PUEDE hacer uso de los puntos de hermandad."
                     : "Privileges ENABLED. Player: %s CAN make use of the guild points.", target->GetName().c_str());
             }
             else
             {
-                handler->SendSysMessage(sModGuildPointsMgr->IsSpanishPlayer(player) ?
+                handler->SendSysMessage(player->hasSpanishClient() ?
                     "Debes ser el lider de tu hermandad para utilizar este comando, y el jugador debe pertenecer a tu hermandad."
                     : "You must be the Guild Master of a guild to use this command!");
                 handler->SetSentErrorMessage(true);
@@ -755,7 +742,7 @@ public:
         }
         else
         {
-            handler->SendSysMessage(sModGuildPointsMgr->IsSpanishPlayer(player) ?
+            handler->SendSysMessage(player->hasSpanishClient() ?
                 "Debes escribir un nombre de personaje existente, o seleccionar a un jugador para poder utilizar este comando!"
                 : "You must type the name of a valid character, or select a player in order to use this command!");
             handler->SetSentErrorMessage(true);
@@ -785,7 +772,7 @@ public:
         {
             if (!handler->extractPlayerTarget((char*)args, &target))
             {
-                handler->SendSysMessage(sModGuildPointsMgr->IsSpanishPlayer(player) ?
+                handler->SendSysMessage(player->hasSpanishClient() ?
                     "Debes escribir un nombre de personaje existente, o seleccionar a un jugador para poder utilizar este comando!"
                     : "You must type the name of a valid character, or select a player in order to use this command!");
                 handler->SetSentErrorMessage(true);
@@ -798,12 +785,12 @@ public:
             if (player->GetGuild() && target->GetGuild() && player->GetGuildId() == target->GetGuildId() && player->GetGuild()->GetLeaderGUID() == player->GetGUID())
             {
                 sModGuildPointsMgr->RemoveGuildHousePointsAllowedMember(target);
-                handler->PSendSysMessage(sModGuildPointsMgr->IsSpanishPlayer(player) ? "Privilegios DESACTIVADOS. El jugador: %s NO PUEDE hacer uso de los puntos de hermandad."
+                handler->PSendSysMessage(player->hasSpanishClient() ? "Privilegios DESACTIVADOS. El jugador: %s NO PUEDE hacer uso de los puntos de hermandad."
                     : "Privileges DISABLED. Player: %s CANNOT use guild points.", target->GetName().c_str());
             }
             else
             {
-                handler->SendSysMessage(sModGuildPointsMgr->IsSpanishPlayer(player) ?
+                handler->SendSysMessage(player->hasSpanishClient() ?
                     "Debes ser el lider de tu hermandad para utilizar este comando, y el jugador debe pertenecer a tu hermandad."
                     : "You must be the Guild Master of a guild to use this command!");
                 handler->SetSentErrorMessage(true);
@@ -812,7 +799,7 @@ public:
         }
         else
         {
-            handler->SendSysMessage(sModGuildPointsMgr->IsSpanishPlayer(player) ?
+            handler->SendSysMessage(player->hasSpanishClient() ?
                 "Debes escribir un nombre de personaje existente, o seleccionar a un jugador para poder utilizar este comando!"
                 : "You must type the name of a valid character, or select a player in order to use this command!");
             handler->SetSentErrorMessage(true);

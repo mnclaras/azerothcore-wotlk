@@ -32,15 +32,9 @@ class custom_npc_tools_reset_cds : public CreatureScript
 public:
     custom_npc_tools_reset_cds() : CreatureScript("npc_tools_reset_cds") { }
 
-    static bool IsSpanishPlayer(Player* player)
-    {
-        LocaleConstant locale = player->GetSession()->GetSessionDbLocaleIndex();
-        return (locale == LOCALE_esES || locale == LOCALE_esMX);
-    }
-
     bool OnGossipHello(Player* player, Creature* creature) override
     {
-        bool isSpanish = IsSpanishPlayer(player);
+        bool isSpanish = player->hasSpanishClient();
         AddGossipItemFor(player, GOSSIP_ICON_TRAINER, isSpanish ? "Reiniciar CDs." : "Reset Cooldowns.", GOSSIP_SENDER_MAIN, 3,
             isSpanish ? "Estas seguro de que quieres reiniciar CDs?" : "Are you sure you want to reset your CDs?", 0, false);
         SendGossipMenuFor(player, DEFAULT_MESSAGE, creature->GetGUID());
@@ -54,7 +48,7 @@ public:
 
         if (sender == GOSSIP_SENDER_MAIN)
         {
-            bool isSpanish = IsSpanishPlayer(player);
+            bool isSpanish = player->hasSpanishClient();
 
             switch (action)
             {
@@ -109,12 +103,6 @@ class custom_npc_tools_reset_stats : public CreatureScript
 public:
     custom_npc_tools_reset_stats() : CreatureScript("custom_npc_tools_reset_stats") { }
 
-    static bool IsSpanishPlayer(Player* player)
-    {
-        LocaleConstant locale = player->GetSession()->GetSessionDbLocaleIndex();
-        return (locale == LOCALE_esES || locale == LOCALE_esMX);
-    }
-
     static bool HandleResetStatsOrLevelHelper(Player* player)
     {
         ChrClassesEntry const* classEntry = sChrClassesStore.LookupEntry(player->getClass());
@@ -140,7 +128,7 @@ public:
 
         player->SetByteValue(UNIT_FIELD_BYTES_2, 1, UNIT_BYTE2_FLAG_PVP);
 
-        player->SetUInt32Value(UNIT_FIELD_FLAGS, UNIT_FLAG_PVP_ATTACKABLE);
+        player->SetUInt32Value(UNIT_FIELD_FLAGS, UNIT_FLAG_PLAYER_CONTROLLED);
 
         //-1 is default value
         player->SetUInt32Value(PLAYER_FIELD_WATCHED_FACTION_INDEX, uint32(-1));
@@ -150,7 +138,7 @@ public:
 
     bool OnGossipHello(Player* player, Creature* creature) override
     {
-        bool isSpanish = IsSpanishPlayer(player);
+        bool isSpanish = player->hasSpanishClient();
         AddGossipItemFor(player, GOSSIP_ICON_TRAINER, isSpanish ? "Reiniciar Stats." : "Reset Stats.", GOSSIP_SENDER_MAIN, 3,
             isSpanish ? "Estas seguro de que quieres reiniciar Stats?" : "Are you sure you want to reset your Stats?", 0, false);
         SendGossipMenuFor(player, DEFAULT_MESSAGE, creature->GetGUID());
@@ -164,7 +152,7 @@ public:
 
         if (sender == GOSSIP_SENDER_MAIN)
         {
-            bool isSpanish = IsSpanishPlayer(player);
+            bool isSpanish = player->hasSpanishClient();
 
             switch (action)
             {

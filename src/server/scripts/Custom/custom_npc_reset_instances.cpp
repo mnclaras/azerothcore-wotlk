@@ -31,15 +31,9 @@ class custom_npc_tools_reset_instances : public CreatureScript
 public:
     custom_npc_tools_reset_instances() : CreatureScript("npc_tools_reset_instances") { }
 
-    static bool IsSpanishPlayer(Player* player)
-    {
-        LocaleConstant locale = player->GetSession()->GetSessionDbLocaleIndex();
-        return (locale == LOCALE_esES || locale == LOCALE_esMX);
-    }
-
     bool OnGossipHello(Player* player, Creature* creature) override
     {
-        bool isSpanish = IsSpanishPlayer(player);
+        bool isSpanish = player->hasSpanishClient();
         AddGossipItemFor(player, GOSSIP_ICON_TRAINER, isSpanish ? "Reiniciar instancias." : "Reset Instances.", GOSSIP_SENDER_MAIN, 2,
             isSpanish ? "Estas seguro de que quieres eliminar el save de tus instancias?" : "Are you sure you want to reset your instances?", 0, false);
         SendGossipMenuFor(player, DEFAULT_MESSAGE, creature->GetGUID());
@@ -52,7 +46,7 @@ public:
 
         if (sender == GOSSIP_SENDER_MAIN)
         {
-            bool isSpanish = IsSpanishPlayer(player);
+            bool isSpanish = player->hasSpanishClient();
 
             switch (action)
             {

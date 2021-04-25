@@ -55,7 +55,7 @@ public:
     bool OnGossipHello(Player* player, Creature* creature) override
     {
         //AddGossipItemFor(player, GOSSIP_ICON_TRAINER, isSpanish ? "Entrename." : "Train me.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 1);
-        bool isSpanish = IsSpanishPlayer(player);
+        bool isSpanish = player->hasSpanishClient();
 
         if (player->getClass() == CLASS_WARRIOR)
             AddGossipItemFor(player, GOSSIP_ICON_VENDOR, isSpanish ? "Comprar Glifos." : "Buy Glyphs.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF + 4);
@@ -106,17 +106,11 @@ public:
         return sWorld->getIntConfig(CONFIG_MIN_DUALSPEC_LEVEL);
     }
 
-    bool IsSpanishPlayer(Player* player)
-    {
-        LocaleConstant locale = player->GetSession()->GetSessionDbLocaleIndex();
-        return (locale == LOCALE_esES || locale == LOCALE_esMX);
-    }
-
     bool OnGossipSelect(Player* player, Creature* creature, uint32 /*sender*/, uint32 action) override
     {
         ClearGossipMenuFor(player);
 
-        bool isSpanish = IsSpanishPlayer(player);
+        bool isSpanish = player->hasSpanishClient();
 
         switch (action)
         {

@@ -133,19 +133,13 @@ private:
         return buf.str();
     }
 
-    static bool IsSpanishPlayer(Player* player)
-    {
-        LocaleConstant locale = player->GetSession()->GetSessionDbLocaleIndex();
-        return (locale == LOCALE_esES || locale == LOCALE_esMX);
-    }
-
 public:
 
     ArenaTeamRanks() : CreatureScript("ArenaTeamRanks") { }
 
     bool OnGossipHello(Player* player, Creature* creature)  override
     {
-        bool isSpanish = IsSpanishPlayer(player);
+        bool isSpanish = player->hasSpanishClient();
 
         AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, isSpanish ? "|TInterface\\icons\\Achievement_Arena_5v5_7:35:35:-30:0|tTOP 1v1" : "|TInterface\\icons\\Achievement_Arena_5v5_7:35:35:-30:0|tTOP 1v1", GOSSIP_SENDER_MAIN, ARENA_5V5_LADDER);
         AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, isSpanish ? "|TInterface\\icons\\Achievement_Arena_2v2_7:35:35:-30:0|tTOP 2v2" : "|TInterface\\icons\\Achievement_Arena_2v2_7:35:35:-30:0|tTOP 2v2", GOSSIP_SENDER_MAIN, ARENA_2V2_LADDER);
@@ -161,7 +155,7 @@ public:
     bool OnGossipSelect(Player* player, Creature* creature, uint32 /*sender*/, uint32 action) override
     {
         player->PlayerTalkClass->ClearMenus();
-        bool isSpanish = IsSpanishPlayer(player);
+        bool isSpanish = player->hasSpanishClient();
         switch (action) {
         case 0:
             // Here should the magic happend

@@ -81,12 +81,6 @@ class custom_vip_only_npc : public CreatureScript
 public:
     custom_vip_only_npc() : CreatureScript("npc_vip") { }
 
-    bool IsSpanishPlayer(Player* player)
-    {
-        LocaleConstant locale = player->GetSession()->GetSessionDbLocaleIndex();
-        return (locale == LOCALE_esES || locale == LOCALE_esMX);
-    }
-
     bool OnGossipHello(Player* player, Creature* creature) override
     {
         if (!player)
@@ -110,7 +104,7 @@ public:
 
         if (sender == GOSSIP_SENDER_MAIN)
         {
-            bool isSpanish = IsSpanishPlayer(player);
+            bool isSpanish = player->hasSpanishClient();
 
             switch (action)
             {
@@ -144,12 +138,6 @@ class custom_vip_only_npc_talk : public CreatureScript
 public:
     custom_vip_only_npc_talk() : CreatureScript("npc_vip_talk") { }
 
-    bool IsSpanishPlayer(Player* player)
-    {
-        LocaleConstant locale = player->GetSession()->GetSessionDbLocaleIndex();
-        return (locale == LOCALE_esES || locale == LOCALE_esMX);
-    }
-
     bool OnGossipHello(Player* player, Creature* creature) override
     {
         if (!player)
@@ -173,7 +161,7 @@ public:
 
         if (sender == GOSSIP_SENDER_MAIN)
         {
-            bool isSpanish = IsSpanishPlayer(player);
+            bool isSpanish = player->hasSpanishClient();
 
             switch (action)
             {
@@ -227,7 +215,7 @@ public:
 
     void EquipItem(Player* player, uint32 itemEntry)
     {
-        bool isSpanish = IsSpanishPlayer(player);
+        bool isSpanish = player->hasSpanishClient();
 
         if (player->HasItemCount(itemEntry, 1, true))
         {
@@ -256,18 +244,12 @@ public:
         }
     }
 
-    bool IsSpanishPlayer(Player* player)
-    {
-        LocaleConstant locale = player->GetSession()->GetSessionDbLocaleIndex();
-        return (locale == LOCALE_esES || locale == LOCALE_esMX);
-    }
-
     bool OnGossipHello(Player* player, Creature* creature) override
     {
         if (!player)
             return false;
 
-        bool isSpanish = IsSpanishPlayer(player);
+        bool isSpanish = player->hasSpanishClient();
 
         if (player->IsInCombat())
         {

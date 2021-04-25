@@ -115,8 +115,6 @@ public:
     void UpdateGuildPoints(uint32 guildId, uint32 points);
 
     void DeleteGuild(uint32 guildId, bool removeRanking);
-
-    bool IsSpanishPlayer(Player* player);
    
     BossRewardInfoContainer m_BossRewardInfoContainer;
     GuildHouseSpawnInfoContainer m_GuildHouseSpawnInfoContainer;

@@ -11,6 +11,7 @@
 #include "Map.h"
 #include "PassiveAI.h"
 #include "Player.h"
+#include "Group.h"
 #include "ScriptMgr.h"
 #include "ScriptedCreature.h"
 #include "ScriptedGossip.h"

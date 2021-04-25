@@ -78,15 +78,9 @@ public:
         return true;
     }
 
-    bool IsSpanishPlayer(Player* player)
-    {
-        LocaleConstant locale = player->GetSession()->GetSessionDbLocaleIndex();
-        return (locale == LOCALE_esES || locale == LOCALE_esMX);
-    }
-
     void SendMenu(Player* player, Creature* creature)
     {
-        bool isSpanish = IsSpanishPlayer(player);
+        bool isSpanish = player->hasSpanishClient();
         std::string confirmText = isSpanish ? ACTION_CONFIRM_TEXT_SPANISH : ACTION_CONFIRM_TEXT_ENGLISH;
 
         AddGossipItemFor(player, GOSSIP_ICON_VENDOR, "1 Amnesia Coin.", GOSSIP_SENDER_MAIN, GOSSIP_ACTION_INFO_DEF, confirmText, 0, false);
@@ -118,7 +112,7 @@ public:
     }
 
     void DoExchange(Player* player, uint32 sourceItemId, uint32 sourceAmount, uint32 destinationItemId, uint32 destinationAmount, bool win) {
-        bool isSpanish = IsSpanishPlayer(player);
+        bool isSpanish = player->hasSpanishClient();
         if (HasItem(player, sourceItemId, sourceAmount))
         {
             DestroyItem(player, sourceItemId, sourceAmount);
@@ -157,7 +151,7 @@ public:
     {
         player->PlayerTalkClass->ClearMenus();
 
-        bool isSpanish = IsSpanishPlayer(player);
+        bool isSpanish = player->hasSpanishClient();
         std::string confirmText = isSpanish ? ACTION_CONFIRM_TEXT_SPANISH : ACTION_CONFIRM_TEXT_ENGLISH;
         if (sender == GOSSIP_SENDER_MAIN)
         {

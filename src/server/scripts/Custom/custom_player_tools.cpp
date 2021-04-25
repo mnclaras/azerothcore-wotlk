@@ -34,15 +34,9 @@ class multi_changer : public CreatureScript
 public:
     multi_changer() : CreatureScript("char_tools") { }
 
-    static bool IsSpanishPlayer(Player* player)
-    {
-        LocaleConstant locale = player->GetSession()->GetSessionDbLocaleIndex();
-        return (locale == LOCALE_esES || locale == LOCALE_esMX);
-    }
-
     bool OnGossipHello(Player* player, Creature* creature) override
     {
-        bool isSpanish = IsSpanishPlayer(player);
+        bool isSpanish = player->hasSpanishClient();
 
         //player->PlayerTalkClass->ClearMenus();
 
@@ -67,7 +61,7 @@ public:
 
         if (sender == GOSSIP_SENDER_MAIN)
         {
-            bool isSpanish = IsSpanishPlayer(player);
+            bool isSpanish = player->hasSpanishClient();
 
             player->PlayerTalkClass->ClearMenus();
             switch (action)

@@ -171,13 +171,18 @@ public:
     uint64 killerGUID = 0;
     uint64 victimGUID = 0;
 
-    bool IsSpanishPlayer(Player* player)
+    bool CanGroupAccept(Player* player, Group* /*group*/) override
     {
-        LocaleConstant locale = player->GetSession()->GetSessionDbLocaleIndex();
-        return (locale == LOCALE_esES || locale == LOCALE_esMX);
+        // Cannot form groups on Deathmatch Event zone when event is active
+        if (player->GetAreaId() == 3817 && sGameEventMgr->IsActiveEvent(77))
+        {
+            player->GetSession()->SendPartyResult(PARTY_OP_INVITE, "", ERR_INVITE_RESTRICTED);
+            return;
+        }
+        return true;
     }
 
-    void OnUpdateArea(Player* player, uint32 oldArea, uint32 newArea)
+    void OnUpdateArea(Player* player, uint32 oldArea, uint32 newArea) override
     {
         if (sGameEventMgr->IsActiveEvent(GAME_EVENT_DEATHMATCH))
         {
@@ -211,7 +216,7 @@ public:
         }   
     }
 
-    void OnPVPKill(Player* killer, Player* victim)
+    void OnPVPKill(Player* killer, Player* victim) override
     {
         if (killer->GetAreaId() == AREA_DEATHMATCH && victim->GetAreaId() == AREA_DEATHMATCH)
         {
@@ -221,7 +226,7 @@ public:
             Group* group = killer->GetGroup();
             if (group)
             {
-                ChatHandler(killer->GetSession()).PSendSysMessage(IsSpanishPlayer(killer) ?
+                ChatHandler(killer->GetSession()).PSendSysMessage(killer->hasSpanishClient() ?
                     "|cffff6060[Informacion]:|r La Zona Deathmatch no acepta grupos!"
                     : "|cffff6060[Information]:|r Groups are not allowed in Deathmatch Zone!");
 
@@ -229,7 +234,7 @@ public:
                     if (Player* member = itr->GetSource())
                         if (member->IsInMap(killer) && killer->GetGUID() != member->GetGUID())
                         {
-                            ChatHandler(member->GetSession()).PSendSysMessage(IsSpanishPlayer(member) ?
+                            ChatHandler(member->GetSession()).PSendSysMessage(member->hasSpanishClient() ?
                                 "|cffff6060[Informacion]:|r La Zona Deathmatch no acepta grupos!"
                                 : "|cffff6060[Information]:|r Groups are not allowed in Deathmatch Zone!");
                             member->TeleportTo(MAP_TANARIS, shop.GetPositionX(), shop.GetPositionY(), shop.GetPositionZ(), shop.GetOrientation());
@@ -265,15 +270,9 @@ class deathmatch_event_teleporter : public CreatureScript
 public:
     deathmatch_event_teleporter() : CreatureScript("deathmatch_event_teleporter") { }
 
-    bool IsSpanishPlayer(Player* player)
-    {
-        LocaleConstant locale = player->GetSession()->GetSessionDbLocaleIndex();
-        return (locale == LOCALE_esES || locale == LOCALE_esMX);
-    }
-
     bool OnGossipHello(Player* player, Creature* creature) override
     {
-        bool isSpanish = IsSpanishPlayer(player);
+        bool isSpanish = player->hasSpanishClient();
 
         AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, "---- TELEPORT ----", GOSSIP_SENDER_MAIN, 5000);
         AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Ir a la zona del evento." : "Go to event zone.", GOSSIP_SENDER_MAIN, 2000,

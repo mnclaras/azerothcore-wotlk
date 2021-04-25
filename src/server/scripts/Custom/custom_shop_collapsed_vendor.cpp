@@ -159,11 +159,6 @@ enum Spells
 
 #define DEFAULT_MESSAGE 907
 
-bool IsSpanishPlayer(Player* player)
-{
-    LocaleConstant locale = player->GetSession()->GetSessionDbLocaleIndex();
-    return (locale == LOCALE_esES || locale == LOCALE_esMX);
-}
 void ShowVendor(Player* player, Creature* creature, uint32 entry)
 {
     player->GetSession()->SendListInventory(creature->GetGUID(), entry);
@@ -181,7 +176,7 @@ public:
 
     bool OnGossipHello(Player* player, Creature* creature) override
     {
-        bool isSpanish = IsSpanishPlayer(player);
+        bool isSpanish = player->hasSpanishClient();
 
         ShowOption(player, isSpanish ? "[Rojas]" : "[Red]", 1);
         ShowOption(player, isSpanish ? "[Amarillas]" : "[Yellow]", 2);
@@ -231,7 +226,7 @@ public:
 
     bool OnGossipHello(Player* player, Creature* creature) override
     {
-        bool isSpanish = IsSpanishPlayer(player);
+        bool isSpanish = player->hasSpanishClient();
 
         ShowOption(player, isSpanish ? "[Encantamiento]" : "[Enchanting]", 1);
         ShowOption(player, isSpanish ? "[Joyeria]" : "[Jewelcrafting]", 2);
@@ -287,7 +282,7 @@ public:
 
     bool OnGossipHello(Player* player, Creature* creature) override
     {
-        bool isSpanish = IsSpanishPlayer(player);
+        bool isSpanish = player->hasSpanishClient();
 
         ShowOption(player, isSpanish ? "[S7]" : "[S7]", 1);
         ShowOption(player, isSpanish ? "[S7 Offset]" : "[S7 Offset]", 2);
@@ -363,7 +358,7 @@ public:
 
     bool OnGossipHello(Player* player, Creature* creature) override
     {
-        bool isSpanish = IsSpanishPlayer(player);
+        bool isSpanish = player->hasSpanishClient();
 
         ShowOption(player, isSpanish ? "[251-284] Equipo PVE por AmnesiaCoins" : "[251-284] PVE Gear by AmnesiaCoins", 100);
         ShowOption(player, isSpanish ? "[T9]" : "[T9]", 1);
@@ -426,7 +421,7 @@ public:
 
         case GOSSIP_ACTION_INFO_DEF + 100:
         {
-            bool isSpanish = IsSpanishPlayer(player);
+            bool isSpanish = player->hasSpanishClient();
             ClearGossipMenuFor(player);
             ShowOption(player, isSpanish ? "[Off-Tier]" : "[Off-Tier]", 16);
             ShowOption(player, isSpanish ? "[Anillos]" : "[Rings]", 17);
@@ -469,7 +464,7 @@ public:
 
     bool OnGossipHello(Player* player, Creature* creature) override
     {
-        bool isSpanish = IsSpanishPlayer(player);
+        bool isSpanish = player->hasSpanishClient();
 
         ShowOption(player, isSpanish ? "S1 (Gladiador)." : "S1 (Gladiator).", 1);
         ShowOption(player, isSpanish ? "S2 (Gladiador Despiadado)." : "S2 (Merciless Gladiator).", 2);
@@ -533,7 +528,7 @@ public:
 
     bool OnGossipHello(Player* player, Creature* creature) override
     {
-        bool isSpanish = IsSpanishPlayer(player);
+        bool isSpanish = player->hasSpanishClient();
 
         ShowOption(player, isSpanish ? "[T1]" : "[T1]", 1);
         ShowOption(player, isSpanish ? "[T2]" : "[T2]", 2);
@@ -589,7 +584,7 @@ public:
 
     bool OnGossipHello(Player* player, Creature* creature) override
     {
-        bool isSpanish = IsSpanishPlayer(player);
+        bool isSpanish = player->hasSpanishClient();
 
         ShowOption(player, isSpanish ? "[PARTE 1]" : "[PART 1]", 1);
         ShowOption(player, isSpanish ? "[PARTE 2]" : "[PART 2]", 2);
@@ -629,7 +624,7 @@ public:
 
     bool OnGossipHello(Player* player, Creature* creature) override
     {
-        bool isSpanish = IsSpanishPlayer(player);
+        bool isSpanish = player->hasSpanishClient();
 
         ShowOption(player, isSpanish ? "[PARTE 1]" : "[PART 1]", 1);
         ShowOption(player, isSpanish ? "[PARTE 2]" : "[PART 2]", 2);
@@ -669,7 +664,7 @@ public:
 
     bool OnGossipHello(Player* player, Creature* creature) override
     {
-        bool isSpanish = IsSpanishPlayer(player);
+        bool isSpanish = player->hasSpanishClient();
 
         ShowOption(player, isSpanish ? "[PARTE 1]" : "[PART 1]", 1);
         ShowOption(player, isSpanish ? "[PARTE 2]" : "[PART 2]", 2);
@@ -709,7 +704,7 @@ public:
 
     bool OnGossipHello(Player* player, Creature* creature) override
     {
-        bool isSpanish = IsSpanishPlayer(player);
+        bool isSpanish = player->hasSpanishClient();
 
         ShowOption(player, isSpanish ? "[PARTE 1]" : "[PART 1]", 1);
         ShowOption(player, isSpanish ? "[PARTE 2]" : "[PART 2]", 2);
@@ -749,7 +744,7 @@ public:
 
     bool OnGossipHello(Player* player, Creature* creature) override
     {
-        bool isSpanish = IsSpanishPlayer(player);
+        bool isSpanish = player->hasSpanishClient();
 
         ShowOption(player, isSpanish ? "[T10 251]" : "[T10 251]", 1);
         ShowOption(player, isSpanish ? "[T10.5 264]" : "[T10.5 264]", 2);
@@ -791,7 +786,7 @@ public:
 
     bool OnGossipHello(Player* player, Creature* creature) override
     {
-        bool isSpanish = IsSpanishPlayer(player);
+        bool isSpanish = player->hasSpanishClient();
 
         ShowOption(player, isSpanish ? "[Monturas PVE]" : "[PVE Mounts]", 1);
         ShowOption(player, isSpanish ? "[Monturas PVP]" : "[PVP Mounts]", 2);
@@ -833,7 +828,7 @@ public:
 
     bool OnGossipHello(Player* player, Creature* creature) override
     {
-        bool isSpanish = IsSpanishPlayer(player);
+        bool isSpanish = player->hasSpanishClient();
 
         ShowOption(player, isSpanish ? "[Mascotas PVE]" : "[PVE Pets]", 1);
         ShowOption(player, isSpanish ? "[Mascotas PVP]" : "[PVP Pets]", 2);
