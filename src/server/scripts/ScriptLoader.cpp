@@ -1217,7 +1217,6 @@ void AddSC_event_automation();
 void AddSC_deathmatch_area();
 void AddSC_mod_guild_points();
 void AddSC_mod_bg_auras();
-void AddSC_custom_npc_ashen_veredict_rep();
 
 void AddCustomScripts()
 {
@@ -1249,6 +1248,5 @@ void AddCustomScripts()
     AddSC_event_automation();
     AddSC_mod_guild_points();
     AddSC_mod_bg_auras();
-    AddSC_custom_npc_ashen_veredict_rep();
 #endif
 }

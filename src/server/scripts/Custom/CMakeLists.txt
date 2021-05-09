@@ -27,7 +27,6 @@ set(scripts_STAT_SRCS
   ${AC_SCRIPTS_DIR}/Custom/Events/events_automation.cpp
   ${AC_SCRIPTS_DIR}/Custom/Guild/mod_guild_points.h
   ${AC_SCRIPTS_DIR}/Custom/Guild/mod_guild_points.cpp
-  ${AC_SCRIPTS_DIR}/Custom/Others/custom_npc_ashen_veredict_rep.cpp
   ${AC_SCRIPTS_DIR}/Custom/custom_player_tools.cpp
   ${AC_SCRIPTS_DIR}/Custom/custom_amnesia_coin_exchange.cpp
   ${AC_SCRIPTS_DIR}/Custom/custom_global_trainer.cpp
