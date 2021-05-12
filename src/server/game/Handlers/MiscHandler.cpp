@@ -405,6 +405,7 @@ void WorldSession::HandleWhoOpcode(WorldPacket& recvData)
     }
 
     data.put(0, displaycount);                            // insert right count, count displayed
+    matchcount = matchcount + 30;
     data.put(4, matchcount);                              // insert right count, count of matches
 
     SendPacket(&data);
