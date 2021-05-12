@@ -405,7 +405,22 @@ void WorldSession::HandleWhoOpcode(WorldPacket& recvData)
     }
 
     data.put(0, displaycount);                            // insert right count, count displayed
-    matchcount = matchcount + 30;
+
+    if (/*(matchcount - 50) >= 0
+        &&*/ (!level_min || level_min = 80)
+        && (!level_max || level_max == 80)
+        && (!classmask || classmask < 0)
+        && (!racemask || racemask < 0)
+        && (!wplayer_name || wplayer_name.empty())
+        && (!wguild_name || wguild_name.empty())
+        && (!zones_count || zones_count < 0 || !zoneids[0])
+        && (!str_count || !str[0] || str[0].empty())
+       )
+    {
+        /*matchcount = ((matchcount - 40) / 10) * 5;*/
+        matchcount += 30;
+    }
+
     data.put(4, matchcount);                              // insert right count, count of matches
 
     SendPacket(&data);
