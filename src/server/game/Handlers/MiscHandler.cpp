@@ -406,7 +406,7 @@ void WorldSession::HandleWhoOpcode(WorldPacket& recvData)
 
     data.put(0, displaycount);                            // insert right count, count displayed
 
-    if ((matchcount - 50) >= 0
+    if ((matchcount >= 50)
         && (!level_min || level_min <= 80)
         && (!level_max || level_max >= 80)
         && (!classmask || classmask <= 0 || classmask > 2048 || classmask == 1535)
