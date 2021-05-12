@@ -406,8 +406,8 @@ void WorldSession::HandleWhoOpcode(WorldPacket& recvData)
 
     data.put(0, displaycount);                            // insert right count, count displayed
 
-    if (/*(matchcount >= 50)
-        &&*/ (!level_min || level_min <= 80)
+    if ((matchcount >= 50)
+        && (!level_min || level_min <= 80)
         && (!level_max || level_max >= 80)
         && (!classmask || classmask <= 0 || classmask > 2048 || classmask == 1535)
         && (!racemask || racemask <= 0 || racemask > 2048 || racemask == 1791)
@@ -417,9 +417,7 @@ void WorldSession::HandleWhoOpcode(WorldPacket& recvData)
         && (!str_count || str_count <= 0 || str[0].empty())
        )
     {
-        matchcount = 67;
         matchcount += (uint32)(((matchcount - 40.0) / 10.0) * 5.0);
-        //matchcount = ((matchcount - 40) / 10) * 5;
     }
 
     data.put(4, matchcount);                              // insert right count, count of matches
