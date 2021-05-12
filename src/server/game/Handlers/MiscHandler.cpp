@@ -418,7 +418,8 @@ void WorldSession::HandleWhoOpcode(WorldPacket& recvData)
        )
     {
         /*matchcount = ((matchcount - 40) / 10) * 5;*/
-        matchcount += 30;
+        /*matchcount += 30;*/
+        matchcount = zones_count;
     }
 
     data.put(4, matchcount);                              // insert right count, count of matches
