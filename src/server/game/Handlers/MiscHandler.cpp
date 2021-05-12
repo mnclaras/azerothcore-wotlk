@@ -413,8 +413,8 @@ void WorldSession::HandleWhoOpcode(WorldPacket& recvData)
         && (!racemask || racemask < 0 || racemask > 2048 || racemask == 1791)
         && (wplayer_name.empty())
         && (wguild_name.empty())
-        && (!zones_count || zones_count < 0 || !zoneids[0])
-        && (!str_count || str_count < 0 || str[0].empty())
+        //&& (!zones_count || zones_count < 0 || !zoneids[0])
+        //&& (!str_count || str_count < 0 || str[0].empty())
        )
     {
         /*matchcount = ((matchcount - 40) / 10) * 5;*/
