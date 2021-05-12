@@ -417,9 +417,8 @@ void WorldSession::HandleWhoOpcode(WorldPacket& recvData)
         && (!str_count || str_count <= 0 || str[0].empty())
        )
     {
-        /*matchcount = ((matchcount - 40) / 10) * 5;*/
-        matchcount += 30;
-        matchcount = str_count;
+        matchcount = 88;
+        matchcount = ((matchcount - 40) / 10) * 5;
     }
 
     data.put(4, matchcount);                              // insert right count, count of matches
