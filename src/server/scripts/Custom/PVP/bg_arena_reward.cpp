@@ -19,6 +19,8 @@
 #include "Player.h"
 #include "Battleground.h"
 #include "Group.h"
+#include "ScriptedCreature.h"
+#include "ScriptedGossip.h"
 
 enum Quests
 {
@@ -36,7 +38,10 @@ enum Quests
     QUEST_PVP_WIN_100_BG = 80015,
     QUEST_DEATHMATCH_AREA_BEGIN = 80016,
     QUEST_DEATHMATCH_AREA_END = 80025,
-    QUEST_DEATHMATCH_AREA_NPC_CREDIT = 80016
+    QUEST_DEATHMATCH_AREA_NPC_CREDIT = 80016,
+    QUEST_CLIMBING_CIRCUIT_IMPOSSIBLE = 60012,
+    QUEST_PVP_WIN_1_ARATHIBASHIN = 80030,
+    QUEST_PVP_WIN_1_EYEOFTHESTORM = 80031,
 };
 
 enum EmblemEntries
@@ -123,6 +128,20 @@ public:
             if (player->GetQuestStatus(QUEST_PVP_WIN_100_BG) == QUEST_STATUS_INCOMPLETE)
                 player->KilledMonsterCredit(QUEST_PVP_WIN_100_BG, 0);
 
+            switch (player->GetZoneId())
+            {
+            case 3358: // Arathi Basin
+                if (player->GetQuestStatus(QUEST_PVP_WIN_1_ARATHIBASHIN) == QUEST_STATUS_INCOMPLETE)
+                    player->KilledMonsterCredit(QUEST_PVP_WIN_1_ARATHIBASHIN, 0);
+                break;
+            case 3820: // Eye of the Storm
+                if (player->GetQuestStatus(QUEST_PVP_WIN_1_EYEOFTHESTORM) == QUEST_STATUS_INCOMPLETE)
+                    player->KilledMonsterCredit(QUEST_PVP_WIN_1_EYEOFTHESTORM, 0);
+                break;
+            default:
+                break;
+            }
+
             // First RDF Win of the day
             if (!player->GetRandomWinner())
             {
@@ -131,7 +150,6 @@ public:
 
             // Gladiator's Chest
             player->AddItem(GLADIATOR_CHEST_ENTRY, 1);
-
         }
     }
 };
@@ -198,9 +216,47 @@ public:
     }
 };
 
+class ClimbingCircuitBan : public CreatureScript
+{
+public:
+
+    ClimbingCircuitBan() : CreatureScript("ClimbingCircuitBan") { }
+
+    bool OnQuestComplete(Player* player, Creature* /*creature*/, Quest const* quest) override
+    {
+        if (!player || !quest)
+            return true;
+
+        // Ban player for 3 days
+        if (quest->GetQuestId() == QUEST_CLIMBING_CIRCUIT_IMPOSSIBLE)
+        {
+            std::string accountName;
+
+            if (player->GetSession()
+                && AccountMgr::IsPlayerAccount(player->GetSession()->GetSecurity())
+                && AccountMgr::GetName(player->GetSession()->GetAccountId(), accountName))
+            {
+                BanReturn banReturn;
+                banReturn = sBan->BanAccount(accountName, "3d", "FlyHack Climbing Circuit Impossible", "AntiHack System Climbing");
+            }
+        }
+    }
+    
+    struct ClimbingCircuitBanAI : public ScriptedAI
+    {
+        ClimbingCircuitBanAI(Creature* creature) : ScriptedAI(creature) { }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new ClimbingCircuitBanAI(creature);
+    }
+};
+
 
 void AddSC_ArenaAndBgRewards()
 {
     new ArenaAndBgRewards();
     new ArenaAndBgRewardsPvPKills();
+    new ClimbingCircuitBan();
 }

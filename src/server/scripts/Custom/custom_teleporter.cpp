@@ -427,7 +427,7 @@ public:
                 AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Circuito 2" : "Circuit 2", GOSSIP_SENDER_MAIN, 1001);
                 AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Circuito 3 (Contrarreloj 25s)" : "Circuit 3 (Time trial 25s)", GOSSIP_SENDER_MAIN, 1002);
                 AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Circuito 4 (Contrarreloj 35s)" : "Circuit 4 (Time trial 35s)", GOSSIP_SENDER_MAIN, 1003);
-                AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Circuito 5 (Dificil)" : "Circuit 5 (Hard)", GOSSIP_SENDER_MAIN, 1004);
+                AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Circuito 5 (Imposible)" : "Circuit 5 (Imposible)", GOSSIP_SENDER_MAIN, 1004);
                 AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Inicio" : "Home Page", GOSSIP_SENDER_MAIN, 999);
                 SendGossipMenuFor(player, DEFAULT_MESSAGE, creature->GetGUID());
                 break;

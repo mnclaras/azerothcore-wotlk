@@ -29,7 +29,9 @@ enum PetGossip
     PET_PAGE_MAX                    =    901,
     PET_MAIN_MENU                   =     50,
     PET_REMOVE_SKILLS               =     80,
-    PET_GOSSIP_HELLO                = 601026
+    PET_GOSSIP_HELLO                = 601026,
+    PET_UPGRADE_TO_MAX_LEVEL        =   7000,
+    PET_RESET_TALENTS               =   7001
 };
 
 enum PetSpells
@@ -54,12 +56,16 @@ public:
 
     bool OnGossipHello(Player *player, Creature * m_creature) override
     {
+        if (!player) return true;
+
+        bool isSpanish = IsSpanishPlayer(player);
+
         // If enabled for Hunters only..
         if (BeastMasterHunterOnly)
         {
             if (player->getClass() != CLASS_HUNTER)
             {
-                m_creature->MonsterWhisper("I am sorry, but pets are for hunters only.", player, false);
+                m_creature->MonsterWhisper(isSpanish ? "Lo siento, pero las mascotas son solo para cazadores" : "I am sorry, but pets are for hunters only.", player, false);
                 return true;
             }
         }
@@ -74,34 +80,40 @@ public:
         }
 
         // MAIN MENU
-        AddGossipItemFor(player, GOSSIP_ICON_BATTLE, "Browse Pets", GOSSIP_SENDER_MAIN, PET_PAGE_START_PETS);
-        AddGossipItemFor(player, GOSSIP_ICON_BATTLE, "Browse Rare Pets", GOSSIP_SENDER_MAIN, PET_PAGE_START_RARE_PETS);
+        AddGossipItemFor(player, GOSSIP_ICON_BATTLE, isSpanish ? "Buscar mascotas" : "Browse Pets", GOSSIP_SENDER_MAIN, PET_PAGE_START_PETS);
+        AddGossipItemFor(player, GOSSIP_ICON_BATTLE, isSpanish ? "Buscar mascotas raras" : "Browse Rare Pets", GOSSIP_SENDER_MAIN, PET_PAGE_START_RARE_PETS);
 
         if (BeastMasterAllowExotic || player->HasSpell(PET_SPELL_BEAST_MASTERY) || player->HasTalent(PET_SPELL_BEAST_MASTERY, player->GetActiveSpec()))
         {
             if (player->getClass() != CLASS_HUNTER)
             {
-                AddGossipItemFor(player, GOSSIP_ICON_BATTLE, "Browse Exotic Pets", GOSSIP_SENDER_MAIN, PET_PAGE_START_EXOTIC_PETS);
-                AddGossipItemFor(player, GOSSIP_ICON_BATTLE, "Browse Rare Exotic Pets", GOSSIP_SENDER_MAIN, PET_PAGE_START_RARE_EXOTIC_PETS);
+                AddGossipItemFor(player, GOSSIP_ICON_BATTLE, isSpanish ? "Buscar mascotas exoticas" : "Browse Exotic Pets", GOSSIP_SENDER_MAIN, PET_PAGE_START_EXOTIC_PETS);
+                AddGossipItemFor(player, GOSSIP_ICON_BATTLE, isSpanish ? "Buscar mascotas raras y exoticas" : "Browse Rare Exotic Pets", GOSSIP_SENDER_MAIN, PET_PAGE_START_RARE_EXOTIC_PETS);
             }
             else if (!BeastMasterHunterBeastMasteryRequired || player->HasTalent(PET_SPELL_BEAST_MASTERY, player->GetActiveSpec()))
             {
-                AddGossipItemFor(player, GOSSIP_ICON_BATTLE, "Browse Exotic Pets", GOSSIP_SENDER_MAIN, PET_PAGE_START_EXOTIC_PETS);
-                AddGossipItemFor(player, GOSSIP_ICON_BATTLE, "Browse Rare Exotic Pets", GOSSIP_SENDER_MAIN, PET_PAGE_START_RARE_EXOTIC_PETS);
+                AddGossipItemFor(player, GOSSIP_ICON_BATTLE, isSpanish ? "Buscas mascotas exoticas" : "Browse Exotic Pets", GOSSIP_SENDER_MAIN, PET_PAGE_START_EXOTIC_PETS);
+                AddGossipItemFor(player, GOSSIP_ICON_BATTLE, isSpanish ? "Buscar mascotas raras y exoticas" : "Browse Rare Exotic Pets", GOSSIP_SENDER_MAIN, PET_PAGE_START_RARE_EXOTIC_PETS);
             }
         }
 
         // remove pet skills (not for hunters)
         if (player->getClass() != CLASS_HUNTER && player->HasSpell(PET_SPELL_CALL_PET))
-            AddGossipItemFor(player, GOSSIP_ICON_BATTLE, "Unlearn Hunter Abilities", GOSSIP_SENDER_MAIN, PET_REMOVE_SKILLS);
+            AddGossipItemFor(player, GOSSIP_ICON_BATTLE, isSpanish ? "Olvidar habilidades de cazador" : "Unlearn Hunter Abilities", GOSSIP_SENDER_MAIN, PET_REMOVE_SKILLS);
 
         // Stables for hunters only - Doesn't seem to work for other classes
         if (player->getClass() == CLASS_HUNTER)
-            AddGossipItemFor(player, GOSSIP_ICON_TAXI, "Visit Stable", GOSSIP_SENDER_MAIN, GOSSIP_OPTION_STABLEPET);
+            AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Visitar establo" : "Visit Stable", GOSSIP_SENDER_MAIN, GOSSIP_OPTION_STABLEPET);
 
         // Pet Food Vendor
-        AddGossipItemFor(player, GOSSIP_ICON_MONEY_BAG, "Buy Pet Food", GOSSIP_SENDER_MAIN, GOSSIP_OPTION_VENDOR);
+        AddGossipItemFor(player, GOSSIP_ICON_MONEY_BAG, isSpanish ? "Comprar comida de mascota" : "Buy Pet Food", GOSSIP_SENDER_MAIN, GOSSIP_OPTION_VENDOR);
 
+        if (player->getClass() == CLASS_HUNTER)
+        {
+            AddGossipItemFor(player, GOSSIP_ICON_TRAINER, isSpanish ? "Subir mascota a nivel 80" : "Upgrade pet to level 80", GOSSIP_SENDER_MAIN, PET_UPGRADE_TO_MAX_LEVEL);
+            AddGossipItemFor(player, GOSSIP_ICON_TRAINER, isSpanish ? "Reiniciar talentos mascota" : "Reset pet talents", GOSSIP_SENDER_MAIN, PET_RESET_TALENTS);
+        }
+        
         player->PlayerTalkClass->SendGossipMenu(PET_GOSSIP_HELLO, m_creature->GetGUID());
 
         // Howl
@@ -112,13 +124,17 @@ public:
 
     bool OnGossipSelect(Player *player, Creature * m_creature, uint32 /*sender*/, uint32 action) override
     {
+        if (!player) return true;
+
         player->PlayerTalkClass->ClearMenus();
+
+        bool isSpanish = IsSpanishPlayer(player);
 
         if (action == PET_MAIN_MENU)
         {
             // MAIN MENU
-            AddGossipItemFor(player, GOSSIP_ICON_BATTLE, "Browse Pets", GOSSIP_SENDER_MAIN, PET_PAGE_START_PETS);
-            AddGossipItemFor(player, GOSSIP_ICON_BATTLE, "Browse Rare Pets", GOSSIP_SENDER_MAIN, PET_PAGE_START_RARE_PETS);
+            AddGossipItemFor(player, GOSSIP_ICON_BATTLE, isSpanish ? "Buscar mascotas" : "Browse Pets", GOSSIP_SENDER_MAIN, PET_PAGE_START_PETS);
+            AddGossipItemFor(player, GOSSIP_ICON_BATTLE, isSpanish ? "Buscar mascotas raras" : "Browse Rare Pets", GOSSIP_SENDER_MAIN, PET_PAGE_START_RARE_PETS);
 
             if (BeastMasterAllowExotic || player->HasSpell(PET_SPELL_BEAST_MASTERY) || player->HasTalent(PET_SPELL_BEAST_MASTERY, player->GetActiveSpec()))
             {
@@ -136,27 +152,34 @@ public:
 
             // remove pet skills (not for hunters)
             if (player->getClass() != CLASS_HUNTER && player->HasSpell(PET_SPELL_CALL_PET))
-                AddGossipItemFor(player, GOSSIP_ICON_BATTLE, "Unlearn Hunter Abilities", GOSSIP_SENDER_MAIN, PET_REMOVE_SKILLS);
+                AddGossipItemFor(player, GOSSIP_ICON_BATTLE, isSpanish ? "Olvidar habilidades de cazador" : "Unlearn Hunter Abilities", GOSSIP_SENDER_MAIN, PET_REMOVE_SKILLS);
 
             // Stables for hunters only - Doesn't seem to work for other classes
             if (player->getClass() == CLASS_HUNTER)
-                AddGossipItemFor(player, GOSSIP_ICON_TAXI, "Visit Stable", GOSSIP_SENDER_MAIN, GOSSIP_OPTION_STABLEPET);
+                AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Visitar establo" : "Visit Stable", GOSSIP_SENDER_MAIN, GOSSIP_OPTION_STABLEPET);
 
-            AddGossipItemFor(player, GOSSIP_ICON_MONEY_BAG, "Buy Pet Food", GOSSIP_SENDER_MAIN, GOSSIP_OPTION_VENDOR);
+            AddGossipItemFor(player, GOSSIP_ICON_MONEY_BAG, isSpanish ? "Comprar comida de mascota" : "Buy Pet Food", GOSSIP_SENDER_MAIN, GOSSIP_OPTION_VENDOR);
+
+            if (player->getClass() == CLASS_HUNTER)
+            {
+                AddGossipItemFor(player, GOSSIP_ICON_TRAINER, isSpanish ? "Subir mascota a nivel 80" : "Upgrade pet to level 80", GOSSIP_SENDER_MAIN, PET_UPGRADE_TO_MAX_LEVEL);
+                AddGossipItemFor(player, GOSSIP_ICON_TRAINER, isSpanish ? "Reiniciar talentos mascota" : "Reset pet talents", GOSSIP_SENDER_MAIN, PET_RESET_TALENTS);
+            }
+
             player->PlayerTalkClass->SendGossipMenu(PET_GOSSIP_HELLO, m_creature->GetGUID());
         }
         else if (action >= PET_PAGE_START_PETS && action < PET_PAGE_START_EXOTIC_PETS)
         {
             // PETS
-            AddGossipItemFor(player, GOSSIP_ICON_TALK, "Back..", GOSSIP_SENDER_MAIN, PET_MAIN_MENU);
+            AddGossipItemFor(player, GOSSIP_ICON_TALK, isSpanish ? "Atras..." : "Back..", GOSSIP_SENDER_MAIN, PET_MAIN_MENU);
             int page = action - PET_PAGE_START_PETS + 1;
             int maxPage = pets.size() / PET_PAGE_SIZE + (pets.size() % PET_PAGE_SIZE != 0);
 
             if (page > 1)
-                AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, "Previous..", GOSSIP_SENDER_MAIN, PET_PAGE_START_PETS + page - 2);
+                AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, isSpanish ? "Previo..." : "Previous..", GOSSIP_SENDER_MAIN, PET_PAGE_START_PETS + page - 2);
 
             if (page < maxPage)
-                AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, "Next..", GOSSIP_SENDER_MAIN, PET_PAGE_START_PETS + page);
+                AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, isSpanish ? "Siguiente..." : "Next..", GOSSIP_SENDER_MAIN, PET_PAGE_START_PETS + page);
 
             AddGossip(player, pets, page);
             player->PlayerTalkClass->SendGossipMenu(DEFAULT_GOSSIP_MESSAGE, m_creature->GetGUID());
@@ -173,15 +196,15 @@ public:
                 m_creature->MonsterWhisper(messageLearn.str().c_str(), player);
             }
 
-            AddGossipItemFor(player, GOSSIP_ICON_TALK, "Back..", GOSSIP_SENDER_MAIN, PET_MAIN_MENU);
+            AddGossipItemFor(player, GOSSIP_ICON_TALK, isSpanish ? "Atras..." : "Back..", GOSSIP_SENDER_MAIN, PET_MAIN_MENU);
             int page = action - PET_PAGE_START_EXOTIC_PETS + 1;
             int maxPage = exoticPets.size() / PET_PAGE_SIZE + (exoticPets.size() % PET_PAGE_SIZE != 0);
 
             if (page > 1)
-                AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, "Previous..", GOSSIP_SENDER_MAIN, PET_PAGE_START_EXOTIC_PETS + page - 2);
+                AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, isSpanish ? "Previo..." : "Previous..", GOSSIP_SENDER_MAIN, PET_PAGE_START_EXOTIC_PETS + page - 2);
 
             if (page < maxPage)
-                AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, "Next..", GOSSIP_SENDER_MAIN, PET_PAGE_START_EXOTIC_PETS + page);
+                AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, isSpanish ? "Siguiente..." : "Next..", GOSSIP_SENDER_MAIN, PET_PAGE_START_EXOTIC_PETS + page);
 
             AddGossip(player, exoticPets, page);
             player->PlayerTalkClass->SendGossipMenu(DEFAULT_GOSSIP_MESSAGE, m_creature->GetGUID());
@@ -189,15 +212,15 @@ public:
         else if (action >= PET_PAGE_START_RARE_PETS && action < PET_PAGE_START_RARE_EXOTIC_PETS)
         {
             // RARE PETS
-            AddGossipItemFor(player, GOSSIP_ICON_TALK, "Back..", GOSSIP_SENDER_MAIN, PET_MAIN_MENU);
+            AddGossipItemFor(player, GOSSIP_ICON_TALK, isSpanish ? "Atras..." : "Back..", GOSSIP_SENDER_MAIN, PET_MAIN_MENU);
             int page = action - PET_PAGE_START_RARE_PETS + 1;
             int maxPage = rarePets.size() / PET_PAGE_SIZE + (rarePets.size() % PET_PAGE_SIZE != 0);
 
             if (page > 1)
-                AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, "Previous..", GOSSIP_SENDER_MAIN, PET_PAGE_START_RARE_PETS + page - 2);
+                AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, isSpanish ? "Previo..." : "Previous..", GOSSIP_SENDER_MAIN, PET_PAGE_START_RARE_PETS + page - 2);
 
             if (page < maxPage)
-                AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, "Next..", GOSSIP_SENDER_MAIN, PET_PAGE_START_RARE_PETS + page);
+                AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, isSpanish ? "Siguiente..." : "Next..", GOSSIP_SENDER_MAIN, PET_PAGE_START_RARE_PETS + page);
 
             AddGossip(player, rarePets, page);
             player->PlayerTalkClass->SendGossipMenu(DEFAULT_GOSSIP_MESSAGE, m_creature->GetGUID());
@@ -214,15 +237,15 @@ public:
                 m_creature->MonsterWhisper(messageLearn.str().c_str(), player);
             }
 
-            AddGossipItemFor(player, GOSSIP_ICON_TALK, "Back..", GOSSIP_SENDER_MAIN, PET_MAIN_MENU);
+            AddGossipItemFor(player, GOSSIP_ICON_TALK, isSpanish ? "Atras..." : "Back..", GOSSIP_SENDER_MAIN, PET_MAIN_MENU);
             int page = action - PET_PAGE_START_RARE_EXOTIC_PETS + 1;
             int maxPage = rareExoticPets.size() / PET_PAGE_SIZE + (rareExoticPets.size() % PET_PAGE_SIZE != 0);
 
             if (page > 1)
-                AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, "Previous..", GOSSIP_SENDER_MAIN, PET_PAGE_START_RARE_EXOTIC_PETS + page - 2);
+                AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, isSpanish ? "Previo..." : "Previous..", GOSSIP_SENDER_MAIN, PET_PAGE_START_RARE_EXOTIC_PETS + page - 2);
 
             if (page < maxPage)
-                AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, "Next..", GOSSIP_SENDER_MAIN, PET_PAGE_START_RARE_EXOTIC_PETS + page);
+                AddGossipItemFor(player, GOSSIP_ICON_INTERACT_1, isSpanish ? "Siguiente..." : "Next..", GOSSIP_SENDER_MAIN, PET_PAGE_START_RARE_EXOTIC_PETS + page);
 
             AddGossip(player, rareExoticPets, page);
             player->PlayerTalkClass->SendGossipMenu(DEFAULT_GOSSIP_MESSAGE, m_creature->GetGUID());
@@ -246,11 +269,60 @@ public:
             // VENDOR
             player->GetSession()->SendListInventory(m_creature->GetGUID());
         }
+        else if (action == PET_UPGRADE_TO_MAX_LEVEL)
+        {
+            Pet* pet = player->GetPet();
+
+            if (!pet)
+            {
+                m_creature->MonsterWhisper(isSpanish ? "No tienes ninguna mascota." :  "You do not have any pet.", player, false);
+                return true;
+            }
+            else if (pet->getPetType() != HUNTER_PET)
+            {
+                m_creature->MonsterWhisper(isSpanish ? "No tienes ninguna mascota." : "You do not have any pet.", player, false);
+                return true;
+            }
+
+            // Set Pet Happiness
+            pet->SetPower(POWER_HAPPINESS, PET_MAX_HAPPINESS);
+
+            // Initialize Pet
+            pet->SetUInt32Value(UNIT_FIELD_LEVEL, player->getLevel());
+            // Prepare Level-Up Visual
+            pet->SetUInt32Value(UNIT_FIELD_LEVEL, player->getLevel() - 1);
+            // Visual Effect for Level-Up
+            pet->SetUInt32Value(UNIT_FIELD_LEVEL, player->getLevel());
+
+            // Initialize Pet Stats
+            pet->InitTalentForLevel();
+            if (!pet->InitStatsForLevel(player->getLevel()))
+            {
+                pet->UpdateAllStats();
+            }
+
+            // Save Pet
+            player->PetSpellInitialize();
+            pet->InitLevelupSpellsForLevel();
+
+            player->UnsummonPetTemporaryIfAny();
+            player->ResummonPetTemporaryUnSummonedIfAny();
+        }
+        else if (action == PET_RESET_TALENTS)
+        {
+            player->ResetPetTalents();
+        }
 
         // BEASTS
         if (action >= PET_PAGE_MAX)
             CreatePet(player, m_creature, action);
         return true;
+    }
+
+    bool IsSpanishPlayer(Player* player)
+    {
+        LocaleConstant locale = player->GetSession()->GetSessionDbLocaleIndex();
+        return (locale == LOCALE_esES || locale == LOCALE_esMX);
     }
 
     struct beastmasterAI : public ScriptedAI

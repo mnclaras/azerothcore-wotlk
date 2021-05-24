@@ -13066,6 +13066,8 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
             else if (shirtEntry == 100073) SetObjectScale(0.9f);
             else if (shirtEntry == 100074) SetObjectScale(0.5f);
             else if (shirtEntry == 100075) SetObjectScale(0.75f);
+            else if (shirtEntry == 100078) SetObjectScale(3.0f);
+            
 
             else SetObjectScale(1.0f);
 
@@ -13158,6 +13160,8 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
             case 100075: SetDisplayId(28227); break;    // Alexstrasza // Scale 0.75
             case 100076: SetDisplayId(240); break;      // Orco guerrero
             case 100077: SetDisplayId(20757); break;    // Demon Hunter
+            case 100078: SetDisplayId(30414); break;    // Panda
+            case 100079: SetDisplayId(27545); break;    // Arthas without helm
 
             case 100100: SetDisplayId(21267); break;    // Fel Orc
             }
