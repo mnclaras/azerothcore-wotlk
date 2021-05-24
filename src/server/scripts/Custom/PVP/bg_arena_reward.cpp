@@ -240,6 +240,7 @@ public:
                 banReturn = sBan->BanAccount(accountName, "3d", "FlyHack Climbing Circuit Impossible", "AntiHack System Climbing");
             }
         }
+        return true;
     }
     
     struct ClimbingCircuitBanAI : public ScriptedAI
