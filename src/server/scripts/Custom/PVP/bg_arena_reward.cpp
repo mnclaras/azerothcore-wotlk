@@ -21,6 +21,7 @@
 #include "Group.h"
 #include "ScriptedCreature.h"
 #include "ScriptedGossip.h"
+#include "BanManager.h"
 
 enum Quests
 {
@@ -222,14 +223,14 @@ public:
 
     ClimbingCircuitBan() : CreatureScript("ClimbingCircuitBan") { }
 
-    bool OnQuestComplete(Player* player, Creature* /*creature*/, Quest const* quest) override
+    bool OnGossipHello(Player* player, Creature* /*creature*/) override
     {
-        if (!player || !quest)
+        if (!player)
             return true;
 
         // Ban player for 3 days
-        if (quest->GetQuestId() == QUEST_CLIMBING_CIRCUIT_IMPOSSIBLE)
-        {
+        //if (quest->GetQuestId() == QUEST_CLIMBING_CIRCUIT_IMPOSSIBLE)
+        //{
             std::string accountName;
 
             if (player->GetSession()
@@ -239,7 +240,7 @@ public:
                 BanReturn banReturn;
                 banReturn = sBan->BanAccount(accountName, "3d", "FlyHack Climbing Circuit Impossible", "AntiHack System Climbing");
             }
-        }
+        //}
         return true;
     }
     
