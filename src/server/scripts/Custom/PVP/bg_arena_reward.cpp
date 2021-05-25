@@ -238,7 +238,7 @@ public:
                 && AccountMgr::GetName(player->GetSession()->GetAccountId(), accountName))
             {
                 BanReturn banReturn;
-                banReturn = sBan->BanAccount(accountName, "3d", "FlyHack Climbing Circuit Impossible", "AntiHack System Climbing");
+                banReturn = sBan->BanAccount(accountName, "3d", "FlyHack", "AntiHack System");
             }
         //}
         return true;
