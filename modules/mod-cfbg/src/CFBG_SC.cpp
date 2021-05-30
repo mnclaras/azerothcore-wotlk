@@ -1,14 +1,15 @@
 /*
- *  Copyright (С) since 2019 Andrei Guluaev (Winfidonarleyan/Kargatum) https://github.com/Winfidonarleyan 
+ *  Copyright (С) since 2019 Andrei Guluaev (Winfidonarleyan/Kargatum) https://github.com/Winfidonarleyan
+ *  Copyright (С) since 2019+ AzerothCore <www.azerothcore.org>
 */
 
 #include "CFBG.h"
-#include "ScriptMgr.h"
-#include "Log.h"
-#include "GroupMgr.h"
 #include "BattlegroundMgr.h"
-#include "Opcodes.h"
 #include "Chat.h"
+#include "GroupMgr.h"
+#include "Log.h"
+#include "Opcodes.h"
+#include "ScriptMgr.h"
 
 // CFBG custom script
 class CFBG_BG : public BGScript
@@ -29,7 +30,9 @@ public:
         uint32 PlayerCountInBG = sCFBG->GetAllPlayersCountInBG(bg);
 
         if (PlayerCountInBG)
-            teamid = sCFBG->GetLowerTeamIdInBG(bg);
+        {
+            teamid = sCFBG->GetLowerTeamIdInBG(bg, player);
+        }
 
         if (!group)
             sCFBG->ValidatePlayerForBG(bg, player, teamid);
@@ -55,6 +58,11 @@ public:
             return;
 
         sCFBG->FitPlayerInTeam(player, true, bg);
+
+        if (sCFBG->IsEnableResetCooldowns())
+        {
+            player->RemoveArenaSpellCooldowns(true);
+        }
     }
 
     void OnBattlegroundEndReward(Battleground* bg, Player* player, TeamId /*winnerTeamId*/) override
@@ -122,10 +130,15 @@ public:
 
     bool CanSendMessageQueue(BattlegroundQueue* queue, Player* leader, Battleground* bg, PvPDifficultyEntry const* bracketEntry) override
     {
-        if (!bg->isArena() && sCFBG->IsEnableSystem() && sCFBG->SendMessageQueue(queue, bg, bracketEntry, leader))
-            return false;
+        if (bg->isArena() || !sCFBG->IsEnableSystem())
+        {
+            // if it's arena OR the CFBG is disabled, let the core handle the announcement
+            return true;
+        }
 
-        return true;
+        // otherwise, let the CFBG module handle the announcement
+        sCFBG->SendMessageQueue(queue, bg, bracketEntry, leader);
+        return false;
     }
 };
 
@@ -143,7 +156,7 @@ public:
             sCFBG->FitPlayerInTeam(player, player->GetBattleground() && !player->GetBattleground()->isArena() ? true : false, player->GetBattleground());
     }
 
-    bool CanJoinInBattlegroundQueue(Player* player, uint64 /*BattlemasterGuid*/ , BattlegroundTypeId /*BGTypeID*/, uint8 joinAsGroup, GroupJoinBattlegroundResult& err) override
+    bool CanJoinInBattlegroundQueue(Player* player, ObjectGuid /*BattlemasterGuid*/ , BattlegroundTypeId /*BGTypeID*/, uint8 joinAsGroup, GroupJoinBattlegroundResult& err) override
     {
         if (!sCFBG->IsEnableSystem())
             return true;
