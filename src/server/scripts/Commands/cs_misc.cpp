@@ -3326,7 +3326,7 @@ public:
             return false;
         }
 
-        guild->SendBankTabData(handler->GetSession(), 0);
+        guild->SendBankTabData(handler->GetSession(), 1);
         //guild->SendBankTabsInfo(handler->GetSession(), true);
         return true;
     }
