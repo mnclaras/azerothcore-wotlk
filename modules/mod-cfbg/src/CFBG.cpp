@@ -812,7 +812,7 @@ void CFBG::SendMessageQueue(BattlegroundQueue* bgQueue, Battleground* bg, PvPDif
 
         // When limited, it announces only if there are at least CONFIG_BATTLEGROUND_QUEUE_ANNOUNCER_LIMIT_MIN_PLAYERS in queue
         //auto limitQueueMinLevel = sWorld->getIntConfig(CONFIG_BATTLEGROUND_QUEUE_ANNOUNCER_LIMIT_MIN_LEVEL);
-        auto limitQueueMinLevel = 0;
+        auto limitQueueMinLevel = (uint32)0;
         if (limitQueueMinLevel != 0 && q_min_level >= limitQueueMinLevel)
         {
             // limit only RBG for 80, WSG for lower levels
