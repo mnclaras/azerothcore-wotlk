@@ -113,6 +113,7 @@ public:
             { "skirmish",           SEC_ADMINISTRATOR,      false, HandleSkirmishCommand,               "" },
             { "mailbox",            SEC_MODERATOR,          false, &HandleMailBoxCommand,               "" },
             { "bank",               SEC_GAMEMASTER,         false, &HandleCharacterCheckBankCommand,    "" },
+            { "gbank",              SEC_GAMEMASTER,         false, &HandleCharacterCheckGuildBankCommand,"" },
         };
         return commandTable;
     }
@@ -3311,6 +3312,21 @@ public:
     static bool HandleCharacterCheckBankCommand(ChatHandler* handler, char const* /*args*/)
     {
         handler->GetSession()->SendShowBank(handler->GetSession()->GetPlayer()->GetGUID());
+        return true;
+    }
+
+    static bool HandleCharacterCheckGuildBankCommand(ChatHandler* handler, char const* /*args*/)
+    {
+        Player* player = handler->GetSession()->GetPlayer();
+
+        Guild* const guild = player->GetGuild();
+        if (!guild)
+        {
+            Guild::SendCommandResult(handler->GetSession(), GUILD_COMMAND_VIEW_TAB, ERR_GUILD_PLAYER_NOT_IN_GUILD);
+            return false;
+        }
+
+        guild->SendBankTabsInfo(handler->GetSession(), true);
         return true;
     }
 };
