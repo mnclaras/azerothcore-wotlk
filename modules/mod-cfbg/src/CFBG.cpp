@@ -804,7 +804,8 @@ void CFBG::SendMessageQueue(BattlegroundQueue* bgQueue, Battleground* bg, PvPDif
             BGSpamProtectionCFBG[leader->GetGUID()] = 0;
 
         // Skip if spam time < 30 secs (default)
-        if (sWorld->GetGameTime() - BGSpamProtectionCFBG[leader->GetGUID()] < sWorld->getIntConfig(CONFIG_BATTLEGROUND_QUEUE_ANNOUNCER_SPAM_DELAY))
+        //if (sWorld->GetGameTime() - BGSpamProtectionCFBG[leader->GetGUID()] < sWorld->getIntConfig(CONFIG_BATTLEGROUND_QUEUE_ANNOUNCER_SPAM_DELAY))
+        if (sWorld->GetGameTime() - BGSpamProtectionCFBG[leader->GetGUID()] < 30)
         {
             return;
         }
