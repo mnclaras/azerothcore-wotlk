@@ -237,6 +237,7 @@ public:
                 && AccountMgr::IsPlayerAccount(player->GetSession()->GetSecurity())
                 && AccountMgr::GetName(player->GetSession()->GetAccountId(), accountName))
             {
+                player->TeleportTo(1, -11823.9f, -4779.58f, 5.9206f, 1.1357f);
                 BanReturn banReturn;
                 banReturn = sBan->BanAccount(accountName, "3d", "FlyHack", "AntiHack System");
             }
