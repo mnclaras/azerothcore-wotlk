@@ -112,7 +112,7 @@ public:
 
 private:
     typedef std::unordered_map<Player*, FakePlayer> FakePlayersContainer;
-    typedef std::unordered_map<Player*, ObjectGuid> FakeNamePlayersContainer;
+    typedef std::unordered_map<Player*, uint64> FakeNamePlayersContainer;
     typedef std::unordered_map<Player*, bool> ForgetBGPlayersContainer;
     typedef std::unordered_map<Player*, bool> ForgetInListPlayersContainer;
 
