@@ -819,7 +819,7 @@ void CFBG::SendMessageQueue(BattlegroundQueue* bgQueue, Battleground* bg, PvPDif
             auto bgTypeToLimit = q_min_level == 80 ? BATTLEGROUND_RB : BATTLEGROUND_WS;
 
             //if (bg->GetBgTypeID() == bgTypeToLimit && qTotal < sWorld->getIntConfig(CONFIG_BATTLEGROUND_QUEUE_ANNOUNCER_LIMIT_MIN_PLAYERS))
-            if (bg->GetBgTypeID() == bgTypeToLimit && qTotal < 3)
+            if (bg->GetBgTypeID() == bgTypeToLimit && qTotal < (uint32)3)
             {
                 return;
             }
