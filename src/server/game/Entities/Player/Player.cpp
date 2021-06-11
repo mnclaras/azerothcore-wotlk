@@ -7650,6 +7650,7 @@ void Player::UpdateArea(uint32 newArea)
     case 307:  // Event - The Overlook Cliffs - The Hinterlands
     case 3983: // Shop Utgarde Keep
     case 989:  // Shop Uldum - Tanaris
+    case 268:  // Azshara Crater
         forceInSanctuary = true;
         break;
     }
