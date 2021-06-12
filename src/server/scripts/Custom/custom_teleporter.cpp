@@ -418,7 +418,7 @@ public:
                 break;
 
             case 14: // Shop VIP
-                player->TeleportTo(1, -8501.3398, 2022.63, 104.75, 3.5727);
+                player->TeleportTo(1, -8592.7471f, 1987.2047f, 100.7207f, 0.3863f);
                 CloseGossipMenuFor(player);
                 break;
 
