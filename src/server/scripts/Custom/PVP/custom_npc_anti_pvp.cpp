@@ -64,7 +64,7 @@ public:
     {
         uint32 timer;
 
-        custom_npc_anti_pvpAI(Creature* creature) : BossAI(creature, NULL) {}
+        custom_npc_anti_pvpAI(Creature* creature) : BossAI(creature, 0) {}
 
         int isLeft(Point P0, Point P1, Point P2)
         {

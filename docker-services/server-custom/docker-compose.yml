@@ -6,7 +6,7 @@ services:
     tty: true
     image: azerothcore/worldserver-custom
     container_name: ac-worldserver-custom
-    restart: unless-stopped
+    restart: always
     privileged: true
     build:
       context: ${WORLDSERVER_BUILD_CONTEXT:-./docker/worldserver}
@@ -34,7 +34,7 @@ services:
   ac-authserver-custom:
     image: azerothcore/authserver-custom
     container_name: ac-authserver-custom
-    restart: unless-stopped
+    restart: always
     build:
       context: ${AUTHSERVER_BUILD_CONTEXT:-./docker/authserver}
       dockerfile: Dockerfile
