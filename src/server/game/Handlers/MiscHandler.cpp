@@ -442,6 +442,12 @@ void WorldSession::HandleLogoutRequestOpcode(WorldPacket & /*recv_data*/)
         || (GetPlayer()->GetAreaId() == 2317) || (GetPlayer()->GetAreaId() == 3478) || (GetPlayer()->GetAreaId() == 3983);
 
 
+    if (!instantLogout)
+    {
+        QueryResult result = CharacterDatabase.PQuery("SELECT AccountId FROM premium WHERE active = 1 AND AccountId = %u", GetPlayer()->GetSession()->GetAccountId());
+        if (result)
+            instantLogout = true;
+    }
 
     bool preventAfkSanctuaryLogout = sWorld->getIntConfig(CONFIG_AFK_PREVENT_LOGOUT) == 1
         && GetPlayer()->isAFK() && sAreaTableStore.LookupEntry(GetPlayer()->GetAreaId())->IsSanctuary();
