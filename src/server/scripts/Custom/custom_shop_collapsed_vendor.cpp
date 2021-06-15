@@ -134,12 +134,55 @@ enum Spells
 
     CREATURE_VENDOR_TRANSMOG_CLASSIC1       = 1000403,
     CREATURE_VENDOR_TRANSMOG_CLASSIC2       = 110003,
+    CREATURE_VENDOR_TRANSMOG_CLASSIC3       = 110004,
     CREATURE_VENDOR_TRANSMOG_TBC1           = 601557,
     CREATURE_VENDOR_TRANSMOG_TBC2           = 110002,
     CREATURE_VENDOR_TRANSMOG_WOTLK1         = 1000402,
     CREATURE_VENDOR_TRANSMOG_WOTLK2         = 110001,
     CREATURE_VENDOR_TRANSMOG_OTHERWEAPONS1  = 601556,
     CREATURE_VENDOR_TRANSMOG_OTHERWEAPONS2  = 110000,
+
+
+    // VIP
+
+    CREATURE_VENDOR_TRANSMOG_PVP_S1_VIP         = 3900000,          
+    CREATURE_VENDOR_TRANSMOG_PVP_S2_VIP         = 3900001,     
+    CREATURE_VENDOR_TRANSMOG_PVP_S3_VIP         = 3900002,     
+    CREATURE_VENDOR_TRANSMOG_PVP_S4_VIP         = 3900003,          
+    CREATURE_VENDOR_TRANSMOG_PVP_S5_VIP         = 3900004,          
+    CREATURE_VENDOR_TRANSMOG_PVP_S52_VIP        = 3900005,
+    CREATURE_VENDOR_TRANSMOG_PVP_S53_VIP        = 3900006,
+    CREATURE_VENDOR_TRANSMOG_PVP_S6_VIP         = 3900007,
+    CREATURE_VENDOR_TRANSMOG_PVP_WEAP_S1_VIP    = 3900008,         
+    CREATURE_VENDOR_TRANSMOG_PVP_WEAP_S2_VIP    = 3900009,         
+    CREATURE_VENDOR_TRANSMOG_PVP_WEAP_S3_VIP    = 3900010,          
+    CREATURE_VENDOR_TRANSMOG_PVP_WEAP_S4_VIP    = 3900011,          
+    CREATURE_VENDOR_TRANSMOG_PVP_WEAP_S5_VIP    = 3900012,          
+    CREATURE_VENDOR_TRANSMOG_PVP_WEAP_S6_VIP    = 3900013,
+
+    CREATURE_VENDOR_TRANSMOG_PVE_T1_VIP         = 3900014,          
+    CREATURE_VENDOR_TRANSMOG_PVE_T2_VIP         = 3900015,          
+    CREATURE_VENDOR_TRANSMOG_PVE_T3_VIP         = 3900016,          
+    CREATURE_VENDOR_TRANSMOG_PVE_T4_VIP         = 3900017,          
+    CREATURE_VENDOR_TRANSMOG_PVE_T5_VIP         = 3900018,          
+    CREATURE_VENDOR_TRANSMOG_PVE_T6_VIP         = 3900019,          
+    CREATURE_VENDOR_TRANSMOG_PVE_T7_VIP         = 3900020,          
+    CREATURE_VENDOR_TRANSMOG_PVE_T75_VIP        = 3900021,
+    CREATURE_VENDOR_TRANSMOG_PVE_T8_VIP         = 3900022,
+    CREATURE_VENDOR_TRANSMOG_PVE_T85_VIP        = 3900023,
+
+    CREATURE_VENDOR_TRANSMOG_CLASSIC1_VIP       = 3900024,
+    CREATURE_VENDOR_TRANSMOG_CLASSIC2_VIP       = 3900025,
+    CREATURE_VENDOR_TRANSMOG_CLASSIC3_VIP       = 3900026,
+    CREATURE_VENDOR_TRANSMOG_TBC1_VIP           = 3900027,
+    CREATURE_VENDOR_TRANSMOG_TBC2_VIP           = 3900028,
+    CREATURE_VENDOR_TRANSMOG_WOTLK1_VIP         = 3900029,
+    CREATURE_VENDOR_TRANSMOG_WOTLK2_VIP         = 3900030,
+    CREATURE_VENDOR_TRANSMOG_OTHERWEAPONS1_VIP  = 3900031,
+    CREATURE_VENDOR_TRANSMOG_OTHERWEAPONS2_VIP  = 3900032,
+
+    // END VIP
+
     
     CREATURE_VENDOR_ICC_T10_251         = 601588,
     CREATURE_VENDOR_ICC_T10_264         = 601589,      
@@ -151,13 +194,35 @@ enum Spells
     
     CREATURE_VENDOR_PETS_PVE            = 601000,
     CREATURE_VENDOR_PETS_PVP            = 601001
-};
-
-//#define CREATURE_VENDOR_               
-//#define CREATURE_VENDOR_               
-//#define CREATURE_VENDOR_               
+};           
 
 #define DEFAULT_MESSAGE 907
+
+
+bool IsVipPlayer(Player* player)
+{
+    QueryResult result = CharacterDatabase.PQuery("SELECT AccountId FROM premium WHERE active = 1 AND AccountId = %u", player->GetSession()->GetAccountId());
+    bool isVipPlayer = false;
+    if (result)
+        isVipPlayer = true;
+    return isVipPlayer;
+}
+
+void TeleportToShop(Player* player, bool isSpanish)
+{
+    player->GetSession()->SendNotification(isSpanish ? "Que haces aqui? No eres VIP! - Has sido reportado a un GM!" : "Why are you here?  You are not a VIP! - You have been reported to a GM!");
+    player->TeleportTo(1, -11823.9f, -4779.58f, 5.9206f, 1.1357f);
+    sLog->outError("Player::VipVendorWithoutPrivileges: Possible hacking attempt: Account %u tried to buy in VIP vendor. He has been teleported to Shop.", player->GetSession()->GetAccountId());
+
+    if (player && player->GetSession() && AccountMgr::IsPlayerAccount(player->GetSession()->GetSecurity()))
+    {
+        std::string str = "";
+        str = "|cFFFFFC00[Playername:|cFF00FFFF[|cFF60FF00" + std::string(player->GetName().c_str()) + "|cFF00FFFF] Possible cheater! Tried to buy in VIP vendor. He has been teleported to Shop";
+        WorldPacket data(SMSG_NOTIFICATION, (str.size() + 1));
+        data << str;
+        sWorld->SendGlobalGMMessage(&data);
+    }
+}
 
 bool IsSpanishPlayer(Player* player)
 {
@@ -526,6 +591,76 @@ public:
     }
 };
 
+class custom_shop_collapsed_vendor_transmog_pvp_vip : public CreatureScript
+{
+public:
+    custom_shop_collapsed_vendor_transmog_pvp_vip() : CreatureScript("npc_collapsed_vendor_transmog_pvp_vip") { }
+
+    bool OnGossipHello(Player* player, Creature* creature) override
+    {
+        if (!player) return false;
+        bool isSpanish = IsSpanishPlayer(player);
+        if (!IsVipPlayer(player))
+        {
+            TeleportToShop(player, isSpanish);
+            return false;
+        }
+
+        ShowOption(player, isSpanish ? "S1 (Gladiador)." : "S1 (Gladiator).", 1);
+        ShowOption(player, isSpanish ? "S2 (Gladiador Despiadado)." : "S2 (Merciless Gladiator).", 2);
+        ShowOption(player, isSpanish ? "S3 (Gladiador Vengativo)." : "S3 (Vengeful Gladiator).", 3);
+        ShowOption(player, isSpanish ? "S4 (Gladiador Brutal)." : "S4 (Brutal Gladiator).", 4);
+        ShowOption(player, isSpanish ? "S5 (Gladiador Mortal)." : "S5 (Deadly Gladiator).", 5);
+        ShowOption(player, isSpanish ? "S5 (Gladiador Odioso)." : "S5 (Hateful Gladiator)", 6);
+        ShowOption(player, isSpanish ? "S5 (Gladiador Salvaje)." : "S5 (Savage Gladiator).", 7);
+        ShowOption(player, isSpanish ? "S6 (Gladiador Furioso)." : "S6 (Furious Gladiator).", 8);
+        ShowOption(player, isSpanish ? "Armas S1 (Gladiador)." : "S1 Weapons (Gladiator).", 9);
+        ShowOption(player, isSpanish ? "Armas S2 (Gladiador Despiadado)." : "S2 Weapons (Merciless Gladiator).", 10);
+        ShowOption(player, isSpanish ? "Armas S3 (Gladiador Vengativo)." : "S3 Weapons (Vengeful Gladiator).", 11);
+        ShowOption(player, isSpanish ? "Armas S4 (Gladiador Brutal)." : "S4 Weapons (Brutal Gladiator).", 12);
+        ShowOption(player, isSpanish ? "Armas S5 (Gladiador Mortal/Odioso/Salvaje)." : "S5 Weapons (Deadly/Hateful/Savage).", 13);
+        ShowOption(player, isSpanish ? "Armas S6 (Gladiador Furioso)." : "S6 Weapons (Furious Gladiator).", 14);
+
+        SendGossipMenuFor(player, DEFAULT_MESSAGE, creature->GetGUID());
+        return true;
+    }
+
+    bool OnGossipSelect(Player* player, Creature* creature, uint32 /*sender*/, uint32 action) override
+    {
+        ClearGossipMenuFor(player);
+        switch (action)
+        {
+        case GOSSIP_ACTION_INFO_DEF + 1: ShowVendor(player, creature, CREATURE_VENDOR_TRANSMOG_PVP_S1_VIP); break;
+        case GOSSIP_ACTION_INFO_DEF + 2: ShowVendor(player, creature, CREATURE_VENDOR_TRANSMOG_PVP_S2_VIP); break;
+        case GOSSIP_ACTION_INFO_DEF + 3: ShowVendor(player, creature, CREATURE_VENDOR_TRANSMOG_PVP_S3_VIP); break;
+        case GOSSIP_ACTION_INFO_DEF + 4: ShowVendor(player, creature, CREATURE_VENDOR_TRANSMOG_PVP_S4_VIP); break;
+        case GOSSIP_ACTION_INFO_DEF + 5: ShowVendor(player, creature, CREATURE_VENDOR_TRANSMOG_PVP_S5_VIP); break;
+        case GOSSIP_ACTION_INFO_DEF + 6: ShowVendor(player, creature, CREATURE_VENDOR_TRANSMOG_PVP_S52_VIP); break;
+        case GOSSIP_ACTION_INFO_DEF + 7: ShowVendor(player, creature, CREATURE_VENDOR_TRANSMOG_PVP_S53_VIP); break;
+        case GOSSIP_ACTION_INFO_DEF + 8: ShowVendor(player, creature, CREATURE_VENDOR_TRANSMOG_PVP_S6_VIP); break;
+        case GOSSIP_ACTION_INFO_DEF + 9: ShowVendor(player, creature, CREATURE_VENDOR_TRANSMOG_PVP_WEAP_S1_VIP); break;
+        case GOSSIP_ACTION_INFO_DEF + 10: ShowVendor(player, creature, CREATURE_VENDOR_TRANSMOG_PVP_WEAP_S2_VIP); break;
+        case GOSSIP_ACTION_INFO_DEF + 11: ShowVendor(player, creature, CREATURE_VENDOR_TRANSMOG_PVP_WEAP_S3_VIP); break;
+        case GOSSIP_ACTION_INFO_DEF + 12: ShowVendor(player, creature, CREATURE_VENDOR_TRANSMOG_PVP_WEAP_S4_VIP); break;
+        case GOSSIP_ACTION_INFO_DEF + 13: ShowVendor(player, creature, CREATURE_VENDOR_TRANSMOG_PVP_WEAP_S5_VIP); break;
+        case GOSSIP_ACTION_INFO_DEF + 14: ShowVendor(player, creature, CREATURE_VENDOR_TRANSMOG_PVP_WEAP_S6_VIP); break;
+        default: OnGossipHello(player, creature); break;
+        }
+
+        return true;
+    };
+
+    struct custom_shop_collapsed_vendor_transmog_pvp_vipAI : public ScriptedAI
+    {
+        custom_shop_collapsed_vendor_transmog_pvp_vipAI(Creature* creature) : ScriptedAI(creature) { }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new custom_shop_collapsed_vendor_transmog_pvp_vipAI(creature);
+    }
+};
+
 class custom_shop_collapsed_vendor_transmog_pve : public CreatureScript
 {
 public:
@@ -582,6 +717,68 @@ public:
     }
 };
 
+class custom_shop_collapsed_vendor_transmog_pve_vip : public CreatureScript
+{
+public:
+    custom_shop_collapsed_vendor_transmog_pve_vip() : CreatureScript("npc_collapsed_vendor_transmog_pve_vip") { }
+
+    bool OnGossipHello(Player* player, Creature* creature) override
+    {
+        if (!player) return false;
+        bool isSpanish = IsSpanishPlayer(player);
+        if (!IsVipPlayer(player))
+        {
+            TeleportToShop(player, isSpanish);
+            return false;
+        }
+
+        ShowOption(player, isSpanish ? "[T1]" : "[T1]", 1);
+        ShowOption(player, isSpanish ? "[T2]" : "[T2]", 2);
+        ShowOption(player, isSpanish ? "[T3]" : "[T3]", 3);
+        ShowOption(player, isSpanish ? "[T4]" : "[T4]", 4);
+        ShowOption(player, isSpanish ? "[T5]" : "[T5]", 5);
+        ShowOption(player, isSpanish ? "[T6]" : "[T6]", 6);
+        ShowOption(player, isSpanish ? "[T7]" : "[T7]", 7);
+        ShowOption(player, isSpanish ? "[T7.5]" : "[T7.5]", 8);
+        ShowOption(player, isSpanish ? "[T8]" : "[T8]", 9);
+        ShowOption(player, isSpanish ? "[T8.5]" : "[T8.5]", 10);
+
+        SendGossipMenuFor(player, DEFAULT_MESSAGE, creature->GetGUID());
+        return true;
+    }
+
+    bool OnGossipSelect(Player* player, Creature* creature, uint32 /*sender*/, uint32 action) override
+    {
+        ClearGossipMenuFor(player);
+        switch (action)
+        {
+        case GOSSIP_ACTION_INFO_DEF + 1: ShowVendor(player, creature, CREATURE_VENDOR_TRANSMOG_PVE_T1_VIP); break;
+        case GOSSIP_ACTION_INFO_DEF + 2: ShowVendor(player, creature, CREATURE_VENDOR_TRANSMOG_PVE_T2_VIP); break;
+        case GOSSIP_ACTION_INFO_DEF + 3: ShowVendor(player, creature, CREATURE_VENDOR_TRANSMOG_PVE_T3_VIP); break;
+        case GOSSIP_ACTION_INFO_DEF + 4: ShowVendor(player, creature, CREATURE_VENDOR_TRANSMOG_PVE_T4_VIP); break;
+        case GOSSIP_ACTION_INFO_DEF + 5: ShowVendor(player, creature, CREATURE_VENDOR_TRANSMOG_PVE_T5_VIP); break;
+        case GOSSIP_ACTION_INFO_DEF + 6: ShowVendor(player, creature, CREATURE_VENDOR_TRANSMOG_PVE_T6_VIP); break;
+        case GOSSIP_ACTION_INFO_DEF + 7: ShowVendor(player, creature, CREATURE_VENDOR_TRANSMOG_PVE_T7_VIP); break;
+        case GOSSIP_ACTION_INFO_DEF + 8: ShowVendor(player, creature, CREATURE_VENDOR_TRANSMOG_PVE_T75_VIP); break;
+        case GOSSIP_ACTION_INFO_DEF + 9: ShowVendor(player, creature, CREATURE_VENDOR_TRANSMOG_PVE_T8_VIP); break;
+        case GOSSIP_ACTION_INFO_DEF + 10: ShowVendor(player, creature, CREATURE_VENDOR_TRANSMOG_PVE_T85_VIP); break;
+        default: OnGossipHello(player, creature); break;
+        }
+
+        return true;
+    };
+
+    struct custom_shop_collapsed_vendor_transmog_pve_vipAI : public ScriptedAI
+    {
+        custom_shop_collapsed_vendor_transmog_pve_vipAI(Creature* creature) : ScriptedAI(creature) { }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new custom_shop_collapsed_vendor_transmog_pve_vipAI(creature);
+    }
+};
+
 class custom_shop_collapsed_vendor_transmog_classic : public CreatureScript
 {
 public:
@@ -593,6 +790,7 @@ public:
 
         ShowOption(player, isSpanish ? "[PARTE 1]" : "[PART 1]", 1);
         ShowOption(player, isSpanish ? "[PARTE 2]" : "[PART 2]", 2);
+        ShowOption(player, isSpanish ? "[PARTE 3]" : "[PART 3]", 3);
 
         SendGossipMenuFor(player, DEFAULT_MESSAGE, creature->GetGUID());
         return true;
@@ -605,6 +803,7 @@ public:
         {
         case GOSSIP_ACTION_INFO_DEF + 1: ShowVendor(player, creature, CREATURE_VENDOR_TRANSMOG_CLASSIC1); break;
         case GOSSIP_ACTION_INFO_DEF + 2: ShowVendor(player, creature, CREATURE_VENDOR_TRANSMOG_CLASSIC2); break;
+        case GOSSIP_ACTION_INFO_DEF + 3: ShowVendor(player, creature, CREATURE_VENDOR_TRANSMOG_CLASSIC3); break;
         default: OnGossipHello(player, creature); break;
         }
 
@@ -619,6 +818,54 @@ public:
     CreatureAI* GetAI(Creature* creature) const override
     {
         return new custom_shop_collapsed_vendor_transmog_classicAI(creature);
+    }
+};
+
+class custom_shop_collapsed_vendor_transmog_classic_vip : public CreatureScript
+{
+public:
+    custom_shop_collapsed_vendor_transmog_classic_vip() : CreatureScript("npc_collapsed_vendor_transmog_classic_vip") { }
+
+    bool OnGossipHello(Player* player, Creature* creature) override
+    {
+        if (!player) return false;
+        bool isSpanish = IsSpanishPlayer(player);
+        if (!IsVipPlayer(player))
+        {
+            TeleportToShop(player, isSpanish);
+            return false;
+        }
+
+        ShowOption(player, isSpanish ? "[PARTE 1]" : "[PART 1]", 1);
+        ShowOption(player, isSpanish ? "[PARTE 2]" : "[PART 2]", 2);
+        ShowOption(player, isSpanish ? "[PARTE 3]" : "[PART 3]", 3);
+
+        SendGossipMenuFor(player, DEFAULT_MESSAGE, creature->GetGUID());
+        return true;
+    }
+
+    bool OnGossipSelect(Player* player, Creature* creature, uint32 /*sender*/, uint32 action) override
+    {
+        ClearGossipMenuFor(player);
+        switch (action)
+        {
+        case GOSSIP_ACTION_INFO_DEF + 1: ShowVendor(player, creature, CREATURE_VENDOR_TRANSMOG_CLASSIC1_VIP); break;
+        case GOSSIP_ACTION_INFO_DEF + 2: ShowVendor(player, creature, CREATURE_VENDOR_TRANSMOG_CLASSIC2_VIP); break;
+        case GOSSIP_ACTION_INFO_DEF + 3: ShowVendor(player, creature, CREATURE_VENDOR_TRANSMOG_CLASSIC3_VIP); break;
+        default: OnGossipHello(player, creature); break;
+        }
+
+        return true;
+    };
+
+    struct custom_shop_collapsed_vendor_transmog_classic_vipAI : public ScriptedAI
+    {
+        custom_shop_collapsed_vendor_transmog_classic_vipAI(Creature* creature) : ScriptedAI(creature) { }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new custom_shop_collapsed_vendor_transmog_classic_vipAI(creature);
     }
 };
 
@@ -662,6 +909,52 @@ public:
     }
 };
 
+class custom_shop_collapsed_vendor_transmog_tbc_vip : public CreatureScript
+{
+public:
+    custom_shop_collapsed_vendor_transmog_tbc_vip() : CreatureScript("npc_collapsed_vendor_transmog_tbc_vip") { }
+
+    bool OnGossipHello(Player* player, Creature* creature) override
+    {
+        if (!player) return false;
+        bool isSpanish = IsSpanishPlayer(player);
+        if (!IsVipPlayer(player))
+        {
+            TeleportToShop(player, isSpanish);
+            return false;
+        }
+
+        ShowOption(player, isSpanish ? "[PARTE 1]" : "[PART 1]", 1);
+        ShowOption(player, isSpanish ? "[PARTE 2]" : "[PART 2]", 2);
+
+        SendGossipMenuFor(player, DEFAULT_MESSAGE, creature->GetGUID());
+        return true;
+    }
+
+    bool OnGossipSelect(Player* player, Creature* creature, uint32 /*sender*/, uint32 action) override
+    {
+        ClearGossipMenuFor(player);
+        switch (action)
+        {
+        case GOSSIP_ACTION_INFO_DEF + 1: ShowVendor(player, creature, CREATURE_VENDOR_TRANSMOG_TBC1_VIP); break;
+        case GOSSIP_ACTION_INFO_DEF + 2: ShowVendor(player, creature, CREATURE_VENDOR_TRANSMOG_TBC2_VIP); break;
+        default: OnGossipHello(player, creature); break;
+        }
+
+        return true;
+    };
+
+    struct custom_shop_collapsed_vendor_transmog_tbc_vipAI : public ScriptedAI
+    {
+        custom_shop_collapsed_vendor_transmog_tbc_vipAI(Creature* creature) : ScriptedAI(creature) { }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new custom_shop_collapsed_vendor_transmog_tbc_vipAI(creature);
+    }
+};
+
 class custom_shop_collapsed_vendor_transmog_wotlk : public CreatureScript
 {
 public:
@@ -702,6 +995,52 @@ public:
     }
 };
 
+class custom_shop_collapsed_vendor_transmog_wotlk_vip : public CreatureScript
+{
+public:
+    custom_shop_collapsed_vendor_transmog_wotlk_vip() : CreatureScript("npc_collapsed_vendor_transmog_wotlk_vip") { }
+
+    bool OnGossipHello(Player* player, Creature* creature) override
+    {
+        if (!player) return false;
+        bool isSpanish = IsSpanishPlayer(player);
+        if (!IsVipPlayer(player))
+        {
+            TeleportToShop(player, isSpanish);
+            return false;
+        }
+
+        ShowOption(player, isSpanish ? "[PARTE 1]" : "[PART 1]", 1);
+        ShowOption(player, isSpanish ? "[PARTE 2]" : "[PART 2]", 2);
+
+        SendGossipMenuFor(player, DEFAULT_MESSAGE, creature->GetGUID());
+        return true;
+    }
+
+    bool OnGossipSelect(Player* player, Creature* creature, uint32 /*sender*/, uint32 action) override
+    {
+        ClearGossipMenuFor(player);
+        switch (action)
+        {
+        case GOSSIP_ACTION_INFO_DEF + 1: ShowVendor(player, creature, CREATURE_VENDOR_TRANSMOG_WOTLK1_VIP); break;
+        case GOSSIP_ACTION_INFO_DEF + 2: ShowVendor(player, creature, CREATURE_VENDOR_TRANSMOG_WOTLK2_VIP); break;
+        default: OnGossipHello(player, creature); break;
+        }
+
+        return true;
+    };
+
+    struct custom_shop_collapsed_vendor_transmog_wotlk_vipAI : public ScriptedAI
+    {
+        custom_shop_collapsed_vendor_transmog_wotlk_vipAI(Creature* creature) : ScriptedAI(creature) { }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new custom_shop_collapsed_vendor_transmog_wotlk_vipAI(creature);
+    }
+};
+
 class custom_shop_collapsed_vendor_transmog_otherweapons : public CreatureScript
 {
 public:
@@ -739,6 +1078,52 @@ public:
     CreatureAI* GetAI(Creature* creature) const override
     {
         return new custom_shop_collapsed_vendor_transmog_otherweaponsAI(creature);
+    }
+};
+
+class custom_shop_collapsed_vendor_transmog_otherweapons_vip : public CreatureScript
+{
+public:
+    custom_shop_collapsed_vendor_transmog_otherweapons_vip() : CreatureScript("npc_collapsed_vendor_transmog_otherweapons_vip") { }
+
+    bool OnGossipHello(Player* player, Creature* creature) override
+    {
+        if (!player) return false;
+        bool isSpanish = IsSpanishPlayer(player);
+        if (!IsVipPlayer(player))
+        {
+            TeleportToShop(player, isSpanish);
+            return false;
+        }
+
+        ShowOption(player, isSpanish ? "[PARTE 1]" : "[PART 1]", 1);
+        ShowOption(player, isSpanish ? "[PARTE 2]" : "[PART 2]", 2);
+
+        SendGossipMenuFor(player, DEFAULT_MESSAGE, creature->GetGUID());
+        return true;
+    }
+
+    bool OnGossipSelect(Player* player, Creature* creature, uint32 /*sender*/, uint32 action) override
+    {
+        ClearGossipMenuFor(player);
+        switch (action)
+        {
+        case GOSSIP_ACTION_INFO_DEF + 1: ShowVendor(player, creature, CREATURE_VENDOR_TRANSMOG_OTHERWEAPONS1_VIP); break;
+        case GOSSIP_ACTION_INFO_DEF + 2: ShowVendor(player, creature, CREATURE_VENDOR_TRANSMOG_OTHERWEAPONS2_VIP); break;
+        default: OnGossipHello(player, creature); break;
+        }
+
+        return true;
+    };
+
+    struct custom_shop_collapsed_vendor_transmog_otherweapons_vipAI : public ScriptedAI
+    {
+        custom_shop_collapsed_vendor_transmog_otherweapons_vipAI(Creature* creature) : ScriptedAI(creature) { }
+    };
+
+    CreatureAI* GetAI(Creature* creature) const override
+    {
+        return new custom_shop_collapsed_vendor_transmog_otherweapons_vipAI(creature);
     }
 };
 
@@ -881,4 +1266,11 @@ void AddSC_custom_shop_collapsed_vendor()
     new custom_shop_collapsed_vendor_transmog_tbc();            // npc_collapsed_vendor_transmog_tbc
     new custom_shop_collapsed_vendor_transmog_wotlk();          // npc_collapsed_vendor_transmog_wotlk
     new custom_shop_collapsed_vendor_transmog_otherweapons();   // npc_collapsed_vendor_transmog_otherweapons
+
+    new custom_shop_collapsed_vendor_transmog_classic_vip();        // npc_collapsed_vendor_transmog_classic
+    new custom_shop_collapsed_vendor_transmog_tbc_vip();            // npc_collapsed_vendor_transmog_tbc
+    new custom_shop_collapsed_vendor_transmog_wotlk_vip();          // npc_collapsed_vendor_transmog_wotlk
+    new custom_shop_collapsed_vendor_transmog_otherweapons_vip();   // npc_collapsed_vendor_transmog_otherweapons
+    new custom_shop_collapsed_vendor_transmog_pvp_vip();            // npc_collapsed_vendor_transmog_pvp
+    new custom_shop_collapsed_vendor_transmog_pve_vip();            // npc_collapsed_vendor_transmog_pve
 }
