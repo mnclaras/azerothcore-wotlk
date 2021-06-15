@@ -199,7 +199,7 @@ enum Spells
 #define DEFAULT_MESSAGE 907
 
 
-bool IsVipPlayer(Player* player)
+bool IsVipPlayerCollapsed(Player* player)
 {
     QueryResult result = CharacterDatabase.PQuery("SELECT AccountId FROM premium WHERE active = 1 AND AccountId = %u", player->GetSession()->GetAccountId());
     bool isVipPlayer = false;
@@ -208,7 +208,7 @@ bool IsVipPlayer(Player* player)
     return isVipPlayer;
 }
 
-void TeleportToShop(Player* player, bool isSpanish)
+void TeleportToShopCollapsed(Player* player, bool isSpanish)
 {
     player->GetSession()->SendNotification(isSpanish ? "Que haces aqui? No eres VIP! - Has sido reportado a un GM!" : "Why are you here?  You are not a VIP! - You have been reported to a GM!");
     player->TeleportTo(1, -11823.9f, -4779.58f, 5.9206f, 1.1357f);
@@ -600,9 +600,9 @@ public:
     {
         if (!player) return false;
         bool isSpanish = IsSpanishPlayer(player);
-        if (!IsVipPlayer(player))
+        if (!IsVipPlayerCollapsed(player))
         {
-            TeleportToShop(player, isSpanish);
+            TeleportToShopCollapsed(player, isSpanish);
             return false;
         }
 
@@ -726,9 +726,9 @@ public:
     {
         if (!player) return false;
         bool isSpanish = IsSpanishPlayer(player);
-        if (!IsVipPlayer(player))
+        if (!IsVipPlayerCollapsed(player))
         {
-            TeleportToShop(player, isSpanish);
+            TeleportToShopCollapsed(player, isSpanish);
             return false;
         }
 
@@ -830,9 +830,9 @@ public:
     {
         if (!player) return false;
         bool isSpanish = IsSpanishPlayer(player);
-        if (!IsVipPlayer(player))
+        if (!IsVipPlayerCollapsed(player))
         {
-            TeleportToShop(player, isSpanish);
+            TeleportToShopCollapsed(player, isSpanish);
             return false;
         }
 
@@ -918,9 +918,9 @@ public:
     {
         if (!player) return false;
         bool isSpanish = IsSpanishPlayer(player);
-        if (!IsVipPlayer(player))
+        if (!IsVipPlayerCollapsed(player))
         {
-            TeleportToShop(player, isSpanish);
+            TeleportToShopCollapsed(player, isSpanish);
             return false;
         }
 
@@ -1004,9 +1004,9 @@ public:
     {
         if (!player) return false;
         bool isSpanish = IsSpanishPlayer(player);
-        if (!IsVipPlayer(player))
+        if (!IsVipPlayerCollapsed(player))
         {
-            TeleportToShop(player, isSpanish);
+            TeleportToShopCollapsed(player, isSpanish);
             return false;
         }
 
@@ -1090,9 +1090,9 @@ public:
     {
         if (!player) return false;
         bool isSpanish = IsSpanishPlayer(player);
-        if (!IsVipPlayer(player))
+        if (!IsVipPlayerCollapsed(player))
         {
-            TeleportToShop(player, isSpanish);
+            TeleportToShopCollapsed(player, isSpanish);
             return false;
         }
 
