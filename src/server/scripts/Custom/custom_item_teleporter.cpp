@@ -371,7 +371,7 @@ public:
             AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Zona Azshara" : "Azshara Zone", GOSSIP_SENDER_MAIN, 5005);
             AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Isla PvP" : "PvP Island", GOSSIP_SENDER_MAIN, 16);
             AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Inicio" : "Home Page", GOSSIP_SENDER_MAIN, 999);
-            SendGossipMenuFor(player, DEFAULT_MESSAGE, creature->GetGUID());
+            SendGossipMenuFor(player, DEFAULT_MESSAGE, item->GetGUID());
             break;
 
         case 11:  // Shattrath
