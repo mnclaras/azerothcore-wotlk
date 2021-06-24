@@ -78,15 +78,8 @@ public:
         AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Shop Utgarde" : "Shop Utgarde", GOSSIP_SENDER_MAIN, 5001);
         AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Shop PvP" : "Shop PvP", GOSSIP_SENDER_MAIN, 5002);
 
-
         QueryResult result = CharacterDatabase.PQuery("SELECT AccountId FROM premium WHERE active = 1 AND AccountId = %u", player->GetSession()->GetAccountId());
-
-        bool isVipPlayer = false;
         if (result) {
-            isVipPlayer = true;
-        }
-        if (isVipPlayer)
-        {
             AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Shop VIP" : "Shop VIP", GOSSIP_SENDER_MAIN, 14);
         }
 
@@ -96,8 +89,7 @@ public:
             AddGossipItemFor(player, GOSSIP_ICON_TABARD, isSpanish ? "Casa de Hermandad" : "Guild House", GOSSIP_SENDER_MAIN, 5003);
         }
 
-        AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Mazmorra custom (5HC)" : "Custom dungeon (5HC)", GOSSIP_SENDER_MAIN, 5004);
-
+        AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Contenido Custom" : "Custom content", GOSSIP_SENDER_MAIN, 6000);
         AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Circuitos escalada" : "Climbing circuits", GOSSIP_SENDER_MAIN, 15);
         AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Ciudades principales" : "Main Cities", GOSSIP_SENDER_MAIN, 1);
         AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Localizaciones Azeroth" : "Azeroth Locations", GOSSIP_SENDER_MAIN, 2);
@@ -109,8 +101,7 @@ public:
         AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Localizaciones Rasganorte" : "Northrend Locations", GOSSIP_SENDER_MAIN, 8);
         AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Mazmorras WOTLK" : "WOTLK Dungeons", GOSSIP_SENDER_MAIN, 9);
         AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Bandas WOTLK" : "WOTLK Raids", GOSSIP_SENDER_MAIN, 10);
-        AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Gurubashi Arena" : "Gurubashi Arena", GOSSIP_SENDER_MAIN, 13);
-        AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Isla PvP" : "PvP Island", GOSSIP_SENDER_MAIN, 16);
+        AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Arena Gurubashi" : "Gurubashi Arena", GOSSIP_SENDER_MAIN, 13);
         SendGossipMenuFor(player, DEFAULT_MESSAGE, item->GetGUID());
 
         return true;
@@ -138,13 +129,7 @@ public:
             return;
         }
 		
-		bool isVipPlayer = false;
-
         uint8 plyr = player->getRace();
-        // float x = player->GetPositionX();
-        // float y = player->GetPositionY();
-        // float z = player->GetPositionZ();
-        // float o = player->GetOrientation();
 
         QueryResult result;
         QueryResult has_gh;
@@ -154,45 +139,6 @@ public:
 
         switch (action)
         {
-        case 999:
-            AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Shop Tanaris" : "Shop Tanaris", GOSSIP_SENDER_MAIN, 5000);
-            AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Shop Utgarde" : "Shop Utgarde", GOSSIP_SENDER_MAIN, 5001);
-            AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Shop PvP" : "Shop PvP", GOSSIP_SENDER_MAIN, 5002);
-
-            result = CharacterDatabase.PQuery("SELECT AccountId FROM premium WHERE active = 1 AND AccountId = %u", player->GetSession()->GetAccountId());
-            if (result) {
-                isVipPlayer = true;
-            }
-            if (isVipPlayer)
-            {
-                AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Shop VIP" : "Shop VIP", GOSSIP_SENDER_MAIN, 14);
-            }
-
-            has_gh = CharacterDatabase.PQuery("SELECT id, `guild` FROM `guild_house` WHERE guild = %u", player->GetGuildId());
-            if (has_gh)
-            {
-                AddGossipItemFor(player, GOSSIP_ICON_TABARD, isSpanish ? "Casa de Hermandad" : "Guild House", GOSSIP_SENDER_MAIN, 5003);
-            }
-
-            AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Mazmorra custom (5HC)" : "Custom dungeon (5HC)", GOSSIP_SENDER_MAIN, 5004);
-
-            AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Circuitos escalada" : "Climbing circuits", GOSSIP_SENDER_MAIN, 15);
-            AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Ciudades principales" : "Main Cities", GOSSIP_SENDER_MAIN, 1);
-            AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Localizaciones Azeroth" : "Azeroth Locations", GOSSIP_SENDER_MAIN, 2);
-            AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Mazmorras Clasicas" : "Classic Dungeons", GOSSIP_SENDER_MAIN, 3);
-            AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Bandas Clasicas" : "Classic Raids", GOSSIP_SENDER_MAIN, 4);
-            AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Localizaciones Terrallende" : "Outland Locations", GOSSIP_SENDER_MAIN, 5);
-            AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Mazmorras TBC" : "TBC Dungeons", GOSSIP_SENDER_MAIN, 6);
-            AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Bandas TBC" : "TBC Raids", GOSSIP_SENDER_MAIN, 7);
-            AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Localizaciones Rasganorte" : "Northrend Locations", GOSSIP_SENDER_MAIN, 8);
-            AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Mazmorras WOTLK" : "WOTLK Dungeons", GOSSIP_SENDER_MAIN, 9);
-            AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Bandas WOTLK" : "WOTLK Raids", GOSSIP_SENDER_MAIN, 10);
-            AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Gurubashi Arena" : "Gurubashi Arena", GOSSIP_SENDER_MAIN, 13);
-            AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Isla PvP" : "PvP Island", GOSSIP_SENDER_MAIN, 16);
-
-            SendGossipMenuFor(player, DEFAULT_MESSAGE, item->GetGUID());
-            break;
-
         case 1: // Main cities
             if ((plyr == 1) || (plyr == 3) || (plyr == 4) || (plyr == 7) || (plyr == 11)) {
                 // Alliance cities
@@ -420,7 +366,13 @@ public:
             AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Inicio" : "Home Page", GOSSIP_SENDER_MAIN, 999);
             SendGossipMenuFor(player, DEFAULT_MESSAGE, item->GetGUID());
             break;
-
+        case 6000:
+            AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Mazmorra custom (5HC)" : "Custom dungeon (5HC)", GOSSIP_SENDER_MAIN, 5004);
+            AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Zona Azshara" : "Azshara Zone", GOSSIP_SENDER_MAIN, 5005);
+            AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Isla PvP" : "PvP Island", GOSSIP_SENDER_MAIN, 16);
+            AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Inicio" : "Home Page", GOSSIP_SENDER_MAIN, 999);
+            SendGossipMenuFor(player, DEFAULT_MESSAGE, creature->GetGUID());
+            break;
 
         case 11:  // Shattrath
             player->TeleportTo(530, -1817.82, 5453.04, -12.42, 0);
@@ -1073,7 +1025,12 @@ public:
             player->TeleportTo(530, -295.456421f, 3151.562744f, 32.035973f, 2.178201f);
             CloseGossipMenuFor(player);
             break;
+        case 5005: // Azshara custom
+            player->TeleportTo(37, 163.3904f, 23.9466f, 231.3843f, 5.365f);
+            CloseGossipMenuFor(player);
+            break;
 
+        case 999:
         case 0:
             AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Shop Tanaris" : "Shop Tanaris", GOSSIP_SENDER_MAIN, 5000);
             AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Shop Utgarde" : "Shop Utgarde", GOSSIP_SENDER_MAIN, 5001);
@@ -1081,10 +1038,6 @@ public:
 
             result = CharacterDatabase.PQuery("SELECT AccountId FROM premium WHERE active = 1 AND AccountId = %u", player->GetSession()->GetAccountId());
             if (result) {
-                isVipPlayer = true;
-            }
-            if (isVipPlayer)
-            {
                 AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Shop VIP" : "Shop VIP", GOSSIP_SENDER_MAIN, 14);
             }
 
@@ -1094,8 +1047,7 @@ public:
                 AddGossipItemFor(player, GOSSIP_ICON_TABARD, isSpanish ? "Casa de Hermandad" : "Guild House", GOSSIP_SENDER_MAIN, 5003);
             }
 
-            AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Mazmorra custom (5HC)" : "Custom dungeon (5HC)", GOSSIP_SENDER_MAIN, 5004);
-
+            AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Contenido Custom" : "Custom content", GOSSIP_SENDER_MAIN, 6000);
             AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Circuitos escalada" : "Climbing circuits", GOSSIP_SENDER_MAIN, 15);
             AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Ciudades principales" : "Main Cities", GOSSIP_SENDER_MAIN, 1);
             AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Localizaciones Azeroth" : "Azeroth Locations", GOSSIP_SENDER_MAIN, 2);
@@ -1107,9 +1059,7 @@ public:
             AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Localizaciones Rasganorte" : "Northrend Locations", GOSSIP_SENDER_MAIN, 8);
             AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Mazmorras WOTLK" : "WOTLK Dungeons", GOSSIP_SENDER_MAIN, 9);
             AddGossipItemFor(player, GOSSIP_ICON_CHAT, isSpanish ? "Bandas WOTLK" : "WOTLK Raids", GOSSIP_SENDER_MAIN, 10);
-            AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Gurubashi Arena" : "Gurubashi Arena", GOSSIP_SENDER_MAIN, 13);
-            AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Isla PvP" : "PvP Island", GOSSIP_SENDER_MAIN, 16);
-
+            AddGossipItemFor(player, GOSSIP_ICON_TAXI, isSpanish ? "Arena Gurubashi" : "Gurubashi Arena", GOSSIP_SENDER_MAIN, 13);
             SendGossipMenuFor(player, DEFAULT_MESSAGE, item->GetGUID());
             break;
         }

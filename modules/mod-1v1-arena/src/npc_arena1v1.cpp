@@ -388,7 +388,7 @@ private:
             return false;
         }
 
-        bool allowHybridPalaDk = true;
+        bool allowHybridPalaDk = false;
 
         if (!allowHybridPalaDk)
         {
