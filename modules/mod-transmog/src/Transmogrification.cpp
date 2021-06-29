@@ -412,7 +412,11 @@ bool Transmogrification::CanTransmogrifyItemWithItem(Player* player, ItemTemplat
         target->InventoryType == INVTYPE_QUIVER)
         return false;
 
-    if (!SuitableForTransmogrification(player, target) || !SuitableForTransmogrification(player, source)) // if (!transmogrified->CanTransmogrify() || !transmogrifier->CanBeTransmogrified())
+    if (!SuitableForTransmogrification(player, target) || !SuitableForTransmogrification(player, source)) 
+        // if (!transmogrified->CanTransmogrify() || !transmogrifier->CanBeTransmogrified())
+        return false;
+
+    if (target->Bonding == NO_BIND)
         return false;
 
     if (IsRangedWeapon(source->Class, source->SubClass) != IsRangedWeapon(target->Class, target->SubClass))
