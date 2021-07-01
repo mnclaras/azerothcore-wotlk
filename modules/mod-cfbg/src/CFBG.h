@@ -57,6 +57,7 @@ struct FakePlayer
     // Real
     uint8   RealRace;
     uint32  RealMorph;
+    uint32  RealNativeMorph;
     TeamId  RealTeamID;
 };
 
@@ -75,6 +76,7 @@ public:
     bool IsEnableSystem();
     bool IsEnableAvgIlvl();
     bool IsEnableBalancedTeams();
+    bool IsEnableBalanceClassLowLevel();
     bool IsEnableEvenTeams();
     bool IsEnableResetCooldowns();
     uint32 EvenTeamsMaxPlayersThreshold();
@@ -125,18 +127,29 @@ private:
     bool _IsEnableSystem;
     bool _IsEnableAvgIlvl;
     bool _IsEnableBalancedTeams;
+    bool _IsEnableBalanceClassLowLevel;
     bool _IsEnableEvenTeams;
     bool _IsEnableResetCooldowns;
     uint32 _EvenTeamsMaxPlayersThreshold;
     uint32 _MaxPlayersCountInGroup;
+    uint8 _balanceClassMinLevel;
+    uint8 _balanceClassMaxLevel;
+    uint8 _balanceClassLevelDiff;
+
     uint32 averagePlayersLevelQueue;
     uint32 averagePlayersItemLevelQueue;
     uint32 joiningPlayers;
+
+    bool isHunterJoining;
+    void FillPlayersToCFBGonEvenTeams(BattlegroundQueue* bgqueue, Battleground* bg, const int32 teamFree, BattlegroundBracketId bracket_id, TeamId faction, uint32& playerCount, uint32& sumLevel, uint32& sumItemLevel);
+    bool isClassJoining(uint8 _class, Player* player, uint32 minLevel);
 
     void RandomRaceMorph(uint8* race, uint32* morph, TeamId team, uint8 _class, uint8 gender);
 
     uint8 GetRandomRace(std::initializer_list<uint32> races);
     uint32 GetMorphFromRace(uint8 race, uint8 gender);
+    TeamId getTeamWithLowerClass(Battleground *bg, Classes c);
+    uint8 getBalanceClassMinLevel(const Battleground *bg) const;
 };
 
 #define sCFBG CFBG::instance()

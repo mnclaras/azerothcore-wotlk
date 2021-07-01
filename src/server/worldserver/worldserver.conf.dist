@@ -1601,7 +1601,15 @@ Warden.Enabled = 1
 #        Default:     3 - (Enabled)
 #                     0 - (Disabled)
 
-Warden.NumMemChecks = 2
+Warden.NumMemChecks = 3
+
+#
+#    Warden.NumLuaChecks
+#        Description: Number of Warden LUA checks that are sent to the client each cycle.
+#        Default:     1 - (Enabled)
+#                     0 - (Disabled)
+
+Warden.NumLuaChecks = 1
 
 #
 #    Warden.NumOtherChecks
@@ -1647,7 +1655,7 @@ Warden.ClientCheckHoldOff = 30
 #                     1 - (Kick)
 #                     2 - (Ban)
 
-Warden.ClientCheckFailAction = 2
+Warden.ClientCheckFailAction = 0
 
 #
 #    Warden.BanDuration
