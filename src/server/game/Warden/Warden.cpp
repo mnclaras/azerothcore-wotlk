@@ -274,7 +274,7 @@ void Warden::ApplyPenalty(uint16 checkId, std::string const& reason)
     }
 
     reportMsg = "Warden: " + reportMsg;
-    sLog->outString(reportMsg.c_str());
+    sLog->outString("%s", reportMsg.c_str());
 }
 
 bool Warden::ProcessLuaCheckResponse(std::string const& msg)
