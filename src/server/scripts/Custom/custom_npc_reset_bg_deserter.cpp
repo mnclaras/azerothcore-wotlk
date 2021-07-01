@@ -62,7 +62,7 @@ public:
             switch (action)
             {
             case 4: // Reset Combat 
-                player->RemoveAura(BG_SPELL_DESERTER);
+                player->RemoveAura(26013);
                 player->GetSession()->SendNotification(isSpanish ? "|cffFFFF00SERVICIOS \n |cffFFFFFFDesertor de BG fue eliminado satisfactoriamente!" : "|cffFFFF00SERVICES \n |cffFFFFFFBG Deserter was succesfully removed!");
                 player->CastSpell(player, 31726);
                 CloseGossipMenuFor(player);
