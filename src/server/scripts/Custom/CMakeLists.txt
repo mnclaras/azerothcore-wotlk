@@ -36,6 +36,7 @@ set(scripts_STAT_SRCS
   ${AC_SCRIPTS_DIR}/Custom/custom_npc_reset_cds.cpp
   ${AC_SCRIPTS_DIR}/Custom/custom_npc_reset_combat.cpp
   ${AC_SCRIPTS_DIR}/Custom/custom_npc_reset_instances.cpp
+  ${AC_SCRIPTS_DIR}/Custom/custom_npc_reset_bg_deserter.cpp
   ${AC_SCRIPTS_DIR}/Custom/custom_teleporter.cpp
   ${AC_SCRIPTS_DIR}/Custom/custom_item_teleporter.cpp
   ${AC_SCRIPTS_DIR}/Custom/custom_vip_only_npc.cpp

@@ -1218,6 +1218,7 @@ void AddSC_deathmatch_area();
 void AddSC_mod_guild_points();
 void AddSC_mod_bg_auras();
 void AddSC_custom_npc_anti_pvp();
+void AddSC_custom_npc_reset_bg_deserter();
 
 void AddCustomScripts()
 {
@@ -1250,5 +1251,6 @@ void AddCustomScripts()
     AddSC_mod_guild_points();
     AddSC_mod_bg_auras();
     AddSC_custom_npc_anti_pvp();
+    AddSC_custom_npc_reset_bg_deserter();
 #endif
 }
