@@ -13163,6 +13163,18 @@ void Player::MorphIllusionShirt(uint8 slot, uint32 shirtEntry)
             case 100077: SetDisplayId(20757); break;    // Demon Hunter
             case 100078: SetDisplayId(30414); break;    // Panda
             case 100079: SetDisplayId(27545); break;    // Arthas without helm
+            case 100080: SetDisplayId(7274); break;     // Tyrande Susurravientos
+            case 100081: SetDisplayId(3597); break;     // Magni Barbabronce
+            case 100082: SetDisplayId(28127); break;    // Varian Wrynn
+            case 100083: SetDisplayId(17822); break;    // Profeta Velen
+            case 100084: SetDisplayId(4527); break;     // Thrall
+            case 100085: SetDisplayId(17122); break;    // Lor'themar Theron
+            case 100086: SetDisplayId(19706); break;    // Rommath
+            case 100087: SetDisplayId(10731); break;    // Sharlindra
+            case 100088: SetDisplayId(4307); break;     // Cairne Pezuña de Sangre
+            case 100089: SetDisplayId(10357); break;    // Vol'jin
+            case 100090: SetDisplayId(16355); break;    // No - muerto del Festival
+
 
             case 100100: SetDisplayId(21267); break;    // Fel Orc
             }

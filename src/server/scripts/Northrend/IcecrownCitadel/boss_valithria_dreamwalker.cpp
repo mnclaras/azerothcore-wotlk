@@ -353,30 +353,27 @@ class boss_valithria_dreamwalker : public CreatureScript
                             //if (p->GetTeamId() == TEAM_ALLIANCE) p->AddItem(49426, 4);
                             if (!event_broadcasted && AccountMgr::IsPlayerAccount(p->GetSession()->GetSecurity()))
                             {
-                                //lets get the info we want
-                                //Map* map = p->GetMap();
-                                std::string g_name = "< Sin Hermandad >";
-                                std::string boss_name = "Valithria Dreamwalker";
-                                std::string IsHeroicMode;
-                                std::string IsNormal;
-                                std::string tag_colour = "7bbef7";
-                                std::string plr_colour = "7bbef7";
-                                std::string guild_colour = "00ff00";
-                                std::string boss_colour = "ff0000";
-                                std::string alive_text = "00ff00";
-
-                                IsNormal = (p->GetMap()->Is25ManRaid()) ? "25" : "10";
-                                IsHeroicMode = (p->GetMap()->IsHeroic()) ? "|cffff0000Heroico|r" : "|cff00ff00Normal|r";
-
-                                std::ostringstream stream;
-
                                 Player* leader = GetLeaderOfGroup(p);
-                                if (leader && leader->GetGuild()) g_name = leader->GetGuildName();
 
-                                stream << "La hermandad |cff" << guild_colour << "" << g_name <<
-                                    "|r ha derrotado a |CFF" << boss_colour << "[" << boss_name <<
-                                    "]|r en modo |cff" << alive_text << IsNormal << "|r " << IsHeroicMode;
-                                sWorld->SendServerMessage(SERVER_MSG_STRING, stream.str().c_str());
+                                if (leader && AccountMgr::IsPlayerAccount(leader->GetSession()->GetSecurity()))
+                                {
+                                    std::ostringstream stream;
+                                    std::string boss_name = "Valithria Dreamwalker";
+                                    std::string IsHeroicMode = (p->GetMap()->IsHeroic()) ? "|cffff0000Heroico|r" : "|cff00ff00Normal|r";
+                                    std::string IsNormal = (p->GetMap()->Is25ManRaid()) ? "25" : "10";
+
+                                    if (leader->GetGuild())
+                                    {
+                                        stream << "La banda liderada por |cff7bbef7" << leader->GetName() << "|r|cff00ff00 < " << leader->GetGuildName()
+                                            << " >|r ha derrotado a |cffff0000[" << boss_name << "]|r en modo |cff00ff00" << IsNormal << "|r " << IsHeroicMode;
+                                    }
+                                    else
+                                    {
+                                        stream << "La banda liderada por |cff7bbef7" << leader->GetName()
+                                            << "|r ha derrotado a |cffff0000[" << boss_name << "]|r en modo |cff00ff00" << IsNormal << "|r " << IsHeroicMode;
+                                    }
+                                    sWorld->SendServerMessage(SERVER_MSG_STRING, stream.str().c_str());
+                                }
 
                                 // Guild points
 
