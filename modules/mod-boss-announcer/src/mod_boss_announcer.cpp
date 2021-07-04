@@ -44,18 +44,18 @@ public:
                 {
                     std::ostringstream stream;
                     std::string boss_name = boss->GetName();
-                    std::string IsHeroicMode = (player->GetMap()->Is25ManRaid()) ? "25" : "10";
-                    std::string IsNormal = (player->GetMap()->IsHeroic()) ? "|cffff0000Heroico|r" : "|cff00ff00Normal|r";
+                    std::string ManMode = (player->GetMap()->Is25ManRaid()) ? "25" : "10";
+                    std::string NormalOrHeroicMode = (player->GetMap()->IsHeroic()) ? " |cffff0000Heroico|r." : " |cff00ff00Normal|r.";
 
                     if (leader->GetGuild())
                     {
                         stream << "La banda liderada por |cff7bbef7" << leader->GetName() << "|r|cff00ff00 < " << leader->GetGuildName()
-                            << " >|r ha derrotado a |cffff0000[" << boss_name << "]|r en modo |cff00ff00" << IsNormal << "|r " << IsHeroicMode;
+                            << " >|r ha derrotado a |cffff0000[" << boss_name << "]|r en modo " << ManMode << NormalOrHeroicMode;
                     }
                     else
                     {
                         stream << "La banda liderada por |cff7bbef7" << leader->GetName()
-                            << "|r ha derrotado a |cffff0000[" << boss_name << "]|r en modo |cff00ff00" << IsNormal << "|r " << IsHeroicMode;
+                            << "|r ha derrotado a |cffff0000[" << boss_name << "]|r en modo " << ManMode << NormalOrHeroicMode;
                     }
                     sWorld->SendServerMessage(SERVER_MSG_STRING, stream.str().c_str());
                 }

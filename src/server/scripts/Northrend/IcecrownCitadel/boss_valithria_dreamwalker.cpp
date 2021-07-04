@@ -359,18 +359,18 @@ class boss_valithria_dreamwalker : public CreatureScript
                                 {
                                     std::ostringstream stream;
                                     std::string boss_name = "Valithria Dreamwalker";
-                                    std::string IsHeroicMode = (p->GetMap()->IsHeroic()) ? "|cffff0000Heroico|r" : "|cff00ff00Normal|r";
-                                    std::string IsNormal = (p->GetMap()->Is25ManRaid()) ? "25" : "10";
+                                    std::string ManMode = (p->GetMap()->Is25ManRaid()) ? "25" : "10";
+                                    std::string NormalOrHeroicMode = (p->GetMap()->IsHeroic()) ? " |cffff0000Heroico|r." : " |cff00ff00Normal|r.";
 
                                     if (leader->GetGuild())
                                     {
                                         stream << "La banda liderada por |cff7bbef7" << leader->GetName() << "|r|cff00ff00 < " << leader->GetGuildName()
-                                            << " >|r ha derrotado a |cffff0000[" << boss_name << "]|r en modo |cff00ff00" << IsNormal << "|r " << IsHeroicMode;
+                                            << " >|r ha derrotado a |cffff0000[" << boss_name << "]|r en modo " << ManMode << NormalOrHeroicMode;
                                     }
                                     else
                                     {
                                         stream << "La banda liderada por |cff7bbef7" << leader->GetName()
-                                            << "|r ha derrotado a |cffff0000[" << boss_name << "]|r en modo |cff00ff00" << IsNormal << "|r " << IsHeroicMode;
+                                            << "|r ha derrotado a |cffff0000[" << boss_name << "]|r en modo " << ManMode << NormalOrHeroicMode;
                                     }
                                     sWorld->SendServerMessage(SERVER_MSG_STRING, stream.str().c_str());
                                 }
