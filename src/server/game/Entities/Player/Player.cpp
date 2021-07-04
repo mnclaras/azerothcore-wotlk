@@ -5261,6 +5261,21 @@ void Player::ResurrectPlayer(float restore_percent, bool applySickness)
                 pet = GetPet();
             }
 
+            if (!pet)
+            {
+                if (GetLastPetNumber() && CanResummonPet(GetLastPetSpell()))
+                    Pet::LoadPetFromDB(this, PET_LOAD_SUMMON_PET, 0, GetLastPetNumber(), true);
+                pet = GetPet();
+            }
+
+            if (!pet)
+            {
+                float x, y, z;
+                GetPosition(x, y, z);
+                SummonPet(0, x, y, z, GetOrientation(), SUMMON_PET, 0, 0, (uint64)0, PET_LOAD_SUMMON_DEAD_PET);
+                pet = GetPet();
+            }
+
             if (pet)
             {
                 if (!pet->IsAlive())
