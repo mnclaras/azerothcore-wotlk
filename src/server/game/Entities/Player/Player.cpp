@@ -5246,7 +5246,35 @@ void Player::ResurrectPlayer(float restore_percent, bool applySickness)
     sOutdoorPvPMgr->HandlePlayerResurrects(this, newzone);
 
     if (Battleground* bg = GetBattleground())
+    {
         bg->HandlePlayerResurrect(this);
+
+
+        // This will cause warlocks and hunters to have their last-used pet to be re-summoned
+        if (getClass() == CLASS_HUNTER)
+        {
+            Pet* pet = GetPet();
+            if (!pet)
+            {
+                UnsummonPetTemporaryIfAny();
+                ResummonPetTemporaryUnSummonedIfAny();
+                pet = GetPet();
+            }
+
+            if (pet)
+            {
+                if (!pet->IsAlive())
+                {
+                    pet->SetPower(POWER_HAPPINESS, pet->GetMaxPower(POWER_HAPPINESS));
+
+                    pet->setDeathState(ALIVE);
+                }
+
+                pet->SetHealth(pet->GetMaxHealth());
+                pet->UpdateAllStats();
+            }
+        }
+    }
 
     // update visibility
     UpdateObjectVisibility();
