@@ -5285,7 +5285,7 @@ void Player::ResurrectPlayer(float restore_percent, bool applySickness)
             GetPosition(x, y, z);
             if (!pet)
             {
-                SummonPet(0, x, y, z, GetOrientation(), SUMMON_PET, 0, 0, (uint64)damage, PET_LOAD_SUMMON_DEAD_PET);
+                SummonPet(0, x, y, z, GetOrientation(), SUMMON_PET, 0, 0, (uint64)0, PET_LOAD_SUMMON_DEAD_PET);
                 return;
             }
 
