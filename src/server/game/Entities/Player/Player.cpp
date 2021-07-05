@@ -5250,45 +5250,79 @@ void Player::ResurrectPlayer(float restore_percent, bool applySickness)
         bg->HandlePlayerResurrect(this);
 
 
-        //// This will cause warlocks and hunters to have their last-used pet to be re-summoned
-        //if (getClass() == CLASS_HUNTER)
-        //{
-        //    Pet* pet = GetPet();
-        //    if (!pet)
-        //    {
-        //        UnsummonPetTemporaryIfAny();
-        //        ResummonPetTemporaryUnSummonedIfAny();
-        //        pet = GetPet();
-        //    }
+        // This will cause warlocks and hunters to have their last-used pet to be re-summoned
+        if (getClass() == CLASS_HUNTER)
+        {
+            UnsummonPetTemporaryIfAny();
+            ResummonPetTemporaryUnSummonedIfAny();
 
-        //    if (!pet)
-        //    {
-        //        if (GetLastPetNumber() && CanResummonPet(GetLastPetSpell()))
-        //            Pet::LoadPetFromDB(this, PET_LOAD_SUMMON_PET, 0, GetLastPetNumber(), true);
-        //        pet = GetPet();
-        //    }
+            Pet* pet = GetPet();
+            if (!pet)
+            {
+                UnsummonPetTemporaryIfAny();
+                ResummonPetTemporaryUnSummonedIfAny();
+                pet = GetPet();
+            }
 
-        //    if (!pet)
-        //    {
-        //        float x, y, z;
-        //        GetPosition(x, y, z);
-        //        SummonPet(0, x, y, z, GetOrientation(), SUMMON_PET, 0, 0, (uint64)0, PET_LOAD_SUMMON_DEAD_PET);
-        //        pet = GetPet();
-        //    }
+            if (!pet)
+            {
+                if (GetLastPetNumber() && CanResummonPet(GetLastPetSpell()))
+                    Pet::LoadPetFromDB(this, PET_LOAD_SUMMON_PET, 0, GetLastPetNumber(), true);
+                pet = GetPet();
+            }
 
-        //    if (pet)
-        //    {
-        //        if (!pet->IsAlive())
-        //        {
-        //            pet->SetPower(POWER_HAPPINESS, pet->GetMaxPower(POWER_HAPPINESS));
+            if (!pet)
+            {
+                float x, y, z;
+                GetPosition(x, y, z);
+                SummonPet(0, x, y, z, GetOrientation(), SUMMON_PET, 0, 0, (uint64)0, PET_LOAD_SUMMON_DEAD_PET);
+                pet = GetPet();
+            }
 
-        //            pet->setDeathState(ALIVE);
-        //        }
+            pet = GetPet();
+            
+            float x, y, z;
+            GetPosition(x, y, z);
+            if (!pet)
+            {
+                player->SummonPet(0, x, y, z, player->GetOrientation(), SUMMON_PET, 0, 0, (uint64)damage, PET_LOAD_SUMMON_DEAD_PET);
+                return;
+            }
 
-        //        pet->SetHealth(pet->GetMaxHealth());
-        //        pet->UpdateAllStats();
-        //    }
-        //}
+            pet->SetPosition(x, y, z, player->GetOrientation());
+
+            pet->SetUInt32Value(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_NONE);
+            pet->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SKINNABLE);
+            pet->setDeathState(ALIVE);
+            pet->ClearUnitState(uint32(UNIT_STATE_ALL_STATE & ~(UNIT_STATE_POSSESSED))); // xinef: just in case
+            pet->SetHealth(pet->CountPctFromMaxHealth(damage));
+
+            // xinef: restore movement
+            if (pet->GetCharmInfo())
+            {
+                pet->GetCharmInfo()->SetIsAtStay(false);
+                pet->GetCharmInfo()->SetIsFollowing(false);
+            }
+
+            pet->SavePetToDB(PET_SAVE_AS_CURRENT, false);
+
+            if (pet)
+            {
+                if (!pet->IsAlive())
+                {
+                    pet->SetPower(POWER_HAPPINESS, pet->GetMaxPower(POWER_HAPPINESS));
+
+                    pet->setDeathState(ALIVE);
+                }
+
+                pet->SetHealth(pet->GetMaxHealth());
+                pet->UpdateAllStats();
+            }
+
+            LoadPet();
+            UnsummonPetTemporaryIfAny();
+            ResummonPetTemporaryUnSummonedIfAny();
+        }
     }
 
     // update visibility
