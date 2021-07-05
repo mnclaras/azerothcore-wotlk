@@ -5253,34 +5253,12 @@ void Player::ResurrectPlayer(float restore_percent, bool applySickness)
         // This will cause warlocks and hunters to have their last-used pet to be re-summoned
         if (getClass() == CLASS_HUNTER)
         {
-            UnsummonPetTemporaryIfAny();
-            ResummonPetTemporaryUnSummonedIfAny();
-
             Pet* pet = GetPet();
-            if (!pet)
-            {
-                UnsummonPetTemporaryIfAny();
-                ResummonPetTemporaryUnSummonedIfAny();
-                pet = GetPet();
-            }
+            if (pet && pet->IsAlive())
+                return;
 
-            if (!pet)
-            {
-                if (GetLastPetNumber() && CanResummonPet(GetLastPetSpell()))
-                    Pet::LoadPetFromDB(this, PET_LOAD_SUMMON_PET, 0, GetLastPetNumber(), true);
-                pet = GetPet();
-            }
+            CastSpell(this, 883, false); // Summons last used pet
 
-            if (!pet)
-            {
-                float x, y, z;
-                GetPosition(x, y, z);
-                SummonPet(0, x, y, z, GetOrientation(), SUMMON_PET, 0, 0, (uint64)0, PET_LOAD_SUMMON_DEAD_PET);
-                pet = GetPet();
-            }
-
-            pet = GetPet();
-            
             float x, y, z;
             GetPosition(x, y, z);
             if (!pet)
@@ -5295,7 +5273,7 @@ void Player::ResurrectPlayer(float restore_percent, bool applySickness)
             pet->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SKINNABLE);
             pet->setDeathState(ALIVE);
             pet->ClearUnitState(uint32(UNIT_STATE_ALL_STATE & ~(UNIT_STATE_POSSESSED))); // xinef: just in case
-            pet->SetHealth(pet->CountPctFromMaxHealth(0));
+            pet->SetHealth(pet->CountPctFromMaxHealth(50));
 
             // xinef: restore movement
             if (pet->GetCharmInfo())
@@ -5305,23 +5283,6 @@ void Player::ResurrectPlayer(float restore_percent, bool applySickness)
             }
 
             pet->SavePetToDB(PET_SAVE_AS_CURRENT, false);
-
-            if (pet)
-            {
-                if (!pet->IsAlive())
-                {
-                    pet->SetPower(POWER_HAPPINESS, pet->GetMaxPower(POWER_HAPPINESS));
-
-                    pet->setDeathState(ALIVE);
-                }
-
-                pet->SetHealth(pet->GetMaxHealth());
-                pet->UpdateAllStats();
-            }
-
-            LoadPet();
-            UnsummonPetTemporaryIfAny();
-            ResummonPetTemporaryUnSummonedIfAny();
         }
     }
 
