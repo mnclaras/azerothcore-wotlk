@@ -291,8 +291,8 @@ void Battleground::Update(uint32 diff)
     // 1v1: First 4 stacks every 20 seconds. Last 4 stacks every 30 seconds.
     // 2v2, 3v3: 1 stack every minute.
     bool is1v1 = (GetArenaType() == ARENA_TYPE_5v5);
-    float startT = is1v1 ? 2 : 15;
-    bool dementiaActive = false;
+    float startT = is1v1 ? 10 : 15;
+    bool dementiaActive = false; 
 
     // DEBUG TIMERS:
     for (BattlegroundPlayerMap::const_iterator itr = GetPlayers().begin(); itr != GetPlayers().end(); ++itr)
