@@ -5250,40 +5250,40 @@ void Player::ResurrectPlayer(float restore_percent, bool applySickness)
         bg->HandlePlayerResurrect(this);
 
 
-        // This will cause warlocks and hunters to have their last-used pet to be re-summoned
-        if (getClass() == CLASS_HUNTER)
-        {
-            Pet* pet = GetPet();
-            if (pet && pet->IsAlive())
-                return;
+        //// This will cause warlocks and hunters to have their last-used pet to be re-summoned
+        //if (getClass() == CLASS_HUNTER)
+        //{
+        //    Pet* pet = GetPet();
+        //    if (pet && pet->IsAlive())
+        //        return;
 
-            CastSpell(this, 883, false); // Summons last used pet
+        //    CastSpell(this, 883, false); // Summons last used pet
 
-            float x, y, z;
-            GetPosition(x, y, z);
-            if (!pet)
-            {
-                SummonPet(0, x, y, z, GetOrientation(), SUMMON_PET, 0, 0, (uint64)0, PET_LOAD_SUMMON_DEAD_PET);
-                return;
-            }
+        //    float x, y, z;
+        //    GetPosition(x, y, z);
+        //    if (!pet)
+        //    {
+        //        SummonPet(0, x, y, z, GetOrientation(), SUMMON_PET, 0, 0, (uint64)0, PET_LOAD_SUMMON_DEAD_PET);
+        //        return;
+        //    }
 
-            pet->SetPosition(x, y, z, GetOrientation());
+        //    pet->SetPosition(x, y, z, GetOrientation());
 
-            pet->SetUInt32Value(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_NONE);
-            pet->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SKINNABLE);
-            pet->setDeathState(ALIVE);
-            pet->ClearUnitState(uint32(UNIT_STATE_ALL_STATE & ~(UNIT_STATE_POSSESSED))); // xinef: just in case
-            pet->SetHealth(pet->CountPctFromMaxHealth(50));
+        //    pet->SetUInt32Value(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_NONE);
+        //    pet->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SKINNABLE);
+        //    pet->setDeathState(ALIVE);
+        //    pet->ClearUnitState(uint32(UNIT_STATE_ALL_STATE & ~(UNIT_STATE_POSSESSED))); // xinef: just in case
+        //    pet->SetHealth(pet->CountPctFromMaxHealth(50));
 
-            // xinef: restore movement
-            if (pet->GetCharmInfo())
-            {
-                pet->GetCharmInfo()->SetIsAtStay(false);
-                pet->GetCharmInfo()->SetIsFollowing(false);
-            }
+        //    // xinef: restore movement
+        //    if (pet->GetCharmInfo())
+        //    {
+        //        pet->GetCharmInfo()->SetIsAtStay(false);
+        //        pet->GetCharmInfo()->SetIsFollowing(false);
+        //    }
 
-            pet->SavePetToDB(PET_SAVE_AS_CURRENT, false);
-        }
+        //    pet->SavePetToDB(PET_SAVE_AS_CURRENT, false);
+        //}
     }
 
     // update visibility
