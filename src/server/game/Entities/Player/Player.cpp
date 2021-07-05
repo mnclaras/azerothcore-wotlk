@@ -5295,7 +5295,7 @@ void Player::ResurrectPlayer(float restore_percent, bool applySickness)
             pet->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SKINNABLE);
             pet->setDeathState(ALIVE);
             pet->ClearUnitState(uint32(UNIT_STATE_ALL_STATE & ~(UNIT_STATE_POSSESSED))); // xinef: just in case
-            pet->SetHealth(pet->CountPctFromMaxHealth(damage));
+            pet->SetHealth(pet->CountPctFromMaxHealth(0));
 
             // xinef: restore movement
             if (pet->GetCharmInfo())
