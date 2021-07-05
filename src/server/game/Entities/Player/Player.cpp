@@ -5285,11 +5285,11 @@ void Player::ResurrectPlayer(float restore_percent, bool applySickness)
             GetPosition(x, y, z);
             if (!pet)
             {
-                player->SummonPet(0, x, y, z, player->GetOrientation(), SUMMON_PET, 0, 0, (uint64)damage, PET_LOAD_SUMMON_DEAD_PET);
+                SummonPet(0, x, y, z, GetOrientation(), SUMMON_PET, 0, 0, (uint64)damage, PET_LOAD_SUMMON_DEAD_PET);
                 return;
             }
 
-            pet->SetPosition(x, y, z, player->GetOrientation());
+            pet->SetPosition(x, y, z, GetOrientation());
 
             pet->SetUInt32Value(UNIT_DYNAMIC_FLAGS, UNIT_DYNFLAG_NONE);
             pet->RemoveFlag(UNIT_FIELD_FLAGS, UNIT_FLAG_SKINNABLE);
