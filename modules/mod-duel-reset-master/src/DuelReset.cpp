@@ -78,8 +78,8 @@ public:
     // Called when a duel ends
     void OnDuelEnd(Player* winner, Player* loser, DuelCompleteType type) override
     {
-        if ((player1->GetAreaId() == 2317) || (player1->GetAreaId() == 3983) || (player1->GetAreaId() == 990)
-            || (player1->GetAreaId() == 989) || (player1->GetAreaId() == 395))
+        if ((winner->GetAreaId() == 2317) || (winner->GetAreaId() == 3983) || (winner->GetAreaId() == 990)
+            || (winner->GetAreaId() == 989) || (winner->GetAreaId() == 395))
         {
             // do not reset anything if DUEL_INTERRUPTED or DUEL_FLED
             if (type == DUEL_WON)
