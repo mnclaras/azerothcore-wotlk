@@ -4482,6 +4482,14 @@ uint32 Player::resetTalentsCost() const
 
 bool Player::resetTalents(bool noResetCost)
 {
+    if (InBattlegroundQueueForBattlegroundQueueType(BATTLEGROUND_QUEUE_5v5))
+    {
+        LocaleConstant locale = GetSession()->GetSessionDbLocaleIndex();
+        bool isSpanish = (locale == LOCALE_esES || locale == LOCALE_esMX);
+        ChatHandler(GetSession()).PSendSysMessage(isSpanish ? "No puedes cambiar de talentos mientras estás anotado en 1v1" : "Cannot change spec while in 1v1.");
+        return;
+    }
+
     sScriptMgr->OnPlayerTalentsReset(this, noResetCost);
 
     // xinef: remove at login flag upon talents reset
