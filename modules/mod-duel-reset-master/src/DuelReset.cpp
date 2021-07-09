@@ -30,7 +30,8 @@ public:
     // Called when a duel starts (after 3s countdown)
     void OnDuelStart(Player* player1, Player* player2) override
     {
-        if ((player1->GetAreaId() == 2317) || (player1->GetAreaId() == 3983))
+        if ((player1->GetAreaId() == 2317) || (player1->GetAreaId() == 3983) || (player1->GetAreaId() == 990)
+            || (player1->GetAreaId() == 989) || (player1->GetAreaId() == 395))
         {
             // Cooldowns reset
             if (sConfigMgr->GetBoolDefault("DuelResetCooldowns", true))
@@ -77,7 +78,8 @@ public:
     // Called when a duel ends
     void OnDuelEnd(Player* winner, Player* loser, DuelCompleteType type) override
     {
-        if ((winner->GetAreaId() == 2317) || (winner->GetAreaId() == 3983))
+        if ((player1->GetAreaId() == 2317) || (player1->GetAreaId() == 3983) || (player1->GetAreaId() == 990)
+            || (player1->GetAreaId() == 989) || (player1->GetAreaId() == 395))
         {
             // do not reset anything if DUEL_INTERRUPTED or DUEL_FLED
             if (type == DUEL_WON)
