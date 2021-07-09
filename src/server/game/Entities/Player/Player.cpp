@@ -4487,7 +4487,7 @@ bool Player::resetTalents(bool noResetCost)
         LocaleConstant locale = GetSession()->GetSessionDbLocaleIndex();
         bool isSpanish = (locale == LOCALE_esES || locale == LOCALE_esMX);
         ChatHandler(GetSession()).PSendSysMessage(isSpanish ? "No puedes cambiar de talentos mientras estás anotado en 1v1" : "Cannot change spec while in 1v1.");
-        return;
+        return false;
     }
 
     sScriptMgr->OnPlayerTalentsReset(this, noResetCost);
