@@ -57,6 +57,21 @@ public:
             else
             {
                 LearnAllRecipesInProfession(player, (SkillType)SKILL);
+
+                if (!player->HasSkill(SKILL_HERBALISM))
+                {
+                    // Lifebloom
+                    player->removeSpell(55503, SPEC_MASK_ALL, false);
+                }
+
+                if (!player->HasSkill(SKILL_ALCHEMY))
+                {
+                    // Flask of the north
+                    player->RemoveAurasDueToSpell(67016);
+                    player->RemoveAurasDueToSpell(67017);
+                    player->RemoveAurasDueToSpell(67018);
+                }
+
                 CloseGossipMenuFor(player);
             }
         }
