@@ -99,7 +99,7 @@ public:
 
         for (auto const& itr : chat)
         {
-            if (msg.find(itr) != std::string::npos)
+            if (lower.find(itr) != std::string::npos)
             {
                 msg = itr;
                 return true;
