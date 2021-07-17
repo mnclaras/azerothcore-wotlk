@@ -31,16 +31,9 @@ public:
         {
             if (boss->GetMap()->IsRaid() && boss->getLevel() > 80 && boss->IsDungeonBoss())
             {
-                Player* leader = player;
-                uint64 leaderGuid = player->GetGroup() ? player->GetGroup()->GetLeaderGUID() : player->GetGUID();
+                Player* leader = GetLeaderOfGroup(player);
 
-                if (leaderGuid != player->GetGUID() && player->GetGroup())
-                {
-                    leader = ObjectAccessor::FindPlayerInOrOutOfWorld(player->GetGroup()->GetLeaderGUID());
-                    if (!leader) leader = player;
-                }
-
-                if (leader && AccountMgr::IsPlayerAccount(leader->GetSession()->GetSecurity()))
+                if (leader)
                 {
                     std::ostringstream stream;
                     std::string boss_name = boss->GetName();
@@ -60,7 +53,77 @@ public:
                     sWorld->SendServerMessage(SERVER_MSG_STRING, stream.str().c_str());
                 }
             }
+            else
+            {
+                // Mazmorra custom para instances
+                if (boss->GetMap()->IsDungeon() && player->GetMap()->IsNonRaidDungeon() && player->GetMapId() == 542)
+                {
+                    Player* leader = GetLeaderOfGroup(player);
+                    if (leader)
+                    {
+                        std::ostringstream stream;
+                        std::string boss_name = boss->GetName();
+
+                        if (leader->GetGuild())
+                        {
+                            stream << "El grupo liderado por |cff7bbef7" << leader->GetName() << "|r|cff00ff00 < " << leader->GetGuildName()
+                                << " >|r ha derrotado a |cffff0000[" << boss_name << "]|r en |cffff0000El Horno de Sangre 5 Heroico|r.";
+                        }
+                        else
+                        {
+                            stream << "El grupo liderado por |cff7bbef7" << leader->GetName()
+                                << "|r ha derrotado a |cffff0000[" << boss_name << "]|r en |cffff0000El Horno de Sangre 5 Heroico|r.";
+                        }
+                        sWorld->SendServerMessage(SERVER_MSG_STRING, stream.str().c_str());
+                    }
+                }
+                else
+                {
+                    // Jefes de mundo
+                    uint32 bossEntry = boss->GetEntry();
+                    if (bossEntry == 2300005 || bossEntry == 2300006)
+                    {
+                        Player* leader = GetLeaderOfGroup(player);
+                        if (leader)
+                        {
+                            std::ostringstream stream;
+                            std::string boss_name = boss->GetName();
+
+                            if (leader->GetGuild())
+                            {
+                                stream << "La banda liderada por |cff7bbef7" << leader->GetName() << "|r|cff00ff00 < " << leader->GetGuildName()
+                                    << " >|r ha derrotado al Jefe de Mundo |cffff0000[" << boss_name << "]|r.";
+                            }
+                            else
+                            {
+                                stream << "La banda liderada por |cff7bbef7" << leader->GetName()
+                                    << "|r ha derrotado al Jefe de Mundo |cffff0000[" << boss_name << "]|r.";
+                            }
+                            sWorld->SendServerMessage(SERVER_MSG_STRING, stream.str().c_str());
+                        }
+                    }
+                }
+            }
         }
+    }
+
+    Player* GetLeaderOfGroup(Player* player)
+    {
+        Player* leader = player;
+        uint64 leaderGuid = player->GetGroup() ? player->GetGroup()->GetLeaderGUID() : player->GetGUID();
+
+        if (leaderGuid != player->GetGUID() && player->GetGroup())
+        {
+            leader = ObjectAccessor::FindPlayerInOrOutOfWorld(player->GetGroup()->GetLeaderGUID());
+            if (!leader) leader = player;
+        }
+
+        if (leader /*&& AccountMgr::IsPlayerAccount(leader->GetSession()->GetSecurity())*/)
+        {
+            return leader;
+        }
+
+        return nullptr;
     }
 };
 

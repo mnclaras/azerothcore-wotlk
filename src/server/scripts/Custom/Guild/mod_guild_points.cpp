@@ -484,7 +484,7 @@ public:
             leader = ObjectAccessor::FindPlayerInOrOutOfWorld(player->GetGroup()->GetLeaderGUID());
 
         if (!leader) leader = player;
-        if (leader /*&& AccountMgr::IsPlayerAccount(leader->GetSession()->GetSecurity())*/)
+        if (leader && AccountMgr::IsPlayerAccount(leader->GetSession()->GetSecurity()))
         {
             return leader;
         }
